@@ -17,13 +17,13 @@
       Scrub dates manually with the event slider at the bottom, or use the left and right arrow keys if available.
     </p>
     <p>
-      Press play ({'▶'} in the toolbar at upper right) or the space bar to toggle animation.
+      Press Play in the toolbar or press the space bar to toggle animation.
     </p>
     <p>
       Tapping a location will give a little more detail about it - you can navigate to the city or event link.
     </p>
     <p>
-      Show locations for one or more specific events by toggling {'≡'} or pressing 'F'.
+      Filter locations for one or more specific events by toggling the filter icon or pressing 'F'.
     </p>
     <p>
       Zoom and pan around the map to see more detail. Our apologies to Alaska and Hawaii for setting the initial viewport to the continental US - your protests are here too!

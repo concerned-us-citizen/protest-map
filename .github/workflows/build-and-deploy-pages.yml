@@ -1,0 +1,82 @@
+name: Build & Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+env:
+  BASE_PATH: "/${{ github.event.repository.name }}"
+  GITHUB_USERNAME: ${{ github.repository_owner }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: github-pages
+      # url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Restore cached scrape data if available
+        uses: actions/cache@v4
+        with:
+          path: cache
+          key: ${{ runner.os }}-scrape-cache-${{ hashFiles('prebuilt_data/*.json') }}
+          restore-keys: ${{ runner.os }}-scrape-cache-
+
+      - name: Initialize cache with prebuilt data
+        run: |
+          mkdir -p cache
+          for f in geocache.json bad_geocache.json wikicache.json; do
+            if [ ! -e "cache/$f" ] && [ -e "prebuilt_data/$f" ]; then
+              cp "prebuilt_data/$f" "cache/$f"
+              echo "Copied prebuilt_data/$f"
+            fi
+          done
+
+      - name: Run scraper – generates/updates cache/*.json
+        run: npm run scrape
+
+      - name: Save updated scrape cache
+        uses: actions/cache@v4
+        with:
+          path: cache
+          key: ${{ runner.os }}-scrape-cache-${{ hashFiles('prebuilt_data/*.json') }}
+
+      - name: Build static site
+        run: npm run build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

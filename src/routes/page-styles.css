@@ -1,0 +1,163 @@
+/* Broken out from +page.svelte to keep its size down */
+
+.toolbar {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 1010;
+  display: flex;
+  flex-direction: column;
+  gap: 0; /* No gap, borders will separate */
+  border-radius: 4px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2); /* Consistent shadow */
+  border: 1px solid #ccc;
+  overflow: hidden; /* To clip button corners if they don't match */
+}
+
+.icon-button {
+  background-color: rgba(255, 255, 255, 0.95);
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+  margin: 0; /* Ensure no margin on buttons themselves */
+  cursor: pointer;
+  font-size: 1.1em;
+  line-height: 1;
+  font-weight: normal;
+  width: 30px; /* Consistent with Leaflet zoom */
+  height: 30px; /* Consistent with Leaflet zoom */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box; /* Ensure padding/border don't add to size if re-added */
+}
+
+.toolbar .icon-button:not(:last-child) {
+  border-bottom: 1px solid #ccc; /* Separator line, slightly darker than #ddd */
+}
+
+/* Last button in toolbar has no bottom border if it's part of the group style */
+.toolbar .icon-button:last-child {
+  border-bottom: none;
+}
+
+.icon-button:hover {
+  background-color: #f0f0f0;
+}
+
+.attribution-link {
+  /* General one, if used outside top-center */
+  font-size: 0.7em;
+  color: #555;
+  margin-bottom: 5px;
+  text-align: center;
+  width: 100%;
+}
+.attribution-link a {
+  color: #337ab7;
+  text-decoration: none;
+}
+.attribution-link a:hover {
+  text-decoration: underline;
+}
+
+.top-center-container {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px; /* Spacing between the main title panel and current date panel */
+  width: 350px; /* Define a fixed width for the container */
+}
+
+.top-center-main-panel {
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 8px 12px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  font-family: sans-serif;
+  text-align: center;
+  width: 100%; /* Make panels take full width of the container */
+  white-space: nowrap; /* This might need to be adjusted if content overflows */
+  box-sizing: border-box;
+}
+
+.top-center-main-panel {
+  font-size: 1em; /* Base font size for this panel */
+}
+
+.top-center-main-panel .main-title {
+  font-size: 1.1em; /* Relative to parent panel's font-size */
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 4px;
+}
+
+.top-center-main-panel .attribution-link {
+  font-size: 0.7em; /* Relative to parent panel's font-size */
+  margin-top: 4px;
+  margin-bottom: 0;
+}
+.top-center-main-panel .attribution-link a {
+  color: #337ab7;
+  text-decoration: none;
+}
+.top-center-main-panel .attribution-link a:hover {
+  text-decoration: underline;
+}
+
+/* Styles moved from +page.svelte */
+.unified-top-center-box {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 350px;
+  z-index: 950;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+:global(.top-center-container) {
+  position: static !important;
+  transform: none !important;
+  width: 100% !important;
+}
+
+.events-filter-wrapper {
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 4px 2px 8px 12px;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+}
+
+.bottom-panel-container {
+  position: absolute;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  max-width: 800px;
+  z-index: 1000;
+  background-color: rgba(245, 245, 245, 0.95);
+  border-radius: 8px;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.filter-toggle-button.dimmed {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+/* End of styles moved from +page.svelte */

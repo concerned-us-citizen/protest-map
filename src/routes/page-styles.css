@@ -270,11 +270,6 @@
     }
   }
 
-  /* Hide left/right arrows on mobile */
-  .histogram-slider-container .nav-button {
-    display: none !important;
-  }
-
   /* Make SVG wrapper take full width when buttons are hidden */
   .histogram-slider-container .svg-wrapper {
     margin: 0; /* Remove margin */

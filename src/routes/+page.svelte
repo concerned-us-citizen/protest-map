@@ -217,7 +217,6 @@ export let data: EventData;
       window.addEventListener('keydown', handleKeydown);
       window.addEventListener('keyup', handleKeyup);
       document.addEventListener('click', handleDocumentClick, true);
-      document.addEventListener('fullscreenchange', handleFullscreenChange);
 
       const today = new Date();
       systemTodayDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
@@ -246,7 +245,6 @@ export let data: EventData;
       window.removeEventListener('keydown', handleKeydown);
       window.removeEventListener('keyup', handleKeyup);
       document.removeEventListener('click', handleDocumentClick, true);
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
     }
     clearTimeout(timer);
   });

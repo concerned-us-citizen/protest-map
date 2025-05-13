@@ -305,6 +305,10 @@ export let data: EventData;
   @import "./page-styles.css";
 </style>
 
+<svelte:head>
+  <title>US Protests Map</title>
+</svelte:head>
+
 {#if data && data.events && data.locations}
   <MapDisplay eventData={data} {currentDate} {selectedEventNames} />
   

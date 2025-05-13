@@ -89,11 +89,59 @@
     window.removeEventListener('mousemove', onMouseMove);
     window.removeEventListener('mouseup', onMouseUp);
   }
-  
+
+  // --- Touch logic ---
+  function getIndexFromTouchEvent(event: TouchEvent): number | null {
+    if (!svgElement || !event.touches || event.touches.length === 0) return null;
+    const CTM = svgElement.getScreenCTM();
+    if (!CTM) return null;
+
+    const touch = event.touches[0];
+    const svgX = (touch.clientX - CTM.e) / CTM.a;
+    const index = Math.floor(svgX / (barWidth + barGap));
+    if (index >= 0 && index < histogramData.length) {
+      return index;
+    }
+    return null;
+  }
+
+  function onTouchStart(event: TouchEvent) {
+    if (!browser) return;
+    isDragging = true;
+    const index = getIndexFromTouchEvent(event);
+    if (index !== null && histogramData[index]) {
+      onDateSelect(histogramData[index].date);
+    }
+    window.addEventListener('touchmove', onTouchMove, { passive: false }); // Use passive: false to allow preventDefault
+    window.addEventListener('touchend', onTouchEnd);
+    event.preventDefault(); // Prevent default touch behavior like scrolling
+  }
+
+  function onTouchMove(event: TouchEvent) {
+    if (!isDragging || !browser) return;
+    const index = getIndexFromTouchEvent(event);
+    if (index !== null && histogramData[index]) {
+      const selectedDate = histogramData[index].date;
+      if (selectedDate !== currentDate) {
+        onDateSelect(selectedDate);
+      }
+    }
+    event.preventDefault(); // Prevent default touch behavior like scrolling
+  }
+
+  function onTouchEnd() {
+    if (!browser) return;
+    isDragging = false;
+    window.removeEventListener('touchmove', onTouchMove);
+    window.removeEventListener('touchend', onTouchEnd);
+  }
+
   onDestroy(() => {
     if (browser) {
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mouseup', onMouseUp);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
     }
   });
 
@@ -130,6 +178,7 @@
       width="100%"
       height={svgHeight}
       on:mousedown={onMouseDown}
+      on:touchstart={onTouchStart}
       role="slider"
       aria-valuemin="0"
       aria-valuemax={histogramData.length -1}

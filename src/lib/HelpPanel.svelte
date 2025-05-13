@@ -2,7 +2,6 @@
   import { fade, slide } from 'svelte/transition';
   export let visible: boolean;
   export let onClose: () => void;
-  let showAttribution = false;
 </script>
 
 {#if visible}
@@ -15,25 +14,22 @@
       Locations are colored in shades of red or blue corresponding to the 2024 Trump or Harris voting margin for their surrounding precinct.
     </p>
     <p>
+      Scrub dates manually with the event slider at the bottom, or use the left and right arrow keys if available.
+    </p>
+    <p>
       Press play ({'▶'} in the toolbar at upper right) or the space bar to toggle animation.
     </p>
     <p>
-      Choose dates manually with the event slider below, or use left and right arrow keys.
+      Tapping a location will give a little more detail about it - you can navigate to the city or event link.
     </p>
     <p>
       Show locations for one or more specific events by toggling {'≡'} or pressing 'F'.
     </p>
-    <p class="toggle-attribution-container">
-      <button
-        class="toggle-attribution-visibility link-button"
-        on:click={() => (showAttribution = !showAttribution)}
-        aria-label="Toggle Attribution"
-      >
-        Credits
-      </button>
+    <p>
+      Zoom and pan around the map to see more detail. Our apologies to Alaska and Hawaii for setting the initial viewport to the continental US - your protests are here too!
     </p>
-    {#if showAttribution}
-    <div class="attribution-container" transition:slide>
+    <p class="toggle-attribution-container" style="font-weight: bold;">Credits</p>
+    <div class="attribution-container" transition:fade>
       <p>A big shout out to the providers of these resources:</p>
       <p class="attribution">
         Location data: <a href="https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748" target="_blank">We (the People) Dissent</a>
@@ -51,7 +47,6 @@
         Protest icon: <a href="https://thenounproject.com/icon/protest-15055/">Fission Strategy</a>
       </p>
     </div>
-    {/if}
   </div>
 {/if}
 
@@ -81,9 +76,14 @@
   }
   .help-panel p {
     margin: 0 0 1.2em 0;
+    flex-shrink: 0; /* Prevent paragraphs from shrinking */
   }
   .help-panel p:last-child {
     margin-bottom: 0;
+  }
+  .attribution-container {
+    flex-grow: 1; /* Allow attribution container to grow */
+    flex-shrink: 0; /* Prevent attribution container from shrinking */
   }
   .dismiss-info-button { /* Combined with .close-button styles from EventsFilter */
     position: absolute;
@@ -131,9 +131,17 @@
   @media (max-width: 600px) {
     .help-panel {
       width: 90%; /* Use percentage for width on smaller screens */
-      max-width: 90vw; /* Adjust max-width for smaller screens */
-      max-height: 90vh; /* Adjust max-height for smaller screens */
+      max-width: 90vw !important; /* Adjust max-width for smaller screens */
+      max-height: 85vh !important; /* Adjust max-height for smaller screens */
       padding: 20px 15px 10px 20px; /* Adjust padding for smaller screens */
+      box-sizing: border-box; /* Include padding in element's total width and height */
+      position: fixed; /* Use fixed positioning relative to the viewport */
+      top: 50%; /* Center vertically */
+      left: 50%; /* Center horizontally */
+      transform: translate(-50%, -50%); /* Use transform for centering */
+      /* Ensure it doesn't overflow the viewport */
+      margin: auto;
+      overflow-y: auto; /* Ensure content is scrollable within the panel */
     }
   }
 </style>

@@ -7,7 +7,7 @@
 
 <div class="events-filter-component">
   <button class="close-button" on:click={onClose} aria-label="Close filter">×</button>
-  <h4 class="filter-title">Filter by Event</h4>
+  <h4 class="filter-title">{ uniqueEvents.length} Event{uniqueEvents.length === 1 ? '' : 's'}</h4>
   {#if uniqueEvents.length > 0}
     <div class="events-section-description">(Toggle one or more)</div>
   {/if}

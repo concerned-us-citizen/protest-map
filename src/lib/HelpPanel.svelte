@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { fade, slide } from 'svelte/transition';
+  import { fade } from 'svelte/transition';
   export let visible: boolean;
   export let onClose: () => void;
 </script>
@@ -8,7 +8,7 @@
   <div class="help-panel">
     <button class="close-button dismiss-info-button" on:click={onClose} aria-label="Close info panel">×</button>
     <p>
-      This map shows recent and planned US protest locations over time.
+      This map shows recent and planned US protest locations over time, compiled from data collected by <a href="https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748" target="_blank">We (the People) Dissent</a>.
     </p>
     <p>
       Locations are colored in shades of red or blue corresponding to the 2024 Trump or Harris voting margin for their surrounding precinct.
@@ -26,7 +26,7 @@
       Filter locations for one or more specific events by toggling the filter icon or pressing 'F'.
     </p>
     <p>
-      Zoom and pan around the map to see more detail. Our apologies to Alaska and Hawaii for setting the initial viewport to the continental US - your protests are here too!
+      Zoom and pan around the map to see more detail. Our apologies to those not initially visible in the initial continental US viewport - your protests are here too!
     </p>
     <p class="toggle-attribution-container" style="font-weight: bold;">Credits</p>
     <div class="attribution-container" transition:fade>

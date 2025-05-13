@@ -115,7 +115,6 @@ export let data: EventData;
   }
 
   function stopDateRepeat() {
-        console.log("Stop date repeat");
     if (repeatTimer) {
       clearTimeout(repeatTimer);
       repeatTimer = null;
@@ -139,7 +138,6 @@ export let data: EventData;
   }
 
   function startDateRepeat(direction: 'next' | 'prev') {
-        console.log("Start Date repeat");
     // If already repeating in the same direction, do nothing.
     if (isRepeatingAction && currentRepeatDirection === direction) return;
     
@@ -150,16 +148,12 @@ export let data: EventData;
     isScrubbingDate = true;
     currentRepeatDirection = direction;
 
-
-        console.log("Start Date repeat setting timer");
-
     // Schedule the first continuous change after INITIAL_REPEAT_DELAY.
     // The immediate first change will be handled by the on:click event.
     repeatTimer = setTimeout(() => {
       // Ensure we are still supposed to be repeating before the first programmatic change
       if (isRepeatingAction && currentRepeatDirection === direction) {
         continuousDateChange();
-        console.log("Continuous date change");
       }
     }, INITIAL_REPEAT_DELAY);
   }

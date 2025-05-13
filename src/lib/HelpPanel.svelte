@@ -44,6 +44,9 @@
         Privacy-oriented analytics: <a href="https://www.goatcounter.com">Goat Counter</a>
       </p>
       <p class="attribution">
+        Geocoding: <a href="https://nominatim.openstreetmap.org">Nominatim</a>
+      </p>
+      <p class="attribution">
         Protest icon: <a href="https://thenounproject.com/icon/protest-15055/">Fission Strategy</a>
       </p>
     </div>
@@ -111,9 +114,6 @@
     font: inherit;
     cursor: pointer;
     text-align: left;
-  }
-  .link-button:hover {
-    text-decoration: underline;
   }
   .attribution {
     color: #555; /* Darker gray */

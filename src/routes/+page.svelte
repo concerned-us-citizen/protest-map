@@ -158,65 +158,6 @@ export let data: EventData;
     }, INITIAL_REPEAT_DELAY);
   }
 
-// URL with step‑by‑step Safari instructions
-const HOW_TO_SAFARI_FULLSCREEN =
-  "https://www.simplymac.com/ios/enable-full-screen-mode-on-safari-for-iphone";
-
-/**
- * Attempts to toggle full‑screen mode.
- * • On macOS → shows an alert that the user must do it in Safari and links to instructions.
- * • On other platforms → tries the Full Screen API (with prefixes) and
- *   falls back to the same alert if the API isn’t available.
- */
-export async function toggleFullscreen(): Promise<void> {
-  const isMac = /Mac/.test(navigator.platform);          // quick‑and‑simple macOS check
-  const message =
-    `On iOS, Full‑screen mode must be enabled from within Safari.\n\n` +
-    `See the step‑by‑step instructions here:\n${HOW_TO_SAFARI_FULLSCREEN}`;
-
-  // 1 — If we’re on macOS, just show the message and stop.
-  if (isMac) {
-    alert(message);
-    return;
-  }
-
-  // 2 — Look up the (possibly vendor‑prefixed) API.
-  const elem = document.documentElement as any;
-
-  const request =
-    elem.requestFullscreen ??
-    elem.webkitRequestFullscreen ??
-    elem.mozRequestFullScreen ??
-    elem.msRequestFullscreen;
-
-  const exit =
-    document.exitFullscreen ??
-    (document as any).webkitExitFullscreen ??
-    (document as any).mozCancelFullScreen ??
-    (document as any).msExitFullscreen;
-
-  // 3 — If the API isn’t supported, fall back to the same message.
-  if (!request || !exit) {
-    alert(message);
-    return;
-  }
-
-  // 4 — Toggle.
-  try {
-    if (!document.fullscreenElement) {
-      await request.call(elem);
-    } else {
-      await exit.call(document);
-    }
-  } catch (err) {
-    console.error("Fullscreen error:", err);
-  }
-}
-
-  function handleFullscreenChange() {
-    isFullscreen = !!document.fullscreenElement;
-  }
-
   function handleKeydown(event: KeyboardEvent) {
     if (event.metaKey || event.ctrlKey || event.altKey) {
       return;
@@ -231,19 +172,10 @@ export async function toggleFullscreen(): Promise<void> {
     } else if (event.key === 'i' || event.key === 'I') {
       event.preventDefault();
       toggleInfoPanelVisibility();
-    } else if (event.key === 'm' || event.key === 'M') {
-      event.preventDefault();
-      toggleFullscreen();
     } else if (event.key === 'Escape' || event.code === 'Escape') {
       event.preventDefault();
-      if (document.fullscreenElement) {
-        toggleFullscreen(); // Exit fullscreen on Escape if active
-      } else if (infoPanelVisible) {
-        infoPanelVisible = false;
-      }
-      if (eventsFilterVisible) {
-        eventsFilterVisible = false;
-      }
+      infoPanelVisible = false;
+      eventsFilterVisible = false; 
     } else if (!playing) {
       if (event.key === 'ArrowLeft' || event.code === 'ArrowLeft') {
         if (!event.repeat) {
@@ -397,7 +329,7 @@ export async function toggleFullscreen(): Promise<void> {
     </div>
     {#if eventsFilterVisible && uniqueEvents.length > 0 }
       <div class="events-filter-wrapper">
-        <EventsFilter {uniqueEvents} {selectedEventNames} onSelectEventFilter={selectEventFilter} {currentDate} {formatDate} onClose={() => eventsFilterVisible = false} />
+        <EventsFilter {uniqueEvents} {selectedEventNames} onSelectEventFilter={selectEventFilter} onClose={() => eventsFilterVisible = false} />
       </div>
     {/if}
   </div>
@@ -423,9 +355,6 @@ export async function toggleFullscreen(): Promise<void> {
     <button class="icon-button info-toggle-button" on:click={toggleInfoPanelVisibility} title="Show Information Panel (I)" aria-label="Show Information Panel (I)">
       {@html infoIconSvg}
     </button>
-    <!-- <button class="icon-button fullscreen-toggle-button" on:click={toggleFullscreen} title={isFullscreen ? 'Exit Fullscreen (M)' : 'Enter Fullscreen (M)'} aria-label={isFullscreen ? 'Exit Fullscreen (M)' : 'Enter Fullscreen (M)'}>
-      {@html isFullscreen ? fullscreenExitIconSvg : fullscreenEnterIconSvg}
-    </button> -->
   </div>
   
   {#if histogramData.length > 0 && currentDate}

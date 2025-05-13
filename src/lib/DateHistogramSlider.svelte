@@ -170,6 +170,7 @@
     on:mousedown={onStartRepeatPrev}
     on:mouseup={onStopRepeat}
     on:mouseleave={onStopRepeat}
+    on:dblclick|preventDefault
     aria-label="Previous Date"
   >‹</button>
   <div class="svg-wrapper" bind:clientWidth={actualSvgWrapperWidth} bind:this={svgWrapperElement}>
@@ -219,6 +220,7 @@
     on:mousedown={onStartRepeatNext}
     on:mouseup={onStopRepeat}
     on:mouseleave={onStopRepeat}
+    on:dblclick|preventDefault
     aria-label="Next Date"
   >›</button>
 </div>

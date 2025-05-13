@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
   schedule:
-    - cron: "0 * * * *"
+    - cron: "29 * * * *"
   workflow_dispatch:
 
 permissions:
@@ -26,7 +26,6 @@ jobs:
     timeout-minutes: 20
     environment:
       name: github-pages
-      # url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Checkout repository

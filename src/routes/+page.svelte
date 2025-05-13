@@ -325,12 +325,12 @@ export let data: EventData;
           >We (the People) Dissent</a></i>
         </div>
       </div>
+      {#if eventsFilterVisible && uniqueEvents.length > 0 }
+        <div class="events-filter-wrapper">
+          <EventsFilter {uniqueEvents} {selectedEventNames} onSelectEventFilter={selectEventFilter} {currentDate} {formatDate} onClose={() => eventsFilterVisible = false} />
+        </div>
+      {/if}
     </div>
-    {#if eventsFilterVisible && uniqueEvents.length > 0 }
-      <div class="events-filter-wrapper">
-        <EventsFilter {uniqueEvents} {selectedEventNames} onSelectEventFilter={selectEventFilter} {currentDate} {formatDate} onClose={() => eventsFilterVisible = false} />
-      </div>
-    {/if}
   </div>
  
   <div class="toolbar">

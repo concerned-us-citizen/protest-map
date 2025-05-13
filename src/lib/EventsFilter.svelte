@@ -38,10 +38,6 @@
 </div>
 
 <style>
-  /* Styles for .events-list-component, .events-header, .events-section-title,
-     .event-names-summary, and .expand-button are removed as they are no longer part of this component.
-     They will be managed by the new parent component (EventSummary.svelte) or are intrinsic to it. */
-
   .events-filter-component {
     display: flex;
     flex-direction: column;

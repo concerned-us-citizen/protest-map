@@ -1,7 +1,9 @@
 <!-- svelte-ignore a11y-interactive-supports-focus -->
 <script lang="ts">
-  import { onDestroy } from 'svelte';
+  import { onDestroy, createEventDispatcher } from 'svelte';
   import { browser } from '$app/environment';
+
+  const dispatch = createEventDispatcher<{ dragstart: void, dragend: void }>();
 
   export let histogramData: { date: string, locationCount: number }[] = [];
   export let currentDate: string;
@@ -64,6 +66,7 @@
   function onMouseDown(event: MouseEvent) {
     if (!browser) return;
     isDragging = true;
+    dispatch('dragstart');
     const index = getIndexFromMouseEvent(event);
     if (index !== null && histogramData[index]) {
       onDateSelect(histogramData[index].date);
@@ -85,6 +88,9 @@
 
   function onMouseUp() {
     if (!browser) return;
+    if (isDragging) {
+      dispatch('dragend');
+    }
     isDragging = false;
     window.removeEventListener('mousemove', onMouseMove);
     window.removeEventListener('mouseup', onMouseUp);
@@ -108,6 +114,7 @@
   function onTouchStart(event: TouchEvent) {
     if (!browser) return;
     isDragging = true;
+    dispatch('dragstart');
     const index = getIndexFromTouchEvent(event);
     if (index !== null && histogramData[index]) {
       onDateSelect(histogramData[index].date);
@@ -131,6 +138,9 @@
 
   function onTouchEnd() {
     if (!browser) return;
+    if (isDragging) {
+      dispatch('dragend');
+    }
     isDragging = false;
     window.removeEventListener('touchmove', onTouchMove);
     window.removeEventListener('touchend', onTouchEnd);
@@ -170,7 +180,6 @@
     on:mousedown={onStartRepeatPrev}
     on:mouseup={onStopRepeat}
     on:mouseleave={onStopRepeat}
-    on:dblclick|preventDefault
     aria-label="Previous Date"
   >‹</button>
   <div class="svg-wrapper" bind:clientWidth={actualSvgWrapperWidth} bind:this={svgWrapperElement}>
@@ -220,7 +229,6 @@
     on:mousedown={onStartRepeatNext}
     on:mouseup={onStopRepeat}
     on:mouseleave={onStopRepeat}
-    on:dblclick|preventDefault
     aria-label="Next Date"
   >›</button>
 </div>
@@ -231,7 +239,7 @@
     align-items: center;
     justify-content: space-between;
     background-color: #f0f0f0; /* Light gray background */
-    padding: 5px 10px 5px 10px;
+    padding: 0;
     border-radius: 8px;
     user-select: none; /* Prevent text selection during drag */
   }

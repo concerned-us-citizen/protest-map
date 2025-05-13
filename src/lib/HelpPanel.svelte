@@ -63,7 +63,8 @@
     top: 50%;
     transform: translate(-50%, -50%);
     width: 350px; /* Slightly wider */
-    max-width: 90vw;
+    max-width: 66.66vw;
+    max-height: 66.66vh;
     background-color: rgba(255, 255, 255, 0.95);
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -76,6 +77,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    overflow-y: auto; /* Add scroll for content that exceeds max-height */
   }
   .help-panel p {
     margin: 0 0 1.2em 0;
@@ -124,5 +126,14 @@
   }
   .attribution a:hover {
     text-decoration: underline;
+  }
+
+  @media (max-width: 600px) {
+    .help-panel {
+      width: 90%; /* Use percentage for width on smaller screens */
+      max-width: 90vw; /* Adjust max-width for smaller screens */
+      max-height: 90vh; /* Adjust max-height for smaller screens */
+      padding: 20px 15px 10px 20px; /* Adjust padding for smaller screens */
+    }
   }
 </style>

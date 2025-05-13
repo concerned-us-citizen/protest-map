@@ -1,1 +1,11 @@
 /* Global application styles can go here. */
+
+html,
+body {
+  overflow: hidden; /* Hide scrollbars */
+  touch-action: none; /* Prevent bounce */
+  margin: 0; /* Remove default body margin */
+  padding: 0; /* Remove default body padding */
+  width: 100%; /* Ensure full width */
+  height: 100%; /* Ensure full height */
+}

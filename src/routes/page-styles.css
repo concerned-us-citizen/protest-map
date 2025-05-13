@@ -64,15 +64,15 @@
 
 .top-center-container {
   position: absolute;
+  position: fixed;
   top: 15px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   gap: 8px; /* Spacing between the main title panel and current date panel */
-  width: 350px; /* Define a fixed width for the container */
 }
 
 .top-center-main-panel {
@@ -94,8 +94,7 @@
 .top-center-main-panel .main-title {
   font-size: 1.1em; /* Relative to parent panel's font-size */
   font-weight: bold;
-  margin-top: 0;
-  margin-bottom: 4px;
+  margin: 5px;
 }
 
 .top-center-main-panel .attribution-link {
@@ -109,19 +108,6 @@
 }
 .top-center-main-panel .attribution-link a:hover {
   text-decoration: underline;
-}
-
-/* Styles moved from +page.svelte */
-.unified-top-center-box {
-  position: absolute;
-  top: 15px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 350px;
-  z-index: 950;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
 }
 
 :global(.top-center-container) {
@@ -140,12 +126,11 @@
 }
 
 .bottom-panel-container {
-  position: absolute;
-  bottom: 25px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80%;
-  max-width: 800px;
+  position: absolute; /* Position at the bottom */
+  bottom: 15px; /* Distance from the bottom */
+  left: 15px; /* Distance from the left */
+  right: 15px; /* Distance from the right */
+  width: auto; /* Allow left/right to control width */
   z-index: 1000;
   background-color: rgba(245, 245, 245, 0.95);
   border-radius: 8px;
@@ -154,10 +139,194 @@
   display: flex;
   flex-direction: column;
   gap: 3px;
+  box-sizing: border-box; /* Include padding in width calculation */
 }
 
 .filter-toggle-button.dimmed {
   opacity: 0.5;
   cursor: not-allowed;
 }
-/* End of styles moved from +page.svelte */
+
+/* Wrapper for bottom controls */
+.bottom-controls-wrapper {
+  position: absolute;
+  bottom: 15px; /* Match toolbar bottom margin */
+  left: 25px; /* Match toolbar left margin */
+  right: 25px; /* Match toolbar right margin */
+  z-index: 1000; /* Ensure it's above the map */
+  display: flex;
+  flex-direction: column; /* Stack event info above slider */
+  gap: 5px; /* Slight margin between panels */
+  align-items: center; /* Center content horizontally */
+  /* Removed max-width, width, and margin as left/right handle width */
+  max-width: 100%; /* Ensure it doesn't exceed viewport width */
+}
+
+.slider-container {
+  padding: 8px;
+  width: 300px;
+  position: static; /* Remove absolute positioning */
+  transform: none; /* Remove transform */
+  background-color: rgba(245, 245, 245, 0.95); /* Keep background */
+  border-radius: 8px; /* Keep border-radius */
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); /* Keep shadow */
+  z-index: 1; /* Ensure slider is below event info panel if needed */
+  pointer-events: auto; /* Re-enable pointer events for the slider */
+}
+
+/* --- Mobile Styles --- */
+
+/* General mobile styles (portrait and landscape) */
+@media (max-width: 768px) {
+  /* Map Display related - Hide zoom buttons on mobile */
+  :global(.leaflet-control-zoom) {
+    display: none !important;
+  }
+
+  .unified-top-center-box {
+    top: 10px; /* Smaller margin from screen top */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Center horizontally */
+    width: calc(
+      100% - 130px
+    ); /* Further reduce width to ensure it's narrow enough */
+    max-width: 280px; /* Further reduce max-width */
+    height: 44px; /* Match play button height */
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5px; /* Add some padding so text doesn't touch edges */
+  }
+
+  .top-center-main-panel {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0; /* Remove padding here, handled by parent */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+
+  .top-center-main-panel .main-title {
+    font-size: 0.9em; /* Slightly smaller title for mobile if needed */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 1em; /* Adjust title font size for mobile */
+  }
+
+  .top-center-main-panel .attribution-link {
+    display: none; /* Remove attribution from title bar */
+  }
+
+  .icon-button.main-play-pause-button {
+    width: 44px; /* Bigger play/pause button */
+    height: 44px;
+  }
+  .icon-button.main-play-pause-button svg {
+    width: 28px; /* Adjust icon size within the button */
+    height: 28px;
+  }
+
+  .icon-button.info-toggle-button svg {
+    width: 28px; /* Adjust icon size within the button */
+    height: 28px;
+  }
+
+  /* Ensure all toolbar buttons and their SVGs are consistently sized */
+  .toolbar .icon-button {
+    width: 44px !important; /* Use !important to override potential specificity issues */
+    height: 44px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .toolbar .icon-button svg {
+    width: 28px !important;
+    height: 28px !important;
+  }
+  /* Specific override for play/pause if it was set differently, though it should be covered */
+  .icon-button.main-play-pause-button {
+    width: 44px !important;
+    height: 44px !important;
+  }
+  .icon-button.main-play-pause-button svg {
+    width: 28px !important;
+    height: 28px !important;
+  }
+
+  /* Mobile styles for bottom controls wrapper */
+  @media (max-width: 768px) {
+    .bottom-controls-wrapper {
+      /* Hide event info panel by default on mobile and disable pointer events */
+      pointer-events: none; /* Allow touch events to pass through to elements below */
+    }
+
+    /* Enable pointer events when scrubbing (event info is visible) */
+    .bottom-controls-wrapper.is-scrubbing {
+      pointer-events: auto;
+    }
+
+    /* Hide event info panel by default on mobile and disable pointer events */
+    /* These styles are now handled by the component itself */
+    /* .bottom-controls-wrapper .event-info { ... } */
+    /* .bottom-controls-wrapper.is-scrubbing .event-info { ... } */
+  }
+
+  /* Hide left/right arrows on mobile */
+  .histogram-slider-container .nav-button {
+    display: none !important;
+  }
+
+  /* Make SVG wrapper take full width when buttons are hidden */
+  .histogram-slider-container .svg-wrapper {
+    margin: 0; /* Remove margin */
+  }
+
+  /* Attempt to hide Leaflet zoom controls again with higher specificity */
+  :global(.leaflet-control-container .leaflet-control-zoom) {
+    display: none !important;
+  }
+
+  /* HelpPanel related - Viewport fitting and scrolling on mobile */
+  .help-panel {
+    top: 10px !important; /* Align with other top elements */
+    transform: translateX(-50%) !important; /* Keep centered horizontally */
+    max-height: calc(
+      100vh - 20px
+    ) !important; /* Fit within viewport with some margin */
+    overflow-y: auto !important; /* Enable vertical scrolling */
+    width: calc(100% - 20px) !important; /* Adjust width for mobile */
+    max-width: none !important; /* Remove max-width constraint */
+    left: 50% !important; /* Ensure it stays centered */
+  }
+}
+
+/* Portrait specific styles */
+@media (max-width: 768px) and (orientation: portrait) {
+  .unified-top-center-box {
+    /* Adjust width to be more centered, considering vertical toolbar */
+    width: calc(100% - 60px); /* Example: if toolbar is on the right */
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 300px; /* Max width for title in portrait */
+  }
+
+  /* Remove old mobile-specific event info container styles */
+  /* .bottom-panel-container .compact-event-info { ... } */
+  /* .bottom-panel-container.show-event-info .compact-event-info { ... } */
+}
+
+/* Landscape specific styles */
+@media (max-width: 768px) and (orientation: landscape) {
+  /* Potentially different layout for title or other elements in landscape */
+  .unified-top-center-box {
+    max-width: 400px; /* Allow more width for title in landscape */
+  }
+
+  /* Remove old mobile-specific event info container styles */
+  /* .bottom-panel-container .compact-event-info { ... } */
+  /* .bottom-panel-container.show-event-info .compact-event-info { ... } */
+}

@@ -7,7 +7,7 @@
   import DateHistogramSlider from '$lib/DateHistogramSlider.svelte';
   import EventInfo from '$lib/EventInfo.svelte';
   import EventsFilter from '$lib/EventsFilter.svelte';
-  import { playIconSvg, pauseIconSvg, filterIconSvg } from '$lib/icons';
+  import { playIconSvg, pauseIconSvg, filterIconSvg, infoIconSvg, fullscreenEnterIconSvg, fullscreenExitIconSvg } from '$lib/icons';
   import { parseDateString, formatDate, formatShortDate, formatDateTimeReadable } from '$lib/dateUtils.js';
 
 export let data: EventData;
@@ -26,6 +26,8 @@ export let data: EventData;
   let selectedEventNames: Set<string> = new Set();
   let infoPanelVisible = false;
   let eventsFilterVisible = false;
+  let isFullscreen = false;
+  let isScrubbingDate = false; // New state for date scrubbing
 
   // State for repeating actions
   let repeatTimer: ReturnType<typeof setTimeout> | null = null;
@@ -154,6 +156,65 @@ export let data: EventData;
     }, INITIAL_REPEAT_DELAY);
   }
 
+// URL with step‑by‑step Safari instructions
+const HOW_TO_SAFARI_FULLSCREEN =
+  "https://www.simplymac.com/ios/enable-full-screen-mode-on-safari-for-iphone";
+
+/**
+ * Attempts to toggle full‑screen mode.
+ * • On macOS → shows an alert that the user must do it in Safari and links to instructions.
+ * • On other platforms → tries the Full Screen API (with prefixes) and
+ *   falls back to the same alert if the API isn’t available.
+ */
+export async function toggleFullscreen(): Promise<void> {
+  const isMac = /Mac/.test(navigator.platform);          // quick‑and‑simple macOS check
+  const message =
+    `On iOS, Full‑screen mode must be enabled from within Safari.\n\n` +
+    `See the step‑by‑step instructions here:\n${HOW_TO_SAFARI_FULLSCREEN}`;
+
+  // 1 — If we’re on macOS, just show the message and stop.
+  if (isMac) {
+    alert(message);
+    return;
+  }
+
+  // 2 — Look up the (possibly vendor‑prefixed) API.
+  const elem = document.documentElement as any;
+
+  const request =
+    elem.requestFullscreen ??
+    elem.webkitRequestFullscreen ??
+    elem.mozRequestFullScreen ??
+    elem.msRequestFullscreen;
+
+  const exit =
+    document.exitFullscreen ??
+    (document as any).webkitExitFullscreen ??
+    (document as any).mozCancelFullScreen ??
+    (document as any).msExitFullscreen;
+
+  // 3 — If the API isn’t supported, fall back to the same message.
+  if (!request || !exit) {
+    alert(message);
+    return;
+  }
+
+  // 4 — Toggle.
+  try {
+    if (!document.fullscreenElement) {
+      await request.call(elem);
+    } else {
+      await exit.call(document);
+    }
+  } catch (err) {
+    console.error("Fullscreen error:", err);
+  }
+}
+
+  function handleFullscreenChange() {
+    isFullscreen = !!document.fullscreenElement;
+  }
+
   function handleKeydown(event: KeyboardEvent) {
     if (event.metaKey || event.ctrlKey || event.altKey) {
       return;
@@ -168,9 +229,14 @@ export let data: EventData;
     } else if (event.key === 'i' || event.key === 'I') {
       event.preventDefault();
       toggleInfoPanelVisibility();
+    } else if (event.key === 'm' || event.key === 'M') {
+      event.preventDefault();
+      toggleFullscreen();
     } else if (event.key === 'Escape' || event.code === 'Escape') {
       event.preventDefault();
-      if (infoPanelVisible) {
+      if (document.fullscreenElement) {
+        toggleFullscreen(); // Exit fullscreen on Escape if active
+      } else if (infoPanelVisible) {
         infoPanelVisible = false;
       }
       if (eventsFilterVisible) {
@@ -179,16 +245,16 @@ export let data: EventData;
     } else if (!playing) {
       if (event.key === 'ArrowLeft' || event.code === 'ArrowLeft') {
         if (!event.repeat) {
-          event.preventDefault();
           prevDate(); // Immediate action for keydown
           startDateRepeat('prev'); // Setup repeat
         }
+        event.preventDefault();
       } else if (event.key === 'ArrowRight' || event.code === 'ArrowRight') {
         if (!event.repeat) {
-          event.preventDefault();
           nextDate(); // Immediate action for keydown
           startDateRepeat('next'); // Setup repeat
         }
+        event.preventDefault();
       }
     }
   }
@@ -217,6 +283,7 @@ export let data: EventData;
       window.addEventListener('keydown', handleKeydown);
       window.addEventListener('keyup', handleKeyup);
       document.addEventListener('click', handleDocumentClick, true);
+      document.addEventListener('fullscreenchange', handleFullscreenChange);
 
       const today = new Date();
       systemTodayDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
@@ -245,6 +312,7 @@ export let data: EventData;
       window.removeEventListener('keydown', handleKeydown);
       window.removeEventListener('keyup', handleKeyup);
       document.removeEventListener('click', handleDocumentClick, true);
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
     }
     clearTimeout(timer);
   });
@@ -312,29 +380,24 @@ export let data: EventData;
 {#if data && data.events && data.locations}
   <MapDisplay eventData={data} {currentDate} {selectedEventNames} />
   
-  <div class="unified-top-center-box">
-    <div class="top-center-container">
-      <div class="top-center-main-panel">
-        <h3 class="main-title">
-          Known Protests
-          {#if allDates.length > 0}
-            {formatShortDate(allDates[0])}-{formatShortDate(allDates[allDates.length - 1])}
-          {/if}
-        </h3>
-        <div class="attribution-link">
-          <i>Provided by <a
-            href="https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748"
-            target="_blank"
-            title={data?.updatedAt ? `Last updated: ${formatDateTimeReadable(String(data.updatedAt))}` : 'Source data'}
-          >We (the People) Dissent</a></i>
-        </div>
+  <div class="top-center-container">
+    <div class="top-center-main-panel">
+      <h3 class="main-title">
+        Protests {formatShortDate(currentDate)}
+      </h3>
+      <div class="attribution-link">
+        <i>Provided by <a
+          href="https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748"
+          target="_blank"
+          title={data?.updatedAt ? `Last updated: ${formatDateTimeReadable(String(data.updatedAt))}` : 'Source data'}
+        >We (the People) Dissent</a></i>
       </div>
-      {#if eventsFilterVisible && uniqueEvents.length > 0 }
-        <div class="events-filter-wrapper">
-          <EventsFilter {uniqueEvents} {selectedEventNames} onSelectEventFilter={selectEventFilter} {currentDate} {formatDate} onClose={() => eventsFilterVisible = false} />
-        </div>
-      {/if}
     </div>
+    {#if eventsFilterVisible && uniqueEvents.length > 0 }
+      <div class="events-filter-wrapper">
+        <EventsFilter {uniqueEvents} {selectedEventNames} onSelectEventFilter={selectEventFilter} {currentDate} {formatDate} onClose={() => eventsFilterVisible = false} />
+      </div>
+    {/if}
   </div>
  
   <div class="toolbar">
@@ -356,30 +419,35 @@ export let data: EventData;
       {@html filterIconSvg}
     </button>
     <button class="icon-button info-toggle-button" on:click={toggleInfoPanelVisibility} title="Show Information Panel (I)" aria-label="Show Information Panel (I)">
-      {'ⓘ'}
+      {@html infoIconSvg}
+    </button>
+    <button class="icon-button fullscreen-toggle-button" on:click={toggleFullscreen} title={isFullscreen ? 'Exit Fullscreen (M)' : 'Enter Fullscreen (M)'} aria-label={isFullscreen ? 'Exit Fullscreen (M)' : 'Enter Fullscreen (M)'}>
+      {@html isFullscreen ? fullscreenExitIconSvg : fullscreenEnterIconSvg}
     </button>
   </div>
   
   {#if histogramData.length > 0 && currentDate}
-    <div class="bottom-panel-container">
-      <EventInfo
-        {currentDate}
-        {formatDate}
+    <div class="bottom-controls-wrapper" class:is-scrubbing={isScrubbingDate}>
+      <EventInfo visible={isScrubbingDate}
         displayedEventNameCount={uniqueEvents.filter(e => e.name && e.name.trim() !== '').length}
         {distinctLocationCount}
         allEventNames={uniqueEvents.map(e => e.name).filter(name => name && name.trim() !== '').join(', ')}
       />
-      <DateHistogramSlider
-        {histogramData}
-        {currentDate}
-        {systemTodayDate}
-        onDateSelect={handleDateSelectFromSlider}
-        onPrev={prevDate}
-        onNext={nextDate}
-        onStartRepeatPrev={() => startDateRepeat('prev')}
-        onStartRepeatNext={() => startDateRepeat('next')}
-        onStopRepeat={stopDateRepeat}
-      />
+      <div class="slider-container">
+        <DateHistogramSlider
+          {histogramData}
+          {currentDate}
+          {systemTodayDate}
+          onDateSelect={handleDateSelectFromSlider}
+          onPrev={prevDate}
+          onNext={nextDate}
+          onStartRepeatPrev={() => startDateRepeat('prev')}
+          onStartRepeatNext={() => startDateRepeat('next')}
+          onStopRepeat={stopDateRepeat}
+          on:dragstart={() => isScrubbingDate = true}
+          on:dragend={() => isScrubbingDate = false}
+        />
+      </div>
     </div>
   {/if}
 

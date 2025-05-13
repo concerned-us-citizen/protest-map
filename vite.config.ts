@@ -10,6 +10,9 @@ export default defineConfig({
       $assets: path.resolve("./src/assets"),
     },
   },
+  server: {
+    host: true, // Listen on all addresses, including LAN
+  },
   build: {
     sourcemap: true,
   },

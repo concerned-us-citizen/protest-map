@@ -233,26 +233,37 @@
  
       if (L && mapElement) {
         map = L.map(mapElement, { zoomControl: false, keyboard: false, minZoom: 2 }); // Adjusted minZoom
-        L.control.zoom({ position: 'topleft' }).addTo(map);
+        if (!isTouchDevice) {
+          L.control.zoom({ position: 'topleft' }).addTo(map);
+        }
         
-        // Define bounds to include Anchorage, Florida Keys, and Hawaii
-        const targetBounds = L.latLngBounds(
-          L.latLng(24, -168), // Southwest: Further west of Hawaii, south enough for Keys
-          L.latLng(62, -65)   // Northeast: North of Anchorage, East of Maine
+        // Define bounds to include only the continental US
+        const continentalUSBounds = L.latLngBounds(
+          L.latLng(30, -125), // Southwest: Northern Florida / Southern California
+          L.latLng(47, -66)   // Northeast: Northern Maine / Southern Canada border
         );
         
-        // Calculate the center of these broader bounds
-        const center = targetBounds.getCenter();
+        // Calculate the center of the continental US bounds
+        const center = continentalUSBounds.getCenter();
         
-        // Determine a suitable zoom level.
-        // For such a wide area, zoom level 2 or 3 is likely.
-        // Let's try getBoundsZoom and then cap it if it's too far out, or set a default.
-        let targetZoom = map.getBoundsZoom(targetBounds, false); // false for 'inside'
+        // Determine a suitable zoom level to fit the continental US
+        // Use getBoundsZoom with padding to ensure the whole area is visible
+        let targetZoom = map.getBoundsZoom(continentalUSBounds, false); // false for 'inside'
 
-        // If getBoundsZoom is too low (e.g. < 2), or too high (e.g. > 4 for this wide view)
-        // set a sensible default. For this span, 3 might be a good starting point.
-        if (targetZoom < 2 || targetZoom > 4) {
-          targetZoom = 3;
+        // Adjust zoom if necessary, ensuring it's not too far out or too close
+        // A zoom level between 4 and 6 might be appropriate for the continental US
+        if (targetZoom < 4 || targetZoom > 6) {
+           // If calculated zoom is outside this range, try to fit the bounds with padding
+           // Or set a default if fitting is still problematic
+           try {
+             targetZoom = map.getBoundsZoom(continentalUSBounds, true, L.point(20, 20)); // true for 'outside', add padding
+           } catch (e) {
+             // Fallback if getBoundsZoom fails unexpectedly
+             targetZoom = 5; // A reasonable default for continental US
+           }
+           // Ensure the fallback or calculated zoom is still within a reasonable range
+           if (targetZoom < 4) targetZoom = 4;
+           if (targetZoom > 6) targetZoom = 6;
         }
         
         map.setView(center, targetZoom);

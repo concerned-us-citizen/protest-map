@@ -106,15 +106,6 @@
   .toggle-attribution-container {
     align-self: center;
   }
-  .link-button {
-    background: none;
-    border: none;
-    color: #337ab7;
-    padding: 0;
-    font: inherit;
-    cursor: pointer;
-    text-align: left;
-  }
   .attribution {
     color: #555; /* Darker gray */
     text-align: start;

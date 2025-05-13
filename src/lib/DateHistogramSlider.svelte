@@ -43,9 +43,8 @@
     return Math.max(1, (locationCount / maxLocationCount) * maxBarHeight); // Ensure min height of 1 for visibility
   }
 
-  function handleBarClick(date: string) { // Removed event parameter
+  function handleBarClick(date: string) {
     onDateSelect(date);
-    // No explicit blur or focus change here anymore
   }
 
   // --- Drag logic placeholder ---
@@ -242,6 +241,8 @@
     padding: 0;
     border-radius: 8px;
     user-select: none; /* Prevent text selection during drag */
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
   }
 
   .svg-wrapper {
@@ -283,22 +284,6 @@
     fill: #337ab7; /* Even darker blue for selected */
   }
 
-  rect.data-bar:focus, rect.data-bar.selected:focus {
-    /* Reverted: No specific focus style here now */
-    /* outline: none; */
-    /* stroke: #005fcc; */
-    /* stroke-width: 1.5px; */
-    /* stroke-dasharray: 2,2; */
-  }
-
-  /* Reverted: No specific focus style here now */
-  rect.data-bar.selected:focus {
-    /* outline: none; */
-    /* stroke: #004c9e; */
-    /* stroke-width: 1.5px; */
-    /* stroke-dasharray: none; */
-  }
-
   .nav-button {
     background-color: transparent; /* Remove background */
     border: none; /* Remove border */
@@ -315,12 +300,6 @@
     align-items: center;
     justify-content: center;
     outline: none; /* Remove focus outline from buttons */
-  }
-
-  .nav-button:focus {
-    /* Optional: Add a custom focus style if needed for accessibility,
-       e.g., a subtle box-shadow or background change if outline is removed.
-       For now, just removing default outline. */
   }
 
   .nav-button:hover {

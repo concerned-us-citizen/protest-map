@@ -2,18 +2,14 @@
   export let uniqueEvents: { name: string; count: number }[] = [];
   export let selectedEventNames: Set<string>;
   export let onSelectEventFilter: (eventName: string) => void;
-  export let currentDate: string; // New prop
-  export let formatDate: (dateStr: string) => string; // New prop
   export let onClose: () => void; // New prop for closing the filter
 </script>
 
 <div class="events-filter-component">
   <button class="close-button" on:click={onClose} aria-label="Close filter">×</button>
-  {#if currentDate && formatDate}
-    <h4 class="filter-title">Events for <strong>{formatDate(currentDate)}</strong></h4>
-  {/if}
+  <h4 class="filter-title">Filter by Event</h4>
   {#if uniqueEvents.length > 0}
-    <div class="events-section-description">(Select one or more to filter)</div>
+    <div class="events-section-description">(Toggle one or more)</div>
   {/if}
   <div class="event-list-scrollable-area">
     {#if uniqueEvents.length > 0}
@@ -67,13 +63,13 @@
   .filter-title {
     font-size: 0.9em;
     font-weight: bold;
-    margin-top: 0; /* Explicitly remove top margin */
+    margin-top: 8px; /* Explicitly remove top margin */
     margin-bottom: 2px;
     text-align: center;
   }
   .event-list-scrollable-area {
     overflow-y: auto;
-    max-height: 200px; /* Keep original height */
+    max-height: 235px; /* Keep original height */
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
@@ -128,6 +124,8 @@
   }
   .event-list-scrollable-area li .event-name-in-list {
     flex-grow: 1;
+    flex-shrink: 1; /* Allow text to shrink */
+    overflow-wrap: break-word; /* Allow long words to break and wrap */
   }
   .event-list-scrollable-area li .event-count-in-list {
     margin-left: 8px;

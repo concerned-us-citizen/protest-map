@@ -268,11 +268,6 @@
     .bottom-controls-wrapper.is-scrubbing {
       pointer-events: auto;
     }
-
-    /* Hide event info panel by default on mobile and disable pointer events */
-    /* These styles are now handled by the component itself */
-    /* .bottom-controls-wrapper .event-info { ... } */
-    /* .bottom-controls-wrapper.is-scrubbing .event-info { ... } */
   }
 
   /* Hide left/right arrows on mobile */
@@ -313,10 +308,6 @@
     transform: translateX(-50%);
     max-width: 300px; /* Max width for title in portrait */
   }
-
-  /* Remove old mobile-specific event info container styles */
-  /* .bottom-panel-container .compact-event-info { ... } */
-  /* .bottom-panel-container.show-event-info .compact-event-info { ... } */
 }
 
 /* Landscape specific styles */
@@ -325,8 +316,4 @@
   .unified-top-center-box {
     max-width: 400px; /* Allow more width for title in landscape */
   }
-
-  /* Remove old mobile-specific event info container styles */
-  /* .bottom-panel-container .compact-event-info { ... } */
-  /* .bottom-panel-container.show-event-info .compact-event-info { ... } */
 }

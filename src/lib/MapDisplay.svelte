@@ -246,27 +246,7 @@
         // Calculate the center of the continental US bounds
         const center = continentalUSBounds.getCenter();
         
-        // Determine a suitable zoom level to fit the continental US
-        // Use getBoundsZoom with padding to ensure the whole area is visible
-        let targetZoom = map.getBoundsZoom(continentalUSBounds, false); // false for 'inside'
-
-        // Adjust zoom if necessary, ensuring it's not too far out or too close
-        // A zoom level between 4 and 6 might be appropriate for the continental US
-        if (targetZoom < 4 || targetZoom > 6) {
-           // If calculated zoom is outside this range, try to fit the bounds with padding
-           // Or set a default if fitting is still problematic
-           try {
-             targetZoom = map.getBoundsZoom(continentalUSBounds, true, L.point(20, 20)); // true for 'outside', add padding
-           } catch (e) {
-             // Fallback if getBoundsZoom fails unexpectedly
-             targetZoom = 5; // A reasonable default for continental US
-           }
-           // Ensure the fallback or calculated zoom is still within a reasonable range
-           if (targetZoom < 4) targetZoom = 4;
-           if (targetZoom > 6) targetZoom = 6;
-        }
-        
-        map.setView(center, targetZoom);
+        map.setView(center, isTouchDevice ? 3 : 4);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '&copy; OpenStreetMap contributors',

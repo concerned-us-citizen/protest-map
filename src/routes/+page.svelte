@@ -121,6 +121,7 @@ export let data: EventData;
     }
     isRepeatingAction = false;
     currentRepeatDirection = null;
+    isScrubbingDate = false;
   }
 
   function continuousDateChange() {
@@ -144,6 +145,7 @@ export let data: EventData;
     stopDateRepeat();
 
     isRepeatingAction = true;
+    isScrubbingDate = true;
     currentRepeatDirection = direction;
 
     // Schedule the first continuous change after INITIAL_REPEAT_DELAY.
@@ -421,9 +423,9 @@ export async function toggleFullscreen(): Promise<void> {
     <button class="icon-button info-toggle-button" on:click={toggleInfoPanelVisibility} title="Show Information Panel (I)" aria-label="Show Information Panel (I)">
       {@html infoIconSvg}
     </button>
-    <button class="icon-button fullscreen-toggle-button" on:click={toggleFullscreen} title={isFullscreen ? 'Exit Fullscreen (M)' : 'Enter Fullscreen (M)'} aria-label={isFullscreen ? 'Exit Fullscreen (M)' : 'Enter Fullscreen (M)'}>
+    <!-- <button class="icon-button fullscreen-toggle-button" on:click={toggleFullscreen} title={isFullscreen ? 'Exit Fullscreen (M)' : 'Enter Fullscreen (M)'} aria-label={isFullscreen ? 'Exit Fullscreen (M)' : 'Enter Fullscreen (M)'}>
       {@html isFullscreen ? fullscreenExitIconSvg : fullscreenEnterIconSvg}
-    </button>
+    </button> -->
   </div>
   
   {#if histogramData.length > 0 && currentDate}

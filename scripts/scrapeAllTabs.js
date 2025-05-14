@@ -36,7 +36,6 @@ async function augmentLocations(locations) {
   const result = {};
 
   const keys = Object.keys(locations);
-  let i = 0;
   for (const key of keys) {
     //console.log(`Augmenting ${++i} of ${keys.length}`);
     const location = locations[key];
@@ -51,7 +50,7 @@ async function augmentLocations(locations) {
         ...wiki,
         pct_dem_lead: voting?.pct_dem_lead,
       };
-    } catch (err) {
+    } catch {
       // console.warn(
       //   `⚠️ Failed to augment: ${JSON.stringify(location)}\n  → ${err.message}`
       // );
@@ -202,9 +201,9 @@ async function normalizeByLocationAndGroupByDate(originalEvents) {
 
     // Fix up bad event names
     const correctedEventNames = {
-      "": "Unnamed",
-      None: "Unnamed",
-      "No name": "Unnamed",
+      "": "Unnamed event",
+      None: "Unnamed event",
+      "No name": "Unnamed event",
     };
     const correctedName = correctedEventNames[event.name] ?? event.name;
     events.push({
@@ -272,7 +271,7 @@ const run = async () => {
             `Cached data in ${RAW_OUTPUT} is not in the expected format. Will scrape live data.`
           );
         }
-      } catch (error) {
+      } catch {
         console.log(
           `Cache file ${RAW_OUTPUT} not found or unreadable. Will scrape live data.`
         );

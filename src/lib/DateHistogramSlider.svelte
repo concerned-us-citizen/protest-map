@@ -8,7 +8,6 @@
   export let histogramData: { date: string, locationCount: number }[] = [];
   export let currentDate: string;
   export let systemTodayDate: string; // e.g., "YYYY-MM-DD"
-  // export let allDates: string[];
   export let onDateSelect: (date: string) => void;
   export let onPrev: () => void; // For single click
   export let onNext: () => void; // For single click
@@ -120,7 +119,6 @@
     }
     window.addEventListener('touchmove', onTouchMove, { passive: false }); // Use passive: false to allow preventDefault
     window.addEventListener('touchend', onTouchEnd);
-    event.preventDefault(); // Prevent default touch behavior like scrolling
   }
 
   function onTouchMove(event: TouchEvent) {
@@ -179,6 +177,9 @@
     on:mousedown={onStartRepeatPrev}
     on:mouseup={onStopRepeat}
     on:mouseleave={onStopRepeat}
+    on:touchstart={onStartRepeatPrev}
+    on:touchend={onStopRepeat}
+    on:touchcancel={onStopRepeat}
     aria-label="Previous Date"
   >‹</button>
   <div class="svg-wrapper" bind:clientWidth={actualSvgWrapperWidth} bind:this={svgWrapperElement}>
@@ -228,6 +229,9 @@
     on:mousedown={onStartRepeatNext}
     on:mouseup={onStopRepeat}
     on:mouseleave={onStopRepeat}
+    on:touchstart={onStartRepeatNext}
+    on:touchend={onStopRepeat}
+    on:touchcancel={onStopRepeat}
     aria-label="Next Date"
   >›</button>
 </div>
@@ -300,6 +304,7 @@
     align-items: center;
     justify-content: center;
     outline: none; /* Remove focus outline from buttons */
+    touch-action: manipulation;
   }
 
   .nav-button:hover {

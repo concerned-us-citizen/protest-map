@@ -16,7 +16,7 @@ export async function load({ fetch }): Promise<{ data: EventData }> {
 
   try {
     return await res.json();
-  } catch (e) {
+  } catch {
     console.error("Invalid JSON in /data/data.json");
     throw new Error("Invalid JSON in /data/data.json");
   }

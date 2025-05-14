@@ -7,8 +7,8 @@
   import DateHistogramSlider from '$lib/DateHistogramSlider.svelte';
   import EventInfo from '$lib/EventInfo.svelte';
   import EventsFilter from '$lib/EventsFilter.svelte';
-  import { playIconSvg, pauseIconSvg, filterIconSvg, infoIconSvg, fullscreenEnterIconSvg, fullscreenExitIconSvg } from '$lib/icons';
-  import { parseDateString, formatDate, formatShortDate, formatDateTimeReadable } from '$lib/dateUtils.js';
+  import { playIconSvg, pauseIconSvg, filterIconSvg, infoIconSvg } from '$lib/icons';
+  import { parseDateString, formatShortDate, formatDateTimeReadable } from '$lib/dateUtils.js';
 
 export let data: EventData;
 
@@ -17,7 +17,6 @@ export let data: EventData;
   let index: number = 0;
   let playing = false;
   let timer: ReturnType<typeof setTimeout>;
-  let eventCount: number = 0;
   let distinctLocationCount: number = 0;
   let uniqueEvents: { name: string, count: number }[] = [];
   let histogramData: { date: string, locationCount: number }[] = [];
@@ -26,8 +25,13 @@ export let data: EventData;
   let selectedEventNames: Set<string> = new Set();
   let infoPanelVisible = false;
   let eventsFilterVisible = false;
-  let isFullscreen = false;
-  let isScrubbingDate = false; // New state for date scrubbing
+  let isDragging = false; // Add back isDragging state
+
+  // State for controlling EventInfo visibility on mobile
+  let isMobile = false;
+  let showEventInfoMobile = false;
+  let eventInfoMobileTimeout: ReturnType<typeof setTimeout> | null = null;
+  const MOBILE_INFO_VISIBILITY_DURATION = 1000; // 1 second
 
   // State for repeating actions
   let repeatTimer: ReturnType<typeof setTimeout> | null = null;
@@ -47,6 +51,11 @@ export let data: EventData;
     const newIndex = allDates.indexOf(selectedDate);
     if (newIndex !== -1) {
       index = newIndex;
+    }
+    // On mobile, show info panel when date is selected via slider drag
+    if (isMobile) {
+      showEventInfoMobile = true;
+      resetEventInfoMobileTimeout();
     }
   }
 
@@ -93,7 +102,7 @@ export let data: EventData;
     }, lingerTime);
   }
 
-  function togglePlayback() {
+  function togglePlayback() { // Add back togglePlayback function
     playing = !playing;
     if (playing) {
       scheduleNextDateAdvance();
@@ -105,12 +114,22 @@ export let data: EventData;
   function nextDate() {
     if (allDates.length > 0) {
       index = (index + 1) % allDates.length;
+      // On mobile, show info panel on next/prev click
+      if (isMobile) {
+        showEventInfoMobile = true;
+        resetEventInfoMobileTimeout();
+      }
     }
   }
 
   function prevDate() {
     if (allDates.length > 0) {
       index = (index - 1 + allDates.length) % allDates.length;
+      // On mobile, show info panel on next/prev click
+      if (isMobile) {
+        showEventInfoMobile = true;
+        resetEventInfoMobileTimeout();
+      }
     }
   }
 
@@ -121,7 +140,10 @@ export let data: EventData;
     }
     isRepeatingAction = false;
     currentRepeatDirection = null;
-    isScrubbingDate = false;
+    // On mobile, hide info panel after repeat stops, unless a click just happened
+    if (isMobile && !isDragging) { // Only hide if not currently dragging the slider
+       // The timeout handles hiding after a short delay
+    }
   }
 
   function continuousDateChange() {
@@ -140,13 +162,18 @@ export let data: EventData;
   function startDateRepeat(direction: 'next' | 'prev') {
     // If already repeating in the same direction, do nothing.
     if (isRepeatingAction && currentRepeatDirection === direction) return;
-    
+
     // Stop any existing repeat action.
     stopDateRepeat();
 
     isRepeatingAction = true;
-    isScrubbingDate = true;
     currentRepeatDirection = direction;
+
+    // On mobile, show info panel when repeat starts
+    if (isMobile) {
+      showEventInfoMobile = true;
+      resetEventInfoMobileTimeout();
+    }
 
     // Schedule the first continuous change after INITIAL_REPEAT_DELAY.
     // The immediate first change will be handled by the on:click event.
@@ -175,7 +202,7 @@ export let data: EventData;
     } else if (event.key === 'Escape' || event.code === 'Escape') {
       event.preventDefault();
       infoPanelVisible = false;
-      eventsFilterVisible = false; 
+      eventsFilterVisible = false;
     } else if (!playing) {
       if (event.key === 'ArrowLeft' || event.code === 'ArrowLeft') {
         if (!event.repeat) {
@@ -203,8 +230,20 @@ export let data: EventData;
     }
   }
 
+  function resetEventInfoMobileTimeout() {
+    if (eventInfoMobileTimeout) {
+      clearTimeout(eventInfoMobileTimeout);
+    }
+    eventInfoMobileTimeout = setTimeout(() => {
+      showEventInfoMobile = false;
+    }, MOBILE_INFO_VISIBILITY_DURATION);
+  }
+
   onMount(async () => {
     if (browser) {
+      // Check for mobile device
+      isMobile = window.matchMedia('(max-width: 768px)').matches;
+
       const visitedCookie = document.cookie.split('; ').find(row => row.startsWith('infoPanelVisited='));
       if (!visitedCookie) {
         infoPanelVisible = true;
@@ -221,20 +260,20 @@ export let data: EventData;
       const today = new Date();
       systemTodayDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
     }
-    
+
     if (data && data.events) {
         allDates = Object.keys(data.events)
-                         // Ensure keys are valid dates that can be parsed by our utility before sorting
-                         .filter(dateStr => dateStr && dateStr.trim() !== '' && parseDateString(dateStr) !== null)
-                         .sort((a, b) => {
-                            const dateA = parseDateString(a);
-                            const dateB = parseDateString(b);
-                            // This should ideally not happen if filter works and dates are YYYY-MM-DD
-                            if (!dateA || !dateB) return 0;
-                            return dateA.getTime() - dateB.getTime();
-                         });
+          // Ensure keys are valid dates that can be parsed by our utility before sorting
+          .filter(dateStr => dateStr && dateStr.trim() !== '' && parseDateString(dateStr) !== null)
+          .sort((a, b) => {
+            const dateA = parseDateString(a);
+            const dateB = parseDateString(b);
+            // This should ideally not happen if filter works and dates are YYYY-MM-DD
+            if (!dateA || !dateB) return 0;
+            return dateA.getTime() - dateB.getTime();
+          });
     }
-    
+
     if (playing) {
       scheduleNextDateAdvance();
     }
@@ -247,6 +286,9 @@ export let data: EventData;
       document.removeEventListener('click', handleDocumentClick, true);
     }
     clearTimeout(timer);
+    if (eventInfoMobileTimeout) {
+      clearTimeout(eventInfoMobileTimeout);
+    }
   });
 
   function handleDocumentClick(event: MouseEvent) {
@@ -257,9 +299,18 @@ export let data: EventData;
     const isClickInsideToolbar = target.closest('.toolbar');
     const isClickInsideInfoPanel = target.closest('.help-panel'); // Renamed class
     const isClickInsideEventsFilter = target.closest('.events-filter-wrapper');
-    const isClickInsideSlider = target.closest('.bottom-panel-container');
+    const isClickInsideSlider = target.closest('.bottom-panel-container'); // Use the container class
 
-    if (!isClickInsideToolbar && !isClickInsideInfoPanel && !isClickInsideEventsFilter && !isClickInsideSlider) {
+    // On mobile, if clicking outside the main panels, hide the info panel
+    if (isMobile && !isClickInsideToolbar && !isClickInsideInfoPanel && !isClickInsideEventsFilter && !isClickInsideSlider) {
+       showEventInfoMobile = false;
+       if (eventInfoMobileTimeout) {
+         clearTimeout(eventInfoMobileTimeout);
+       }
+    }
+
+    // Always hide help/filter panels if clicking outside them
+    if (!isClickInsideToolbar && !isClickInsideInfoPanel && !isClickInsideEventsFilter) {
       if (infoPanelVisible) {
         infoPanelVisible = false;
       }
@@ -269,11 +320,24 @@ export let data: EventData;
     }
   }
 
+  // Handle click on the bottom controls wrapper itself to show info on mobile
+  function handleBottomControlsClick(event: MouseEvent) {
+    // Check if the click originated from a navigation button
+    const target = event.target as HTMLElement;
+    if (target.closest('.nav-button')) {
+      return; // Do nothing if a nav button was clicked
+    }
+
+    if (isMobile) {
+      showEventInfoMobile = true;
+      resetEventInfoMobileTimeout();
+    }
+  }
+
   $: if (allDates.length > 0 && data && data.events) {
     currentDate = allDates[index];
     selectedEventNames = new Set();
     const currentDayEvents = data?.events?.[currentDate] || [];
-    eventCount = currentDayEvents.length;
 
     const locationsForDay = new Set(currentDayEvents.map(event => event.location));
     distinctLocationCount = locationsForDay.size;
@@ -299,6 +363,9 @@ export let data: EventData;
       scheduleNextDateAdvance();
     }
   }
+
+  // Reactive statement to control isScrubbingDate based on mobile state and showEventInfoMobile
+  $: isScrubbingDate = isMobile ? showEventInfoMobile : true; // Always true on desktop
 </script>
 
 <style>
@@ -311,11 +378,11 @@ export let data: EventData;
 
 {#if data && data.events && data.locations}
   <MapDisplay eventData={data} {currentDate} {selectedEventNames} />
-  
+
   <div class="top-center-container">
     <div class="top-center-main-panel">
       <h3 class="main-title">
-        Protests {formatShortDate(currentDate)}
+        Protests on {formatShortDate(currentDate)}
       </h3>
       <div class="attribution-link">
         <i>Provided by <a
@@ -331,7 +398,7 @@ export let data: EventData;
       </div>
     {/if}
   </div>
- 
+
   <div class="toolbar">
     <button class="icon-button main-play-pause-button" on:click={togglePlayback} title={playing ? 'Pause Animation (Space)' : 'Play Animation (Space)'} aria-label={playing ? 'Pause Animation (Space)' : 'Play Animation (Space)'}>
       {@html playing ? pauseIconSvg : playIconSvg}
@@ -354,9 +421,11 @@ export let data: EventData;
       {@html infoIconSvg}
     </button>
   </div>
-  
+
   {#if histogramData.length > 0 && currentDate}
-    <div class="bottom-controls-wrapper" class:is-scrubbing={isScrubbingDate}>
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <div class="bottom-controls-wrapper" class:is-scrubbing={isScrubbingDate} on:click={handleBottomControlsClick}>
       <EventInfo visible={isScrubbingDate}
         displayedEventNameCount={uniqueEvents.filter(e => e.name && e.name.trim() !== '').length}
         {distinctLocationCount}
@@ -373,8 +442,8 @@ export let data: EventData;
           onStartRepeatPrev={() => startDateRepeat('prev')}
           onStartRepeatNext={() => startDateRepeat('next')}
           onStopRepeat={stopDateRepeat}
-          on:dragstart={() => isScrubbingDate = true}
-          on:dragend={() => isScrubbingDate = false}
+          on:dragstart={() => { if(isMobile) showEventInfoMobile = true; }}
+          on:dragend={() => { if(isMobile) resetEventInfoMobileTimeout(); }}
         />
       </div>
     </div>

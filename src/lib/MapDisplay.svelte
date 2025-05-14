@@ -2,7 +2,7 @@
   import { onMount, onDestroy, afterUpdate } from 'svelte';
   import { browser } from '$app/environment';
   import type { EventData } from '$lib/types.ts';
-  import type { Map as LeafletMap, Marker, DivIcon, LayerGroup } from 'leaflet';
+  import type { Map as LeafletMap, Marker, DivIcon, LayerGroup, LeafletMouseEvent } from 'leaflet';
 
   export let eventData: EventData;
   export let currentDate: string;
@@ -252,7 +252,7 @@
           attribution: '&copy; OpenStreetMap contributors',
         }).addTo(map);
 
-        map.on('click', (e: L.LeafletMouseEvent) => {
+        map.on('click', (e: LeafletMouseEvent) => {
           const target = e.originalEvent.target as HTMLElement;
           // Prevent map click from closing popups if click is on nav/info panels (handled by parent)
           // or if click is on a marker itself.

@@ -93,7 +93,7 @@ export const formatDate = (dateStr) => {
  */
 export const formatShortDate = (dateStr) => {
   const d = parseDateString(dateStr);
-  if (!d) return "Invalid Date";
+  if (!d) return "";
   return d.toLocaleDateString("en-US", {
     month: "numeric",
     day: "numeric",

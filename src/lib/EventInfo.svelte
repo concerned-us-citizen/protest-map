@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { fade } from "svelte/transition";
+
   export let visible: boolean;
   export let displayedEventNameCount: number; // Unique event names
   export let distinctLocationCount: number;
@@ -6,14 +8,14 @@
 </script>
 
 {#if visible}
-<div class="event-info">
+<div class="event-info" transition:fade={{ duration: 200 }}>
   {#if distinctLocationCount > 0}
     <div class="event-names-summary-text">
       {(() => {
         const trimmedNames = allEventNames ? allEventNames.trim() : '';
         const lowerNames = trimmedNames.toLowerCase();
         if (displayedEventNameCount === 0 || !trimmedNames || lowerNames === "unnamed event" || lowerNames === "unnamed" || lowerNames === "no name") {
-          return 'Unnamed';
+          return 'Unnamed event';
         }
         return allEventNames;
       })()}

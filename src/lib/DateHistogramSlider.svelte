@@ -264,28 +264,28 @@
   }
   
   .selected-background-highlight {
-    fill: #d6eaff; /* More saturated light blue for better visibility */
+    fill: #FFD580; /* Light orange for selected background highlight */
   }
 
   rect.data-bar {
-    fill: #a0c0e0; /* Default bar color (light blue) */
+    fill: #00008B; /* Dark blue for standard bars */
     transition: fill 0.2s ease-in-out;
   }
 
   rect.data-bar.future {
-    fill: #c0d0e0; /* Slightly dimmer/desaturated blue for future dates */
+    fill: #191970; /* Slightly lighter dark blue for future dates */
   }
 
   rect.data-bar.future.selected {
-    fill: #508abd; /* A different shade for selected future date if needed, or let .selected override */
+    fill: #FFB347; /* Slightly less saturated orange for selected future date */
   }
 
   rect.data-bar:hover {
-    fill: #70a0d0; /* Darker blue on hover */
+    fill: #4169E1; /* RoyalBlue on hover */
   }
 
   rect.data-bar.selected {
-    fill: #337ab7; /* Even darker blue for selected */
+    fill: #FFA500; /* Orange for selected bars */
   }
 
   .nav-button {

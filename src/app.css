@@ -9,3 +9,14 @@ body {
   width: 100%; /* Ensure full width */
   height: 100%; /* Ensure full height */
 }
+
+.tour-image {
+  /* Define the global style here */
+  width: 300px;
+}
+
+@media (max-width: 768px) {
+  .tour-image {
+    width: 250px;
+  }
+}

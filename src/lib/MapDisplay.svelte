@@ -3,6 +3,7 @@
   import { browser } from '$app/environment';
   import type { EventData } from '$lib/types.ts';
   import type { Map as LeafletMap, Marker, DivIcon, LayerGroup, LeafletMouseEvent } from 'leaflet';
+  import { markerSvg } from '$lib/icons';
 
   export let eventData: EventData;
   export let currentDate: string;
@@ -12,7 +13,6 @@
   let map: LeafletMap | null = null;
   let L: typeof import('leaflet') | null = null;
   let markerLayerGroup: LayerGroup | null = null;
-  let markerSvgString: string | null = null;
   let popupCloseTimer: ReturnType<typeof setTimeout> | null = null;
   let isTouchDevice = false;
 
@@ -43,7 +43,7 @@
 
   const renderMarkers = (): void => {
     // Ensure L and map are initialized before proceeding
-    if (!L || !map || !markerSvgString || !eventData || !eventData.locations || !eventData.events) {
+    if (!L || !map || !eventData || !eventData.locations || !eventData.events) {
       return;
     }
 
@@ -64,7 +64,7 @@
       if (!loc || loc.lat == null || loc.lon == null) return;
       const color = getColor(loc.pct_dem_lead);
       const iconSize = 50;
-      const iconHtml = `<div style="color: ${color}; width: ${iconSize}px; height: ${iconSize}px;">${markerSvgString}</div>`;
+      const iconHtml = `<div style="color: ${color}; width: ${iconSize}px; height: ${iconSize}px;">${markerSvg}</div>`;
 
       const icon: DivIcon = L!.divIcon({ // L is confirmed non-null by the guard above
         html: iconHtml,
@@ -223,13 +223,6 @@
       const leaflet = await import('leaflet');
       await import('leaflet/dist/leaflet.css');
       L = leaflet;
-
-      try {
-        // Import SVG from src/assets using Vite's raw loader
-        markerSvgString = await import('$assets/marker.svg?raw').then(m => m.default);
-      } catch (error) {
-        console.error("Error loading marker SVG:", error);
-      }
  
       if (L && mapElement) {
         map = L.map(mapElement, { zoomControl: false, keyboard: false, minZoom: 2 }); // Adjusted minZoom
@@ -277,7 +270,7 @@
           }
         });
         
-        if (currentDate && markerSvgString) { // Initial render if currentDate is already set
+        if (currentDate) { // Initial render if currentDate is already set
           renderMarkers();
         }
 

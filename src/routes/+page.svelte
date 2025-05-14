@@ -2,9 +2,10 @@
   import { onMount, onDestroy } from 'svelte';
   import { browser } from '$app/environment';
   import type { EventData } from '$lib/types.ts';
-  import HelpPanel from '$lib/HelpPanel.svelte';
+  import CreditsPanel from '$lib/CreditsPanel.svelte';
   import MapDisplay from '$lib/MapDisplay.svelte';
   import DateHistogramSlider from '$lib/DateHistogramSlider.svelte';
+  import Tour from '$lib/Tour.svelte';
   import EventInfo from '$lib/EventInfo.svelte';
   import EventsFilter from '$lib/EventsFilter.svelte';
   import { playIconSvg, pauseIconSvg, filterIconSvg, infoIconSvg } from '$lib/icons';
@@ -21,9 +22,10 @@ export let data: EventData;
   let uniqueEvents: { name: string, count: number }[] = [];
   let histogramData: { date: string, locationCount: number }[] = [];
   let systemTodayDate: string = '';
+  let showTour = false;
 
   let selectedEventNames: Set<string> = new Set();
-  let infoPanelVisible = false;
+  let creditsPanelVisible = false;
   let eventsFilterVisible = false;
   let isDragging = false; // Add back isDragging state
 
@@ -42,8 +44,8 @@ export let data: EventData;
 
   function toggleEventsFilterVisibility() {
     eventsFilterVisible = !eventsFilterVisible;
-    if (eventsFilterVisible && infoPanelVisible) {
-      infoPanelVisible = false;
+    if (eventsFilterVisible && creditsPanelVisible) {
+      creditsPanelVisible = false;
     }
   }
 
@@ -59,9 +61,9 @@ export let data: EventData;
     }
   }
 
-  function toggleInfoPanelVisibility() {
-    infoPanelVisible = !infoPanelVisible;
-    if (infoPanelVisible && eventsFilterVisible) {
+  function togglecreditsPanelVisibility() {
+    creditsPanelVisible = !creditsPanelVisible;
+    if (creditsPanelVisible && eventsFilterVisible) {
       eventsFilterVisible = false;
     }
   }
@@ -198,10 +200,10 @@ export let data: EventData;
       toggleEventsFilterVisibility();
     } else if (event.key === 'i' || event.key === 'I') {
       event.preventDefault();
-      toggleInfoPanelVisibility();
+      togglecreditsPanelVisibility();
     } else if (event.key === 'Escape' || event.code === 'Escape') {
       event.preventDefault();
-      infoPanelVisible = false;
+      creditsPanelVisible = false;
       eventsFilterVisible = false;
     } else if (!playing) {
       if (event.key === 'ArrowLeft' || event.code === 'ArrowLeft') {
@@ -239,20 +241,27 @@ export let data: EventData;
     }, MOBILE_INFO_VISIBILITY_DURATION);
   }
 
+  function restartTour() {
+    showTour = true;
+    creditsPanelVisible = false;
+  }
+
+  function saveShownTourToCookie() {
+    const expiryDate = new Date();
+    expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+    document.cookie = `hasShownTour=true; expires=${expiryDate.toUTCString()}; path=/; SameSite=Lax`;
+  }
+
+  function hasShownTourCookieExists() {
+    return !(document.cookie.split('; ').find(row => row.startsWith('hasShownTour=')) ?? false);
+  }
+
   onMount(async () => {
     if (browser) {
       // Check for mobile device
       isMobile = window.matchMedia('(max-width: 768px)').matches;
 
-      const visitedCookie = document.cookie.split('; ').find(row => row.startsWith('infoPanelVisited='));
-      if (!visitedCookie) {
-        infoPanelVisible = true;
-        const expiryDate = new Date();
-        expiryDate.setFullYear(expiryDate.getFullYear() + 1);
-        document.cookie = `infoPanelVisited=true; expires=${expiryDate.toUTCString()}; path=/; SameSite=Lax`;
-      } else {
-        infoPanelVisible = false;
-      }
+      showTour = !hasShownTourCookieExists();
       window.addEventListener('keydown', handleKeydown);
       window.addEventListener('keyup', handleKeyup);
       document.addEventListener('click', handleDocumentClick, true);
@@ -297,12 +306,12 @@ export let data: EventData;
     const target = event.target as HTMLElement;
 
     const isClickInsideToolbar = target.closest('.toolbar');
-    const isClickInsideInfoPanel = target.closest('.help-panel'); // Renamed class
+    const isClickInsidecreditsPanel = target.closest('.credits-panel'); // Renamed class
     const isClickInsideEventsFilter = target.closest('.events-filter-wrapper');
     const isClickInsideSlider = target.closest('.bottom-panel-container'); // Use the container class
 
     // On mobile, if clicking outside the main panels, hide the info panel
-    if (isMobile && !isClickInsideToolbar && !isClickInsideInfoPanel && !isClickInsideEventsFilter && !isClickInsideSlider) {
+    if (isMobile && !isClickInsideToolbar && !isClickInsidecreditsPanel && !isClickInsideEventsFilter && !isClickInsideSlider) {
        showEventInfoMobile = false;
        if (eventInfoMobileTimeout) {
          clearTimeout(eventInfoMobileTimeout);
@@ -310,9 +319,9 @@ export let data: EventData;
     }
 
     // Always hide help/filter panels if clicking outside them
-    if (!isClickInsideToolbar && !isClickInsideInfoPanel && !isClickInsideEventsFilter) {
-      if (infoPanelVisible) {
-        infoPanelVisible = false;
+    if (!isClickInsideToolbar && !isClickInsidecreditsPanel && !isClickInsideEventsFilter) {
+      if (creditsPanelVisible) {
+        creditsPanelVisible = false;
       }
       if (eventsFilterVisible) {
         eventsFilterVisible = false;
@@ -417,7 +426,7 @@ export let data: EventData;
     >
       {@html filterIconSvg}
     </button>
-    <button class="icon-button info-toggle-button" on:click={toggleInfoPanelVisibility} title="Show Information Panel (I)" aria-label="Show Information Panel (I)">
+    <button class="icon-button info-toggle-button" on:click={togglecreditsPanelVisibility} title="Show Information Panel (I)" aria-label="Show Information Panel (I)">
       {@html infoIconSvg}
     </button>
   </div>
@@ -449,5 +458,74 @@ export let data: EventData;
     </div>
   {/if}
 
-  <HelpPanel visible={infoPanelVisible} onClose={toggleInfoPanelVisibility} />
+  <CreditsPanel visible={creditsPanelVisible} onClose={togglecreditsPanelVisibility} onRestartTour={restartTour} />
+
+  {#if showTour}
+    <Tour
+      steps={[
+        {
+          title: "US Protests Map",
+          description: `
+          <p>This map shows recent and planned US protest locations over time, compiled from data collected by <a href="https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748" target="_blank">We (the People) Dissent</a>.</p>
+          <p>It presents locations by date, and you can either play an animation of the compiled dates or select specific days manually.</p>
+          ` 
+        },
+        {
+          title: "What Do These Signs Mean?",
+          description: `
+          <p>Protests appear on the map as protest signs, colored in shades of red or blue to give a sense of the broad political affiliation of the surrounding precinct.</p>
+          <p>(We use the margin Trump or Harris won by to gauge this.)</p>
+          <p>Precinct voting margins across the US are compiled by the New York Times, and data for some precincts isn't available. Where absent, the signs are presented in gray.</p>
+          `,
+          elementId: undefined 
+        },
+        {
+          title: "Animating The Dates",
+          description: `
+          <p>You can watch the protests play out over time, by toggling the Play/Pause buttons.</p>
+          <p>If available, you can also press the spacebar to toggle animation.</p>
+          `,
+          elementId: undefined 
+        },
+        {
+          title: "Using the Timeline",
+          description: `
+          <p>Instead of animating, you can step through the dates one at a time by clicking the arrow buttons (or the left or right arrow keys if available).</p>
+          <img src="timeline.png" class='tour-image' />
+          <p>You can also select a particular date by tapping within the timeline.</p>
+          <p>Further, you can "scrub" through the dates, by dragging across the timeline to see the map animate as you move.</p>
+          `,
+          elementId: undefined 
+        },
+        {
+          title: "View Location Details",
+          description: `
+          <p>Tapping a location will show a little more detail about it - you can navigate to a Wikipedia entry on it, or to the associated event's link.</p>
+          <img src="info-popup.png" class='tour-image'/>
+          `,
+          elementId: undefined 
+        },
+        {
+          title: "Filter Locations by Events",
+          description: `
+          <p>The locations available are for multiple events on a given date.</p>
+          <p>If you want to see the locations for one or more events, you can filter them with the Events list - simply tap on an event to toggle its visibility.</p>
+          `,
+          elementId: undefined 
+        },
+        {
+          title: "The Map Is Interactive",
+          description: `
+          <p>You can zoom and pan (pinch and drag on mobile devices) around the map to see more locations or detail.</p>
+          <p>Our apologies to those with events not initially visible in the initial continental US viewport - your protests are here too!</p>
+          `,
+          elementId: undefined 
+        },
+      ]}
+      on:dismiss={() => {
+        showTour = false;
+        saveShownTourToCookie();
+      }}
+    />
+  {/if}
 {/if}

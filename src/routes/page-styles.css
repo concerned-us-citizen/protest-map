@@ -94,7 +94,7 @@
 .top-center-main-panel .main-title {
   font-size: 1.1em; /* Relative to parent panel's font-size */
   font-weight: bold;
-  margin: 5px;
+  margin: 0px;
 }
 
 .top-center-main-panel .attribution-link {
@@ -143,8 +143,11 @@
 }
 
 .filter-toggle-button.dimmed {
-  opacity: 0.5;
   cursor: not-allowed;
+}
+
+.filter-toggle-button.dimmed svg {
+  opacity: 0.5;
 }
 
 /* Wrapper for bottom controls */
@@ -215,22 +218,18 @@
     overflow: hidden;
     text-overflow: ellipsis;
     font-size: 1em; /* Adjust title font size for mobile */
+    margin: 11px;
   }
 
   .top-center-main-panel .attribution-link {
     display: none; /* Remove attribution from title bar */
   }
 
-  .icon-button.main-play-pause-button {
+  .icon-button {
     width: 44px; /* Bigger play/pause button */
     height: 44px;
   }
-  .icon-button.main-play-pause-button svg {
-    width: 28px; /* Adjust icon size within the button */
-    height: 28px;
-  }
-
-  .icon-button.info-toggle-button svg {
+  .icon-button svg {
     width: 28px; /* Adjust icon size within the button */
     height: 28px;
   }
@@ -247,26 +246,25 @@
     width: 28px !important;
     height: 28px !important;
   }
-  /* Specific override for play/pause if it was set differently, though it should be covered */
-  .icon-button.main-play-pause-button {
-    width: 44px !important;
-    height: 44px !important;
-  }
-  .icon-button.main-play-pause-button svg {
-    width: 28px !important;
-    height: 28px !important;
+
+  /* Add styles to control EventInfo visibility on mobile */
+  .bottom-controls-wrapper > :global(.event-info-panel) {
+    /* Target the EventInfo component's root element */
+    opacity: 0; /* Hidden by default on mobile */
+    transition: opacity 0.3s ease-in-out; /* Add transition */
+    pointer-events: none; /* Still disable pointer events when hidden */
   }
 
-  /* Mobile styles for bottom controls wrapper */
-  @media (max-width: 768px) {
-    .bottom-controls-wrapper {
-      /* Hide event info panel by default on mobile and disable pointer events */
-      pointer-events: none; /* Allow touch events to pass through to elements below */
-    }
+  .bottom-controls-wrapper.is-scrubbing > :global(.event-info-panel) {
+    opacity: 1; /* Visible when dragging/holding/clicked */
+    pointer-events: auto; /* Enable pointer events when visible */
+  }
 
-    /* Enable pointer events when scrubbing (event info is visible) */
-    .bottom-controls-wrapper.is-scrubbing {
-      pointer-events: auto;
+  /* Desktop styles - ensure EventInfo is always visible */
+  @media (min-width: 769px) {
+    .bottom-controls-wrapper > :global(.event-info-panel) {
+      opacity: 1 !important; /* Always visible on desktop */
+      pointer-events: auto !important; /* Always interactive on desktop */
     }
   }
 

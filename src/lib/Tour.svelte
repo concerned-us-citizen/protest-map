@@ -178,7 +178,7 @@
 
   @media (max-width: 600px) {
     .tour-panel {
-      height: 380px; /* Taller height for mobile */
+      height: 385px; /* Taller height for mobile */
     }
   }
 

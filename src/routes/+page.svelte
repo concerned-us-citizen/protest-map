@@ -521,6 +521,13 @@ export let data: EventData;
           `,
           elementId: undefined 
         },
+        {
+          title: "Thanks For Watching",
+          description: `
+          <p>Tap Dismiss to explore the map.</p>
+          `,
+          elementId: undefined 
+        },
       ]}
       on:dismiss={() => {
         showTour = false;

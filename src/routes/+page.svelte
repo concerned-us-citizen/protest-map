@@ -253,7 +253,7 @@ export let data: EventData;
   }
 
   function hasShownTourCookieExists() {
-    return !(document.cookie.split('; ').find(row => row.startsWith('hasShownTour=')) ?? false);
+    return document.cookie.split('; ').some(row => row.startsWith('hasShownTour='));
   }
 
   onMount(async () => {

@@ -10848,5 +10848,420 @@
     "title": "Mount Laurel, New Jersey",
     "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Laurelacres.jpg/500px-Laurelacres.jpg",
     "pageUrl": "https://en.wikipedia.org/wiki/Mount%20Laurel%2C%20New%20Jersey"
+  },
+  "holbrook,az": {
+    "title": "Holbrook, Arizona",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Historic_Navajo_County_Courthouse_and_Museum_cropped.jpg/500px-Historic_Navajo_County_Courthouse_and_Museum_cropped.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Holbrook%2C%20Arizona"
+  },
+  "scottsdale,az": {
+    "title": "Scottsdale, Arizona",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Scottsdale_waterfront.jpg/500px-Scottsdale_waterfront.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Scottsdale%2C%20Arizona"
+  },
+  "springerville,az": {
+    "title": "Springerville, Arizona",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Vista_of_Springerville%2C_Arizona_%2835244834136%29.jpg/500px-Vista_of_Springerville%2C_Arizona_%2835244834136%29.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Springerville%2C%20Arizona"
+  },
+  "baywood-los osos,ca": {
+    "title": "Baywood-Los Osos, California",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/San_Luis_Obispo_County_California_Incorporated_and_Unincorporated_areas_Baywood-Los_Osos_Highlighted.svg/500px-San_Luis_Obispo_County_California_Incorporated_and_Unincorporated_areas_Baywood-Los_Osos_Highlighted.svg.png",
+    "pageUrl": "https://en.wikipedia.org/wiki/Baywood-Los%20Osos%2C%20California"
+  },
+  "belmont,ca": {
+    "title": "Belmont, California",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Aerial_view_of_Belmont%2C_September_2019.JPG/500px-Aerial_view_of_Belmont%2C_September_2019.JPG",
+    "pageUrl": "https://en.wikipedia.org/wiki/Belmont%2C%20California"
+  },
+  "camp pendleton south,ca": {
+    "title": "Camp Pendleton South, California",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/San_Diego_County_California_Incorporated_and_Unincorporated_areas_Camp_Pendleton_South_Highlighted.svg/500px-San_Diego_County_California_Incorporated_and_Unincorporated_areas_Camp_Pendleton_South_Highlighted.svg.png",
+    "pageUrl": "https://en.wikipedia.org/wiki/Camp%20Pendleton%20South%2C%20California"
+  },
+  "gilroy,ca": {
+    "title": "Gilroy, California",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Old_City_Hall%2C_7410_Monterey_St.%2C_Gilroy%2C_CA_9-23-2012_3-25-51_PM.JPG/500px-Old_City_Hall%2C_7410_Monterey_St.%2C_Gilroy%2C_CA_9-23-2012_3-25-51_PM.JPG",
+    "pageUrl": "https://en.wikipedia.org/wiki/Gilroy%2C%20California"
+  },
+  "hawthorne,ca": {
+    "title": "Hawthorne, California",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Hawthorne_logo_2024_PNG.png/500px-Hawthorne_logo_2024_PNG.png",
+    "pageUrl": "https://en.wikipedia.org/wiki/Hawthorne%2C%20California"
+  },
+  "la mesa,ca": {
+    "title": "La Mesa, California",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Amayatrolley.jpg/500px-Amayatrolley.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/La%20Mesa%2C%20California"
+  },
+  "la quinta,ca": {
+    "title": "La Quinta, California",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Saint_Francis_of_Assisi_Catholic_Church%2C_La_Quinta%2C_Riverside_County%2C_California%2C_United_States_.jpg/500px-Saint_Francis_of_Assisi_Catholic_Church%2C_La_Quinta%2C_Riverside_County%2C_California%2C_United_States_.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/La%20Quinta%2C%20California"
+  },
+  "n auburn,ca": {
+    "title": "Auburn, California",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/2009-0724-CA-OldTownAuburn.jpg/500px-2009-0724-CA-OldTownAuburn.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Auburn%2C%20California"
+  },
+  "placerville,ca": {
+    "title": "Placerville, California",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Downtown_Placerville%2C_CA_2021.jpg/500px-Downtown_Placerville%2C_CA_2021.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Placerville%2C%20California"
+  },
+  "san andreas,ca": {
+    "title": "San Andreas, California",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/2009-0724-CA-SanAndreas-MainSt.jpg/500px-2009-0724-CA-SanAndreas-MainSt.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/San%20Andreas%2C%20California"
+  },
+  "yreka,ca": {
+    "title": "Yreka, California",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Yreka%2C_California_in_summer_2011_%283%29.JPG/500px-Yreka%2C_California_in_summer_2011_%283%29.JPG",
+    "pageUrl": "https://en.wikipedia.org/wiki/Yreka%2C%20California"
+  },
+  "golden,co": {
+    "title": "Golden, Colorado",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/GoldenCO_WashingtonStreet_01Oct2017.jpg/500px-GoldenCO_WashingtonStreet_01Oct2017.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Golden%2C%20Colorado"
+  },
+  "thornton,co": {
+    "title": "Thornton, Colorado",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Thornton%2C_CO%2C_welcome_sign_IMG_5209.JPG/500px-Thornton%2C_CO%2C_welcome_sign_IMG_5209.JPG",
+    "pageUrl": "https://en.wikipedia.org/wiki/Thornton%2C%20Colorado"
+  },
+  "granby,ct": {
+    "title": "Granby, Connecticut",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Soldiers%27_Monument_for_American_Civil_War_in_Granby%2C_Connecticut.jpg/500px-Soldiers%27_Monument_for_American_Civil_War_in_Granby%2C_Connecticut.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Granby%2C%20Connecticut"
+  },
+  "w hartford,ct": {
+    "title": "Hartford, Connecticut",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Hartford_Seminary_-_Hartford%2C_CT_-_2.jpg/500px-Hartford_Seminary_-_Hartford%2C_CT_-_2.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Hartford%2C%20Connecticut"
+  },
+  "selbyville,de": {
+    "title": "Selbyville, Delaware",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Selbyville_Library.jpg/500px-Selbyville_Library.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Selbyville%2C%20Delaware"
+  },
+  "orange city,fl": {
+    "title": "Orange City, Florida",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Orange_City_Town_Hall1.jpg/500px-Orange_City_Town_Hall1.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Orange%20City%2C%20Florida"
+  },
+  "plant city,fl": {
+    "title": "Plant City, Florida",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/PlantCityHall.jpg/400px-PlantCityHall.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Plant%20City%2C%20Florida"
+  },
+  "nāʻālehu,hi": {
+    "title": "Nāʻālehu, Hawaii",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Naalehu_post_office.jpg/500px-Naalehu_post_office.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/N%C4%81%CA%BB%C4%81lehu%2C%20Hawaii"
+  },
+  "hailey,id": {
+    "title": "Hailey, Idaho",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Hailey_Idaho_Soccer_Fields.JPG/500px-Hailey_Idaho_Soccer_Fields.JPG",
+    "pageUrl": "https://en.wikipedia.org/wiki/Hailey%2C%20Idaho"
+  },
+  "forest park,il": {
+    "title": "Forest Park, Illinois",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Madison_Street%2C_Forest_Park.jpg/500px-Madison_Street%2C_Forest_Park.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Forest%20Park%2C%20Illinois"
+  },
+  "la grange,il": {
+    "title": "La Grange, Illinois",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Lyons_Township_Hall_%285978130193%29.jpg/500px-Lyons_Township_Hall_%285978130193%29.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/La%20Grange%2C%20Illinois"
+  },
+  "woodstock,il": {
+    "title": "Woodstock, Illinois",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Woodstock_Illinois_02.jpg/500px-Woodstock_Illinois_02.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Woodstock%2C%20Illinois"
+  },
+  "baldwin city,ks": {
+    "title": "Baldwin City, Kansas",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Downtown_Baldwin_City_NoDate.png/500px-Downtown_Baldwin_City_NoDate.png",
+    "pageUrl": "https://en.wikipedia.org/wiki/Baldwin%20City%2C%20Kansas"
+  },
+  "new orleans,ky": {
+    "title": "Battle of New Orleans",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Battle_of_New_Orleans%2C_Jean_Hyacinthe_de_Laclotte.jpg/500px-Battle_of_New_Orleans%2C_Jean_Hyacinthe_de_Laclotte.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Battle%20of%20New%20Orleans"
+  },
+  "paintsville,ky": {
+    "title": "Paintsville, Kentucky",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Paintsville%2C_Ky_Main_Street.jpg/500px-Paintsville%2C_Ky_Main_Street.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Paintsville%2C%20Kentucky"
+  },
+  "amherst,ma": {
+    "title": "Amherst, Massachusetts",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/7/78/Amherst%2C_Massachusetts.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Amherst%2C%20Massachusetts"
+  },
+  "bernardston,ma": {
+    "title": "Bernardston, Massachusetts",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Powers_Institute.JPG/500px-Powers_Institute.JPG",
+    "pageUrl": "https://en.wikipedia.org/wiki/Bernardston%2C%20Massachusetts"
+  },
+  "mansfield,ma": {
+    "title": "Mansfield, Massachusetts",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/North_Main_Street%2C_Mansfield_MA.jpg/500px-North_Main_Street%2C_Mansfield_MA.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Mansfield%2C%20Massachusetts"
+  },
+  "mashpee,ma": {
+    "title": "Mashpee, Massachusetts",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Mashpee_MA_Town_Hall.jpg/500px-Mashpee_MA_Town_Hall.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Mashpee%2C%20Massachusetts"
+  },
+  "rowley,ma": {
+    "title": "Rowley, Massachusetts",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Rowley375_Alternate_Logo.png/500px-Rowley375_Alternate_Logo.png",
+    "pageUrl": "https://en.wikipedia.org/wiki/Rowley%2C%20Massachusetts"
+  },
+  "s deefield,ma": {
+    "title": "2017–18 North American winter",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/GFS_Arctic_cold_temperatures_over_North_America_on_January_1%2C_2018.png/500px-GFS_Arctic_cold_temperatures_over_North_America_on_January_1%2C_2018.png",
+    "pageUrl": "https://en.wikipedia.org/wiki/2017%E2%80%9318%20North%20American%20winter"
+  },
+  "scituate,ma": {
+    "title": "Scituate, Massachusetts",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/The_River_and_Town%2C_Scituate%2C_MA.jpg/500px-The_River_and_Town%2C_Scituate%2C_MA.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Scituate%2C%20Massachusetts"
+  },
+  "seekonk,ma": {
+    "title": "Seekonk, Massachusetts",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Seekonk_MA_Town_Hall.jpg/500px-Seekonk_MA_Town_Hall.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Seekonk%2C%20Massachusetts"
+  },
+  "whately,ma": {
+    "title": "Whately, Massachusetts",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Whately_Milk_Bottle.JPG/500px-Whately_Milk_Bottle.JPG",
+    "pageUrl": "https://en.wikipedia.org/wiki/Whately%2C%20Massachusetts"
+  },
+  "harford county,md": {
+    "title": "Harford County, Maryland",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/BEL_AIR_COURTHOUSE_HISTORIC_DISTRICT%2C_HARFORD_COUNTY.jpg/500px-BEL_AIR_COURTHOUSE_HISTORIC_DISTRICT%2C_HARFORD_COUNTY.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Harford%20County%2C%20Maryland"
+  },
+  "perry hall,md": {
+    "title": "Perry Hall, Maryland",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Baltimore_County_Maryland_Incorporated_and_Unincorporated_areas_Perry_Hall_Highlighted.svg/500px-Baltimore_County_Maryland_Incorporated_and_Unincorporated_areas_Perry_Hall_Highlighted.svg.png",
+    "pageUrl": "https://en.wikipedia.org/wiki/Perry%20Hall%2C%20Maryland"
+  },
+  "woodlawn,md": {
+    "title": "Woodlawn, Maryland",
+    "image": null,
+    "pageUrl": "https://en.wikipedia.org/wiki/Woodlawn%2C%20Maryland"
+  },
+  "benton,me": {
+    "title": "Benton, Maine",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Kennebec_County_Maine_incorporated_and_unincorporated_areas_Benton_highlighted.svg/500px-Kennebec_County_Maine_incorporated_and_unincorporated_areas_Benton_highlighted.svg.png",
+    "pageUrl": "https://en.wikipedia.org/wiki/Benton%2C%20Maine"
+  },
+  "brooklin,me": {
+    "title": "Brooklin, Maine",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/View_at_Brooklin%2C_ME.jpg/500px-View_at_Brooklin%2C_ME.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Brooklin%2C%20Maine"
+  },
+  "saco,me": {
+    "title": "Saco, Maine",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Main_Street%2C_Saco_Maine.jpg/500px-Main_Street%2C_Saco_Maine.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Saco%2C%20Maine"
+  },
+  "austin,mn": {
+    "title": "Austin, Minnesota",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Austin_MN_collage.png/500px-Austin_MN_collage.png",
+    "pageUrl": "https://en.wikipedia.org/wiki/Austin%2C%20Minnesota"
+  },
+  "moorhead,mn": {
+    "title": "Moorhead, Minnesota",
+    "image": "https://upload.wikimedia.org/wikipedia/en/thumb/f/f6/Downtown_Moorhead%2C_May_7%2C_2024.png/500px-Downtown_Moorhead%2C_May_7%2C_2024.png",
+    "pageUrl": "https://en.wikipedia.org/wiki/Moorhead%2C%20Minnesota"
+  },
+  "savage,mn": {
+    "title": "Savage, Minnesota",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Dan_Patch_Banners_Savage_MN.jpg/500px-Dan_Patch_Banners_Savage_MN.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Savage%2C%20Minnesota"
+  },
+  "sunburg,mn": {
+    "title": "Sunburg, Minnesota",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Kandiyohi_County_Minnesota_Incorporated_and_Unincorporated_areas_Sunburg_Highlighted.svg/500px-Kandiyohi_County_Minnesota_Incorporated_and_Unincorporated_areas_Sunburg_Highlighted.svg.png",
+    "pageUrl": "https://en.wikipedia.org/wiki/Sunburg%2C%20Minnesota"
+  },
+  "two harbors,mn": {
+    "title": "Two Harbors, Minnesota",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Two_Harbors_Minnesota_aerial_view.jpg/500px-Two_Harbors_Minnesota_aerial_view.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Two%20Harbors%2C%20Minnesota"
+  },
+  "farmington,mo": {
+    "title": "Farmington, Missouri",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Farmington%2C_Missouri_%2848111993801%29.jpg/500px-Farmington%2C_Missouri_%2848111993801%29.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Farmington%2C%20Missouri"
+  },
+  "st. charles,mo": {
+    "title": "St. Charles, Missouri",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Historic_Saint_Charles_Main_Street_3.jpg/500px-Historic_Saint_Charles_Main_Street_3.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/St.%20Charles%2C%20Missouri"
+  },
+  "st. joseph,mo": {
+    "title": "St. Joseph, Missouri",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Robidoux-row.jpg/500px-Robidoux-row.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/St.%20Joseph%2C%20Missouri"
+  },
+  "columbia falls,mt": {
+    "title": "Columbia Falls, Montana",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Flathead_River.jpg/500px-Flathead_River.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Columbia%20Falls%2C%20Montana"
+  },
+  "morehead city,nc": {
+    "title": "Morehead City, North Carolina",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Morehead_City.jpg/500px-Morehead_City.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Morehead%20City%2C%20North%20Carolina"
+  },
+  "raeford,nc": {
+    "title": "Raeford, North Carolina",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Raeford%2C_North_Carolina.jpg/500px-Raeford%2C_North_Carolina.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Raeford%2C%20North%20Carolina"
+  },
+  "tillery,nc": {
+    "title": "Lake Tillery",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Lake_Tillery%2C_North_Carolina.jpg/500px-Lake_Tillery%2C_North_Carolina.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Lake%20Tillery"
+  },
+  "beatrice,ne": {
+    "title": "Beatrice, Nebraska",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Gage_County%2C_Nebraska_courthouse_from_S_4.JPG/500px-Gage_County%2C_Nebraska_courthouse_from_S_4.JPG",
+    "pageUrl": "https://en.wikipedia.org/wiki/Beatrice%2C%20Nebraska"
+  },
+  "conway,nh": {
+    "title": "Conway, New Hampshire",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Center-conway-town-hall-united-methodist-church.JPG/500px-Center-conway-town-hall-united-methodist-church.JPG",
+    "pageUrl": "https://en.wikipedia.org/wiki/Conway%2C%20New%20Hampshire"
+  },
+  "epping,nh": {
+    "title": "Epping, New Hampshire",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/EppingTownHallApril2025.jpg/500px-EppingTownHallApril2025.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Epping%2C%20New%20Hampshire"
+  },
+  "hillsborough,nh": {
+    "title": "Hillsborough, New Hampshire",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Hillsborough-Hillsborough-NH.png/500px-Hillsborough-Hillsborough-NH.png",
+    "pageUrl": "https://en.wikipedia.org/wiki/Hillsborough%2C%20New%20Hampshire"
+  },
+  "plymouth,nh": {
+    "title": "Plymouth, New Hampshire",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Plymouth_NH.jpg/500px-Plymouth_NH.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Plymouth%2C%20New%20Hampshire"
+  },
+  "raymond,nh": {
+    "title": "Raymond, New Hampshire",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Raymond_NH_Common_021813.jpg/500px-Raymond_NH_Common_021813.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Raymond%2C%20New%20Hampshire"
+  },
+  "lebanon,nj": {
+    "title": "Lebanon, New Jersey",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Lebanon_Reformed_Church%2C_Lebanon%2C_NJ.jpg/500px-Lebanon_Reformed_Church%2C_Lebanon%2C_NJ.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Lebanon%2C%20New%20Jersey"
+  },
+  "lyons,nj": {
+    "title": "Bernards Township, New Jersey",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Van_Dorn%27s_Mill%2C_Franklin_Corners%2C_NJ.jpg/500px-Van_Dorn%27s_Mill%2C_Franklin_Corners%2C_NJ.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Bernards%20Township%2C%20New%20Jersey"
+  },
+  "mt laurel,nj": {
+    "title": "Mount Laurel, New Jersey",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Laurelacres.jpg/500px-Laurelacres.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Mount%20Laurel%2C%20New%20Jersey"
+  },
+  "paterson,nj": {
+    "title": "Paterson, New Jersey",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Great_Falls_of_Paterson_2016.jpg/500px-Great_Falls_of_Paterson_2016.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Paterson%2C%20New%20Jersey"
+  },
+  "rodeo,nm": {
+    "title": "Rodeo, New Mexico",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Rodeo%2C_New_Mexico.jpg/500px-Rodeo%2C_New_Mexico.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Rodeo%2C%20New%20Mexico"
+  },
+  "chatham,ny": {
+    "title": "Chatham, New York",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Old_Parsonage%2C_Old_Chatham_%28Columbia_County%2C_New_York%29_%28retouched%29.jpg/500px-Old_Parsonage%2C_Old_Chatham_%28Columbia_County%2C_New_York%29_%28retouched%29.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Chatham%2C%20New%20York"
+  },
+  "manhattan,ny": {
+    "title": "Manhattan",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Above_Gotham.jpg/500px-Above_Gotham.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Manhattan"
+  },
+  "narrowsburg,ny": {
+    "title": "Narrowsburg, New York",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Narrowsburg%2C_NY_from_NY-PA_bridge..jpg/500px-Narrowsburg%2C_NY_from_NY-PA_bridge..jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Narrowsburg%2C%20New%20York"
+  },
+  "ronkonkoma,ny": {
+    "title": "Ronkonkoma, New York",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Ronkonkoma_Station_Archway.jpg/500px-Ronkonkoma_Station_Archway.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Ronkonkoma%2C%20New%20York"
+  },
+  "watkins glen,ny": {
+    "title": "Watkins Glen, New York",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/NY_14_SB_approaching_NY_409-NY_414.jpg/500px-NY_14_SB_approaching_NY_409-NY_414.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Watkins%20Glen%2C%20New%20York"
+  },
+  "west monroe,ny": {
+    "title": "West Monroe, New York",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Oswego_County_New_York_incorporated_and_unincorporated_areas_West_Monroe_highlighted.svg/500px-Oswego_County_New_York_incorporated_and_unincorporated_areas_West_Monroe_highlighted.svg.png",
+    "pageUrl": "https://en.wikipedia.org/wiki/West%20Monroe%2C%20New%20York"
+  },
+  "! ravenna,oh": {
+    "title": "Ravenna, Ohio",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Ravenna_downtown.jpg/500px-Ravenna_downtown.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Ravenna%2C%20Ohio"
+  },
+  "defiance,oh": {
+    "title": "The Prize Winner of Defiance, Ohio",
+    "image": null,
+    "pageUrl": "https://en.wikipedia.org/wiki/The%20Prize%20Winner%20of%20Defiance%2C%20Ohio"
+  },
+  "geneva,oh": {
+    "title": "Geneva, Ohio",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/South_Broadway%2C_Geneva%2C_Ohio_-_20220216.jpg/500px-South_Broadway%2C_Geneva%2C_Ohio_-_20220216.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Geneva%2C%20Ohio"
+  },
+  "north olmsted,oh": {
+    "title": "North Olmsted, Ohio",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/North_Olmsted_Old_Town_Hall.JPG/500px-North_Olmsted_Old_Town_Hall.JPG",
+    "pageUrl": "https://en.wikipedia.org/wiki/North%20Olmsted%2C%20Ohio"
+  },
+  "clackamas,or": {
+    "title": "Clackamas County, Oregon",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/View_of_Mt_Hood_by_Wamic%2C_Mt_Hood_National_Forest_%2822824984634%29.jpg/500px-View_of_Mt_Hood_by_Wamic%2C_Mt_Hood_National_Forest_%2822824984634%29.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Clackamas%20County%2C%20Oregon"
+  },
+  "! philadelphia,pa": {
+    "title": "Philadelphia",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Independence_National_Historical_Park_INDE0004_b.jpg/500px-Independence_National_Historical_Park_INDE0004_b.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Philadelphia"
+  },
+  "shillington,pa": {
+    "title": "Shillington, Pennsylvania",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Shillington_Town_Hall%2C_BerksCo_PA_01.JPG/500px-Shillington_Town_Hall%2C_BerksCo_PA_01.JPG",
+    "pageUrl": "https://en.wikipedia.org/wiki/Shillington%2C%20Pennsylvania"
+  },
+  "glen allen,va": {
+    "title": "Glen Allen, Virginia",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Glen_Allen_VA.JPG/500px-Glen_Allen_VA.JPG",
+    "pageUrl": "https://en.wikipedia.org/wiki/Glen%20Allen%2C%20Virginia"
+  },
+  "tyson's corner,va": {
+    "title": "Tysons, Virginia",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Tysons_Corner_Sunset_.jpg/500px-Tysons_Corner_Sunset_.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Tysons%2C%20Virginia"
+  },
+  "fairfax,vt": {
+    "title": "Fairfax, Vermont",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Fairfax%2C_Vermont_%2817129795518%29.jpg/500px-Fairfax%2C_Vermont_%2817129795518%29.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Fairfax%2C%20Vermont"
   }
 }

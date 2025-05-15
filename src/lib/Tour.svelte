@@ -61,7 +61,38 @@
     arrowElement.style.display = 'block';
   }
 
+  let touchStartX = 0;
+  const swipeThreshold = 50; // Minimum distance for a swipe
+
+  const handleTouchStart = (event: Event | TouchEvent) => {
+    if ('touches' in event) {
+      touchStartX = event.touches[0].clientX;
+    }
+  };
+
+  const handleTouchEnd = (event: Event | TouchEvent) => {
+    if ('changedTouches' in event) {
+      const touchEndX = event.changedTouches[0].clientX;
+      const diff = touchEndX - touchStartX;
+
+      // Only handle swipes on smaller screens
+      if (window.innerWidth <= 600) {
+        if (diff > swipeThreshold && showPrevious) {
+          previousStep();
+        } else if (diff < -swipeThreshold && showNext) {
+          nextStep();
+        }
+      }
+    }
+  };
+
   onMount(() => {
+    // Add touch event listeners to the panel element
+    if (panelElement) {
+      panelElement.addEventListener('touchstart', handleTouchStart as EventListenerOrEventListenerObject);
+      panelElement.addEventListener('touchend', handleTouchEnd as EventListenerOrEventListenerObject);
+    }
+
     if (currentStep.elementId) {
       targetElement = document.getElementById(currentStep.elementId);
       if (targetElement) {
@@ -73,6 +104,11 @@
         return () => {
           window.removeEventListener('resize', positionArrow);
           observer.disconnect();
+          // Clean up touch event listeners
+          if (panelElement) {
+            panelElement.removeEventListener('touchstart', handleTouchStart as EventListenerOrEventListenerObject);
+            panelElement.removeEventListener('touchend', handleTouchEnd as EventListenerOrEventListenerObject);
+          }
         };
       } else {
         console.warn(`Element with id "${currentStep.elementId}" not found.`);
@@ -100,6 +136,11 @@
 
   onDestroy(() => {
     window.removeEventListener('resize', positionArrow);
+    // Clean up touch event listeners
+    if (panelElement) {
+      panelElement.removeEventListener('touchstart', handleTouchStart as EventListenerOrEventListenerObject);
+      panelElement.removeEventListener('touchend', handleTouchEnd as EventListenerOrEventListenerObject);
+    }
   });
 
   // Crossfade transition for step content

@@ -3,17 +3,8 @@
   "eslint.useFlatConfig": true,
   "eslint.enable": true,
   "eslint.run": "onType",
-
-  "editor.codeActionsOnSave": {
-    "source.fixAll": "never"
-  },
-
   "eslint.codeActionsOnSave.mode": "all",
-
-  "eslint.options": {
-    "extraFileExtensions": [".svelte"]
-  },
-
+  "eslint.lintTask.enable": true,
   "files.exclude": {
     "**/.svelte-kit": true,
     "**/build": true

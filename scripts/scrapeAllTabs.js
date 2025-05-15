@@ -346,12 +346,14 @@ const run = async () => {
           console.warn(
             `⚠️ Failed to copy ${src} to ${dest}: ${copyErr.message}`
           );
+          throw copyErr;
         }
       }
       console.log("Finished copying cache files.");
     }
   } catch (err) {
     console.error("Error:", err);
+    throw err;
   }
 };
 

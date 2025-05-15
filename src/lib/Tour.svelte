@@ -3,6 +3,7 @@
   import { quintOut } from 'svelte/easing';
   import { crossfade } from 'svelte/transition';
   import { markerSvg } from './icons';
+  import DimmedBackgroundPanel from './DimmedBackgroundPanel.svelte';
 
   const dispatch = createEventDispatcher();
 
@@ -80,8 +81,8 @@
   });
 </script>
 
-<div class="tour-overlay">
-  {#if currentStep}
+{#if currentStep}
+  <DimmedBackgroundPanel on:dismiss={dismiss}>
     <div class="tour-panel" bind:this={panelElement}>
       <div class="panel-content" in:receive={{ key: currentStepIndex }} out:send={{ key: currentStepIndex }}>
         <div class="header">
@@ -107,25 +108,10 @@
         </div>
       </div>
     </div>
-  {/if}
-</div>
+  </DimmedBackgroundPanel>
+{/if}
 
 <style>
-  .tour-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    opacity: 1; /* Make overlay fully opaque */
-    background-color: rgba(0, 0, 0, 0.7); /* Use rgba for background color with desired opacity */
-    justify-content: center;
-    align-items: center;
-    z-index: 9999; /* Ensure it's above all other content, including toolbar */
-    pointer-events: none; /* Allow clicks to pass through overlay */
-  }
-
   .tour-panel {
     pointer-events: auto; /* Re-enable clicks for the panel */
     background-color: white;
@@ -160,7 +146,7 @@
   }
 
   .icon-container {
-    width: 80px; 
+    width: 80px;
     height: auto;
     margin: -25px 10px 0px -15px;
     flex-shrink: 0;

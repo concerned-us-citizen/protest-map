@@ -1,5 +1,6 @@
 <script lang="ts">
   import { fade } from 'svelte/transition';
+  import DimmedBackgroundPanel from './DimmedBackgroundPanel.svelte';
 
   export let visible: boolean;
   export let onClose: () => void;
@@ -7,7 +8,7 @@
 </script>
 
 {#if visible}
-  <div class="credits-overlay">
+  <DimmedBackgroundPanel on:dismiss={onClose}>
     <div class="credits-panel">
       <button class="close-button dismiss-info-button" on:click={onClose} aria-label="Close info panel">×</button>
       <p class="toggle-attribution-container" style="font-weight: bold;">Credits</p>
@@ -36,26 +37,10 @@
         <button class="link-button" on:click={onRestartTour}>Take tour again</button>
       </p>
     </div>
-  </div>
+  </DimmedBackgroundPanel>
 {/if}
 
 <style>
-  /* Credits Overlay Styles (similar to Tour overlay) */
-  .credits-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    opacity: 1; /* Make overlay fully opaque */
-    background-color: rgba(0, 0, 0, 0.7); /* Use rgba for background color with desired opacity */
-    justify-content: center; /* Center panel horizontally */
-    align-items: center; /* Center panel vertically */
-    z-index: 9999; /* Ensure it's above all other content, including toolbar */
-    /* pointer-events: none; /* Allow clicks to pass through overlay - maybe not needed here as the panel itself is clickable */
-  }
-
   /* Credits Panel Styles */
   .credits-panel {
     /* Remove absolute positioning and transform centering */
@@ -65,8 +50,6 @@
     transform: none;
 
     /* Keep responsive sizing but adjust max-width/height if needed to match Tour feel */
-    /* Keep responsive sizing but adjust max-width/height if needed to match Tour feel */
-    /* Removed explicit width and max-width to allow flexbox to center */
     max-height: 66.66vh; /* Keep original max-height */
 
     /* Keep existing visual styles */

@@ -11,8 +11,6 @@
 
   let panelElement: HTMLElement;
   let targetElement: HTMLElement | null = null;
-  let arrowElement: SVGElement | null = null;
-  let arrowDirection: 'left' | 'right' = 'right';
 
   $: currentStep = steps[currentStepIndex];
   $: showPrevious = currentStepIndex > 0;
@@ -32,33 +30,6 @@
     if (showPrevious) {
       currentStepIndex--;
     }
-  }
-
-  function positionArrow() {
-    if (!panelElement || !targetElement || !arrowElement) return;
-
-    const targetRect = targetElement.getBoundingClientRect();
-
-    // Calculate space on left and right
-    const spaceLeft = targetRect.left;
-    const spaceRight = window.innerWidth - targetRect.right;
-
-    // Determine arrow direction based on space
-    if (spaceRight > spaceLeft) {
-      arrowDirection = 'right';
-      // Position arrow to the left of the target
-      arrowElement.style.left = `${targetRect.left - 20}px`; // 20px margin
-      arrowElement.style.top = `${targetRect.top + targetRect.height / 2 - arrowElement.getBoundingClientRect().height / 2}px`;
-      arrowElement.style.transform = 'rotate(0deg)'; // Pointing right
-    } else {
-      arrowDirection = 'left';
-      // Position arrow to the right of the target
-      arrowElement.style.left = `${targetRect.right + 20}px`; // 20px margin
-      arrowElement.style.top = `${targetRect.top + targetRect.height / 2 - arrowElement.getBoundingClientRect().height / 2}px`;
-      arrowElement.style.transform = 'rotate(180deg)'; // Pointing left
-    }
-
-    arrowElement.style.display = 'block';
   }
 
   let touchStartX = 0;
@@ -92,50 +63,9 @@
       panelElement.addEventListener('touchstart', handleTouchStart as EventListenerOrEventListenerObject);
       panelElement.addEventListener('touchend', handleTouchEnd as EventListenerOrEventListenerObject);
     }
-
-    if (currentStep.elementId) {
-      targetElement = document.getElementById(currentStep.elementId);
-      if (targetElement) {
-        positionArrow();
-        window.addEventListener('resize', positionArrow);
-        // Observe target element for position changes (e.g., due to layout shifts)
-        const observer = new MutationObserver(positionArrow);
-        observer.observe(targetElement, { attributes: true, childList: true, subtree: true });
-        return () => {
-          window.removeEventListener('resize', positionArrow);
-          observer.disconnect();
-          // Clean up touch event listeners
-          if (panelElement) {
-            panelElement.removeEventListener('touchstart', handleTouchStart as EventListenerOrEventListenerObject);
-            panelElement.removeEventListener('touchend', handleTouchEnd as EventListenerOrEventListenerObject);
-          }
-        };
-      } else {
-        console.warn(`Element with id "${currentStep.elementId}" not found.`);
-        if (arrowElement) arrowElement.style.display = 'none';
-      }
-    } else {
-       if (arrowElement) arrowElement.style.display = 'none';
-    }
   });
 
-  // Update arrow position when currentStepIndex changes
-  $: {
-    if (currentStep && currentStep.elementId) {
-      targetElement = document.getElementById(currentStep.elementId);
-      if (targetElement) {
-        positionArrow();
-      } else {
-        console.warn(`Element with id "${currentStep.elementId}" not found.`);
-        if (arrowElement) arrowElement.style.display = 'none';
-      }
-    } else {
-      if (arrowElement) arrowElement.style.display = 'none';
-    }
-  }
-
   onDestroy(() => {
-    window.removeEventListener('resize', positionArrow);
     // Clean up touch event listeners
     if (panelElement) {
       panelElement.removeEventListener('touchstart', handleTouchStart as EventListenerOrEventListenerObject);
@@ -177,12 +107,6 @@
         </div>
       </div>
     </div>
-
-    {#if currentStep.elementId}
-      <svg class="arrow" bind:this={arrowElement} width="20" height="20" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path d="M10 0L20 10L10 20L10 10L0 10L10 0Z"/>
-      </svg>
-    {/if}
   {/if}
 </div>
 
@@ -214,7 +138,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    position: relative; /* Needed for absolute positioning of arrow */
+    position: relative;
   }
 
   @media (max-width: 600px) {
@@ -332,13 +256,5 @@
 
   .link-button:hover {
     text-decoration: none;
-  }
-
-  .arrow {
-    position: fixed;
-    color: #ff0000; /* Bright color */
-    z-index: 1001;
-    pointer-events: none; /* Allow clicks to pass through arrow */
-    display: none; /* Hidden by default, shown when elementId is present */
   }
 </style>

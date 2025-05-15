@@ -53,9 +53,16 @@ jobs:
         run: |
           mkdir -p cache
           for f in geocache.json bad_geocache.json wikicache.json; do
-            if [ ! -e "cache/$f" ] && [ -e "prebuilt_data/$f" ]; then
-              cp "prebuilt_data/$f" "cache/$f"
-              echo "Copied prebuilt_data/$f"
+            # Check if prebuilt_data file exists
+            if [ -e "prebuilt_data/$f" ]; then
+              # Check if cache file exists AND prebuilt_data file is NOT newer than cache file
+              if [ -e "cache/$f" ] && [ ! "prebuilt_data/$f" -nt "cache/$f" ]; then
+                echo "Cache file cache/$f is newer or same age as prebuilt_data/$f, keeping cache version."
+              else
+                # If cache file doesn't exist OR prebuilt_data file is newer than cache file
+                cp "prebuilt_data/$f" "cache/$f"
+                echo "Copied prebuilt_data/$f (newer or cache did not exist)."
+              fi
             fi
           done
 

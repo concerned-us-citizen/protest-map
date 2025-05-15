@@ -3,9 +3,11 @@ import { loadGeocodeCache, geocode } from "./geocode.mjs";
 import { loadWikiCache, getWikipediaCityInfo } from "./wikidata.mjs";
 import { loadVotingInfo, fetchVotingInfo } from "./votingInfo/votingInfo.mjs";
 import { normalizeToYYYYMMDD } from "../src/lib/dateUtils.js"; // Import the new utility
+import { mkdir } from "fs/promises";
 
 const DOC_ID = "1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A";
-const OUTPUT = "./static/data/data.json";
+const OUTPUT_DIR = "./static/data";
+const OUTPUT = `${OUTPUT_DIR}/data.json`;
 const RAW_OUTPUT = "./cache/events_raw.json";
 
 function stripPropsFromValues(obj, propsToRemove) {
@@ -322,6 +324,7 @@ const run = async () => {
       events: normalizedEvents.groupedEvents,
       locations: simplifiedLocations,
     };
+    await mkdir(OUTPUT_DIR, { recursive: true });
     await writeFile(OUTPUT, JSON.stringify(result, null, 2));
     console.log(`Saved to ${OUTPUT}`);
 

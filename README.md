@@ -2,7 +2,7 @@
 
 This project displays recent and planned US protest locations over time on an interactive map, using data provided by We (the People) Dissent. Locations are colored to indicate the 2024 Trump or Harris voting margin for their surrounding precinct.
 
-<img src="README-assets/desktop-screenshot.png" width="500">
+<img src="static/desktop-screenshot.png" width="500">
 
 ## Project Overview
 

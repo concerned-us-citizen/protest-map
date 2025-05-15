@@ -7,7 +7,7 @@
     "scrape": "node scripts/scrapeAllTabs.js",
     "scrapecached": "node scripts/scrapeAllTabs.js --use-cache",
     "dev": "vite dev",
-    "build": "pnpm run lint:strict && vite build",
+    "build": "npm run lint:strict && vite build",
     "lint": "eslint . --ext .js,.ts,.svelte",
     "lint:strict": "eslint . --ext .js,.ts,.svelte --max-warnings=0",
     "preview": "vite preview",

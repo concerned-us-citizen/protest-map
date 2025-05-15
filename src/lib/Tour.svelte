@@ -11,7 +11,6 @@
   export let currentStepIndex: number = 0;
 
   let panelElement: HTMLElement;
-  let targetElement: HTMLElement | null = null;
 
   $: currentStep = steps[currentStepIndex];
   $: showPrevious = currentStepIndex > 0;

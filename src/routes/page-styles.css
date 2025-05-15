@@ -277,18 +277,6 @@
   :global(.leaflet-control-container .leaflet-control-zoom) {
     display: none !important;
   }
-
-  .credits-panel {
-    top: 10px !important; /* Align with other top elements */
-    transform: translateX(-50%) !important; /* Keep centered horizontally */
-    max-height: calc(
-      100vh - 20px
-    ) !important; /* Fit within viewport with some margin */
-    overflow-y: auto !important; /* Enable vertical scrolling */
-    width: calc(100% - 20px) !important; /* Adjust width for mobile */
-    max-width: none !important; /* Remove max-width constraint */
-    left: 50% !important; /* Ensure it stays centered */
-  }
 }
 
 /* Portrait specific styles */

@@ -32,18 +32,20 @@
     align-items: center;
     z-index: 9999; /* Ensure it's above all other content */
     pointer-events: auto; /* Allow pointer events on the background itself */
-    padding: 0 5px; /* Add 5px horizontal padding to ensure margin on small screens */
     box-sizing: border-box; /* Include padding in the element's total width */
   }
 
   .centered-content {
     max-width: 800px; /* Restrict the maximum width of the content panel */
     margin: 0 auto; /* Center the block horizontally within the flex container */
-    padding: 20px; /* Add some padding inside the content area */
+    padding: 10px; /* Add some padding inside the content area */
+    height: 100%;
     /* Removed background-color: white; - slotted content should provide its own background */
     border-radius: 8px; /* Optional: add rounded corners */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: add a subtle shadow */
     pointer-events: auto; /* Allow pointer events on the content inside */
     box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 </style>

@@ -5,6 +5,39 @@
   export let visible: boolean;
   export let onClose: () => void;
   export let onRestartTour: () => void; // Export a function prop
+
+  const attributions = [
+    {
+      description: 'Location data',
+      resourceName: 'We (the People) Dissent',
+      resourceLink: 'https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748'
+    },
+    {
+      description: 'Voting precinct margins',
+      resourceName: 'The New York Times',
+      resourceLink: 'https://github.com/nytimes/presidential-precinct-map-2024'
+    },
+    {
+      description: 'App source',
+      resourceName: 'US Protest Map',
+      resourceLink: 'https://github.com/concerned-us-citizen/protest-map'
+    },
+    {
+      description: 'Privacy-oriented analytics',
+      resourceName: 'Goat Counter',
+      resourceLink: 'https://www.goatcounter.com'
+    },
+    {
+      description: 'Geocoding',
+      resourceName: 'Nominatim',
+      resourceLink: 'https://nominatim.openstreetmap.org'
+    },
+    {
+      description: 'Protest icon',
+      resourceName: 'Fission Strategy',
+      resourceLink: 'https://thenounproject.com/icon/protest-15055/'
+    }
+  ];
 </script>
 
 {#if visible}
@@ -13,25 +46,13 @@
       <button class="close-button dismiss-info-button" on:click={onClose} aria-label="Close info panel">×</button>
       <p class="toggle-attribution-container" style="font-weight: bold;">Credits</p>
       <div class="attribution-container" transition:fade>
-        <p>A big shout out to the providers of these resources:</p>
-        <p class="attribution">
-          Location data: <a href="https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748" target="_blank">We (the People) Dissent</a>
-        </p>
-        <p class="attribution">
-          Voting precinct margins: <a href="https://github.com/nytimes/presidential-precinct-map-2024" target="_blank">The New York Times</a>
-        </p>
-        <p class="attribution">
-          App source: <a href="https://github.com/concerned-us-citizen/protest-map" target="_blank">US Protest Map</a>
-        </p>
-        <p class="attribution">
-          Privacy-oriented analytics: <a href="https://www.goatcounter.com">Goat Counter</a>
-        </p>
-        <p class="attribution">
-          Geocoding: <a href="https://nominatim.openstreetmap.org">Nominatim</a>
-        </p>
-        <p class="attribution">
-          Protest icon: <a href="https://thenounproject.com/icon/protest-15055/">Fission Strategy</a>
-        </p>
+        <p>A big shout out to these resources:</p>
+        {#each attributions as attribution}
+          <p class="attribution">
+            <strong>{attribution.description}</strong><br>
+            <a href={attribution.resourceLink} target="_blank">{attribution.resourceName}</a>
+          </p>
+        {/each}
       </div>
       <p>
         <button class="link-button" on:click={onRestartTour}>Take tour again</button>
@@ -50,7 +71,7 @@
     transform: none;
 
     /* Keep responsive sizing but adjust max-width/height if needed to match Tour feel */
-    max-height: 66.66vh; /* Keep original max-height */
+
 
     /* Keep existing visual styles */
     background-color: rgba(255, 255, 255);
@@ -67,6 +88,7 @@
     display: flex;
     flex-direction: column;
     align-items: center; /* Center flex items (paragraphs, attribution container) horizontally */
+    max-height: 95vh;
     overflow-y: auto;
     pointer-events: auto; /* Ensure panel is clickable */
   }
@@ -89,12 +111,7 @@
     margin: 0 0 1.2em 0;
     flex-shrink: 0; /* Prevent paragraphs from shrinking */
   }
-  /* Center the button paragraph and add margin */
-  .credits-panel p:last-child {
-    margin-top: 20px; /* Add margin above the button */
-    margin-bottom: 0;
-    align-self: center; /* Ensure the last paragraph (button) is centered */
-  }
+
   .attribution-container {
     flex-grow: 1; /* Allow attribution container to grow */
     flex-shrink: 0; /* Prevent attribution container from shrinking */
@@ -102,15 +119,15 @@
     max-width: 100%; /* Ensure it doesn't exceed parent width */
     text-align: left; /* Keep text left-justified within the container */
   }
-  .dismiss-info-button { /* Combined with .close-button styles from EventsFilter */
+  .dismiss-info-button {
     position: absolute;
-    top: 5px; /* Adjusted to match EventsFilter */
-    right: 7px; /* Adjusted to match EventsFilter */
+    top: 0px;
+    right: 0px;
     background: none;
     border: none;
-    font-size: 1.5em; /* Matched from EventsFilter */
+    font-size: 1.5em;
     line-height: 1;
-    padding: 0; /* Matched from EventsFilter */
+    padding: 15px;
     cursor: pointer;
     color: #888;
   }
@@ -131,6 +148,10 @@
   }
   .attribution a:hover {
     text-decoration: underline;
+  }
+
+  p button {
+    margin-top: 20px;
   }
 
   @media (max-width: 600px) {

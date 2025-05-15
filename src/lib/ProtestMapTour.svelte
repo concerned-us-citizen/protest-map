@@ -13,7 +13,7 @@ steps={[
     `,
   },
   {
-    title: "Colored Protest Locations",
+    title: "Colored Locations",
     description: `
     <p>Protests appear on the map as protest signs, colored in shades of red or blue to reflect the 2024 voting results of the surrounding precinct.</p>
     <p>This is presented using the margin by which Trump or Harris won the election in that precinct, from data compiled by the New York Times.</p>
@@ -46,8 +46,8 @@ steps={[
   {
     title: "View By Event",
     description: `
-    <img src="event-filter.png" class='tour-image' />
     <p>Each protest location is associated with an event (e.g."Hands Off!"). In many cases, there are multiple events on a given day.</p>
+    <img src="event-filter.png" class='tour-image' />
     <p>To see specific events' locations, tap the filter tool button to see the list of events. Then tap one or more names from that list.</p>
     `,
   },

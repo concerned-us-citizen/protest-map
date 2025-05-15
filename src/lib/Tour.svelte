@@ -102,7 +102,7 @@
             {/each}
           </div>
           <div class="navigation-buttons">
-            <button class="link-button" on:click={previousStep} class:hidden={!showPrevious}>Previous</button>
+            <button class="link-button" on:click={previousStep} class:hidden={!showPrevious}>Prev</button>
             <button class="link-button" on:click={nextStep} class:hidden={!showNext}>Next</button>
           </div>
         </div>
@@ -118,18 +118,20 @@
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     padding: 20px;
-    width: 90%; /* Adjust width as needed */
-    height: 300px;
-    max-width: 500px; /* Max width */
+    min-height: 400px;
+    min-width: 500px;
+    max-width: 500px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     position: relative;
+    max-height: 95vh;
+    overflow-y: auto;
   }
 
   @media (max-width: 600px) {
     .tour-panel {
-      height: 385px; /* Taller height for mobile */
+      min-width: 82vw;
+      min-height: 440px; /* Taller height for mobile */
     }
   }
 
@@ -137,6 +139,7 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    flex-grow: 1;
   }
 
   .header {
@@ -165,7 +168,7 @@
   .title-container h1 { /* Updated class name */
     font-size: 1.5em;
     font-weight: bold;
-    margin: 0 0 10px -10px;
+    margin: 5px 0 10px -10px;
   }
 
   @media (max-width: 600px) {
@@ -177,6 +180,7 @@
   .description-text { /* New style for description */
     font-size: 1em;
     margin: 0 0 15px 0; /* Add some margin below description */
+    flex-grow: 1;
     text-align: left;
   }
 

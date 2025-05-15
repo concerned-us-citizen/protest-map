@@ -13,7 +13,7 @@
 
 export let data: EventData;
 
-  let currentDate: string = '';
+  let currentDateString: string = '';
   let allDates: string[] = [];
   let index: number = 0;
   let playing = false;
@@ -86,7 +86,7 @@ export let data: EventData;
     clearTimeout(timer);
     if (!playing || !allDates.length || !data?.events) return;
 
-    const numEvents = (data.events[currentDate] || []).length;
+    const numEvents = (data.events[currentDateString] || []).length;
     let lingerTime;
 
     if (numEvents === 0 && allDates.length > 1) {
@@ -344,9 +344,9 @@ export let data: EventData;
   }
 
   $: if (allDates.length > 0 && data && data.events) {
-    currentDate = allDates[index];
+    currentDateString = allDates[index];
     selectedEventNames = new Set();
-    const currentDayEvents = data?.events?.[currentDate] || [];
+    const currentDayEvents = data?.events?.[currentDateString] || [];
 
     const locationsForDay = new Set(currentDayEvents.map(event => event.location));
     distinctLocationCount = locationsForDay.size;
@@ -386,12 +386,12 @@ export let data: EventData;
 </svelte:head>
 
 {#if data && data.events && data.locations}
-  <MapDisplay eventData={data} {currentDate} {selectedEventNames} />
+  <MapDisplay eventData={data} {currentDateString} {selectedEventNames} />
 
   <div class="top-center-container">
     <div class="top-center-main-panel">
       <h3 class="main-title">
-        Protests on {formatShortDate(currentDate)}
+        Protests on {formatShortDate(currentDateString)}
       </h3>
       <div class="attribution-link">
         <i>Provided by <a
@@ -431,11 +431,13 @@ export let data: EventData;
     </button>
   </div>
 
-  {#if histogramData.length > 0 && currentDate}
+  {#if histogramData.length > 0 && currentDateString}
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div class="bottom-controls-wrapper" class:is-scrubbing={isScrubbingDate} on:click={handleBottomControlsClick}>
-      <EventInfo visible={isScrubbingDate}
+      <EventInfo 
+        visible={isScrubbingDate}
+        currentDateString={currentDateString}
         displayedEventNameCount={uniqueEvents.filter(e => e.name && e.name.trim() !== '').length}
         {distinctLocationCount}
         allEventNames={uniqueEvents.map(e => e.name).filter(name => name && name.trim() !== '').join(', ')}
@@ -443,7 +445,7 @@ export let data: EventData;
       <div class="slider-container">
         <DateHistogramSlider
           {histogramData}
-          {currentDate}
+          {currentDateString}
           {systemTodayDate}
           onDateSelect={handleDateSelectFromSlider}
           onPrev={prevDate}

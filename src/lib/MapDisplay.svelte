@@ -6,7 +6,7 @@
   import { markerSvg } from '$lib/icons';
 
   export let eventData: EventData;
-  export let currentDate: string;
+  export let currentDateString: string;
   export let selectedEventNames: Set<string>;
 
   let mapElement: HTMLElement;
@@ -55,7 +55,7 @@
     const currentMarkerLayerGroup = L.layerGroup(); // Create a new layer group
     markerLayerGroup = currentMarkerLayerGroup; // Assign to the component's reactive variable
 
-    const eventsToRender = (eventData.events[currentDate] || []).filter(event =>
+    const eventsToRender = (eventData.events[currentDateString] || []).filter(event =>
       selectedEventNames.size === 0 || selectedEventNames.has(event.name)
     );
 
@@ -270,7 +270,7 @@
           }
         });
         
-        if (currentDate) { // Initial render if currentDate is already set
+        if (currentDateString) { // Initial render if currentDateString is already set
           renderMarkers();
         }
 

@@ -1,8 +1,10 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
+  import { formatDate, isFutureDate } from "./dateUtils";
 
   export let visible: boolean;
   export let displayedEventNameCount: number; // Unique event names
+  export let currentDateString: string;
   export let distinctLocationCount: number;
   export let allEventNames: string; // Comma-separated full list
 </script>
@@ -10,6 +12,12 @@
 {#if visible}
 <div class="event-info" transition:fade={{ duration: 200 }}>
   {#if distinctLocationCount > 0}
+    <div class="counts-line">
+      <strong>
+        <span class="date-display">{formatDate(currentDateString)} {isFutureDate(currentDateString) ? '(future)' : ''} </span>
+        <span class="stats-display">{displayedEventNameCount > 0 ? displayedEventNameCount : 0} Event{displayedEventNameCount === 1 ? '' : 's'}, {distinctLocationCount} Location{distinctLocationCount === 1 ? '' : 's'}</span>
+      </strong>
+    </div>
     <div class="event-names-summary-text">
       {(() => {
         const trimmedNames = allEventNames ? allEventNames.trim() : '';
@@ -19,9 +27,6 @@
         }
         return allEventNames;
       })()}
-    </div>
-    <div class="counts-line">
-      <strong>{displayedEventNameCount > 0 ? displayedEventNameCount : 0} Event{displayedEventNameCount === 1 ? '' : 's'}, {distinctLocationCount} Location{distinctLocationCount === 1 ? '' : 's'}</strong>
     </div>
   {:else}
     <div class="no-events-message">
@@ -57,6 +62,14 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    /* Removed flexbox properties from here */
+    align-items: center; /* Vertically align items */
+  }
+
+  .counts-line strong {
+    display: flex; /* Add flexbox to strong tag */
+    justify-content: space-between; /* Justify content within strong tag */
+    width: 100%; /* Make strong tag take full width */
   }
 
   .event-names-summary-text {

@@ -134,3 +134,21 @@ export const normalizeToYYYYMMDD = (dateStr) => {
   if (!d) return null;
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 };
+
+/**
+ * Checks if a date string represents a date in the future.
+ * Uses parseDateString for reliable parsing.
+ * @param {string | null | undefined} dateStr The date string to check.
+ * @returns {boolean} Returns true if the date is after today, otherwise false.
+ */
+export const isFutureDate = (dateStr) => {
+  const d = parseDateString(dateStr);
+  if (!d) return false;
+
+  const today = new Date();
+  // Set time to midnight for accurate date comparison
+  today.setHours(0, 0, 0, 0);
+  d.setHours(0, 0, 0, 0);
+
+  return d > today;
+};

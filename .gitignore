@@ -8,6 +8,7 @@ node_modules
 /.svelte-kit
 /build
 /cache
+static/data/data.json
 
 # OS
 .DS_Store

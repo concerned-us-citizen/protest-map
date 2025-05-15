@@ -9,7 +9,7 @@
   <button class="close-button" on:click={onClose} aria-label="Close filter">×</button>
   <h4 class="filter-title">{ uniqueEvents.length} Event{uniqueEvents.length === 1 ? '' : 's'}</h4>
   {#if uniqueEvents.length > 0}
-    <div class="events-section-description">(Toggle one or more)</div>
+    <div class="events-section-description">(Tap to toggle one or more)</div>
   {/if}
   <div class="event-list-scrollable-area">
     {#if uniqueEvents.length > 0}

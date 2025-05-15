@@ -1,5 +1,3 @@
-import { readFile, writeFile, access } from "fs/promises";
-import { constants } from "fs";
 import { load } from "cheerio";
 import { loadGeocodeCache, geocode } from "./geocode.mjs";
 import { loadWikiCache, getWikipediaCityInfo } from "./wikidata.mjs";
@@ -240,9 +238,13 @@ async function normalizeByLocationAndGroupByDate(originalEvents) {
   return { groupedEvents, locations };
 }
 
+const { readFile, writeFile, access, copyFile } = await import("fs/promises"); // Add copyFile
+const { constants } = await import("fs"); // Ensure constants is imported
+
 const run = async () => {
   const args = process.argv.slice(2);
   const tryUsingCache = args.includes("--use-cache");
+  const updatePrebuiltData = args.includes("--updatePrebuiltData"); // Check for the new flag
   let rawEvents;
   let loadedFromCache = false;
   let cacheTimestamp;
@@ -322,6 +324,32 @@ const run = async () => {
     };
     await writeFile(OUTPUT, JSON.stringify(result, null, 2));
     console.log(`Saved to ${OUTPUT}`);
+
+    // Add logic to copy cache files to prebuilt_data if flag is present
+    if (updatePrebuiltData) {
+      console.log("Copying cache files to prebuilt_data...");
+      const cacheFiles = [
+        "bad_geocache.json",
+        "geocache.json",
+        "wikicache.json",
+      ];
+      const cacheDir = "./cache/";
+      const prebuiltDataDir = "./prebuilt_data/";
+
+      for (const file of cacheFiles) {
+        const src = cacheDir + file;
+        const dest = prebuiltDataDir + file;
+        try {
+          await copyFile(src, dest);
+          console.log(`Copied ${src} to ${dest}`);
+        } catch (copyErr) {
+          console.warn(
+            `⚠️ Failed to copy ${src} to ${dest}: ${copyErr.message}`
+          );
+        }
+      }
+      console.log("Finished copying cache files.");
+    }
   } catch (err) {
     console.error("Error:", err);
   }

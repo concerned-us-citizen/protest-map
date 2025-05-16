@@ -9,7 +9,7 @@ This project displays recent and planned US protest locations over time on an in
 The project has two main components:
 
 1.  **Data Scraper (`scripts/scrapeAllTabs.js`):**
-    *   This Node.js script fetches event data from a Google Sheet maintained by the volunteer organization "We (the People) Dissent".
+    *   This Node.js script fetches event data from a Google Sheet maintained by the volunteer organization [We (the People) Dissent](https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748).
     *   It augments this event data with:
         *   Geocoding information for event locations.
         *   Relevant Wikipedia data for the cities.

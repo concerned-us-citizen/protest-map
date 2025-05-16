@@ -9,9 +9,11 @@
   import EventInfo from '$lib/EventInfo.svelte';
   import EventsFilter from '$lib/EventsFilter.svelte';
   import { playIconSvg, pauseIconSvg, filterIconSvg, infoIconSvg } from '$lib/icons';
-  import { parseDateString, formatShortDate, formatDateTimeReadable } from '$lib/dateUtils.js';
+  import { parseDateString, formatDateTimeReadable, getFirstAndLastDate, formatDateRange, formatDate, isFutureDate } from '$lib/dateUtils.js';
 
 export let data: EventData;
+
+  $: dateRange = data?.events ? formatDateRange(getFirstAndLastDate(data.events).firstDate, getFirstAndLastDate(data.events).lastDate) : '';
 
   let currentDateString: string = '';
   let allDates: string[] = [];
@@ -383,16 +385,20 @@ export let data: EventData;
 
 <svelte:head>
   <title>US Protests Map</title>
+  <meta property="og:title" content={`A Map of Protests ${dateRange}`} />
+  <meta property="og:description" content={`An interactive map of protests ${dateRange}`} />
 </svelte:head>
-
 {#if data && data.events && data.locations}
   <MapDisplay eventData={data} {currentDateString} {selectedEventNames} />
 
   <div class="top-center-container">
     <div class="top-center-main-panel">
       <h3 class="main-title">
-        Protests on {formatShortDate(currentDateString)}
+        Map of US Protests
       </h3>
+      <div class="date-range-display">
+        {dateRange}
+      </div>
       <div class="attribution-link">
         <i>Provided by <a
           href="https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748"
@@ -401,6 +407,13 @@ export let data: EventData;
         >We (the People) Dissent</a></i>
       </div>
     </div>
+    {#if currentDateString}
+      <div class="current-date-panel">
+        <div class="current-date-display">
+          <b>{formatDate(currentDateString)} {isFutureDate(currentDateString) ? '(future)' : ''}</b>
+        </div>
+      </div>
+    {/if}
     {#if eventsFilterVisible && uniqueEvents.length > 0 }
       <div class="events-filter-wrapper">
         <EventsFilter {uniqueEvents} {selectedEventNames} onSelectEventFilter={selectEventFilter} onClose={() => eventsFilterVisible = false} />

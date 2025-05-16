@@ -28,7 +28,7 @@
 
   let maxLocationCount = 1;
 
-  $: if (histogramData.length > 0) {
+$: if (histogramData.length > 0) {
     maxLocationCount = Math.max(...histogramData.map(d => d.locationCount), 1);
   }
 

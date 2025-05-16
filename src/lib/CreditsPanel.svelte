@@ -46,7 +46,7 @@
       <button class="close-button dismiss-info-button" on:click={onClose} aria-label="Close info panel">×</button>
       <p class="toggle-attribution-container" style="font-weight: bold;">Credits</p>
       <div class="attribution-container" transition:fade>
-        <p>A big shout out to these resources:</p>
+        <p>A strong shout out to the huge and valuable efforts of these contributors:</p>
         {#each attributions as attribution}
           <p class="attribution">
             <strong>{attribution.description}</strong><br>
@@ -108,7 +108,7 @@
   }
 
   .credits-panel p {
-    margin: 0 0 1.2em 0;
+    margin: 0 0 0.2em 0;
     flex-shrink: 0; /* Prevent paragraphs from shrinking */
   }
 
@@ -136,6 +136,7 @@
   }
   .toggle-attribution-container {
     align-self: center;
+    font-size: 1.5em;
   }
   .attribution {
     color: #555; /* Darker gray */

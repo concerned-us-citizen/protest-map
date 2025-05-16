@@ -4,6 +4,7 @@ html,
 body {
   overflow: hidden; /* Hide scrollbars */
   touch-action: none; /* Prevent bounce */
+  overscroll-behavior: none; /* Prevent pull-to-refresh on iOS */
   margin: 0; /* Remove default body margin */
   padding: 0; /* Remove default body padding */
   width: 100%; /* Ensure full width */

@@ -2,7 +2,10 @@ import { load } from "cheerio";
 import { loadGeocodeCache, geocode } from "./geocode.mjs";
 import { loadWikiCache, getWikipediaCityInfo } from "./wikidata.mjs";
 import { loadVotingInfo, fetchVotingInfo } from "./votingInfo/votingInfo.mjs";
-import { normalizeToYYYYMMDD } from "../src/lib/dateUtils.js"; // Import the new utility
+import {
+  normalizeToYYYYMMDD,
+  normalizeYearTo2025,
+} from "../src/lib/dateUtils.js"; // Import the new utility
 import { mkdir } from "fs/promises";
 
 const DOC_ID = "1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A";
@@ -226,10 +229,18 @@ async function normalizeByLocationAndGroupByDate(originalEvents) {
       return acc;
     }
 
-    if (!acc[normalizedDate]) {
-      acc[normalizedDate] = [];
+    const finalDate = normalizeYearTo2025(normalizedDate);
+
+    if (!finalDate) {
+      console.warn(
+        `Could not normalize year in date: "${normalizedDate}". Skipping event: ${JSON.stringify(rest)}`
+      );
+      return acc;
     }
-    acc[normalizedDate].push(rest);
+    if (!acc[finalDate]) {
+      acc[finalDate] = [];
+    }
+    acc[finalDate].push(rest);
     return acc;
   }, {});
 

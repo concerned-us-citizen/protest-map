@@ -1,10 +1,10 @@
 name: Build & Deploy to GitHub Pages
 
 on:
-  push:
-    branches: [main]
-  schedule:
-    - cron: "29 * * * *"
+  # push:
+  #   branches: [main]
+  # schedule:
+  #   - cron: "29 * * * *"
   workflow_dispatch:
 
 permissions:

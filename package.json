@@ -8,6 +8,7 @@
     "scrapecached": "node scripts/scrapeAllTabs.js --use-cache",
     "update-prebuilt-data": "node scripts/scrapeAllTabs.js --updatePrebuiltData",
     "upload-precincts-spatial-index": "node scripts/upload-precincts-spatial-index.js",
+    "download-precincts-spatial-index": "curl -L -o prebuilt_data/precincts-with-results-spatial-index.json https://github.com/concerned-us-citizen/voting-precincts-spatial-index/releases/download/v1/precincts-with-results-spatial-index.json",
     "dev": "vite dev",
     "build": "npm run lint:strict && vite build",
     "lint": "eslint . --ext .js,.ts,.svelte",

@@ -46,19 +46,14 @@ jobs:
         env:
           GH_REPO: ${{ github.repository }}
         run: |
-          mkdir -p cache
-
-          # Get latest release tag
-          TAG=$(curl -s https://api.github.com/repos/$GH_REPO/releases/latest | jq -r .tag_name)
-
-          echo "Latest release tag: $TAG"
+          mkdir -p prebuilt_data
 
           # Download file
-          curl -L -o cache/precincts-with-results-spatial-index.json \
-            https://github.com/$GH_REPO/releases/download/$TAG/precincts-with-results-spatial-index.json
+          curl -L -o prebuilt_data/precincts-with-results-spatial-index.json \
+            https://github.com/concerned-us-citizen/voting-precincts-spatial-index/releases/download/v1/precincts-with-results-spatial-index.json
 
           # Ensure file was downloaded and is not empty
-          test -s cache/precincts-with-results-spatial-index.json || {
+          test -s prebuilt_data/precincts-with-results-spatial-index.json || {
             echo "❌ Failed to download or file is empty!"
             exit 1
           }

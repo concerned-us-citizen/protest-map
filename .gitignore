@@ -9,6 +9,7 @@ node_modules
 /build
 /cache
 static/data/data.json
+prebuilt_data/precincts-with-results-spatial-index.json
 
 # OS
 .DS_Store

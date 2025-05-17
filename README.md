@@ -55,7 +55,7 @@ git clone https://github.com/concerned-us-citizen/protest-map.git
 
 1.  **Install Dependencies:**
     ```bash
-    npm install --legacy-peer-deps # needed to use eslint-plugin-deprecation with eslint 9
+    npm install
     ```
 
 2.  **Generate Data:**

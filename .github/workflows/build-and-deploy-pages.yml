@@ -46,7 +46,7 @@ jobs:
         env:
           GH_REPO: ${{ github.repository }}
         run: |
-          mkdir -p prebuilt_data
+          mkdir -p cache
 
           # Get latest release tag
           TAG=$(curl -s https://api.github.com/repos/$GH_REPO/releases/latest | jq -r .tag_name)

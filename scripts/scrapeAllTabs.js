@@ -1,7 +1,7 @@
 import { load } from "cheerio";
 import { loadGeocodeCache, geocode } from "./geocode.mjs";
 import { loadWikiCache, getWikipediaCityInfo } from "./wikidata.mjs";
-import { loadVotingInfo, fetchVotingInfo } from "./votingInfo/votingInfo.mjs";
+import { loadVotingInfo, fetchVotingInfo } from "./votingInfo.mjs";
 import {
   normalizeToYYYYMMDD,
   normalizeYearTo2025,

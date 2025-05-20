@@ -1,13 +1,9 @@
 <script lang="ts">
   import { onMount, onDestroy, afterUpdate } from 'svelte';
   import { browser } from '$app/environment';
-  import type { EventData } from '$lib/types.ts';
-  import type { Map as LeafletMap, Marker, DivIcon, LayerGroup, LeafletMouseEvent } from 'leaflet';
+  import type { Map as LeafletMap, Marker, DivIcon, LayerGroup, LeafletMouseEvent, Layer } from 'leaflet';
   import { markerSvg } from '$lib/icons';
-
-  export let eventData: EventData;
-  export let currentDateString: string;
-  export let selectedEventNames: Set<string>;
+  import { getPageStateFromContext } from './store/PageState.svelte';
 
   let mapElement: HTMLElement;
   let map: LeafletMap | null = null;
@@ -15,6 +11,9 @@
   let markerLayerGroup: LayerGroup | null = null;
   let popupCloseTimer: ReturnType<typeof setTimeout> | null = null;
   let isTouchDevice = false;
+  export let className = '';
+
+  const pageState = getPageStateFromContext();
 
   const getColor = (pct?: number): string => {
     if (pct === undefined || pct === null) {
@@ -43,24 +42,18 @@
 
   const renderMarkers = (): void => {
     // Ensure L and map are initialized before proceeding
-    if (!L || !map || !eventData || !eventData.locations || !eventData.events) {
+    if (!L || !map) {
       return;
     }
 
-    // L and map are now guaranteed to be non-null for the rest of this function scope.
-    // markerLayerGroup will be initialized or re-initialized here.
     if (markerLayerGroup) {
       map.removeLayer(markerLayerGroup);
     }
     const currentMarkerLayerGroup = L.layerGroup(); // Create a new layer group
-    markerLayerGroup = currentMarkerLayerGroup; // Assign to the component's reactive variable
+    markerLayerGroup = currentMarkerLayerGroup;
 
-    const eventsToRender = (eventData.events[currentDateString] || []).filter(event =>
-      selectedEventNames.size === 0 || selectedEventNames.has(event.name)
-    );
-
-    eventsToRender.forEach((event) => {
-      const loc = eventData.locations[event.location];
+    pageState.filter.filteredEvents.forEach((event) => {
+      const loc = pageState.eventStore.locations.get(event.location);
       if (!loc || loc.lat == null || loc.lon == null) return;
       const color = getColor(loc.pct_dem_lead);
       const iconSize = 50;
@@ -82,7 +75,6 @@
         const absMarginPercent = Math.round(Math.abs(margin) * 100);
         const candidateName = margin > 0 ? 'Harris' : 'Trump';
         const marginColor = margin > 0 ? 'rgb(23, 78, 154)' : 'rgb(190, 40, 40)';
-        // Assuming the NYT attribution URL is the main data source URL for now
         const nytAttributionUrl = "https://github.com/nytimes/presidential-precinct-map-2024";
         
         marginDisplay = `
@@ -116,7 +108,7 @@
 
       const openPopup = () => {
         if (markerLayerGroup) {
-          markerLayerGroup.eachLayer((layer: any) => {
+          markerLayerGroup.eachLayer((layer: Layer) => {
             if (layer !== marker && layer.isPopupOpen && layer.isPopupOpen()) {
               layer.closePopup();
             }
@@ -262,7 +254,7 @@
               currentElement = currentElement.parentElement;
           }
           if (!isMarkerClick && markerLayerGroup) {
-              markerLayerGroup.eachLayer((layer: any) => {
+              markerLayerGroup.eachLayer((layer: Layer) => {
                   if (layer.isPopupOpen && layer.isPopupOpen()) {
                       layer.closePopup();
                   }
@@ -270,15 +262,12 @@
           }
         });
         
-        if (currentDateString) { // Initial render if currentDateString is already set
-          renderMarkers();
-        }
+        renderMarkers();
 
         // Add keydown listener to mapElement to prevent arrow key propagation
         mapElement.addEventListener('keydown', (event: KeyboardEvent) => {
           if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
             event.preventDefault();
-            // console.log('MapDisplay: Arrow key pressed on map, prevented default.');
           }
         });
       }
@@ -303,7 +292,7 @@
 
 </script>
 
-<div class="map-container" bind:this={mapElement} tabindex="-1"></div>
+<div class={`map-container ${className}`} bind:this={mapElement} tabindex="-1"></div>
 
 <style>
   .map-container {

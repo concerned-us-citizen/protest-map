@@ -1,25 +1,30 @@
 <script lang="ts">
-  export let uniqueEvents: { name: string; count: number }[] = [];
-  export let selectedEventNames: Set<string>;
-  export let onSelectEventFilter: (eventName: string) => void;
-  export let onClose: () => void; // New prop for closing the filter
+  import { getPageStateFromContext } from "./store/PageState.svelte";
+  import { countAndLabel } from "./util/string";
+
+  export let onClose: () => void;
+  export let className = '';
+
+  const pageState = getPageStateFromContext();
+  const eventNamesWithLocationCounts = pageState.filter.currentDateEventNamesWithLocationCounts;
+  
 </script>
 
-<div class="events-filter-component">
+<div class={`events-filter-component ${className}`}>
   <button class="close-button" on:click={onClose} aria-label="Close filter">×</button>
-  <h4 class="filter-title">{ uniqueEvents.length} Event{uniqueEvents.length === 1 ? '' : 's'}</h4>
-  {#if uniqueEvents.length > 0}
+  <h4 class="filter-title">{countAndLabel(eventNamesWithLocationCounts, "Event")}</h4>
+  {#if eventNamesWithLocationCounts.length > 0}
     <div class="events-section-description">(Tap to toggle one or more)</div>
   {/if}
   <div class="event-list-scrollable-area">
-    {#if uniqueEvents.length > 0}
+    {#if eventNamesWithLocationCounts.length > 0}
       <ul>
-        {#each uniqueEvents as event (event.name)}
+        {#each eventNamesWithLocationCounts as event (event.name)}
           <li class="filter-item">
             <button
               type="button"
-              on:click|stopPropagation={() => onSelectEventFilter(event.name)}
-              class:selected-event={selectedEventNames.has(event.name)}
+              on:click|stopPropagation={() => pageState.filter.toggleSelectedEventName(event.name)}
+              class:selected-event={pageState.filter.selectedEventNames.includes(event.name)}
             >
               <span class="event-name-in-list">{event.name || 'Unnamed'}</span>
               <span class="event-count-in-list">({event.count})</span>

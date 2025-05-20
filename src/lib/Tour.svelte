@@ -4,10 +4,21 @@
   import { crossfade } from 'svelte/transition';
   import { markerSvg } from './icons';
   import DimmedBackgroundPanel from './DimmedBackgroundPanel.svelte';
+  import type { Component } from 'svelte';
+  import InlineSvg from './InlineSvg.svelte';
 
   const dispatch = createEventDispatcher();
 
-  export let steps: { title: string; description: string; elementId?: string }[];
+  export let steps: {
+    title: string;
+    description?: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    component?: Component<any>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    props?: Record<string, any>;
+  }[];
+  export let className = '';
+
   export let currentStepIndex: number = 0;
 
   let panelElement: HTMLElement;
@@ -75,24 +86,30 @@
 
   // Crossfade transition for step content
   const [send, receive] = crossfade({
-    duration: 300,
+    duration: 300,         
     easing: quintOut,
   });
 </script>
 
 {#if currentStep}
-  <DimmedBackgroundPanel on:dismiss={dismiss}>
+  <DimmedBackgroundPanel className={className} on:dismiss={dismiss}>
     <div class="tour-panel" bind:this={panelElement}>
       <div class="panel-content" in:receive={{ key: currentStepIndex }} out:send={{ key: currentStepIndex }}>
         <div class="header">
           <div class="icon-container">
-            {@html markerSvg}
+            <InlineSvg content={markerSvg}/>
           </div>
-          <div class="title-container"> <!-- Renamed for clarity -->
+          <div class="title-container">
             <h1>{currentStep.title}</h1>
           </div>
         </div>
-        <p class="description-text">{@html currentStep.description}</p> <!-- Moved description outside header -->
+        {#if currentStep.component}
+          <!-- eslint-disable-next-line @typescript-eslint/no-explicit-any -->
+          <svelte:component this={currentStep.component} {...currentStep.props as Record<string, any>} />
+        {:else}
+          <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+          <p class="description-text">{@html currentStep.description}</p>
+        {/if}
         <div class="footer">
           <button class="link-button" on:click={dismiss}>Dismiss</button>
           <div class="progress-indicator">
@@ -102,7 +119,7 @@
           </div>
           <div class="navigation-buttons">
             <button class="link-button" on:click={previousStep} class:hidden={!showPrevious}>Prev</button>
-            <button class="link-button" on:click={nextStep} class:hidden={!showNext}>Next</button>
+            <button class="link-button" on:click={nextStep} class:disabled={!showNext}>Next</button>
           </div>
         </div>
       </div>
@@ -124,7 +141,6 @@
     flex-direction: column;
     position: relative;
     max-height: 95vh;
-    overflow-y: auto;
   }
 
   @media (max-width: 600px) {
@@ -139,6 +155,7 @@
     flex-direction: column;
     height: 100%;
     flex-grow: 1;
+    overflow-y: auto;
   }
 
   .header {
@@ -233,6 +250,12 @@
     visibility: hidden;
   }
 
+  .navigation-buttons .disabled {
+    color: lightgray;
+    pointer-events: none;
+    text-decoration: none;
+  }
+
   .link-button {
     background: none;
     border: none;
@@ -240,10 +263,10 @@
     cursor: pointer;
     padding: 0;
     font-size: 1em;
-    text-decoration: underline;
+    text-decoration: none;
   }
 
   .link-button:hover {
-    text-decoration: none;
+    text-decoration: underline;
   }
 </style>

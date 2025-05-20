@@ -2,7 +2,6 @@ import geojsonRbush from "geojson-rbush";
 import * as turf from "@turf/turf";
 import { readFile } from "fs/promises";
 
-// @ts-ignore
 const tree = geojsonRbush();
 
 export async function loadVotingInfo() {

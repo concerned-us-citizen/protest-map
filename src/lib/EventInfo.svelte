@@ -1,32 +1,29 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
-  import { formatDate, isFutureDate } from "./dateUtils";
+  import {formatDateIndicatingFuture } from "./util/dates";
+  import { cubicInOut } from "svelte/easing";
+  import { countAndLabel } from "./util/string";
+  import { getPageStateFromContext } from "./store/PageState.svelte";
 
-  export let visible: boolean;
-  export let displayedEventNameCount: number; // Unique event names
-  export let currentDateString: string;
-  export let distinctLocationCount: number;
-  export let allEventNames: string; // Comma-separated full list
+  export let className = '';
+
+  const pageState = getPageStateFromContext();
 </script>
 
-{#if visible}
-<div class="event-info" transition:fade={{ duration: 200 }}>
-  {#if distinctLocationCount > 0}
+<div class={`event-info ${className}`} transition:fade={{ duration: 300, easing: cubicInOut }}>
+  {#if pageState.filter.currentDateEvents.length > 0}
     <div class="counts-line">
       <strong>
-        <span class="date-display">{formatDate(currentDateString)} {isFutureDate(currentDateString) ? '(future)' : ''} </span>
-        <span class="stats-display">{displayedEventNameCount > 0 ? displayedEventNameCount : 0} Event{displayedEventNameCount === 1 ? '' : 's'}, {distinctLocationCount} Location{distinctLocationCount === 1 ? '' : 's'}</span>
+        <span class="date-display">{formatDateIndicatingFuture(pageState.filter.currentDate)} </span>
+        <span class="stats-display">{countAndLabel(pageState.filter.currentDateEventNamesWithLocationCounts, "Event")}, {countAndLabel(pageState.filter.currentDateEvents, "Location")}</span>
       </strong>
     </div>
     <div class="event-names-summary-text">
-      {(() => {
-        const trimmedNames = allEventNames ? allEventNames.trim() : '';
-        const lowerNames = trimmedNames.toLowerCase();
-        if (displayedEventNameCount === 0 || !trimmedNames || lowerNames === "unnamed event" || lowerNames === "unnamed" || lowerNames === "no name") {
-          return 'Unnamed event';
-        }
-        return allEventNames;
-      })()}
+      {
+      pageState.filter.currentDateEventNamesWithLocationCounts
+        .map(nc => nc.name)
+        .join(", ")
+      }
     </div>
   {:else}
     <div class="no-events-message">
@@ -34,7 +31,6 @@
     </div>
   {/if}
 </div>
-{/if}
 
 <style>
   .event-info {
@@ -92,15 +88,4 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-
-  /* Date display on scrub (within the now conditionally visible container) */
-  /* These rules might still be useful if we want to hide *only* the date text within the container */
-  /* but the primary hiding is now on the container itself. Keeping for potential future use or refinement. */
-@media (max-width: 768px) {
-
-  /* Hide event info panel by default on mobile */
-  .event-info {
-    pointer-events: none; /* Disable pointer events when hidden */
-  }
-}
 </style>

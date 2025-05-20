@@ -1,102 +1,97 @@
+import prettier from "eslint-config-prettier";
 import js from "@eslint/js";
-import tseslint from "@typescript-eslint/eslint-plugin";
-import tsParser from "@typescript-eslint/parser";
+import { includeIgnoreFile } from "@eslint/compat";
 import svelte from "eslint-plugin-svelte";
 import svelteParser from "svelte-eslint-parser";
 import globals from "globals";
+import { fileURLToPath } from "node:url";
+import ts from "typescript-eslint";
+const gitignorePath = fileURLToPath(new URL("./.gitignore", import.meta.url));
 
-export default [
+export default ts.config(
+  includeIgnoreFile(gitignorePath),
   js.configs.recommended,
-
-  /* --------------------------------------------------------- *
-   * 2)  Project‑wide globals                                  *
-   * --------------------------------------------------------- */
+  ...ts.configs.recommended,
+  ...svelte.configs["flat/recommended"],
+  prettier,
+  ...svelte.configs["flat/prettier"],
   {
-    files: ["**/*.{js,ts,tsx,svelte,mjs}"],
     languageOptions: {
       globals: {
         ...globals.browser,
         ...globals.node,
-        ...globals.es2021,
       },
     },
   },
-
-  /* --------------------------------------------------------- *
-   * 3)  Pure TypeScript source files                          *
-   * --------------------------------------------------------- */
   {
-    files: ["**/*.{ts,tsx}"],
+    files: ["**/*.ts"],
     languageOptions: {
-      parser: tsParser,
       parserOptions: {
-        project: "./tsconfig.json",
-        sourceType: "module",
+        parser: ts.parser,
+      },
+      globals: {
+        ...globals.browser,
+        ...globals.node,
       },
     },
-    plugins: {
-      "@typescript-eslint": tseslint,
-    },
-    rules: {
-      /* Disable the core rule & replace with TS‑aware version */
-      "no-unused-vars": "off",
-      "@typescript-eslint/no-unused-vars": [
-        "error",
-        {
-          argsIgnorePattern: "^_",
-          varsIgnorePattern: "^_",
-        },
-      ],
-      "@typescript-eslint/explicit-function-return-type": "error",
-      "no-debugger": "error",
-    },
   },
-
-  /* --------------------------------------------------------- *
-   * 4)  Svelte component files                                *
-   * --------------------------------------------------------- */
   {
     files: ["**/*.svelte"],
     languageOptions: {
-      /* The outer parser that understands Svelte single‑file components */
       parser: svelteParser,
-
-      /* Parser used for <script> / <style> blocks inside Svelte */
       parserOptions: {
-        parser: tsParser,
-        project: "./tsconfig.json",
+        parser: ts.parser,
+        ecmaVersion: 2020,
         sourceType: "module",
-        extraFileExtensions: [".svelte"],
+      },
+      globals: {
+        ...globals.browser,
+        ...globals.node,
       },
     },
-    plugins: {
-      svelte,
-      "@typescript-eslint": tseslint,
-    },
-    processor: "svelte/svelte",
     rules: {
-      /* Same replacement of core rule as in TS block */
+      "svelte/valid-compile": "error",
+      // Crucial: Turn off the core ESLint no-unused-vars,
+      // as @typescript-eslint/no-unused-vars will be used instead.
       "no-unused-vars": "off",
+      // IMPORTANT: Configure @typescript-eslint/no-unused-vars for Svelte files
+      // This override will apply to Svelte files.
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_", // This is key for your '_' in #each
+          // You might also want these for robustness:
+          // ignoreRestSiblings: true,
+          // caughtErrorsIgnorePattern: "^_",
+        },
+      ],
+    },
+  },
+  {
+    // ✅ shared rule override for .ts files primarily,
+    // though the .svelte block above will override no-unused-vars for svelte files.
+    files: ["**/*.ts"], // Explicitly target .ts files for this block
+    rules: {
+      // Make sure @typescript-eslint/no-unused-vars is configured for .ts files too
       "@typescript-eslint/no-unused-vars": [
         "error",
         {
           argsIgnorePattern: "^_",
           varsIgnorePattern: "^_",
+          // ignoreRestSiblings: true,
+          // caughtErrorsIgnorePattern: "^_",
         },
       ],
+      "no-undef": "off", // This is fine for both, but better in the shared block if it applies to both
     },
   },
-
-  /* --------------------------------------------------------- *
-   * 5)  Global ignores (build output, deps, etc.)             *
-   * --------------------------------------------------------- */
   {
-    ignores: [
-      "**/node_modules/**",
-      "**/.svelte-kit/**",
-      "**/build/**",
-      "**/dist/**",
-      "**/.output/**",
-    ],
-  },
-];
+    // ✅ shared rule override to apply consistent linting across both
+    files: ["**/*.ts", "**/*.svelte"],
+    rules: {
+      "no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+      "no-undef": "off",
+    },
+  }
+);

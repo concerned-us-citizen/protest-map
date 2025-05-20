@@ -1,9 +1,12 @@
 <script lang="ts">
   import Tour from "./Tour.svelte";
+  import CreditsPanel from "./CreditsPanel.svelte";
   export let onClose: () => void;
+  export let dataLastUpdated: string;
+  export let className = '';
 </script>
 
-<Tour
+<Tour className={className}
 steps={[
   {
     title: "US Protests Map",
@@ -15,8 +18,8 @@ steps={[
   {
     title: "Colored Locations",
     description: `
-    <p>Protests appear on the map as protest signs, colored in shades of red or blue to reflect the 2024 voting results of the surrounding precinct.</p>
-    <p>This is presented using the margin by which Trump or Harris won the election in that precinct, from data compiled by the New York Times.</p>
+    <p>Locations appear on the map as protest signs, colored in shades of red or blue to reflect the 2024 presidential voter preferences of the surrounding precinct.</p>
+    <p>These results use the margin by which Trump or Harris won the election in that precinct, from data compiled by the New York Times.</p>
     <p>Data for some precincts isn't available; where absent, signs are presented in gray.</p>
     `,
   },
@@ -59,11 +62,10 @@ steps={[
     `,
   },
   {
-    title: "Thanks For Watching",
-    description: `
-    <p>Tap Dismiss to explore the map.</p>
-    `,
-  },
+    title: "Credits",
+    component: CreditsPanel,
+    props: { dataLastUpdated }
+  }
 ]}
 on:dismiss={() => {
   onClose();

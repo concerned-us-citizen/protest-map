@@ -1,8 +1,12 @@
-import type { EventData } from "$lib/types";
+import type { Load } from "@sveltejs/kit";
+
+import type { ProtestEventDataJson } from "$lib/types";
 
 export const prerender = true;
 
-export async function load({ fetch }): Promise<{ data: EventData }> {
+export const load: Load = async ({
+  fetch,
+}): Promise<{ data: ProtestEventDataJson }> => {
   const res = await fetch("/data/data.json");
 
   if (!res.ok) {
@@ -20,4 +24,4 @@ export async function load({ fetch }): Promise<{ data: EventData }> {
     console.error("Invalid JSON in /data/data.json");
     throw new Error("Invalid JSON in /data/data.json");
   }
-}
+};

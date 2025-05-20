@@ -133,8 +133,22 @@
   box-sizing: border-box;
 }
 
+.current-date-panel .current-date-display {
+  display: flex; /* Use flexbox to align items */
+  justify-content: space-between; /* Space out the date and location count */
+  align-items: center; /* Vertically align items */
+}
+
 .current-date-panel .current-date-display b {
   font-size: 1em; /* Ensure the date text is readable */
+  white-space: nowrap; /* Prevent wrapping */
+}
+
+.current-date-panel .current-date-display .location-count {
+  font-size: 0.9em; /* Slightly smaller font size for the count */
+  color: #555; /* Match attribution link color */
+  margin-left: 10px; /* Add space between date and count */
+  white-space: nowrap; /* Prevent wrapping */
 }
 
 :global(.top-center-container) {
@@ -273,26 +287,8 @@
     height: 28px !important;
   }
 
-  /* Add styles to control EventInfo visibility on mobile */
-  .bottom-controls-wrapper > :global(.event-info-panel) {
-    /* Target the EventInfo component's root element */
-    opacity: 0; /* Hidden by default on mobile */
-    transition: opacity 0.3s ease-in-out; /* Add transition */
-    pointer-events: none; /* Still disable pointer events when hidden */
-  }
-
-  .bottom-controls-wrapper.is-scrubbing > :global(.event-info-panel) {
-    opacity: 1; /* Visible when dragging/holding/clicked */
-    pointer-events: auto; /* Enable pointer events when visible */
-  }
-
   /* Desktop styles - ensure EventInfo is always visible */
   @media (min-width: 769px) {
-    .bottom-controls-wrapper > :global(.event-info-panel) {
-      opacity: 1 !important; /* Always visible on desktop */
-      pointer-events: auto !important; /* Always interactive on desktop */
-    }
-
     .date-range-display {
       font-size: 0.7em; /* Slightly smaller font size for mobile */
     }
@@ -316,7 +312,12 @@
     width: calc(100% - 60px); /* Example: if toolbar is on the right */
     left: 50%;
     transform: translateX(-50%);
-    max-width: 300px; /* Max width for title in portrait */
+    max-width: 400px; /* Increase max width for title in portrait to prevent wrapping */
+  }
+
+  .current-date-panel {
+    max-width: 100%; /* Allow current date panel to take full width */
+    width: auto; /* Allow width to be determined by content and padding */
   }
 }
 

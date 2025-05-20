@@ -5,8 +5,9 @@ import { loadVotingInfo, fetchVotingInfo } from "./votingInfo.mjs";
 import {
   normalizeToYYYYMMDD,
   normalizeYearTo2025,
-} from "../src/lib/dateUtils.js"; // Import the new utility
+} from "../src/lib/util/dates.js"; // Import the new utility
 import { mkdir } from "fs/promises";
+import { toTitleCase } from "../src/lib/stringUtils.js";
 
 const DOC_ID = "1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A";
 const OUTPUT_DIR = "./static/data";
@@ -184,6 +185,21 @@ function getLocationKey(event) {
   return parts.join("-");
 }
 
+function normalizeNames(rawEvents) {
+  const correctedEventNames = {
+    "": "Unnamed event",
+    None: "Unnamed event",
+    "No name": "Unnamed event",
+  };
+
+  return rawEvents.map((event) => {
+    const { name: originalName, ...rest } = event;
+    const normalizedName =
+      correctedEventNames[originalName] ?? toTitleCase(originalName);
+    return { name: normalizedName, ...rest };
+  });
+}
+
 async function normalizeByLocationAndGroupByDate(originalEvents) {
   const locations = {};
   const events = [];
@@ -201,17 +217,9 @@ async function normalizeByLocationAndGroupByDate(originalEvents) {
         country: event.country,
       };
     }
-
-    // Fix up bad event names
-    const correctedEventNames = {
-      "": "Unnamed event",
-      None: "Unnamed event",
-      "No name": "Unnamed event",
-    };
-    const correctedName = correctedEventNames[event.name] ?? event.name;
     events.push({
       date: event.date,
-      name: correctedName,
+      name: event.name,
       link: event.link,
       location: locKey,
     });
@@ -240,6 +248,7 @@ async function normalizeByLocationAndGroupByDate(originalEvents) {
     if (!acc[finalDate]) {
       acc[finalDate] = [];
     }
+
     acc[finalDate].push(rest);
     return acc;
   }, {});
@@ -312,7 +321,11 @@ const run = async () => {
       );
     }
 
-    const normalizedEvents = await normalizeByLocationAndGroupByDate(rawEvents);
+    const normalizedNameRawEvents = normalizeNames(rawEvents);
+
+    const normalizedEvents = await normalizeByLocationAndGroupByDate(
+      normalizedNameRawEvents
+    );
 
     const augmentedLocations = await augmentLocations(
       normalizedEvents.locations

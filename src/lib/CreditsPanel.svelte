@@ -1,8 +1,7 @@
 <script lang="ts">
   import { getPageStateFromContext } from './store/PageState.svelte';
 
-  export let updatedAt: string | undefined;
-  export let className = '';
+  const { className } = $props();
 
   const pageState = getPageStateFromContext();
 
@@ -56,11 +55,9 @@
     {/each}
   </div>
 </div>
-{#if updatedAt}
-  <p class="last-updated">
-    {pageState.eventStore.formattedUpdatedAt}
-  </p>
-{/if}
+<p class="last-updated">
+  {pageState.eventStore.formattedUpdatedAt}
+</p>
 
 <style>
   .content {

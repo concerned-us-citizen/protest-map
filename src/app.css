@@ -9,6 +9,15 @@ body {
   padding: 0; /* Remove default body padding */
   width: 100%; /* Ensure full width */
   height: 100%; /* Ensure full height */
+
+  font-family: sans-serif;
+
+  --toolbar-margin: 0.9375em;
+  --icon-size: 1.8em;
+  --icon-button-size: 2.3em;
+  --panel-background-color: #fffc;
+  --panel-border-radius: 0.4em;
+  --panel-padding: 0.5em 1em;
 }
 
 .tour-image {

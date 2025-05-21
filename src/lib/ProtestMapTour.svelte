@@ -2,8 +2,8 @@
   import Tour from "./Tour.svelte";
   import CreditsPanel from "./CreditsPanel.svelte";
   export let onClose: () => void;
-  export let dataLastUpdated: string;
   export let className = '';
+
 </script>
 
 <Tour className={className}
@@ -63,8 +63,7 @@ steps={[
   },
   {
     title: "Credits",
-    component: CreditsPanel,
-    props: { dataLastUpdated }
+    component: CreditsPanel
   }
 ]}
 on:dismiss={() => {

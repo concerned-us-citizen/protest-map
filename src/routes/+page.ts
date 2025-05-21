@@ -4,9 +4,7 @@ import type { ProtestEventDataJson } from "$lib/types";
 
 export const prerender = true;
 
-export const load: Load = async ({
-  fetch,
-}): Promise<{ data: ProtestEventDataJson }> => {
+export const load: Load = async ({ fetch }): Promise<ProtestEventDataJson> => {
   const res = await fetch("/data/data.json");
 
   if (!res.ok) {

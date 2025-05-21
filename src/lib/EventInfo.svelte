@@ -1,6 +1,6 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
-  import {formatDateIndicatingFuture } from "./util/dates";
+  import {formatDateIndicatingFuture } from "./util/date";
   import { cubicInOut } from "svelte/easing";
   import { countAndLabel } from "./util/string";
   import { getPageStateFromContext } from "./store/PageState.svelte";
@@ -47,7 +47,6 @@
     display: flex; /* Use flexbox for vertical centering */
     flex-direction: column;
     align-items: stretch;
-    width: 300px;
     word-break: break-word; /* Allow long words to break */
   }
   /* Style for the event info panel */

@@ -28,14 +28,15 @@
     margin: 0;  
     border: none;
     border-radius: 0;
+    background-color: var(--panel-background-color);
     padding: 0;
     box-shadow: none;
     cursor: pointer;
   }
   /* :global here to avoid css-unused-selector warning, since the svg tag is embedded in the icon string */
   .icon-button :global(svg) {
-    width: var(--icon-button-icon-size);
-    height:  var(--icon-button-icon-size);
+    width: var(--icon-size);
+    height:  var(--icon-size);
   }
 
 </style>

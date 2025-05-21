@@ -5,26 +5,15 @@ import { loadVotingInfo, fetchVotingInfo } from "./votingInfo.mjs";
 import {
   normalizeToYYYYMMDD,
   normalizeYearTo2025,
-} from "../src/lib/util/dates.js"; // Import the new utility
+} from "../src/lib/util/date.ts";
 import { mkdir } from "fs/promises";
-import { toTitleCase } from "../src/lib/stringUtils.js";
+import { toTitleCase } from "../src/lib/util/string.ts";
+import { stripPropsFromValues } from "../src/lib/util/misc.ts";
 
 const DOC_ID = "1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A";
 const OUTPUT_DIR = "./static/data";
 const OUTPUT = `${OUTPUT_DIR}/data.json`;
 const RAW_OUTPUT = "./cache/events_raw.json";
-
-function stripPropsFromValues(obj, propsToRemove) {
-  const result = {};
-  for (const [key, value] of Object.entries(obj)) {
-    const newValue = { ...value };
-    propsToRemove.forEach((prop) => {
-      delete newValue[prop];
-    });
-    result[key] = newValue;
-  }
-  return result;
-}
 
 async function fetchHTML(url) {
   const res = await fetch(url);
@@ -64,7 +53,9 @@ async function augmentLocations(locations) {
   return result;
 }
 
-function extractTabsFromInitScript(html) {
+type TabInfo = { name: string; gid: string };
+
+function extractTabsFromInitScript(html: string): TabInfo[] {
   const $ = load(html);
 
   const initScript = $("script")
@@ -76,10 +67,10 @@ function extractTabsFromInitScript(html) {
     throw new Error("Could not find init() script.");
   }
 
-  const tabs = [];
+  const tabs: TabInfo[] = [];
 
   const itemRegex = /items\.push\(\s*{([\s\S]*?)}\s*\);/g;
-  let match;
+  let match: RegExpExecArray | null;
 
   while ((match = itemRegex.exec(initScript)) !== null) {
     const block = match[1];
@@ -138,16 +129,17 @@ async function scrapeSheet({ name, gid }) {
       "Org. Link": "Link",
       "Name of Protest": "Name",
     };
-    let header = renames[name] || name;
+    const header = renames[name] || name;
     return header.toLowerCase();
   });
-  let dataRows = [];
+  const dataRows: string[][] = [];
   for (let i = headerRowIndex + 1; i < allRows.length; i++) {
     dataRows.push(getRowCells(allRows[i]));
   }
 
   const mappedRows = dataRows.map((row) => {
-    const obj = {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const obj: Record<string, any> = {};
     headers.forEach((header, i) => {
       obj[header] = row[i] ?? null;
     });
@@ -165,7 +157,8 @@ async function scrapeAllSheets() {
   const mainHTML = await fetchHTML(url);
   const tabs = extractTabsFromInitScript(mainHTML);
 
-  const allRows = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const allRows: Record<string, any>[] = [];
 
   for (const tab of tabs) {
     console.log(`Scraping tab: ${tab.name}`);
@@ -200,9 +193,16 @@ function normalizeNames(rawEvents) {
   });
 }
 
+type Event = {
+  date: string;
+  name: string;
+  link: string;
+  location: string;
+};
+
 async function normalizeByLocationAndGroupByDate(originalEvents) {
   const locations = {};
-  const events = [];
+  const events: Event[] = [];
 
   for (const event of originalEvents) {
     const locKey = getLocationKey(event);

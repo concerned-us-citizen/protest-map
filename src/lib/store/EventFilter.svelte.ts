@@ -1,6 +1,6 @@
 import { EventStore } from "./EventStore.svelte";
-import type { Nullable, ProtestEvent, SetTimeoutId } from "$lib/types";
-import { formatDate } from "$lib/util/dates";
+import type { Nullable, SetTimeoutId } from "$lib/types";
+import { formatDate } from "$lib/util/date";
 
 const INITIAL_REPEAT_DELAY = 400; // ms
 const REPEAT_INTERVAL = 80; // ms
@@ -10,14 +10,12 @@ export class EventFilter {
 
   currentDateIndex = $state(-1);
 
-  #currentDate = $derived(() => {
+  readonly currentDate = $derived.by(() => {
     const dates = this.eventsStore.allDatesWithEventCounts;
-    return dates[this.currentDateIndex].date ?? null;
+    return dates[this.currentDateIndex]?.date ?? null;
   });
-  get currentDate(): Nullable<Date> {
-    return this.#currentDate();
-  }
-  set currentDate(date: Nullable<Date>) {
+
+  setCurrentDate(date: Nullable<Date>) {
     if (date === null) {
       this.currentDateIndex = -1;
     } else {
@@ -53,21 +51,15 @@ export class EventFilter {
     this.#selectRelativeDateWrapping(-1);
   }
 
-  #formattedCurrentDate = $derived(() => formatDate(this.currentDate));
-  get formattedCurrentDate(): string {
-    return this.#formattedCurrentDate();
-  }
+  readonly formattedCurrentDate = $derived(formatDate(this.currentDate));
 
-  #currentDateEvents = $derived(() =>
-    this.currentDate
+  readonly currentDateEvents = $derived.by(() =>
+    this.currentDate && this.eventsStore
       ? (this.eventsStore.events.get(this.currentDate) ?? [])
       : []
   );
-  get currentDateEvents(): ProtestEvent[] {
-    return this.#currentDateEvents();
-  }
 
-  #currentDateEventNamesWithLocationCounts = $derived(() => {
+  readonly currentDateEventNamesWithLocationCounts = $derived.by(() => {
     const eventCountsMap = this.currentDateEvents.reduce(
       (acc, event) => {
         acc[event.name] = (acc[event.name] || 0) + 1;
@@ -79,46 +71,30 @@ export class EventFilter {
       .map(([name, count]) => ({ name, count }))
       .sort((a, b) => b.count - a.count);
   });
-  get currentDateEventNamesWithLocationCounts(): {
-    name: string;
-    count: number;
-  }[] {
-    return this.#currentDateEventNamesWithLocationCounts();
-  }
 
-  #currentDateHasEventNames = $derived(
-    () => this.currentDateEventNamesWithLocationCounts.length > 0
+  readonly currentDateHasEventNames = $derived(
+    this.currentDateEventNamesWithLocationCounts.length > 0
   );
-  get currentDateHasEventNames(): boolean {
-    return this.#currentDateHasEventNames();
-  }
 
-  #selectedEventNames = $state<string[]>([]);
-  get selectedEventNames(): string[] {
-    return this.#selectedEventNames;
-  }
+  readonly selectedEventNames = $state<string[]>([]);
 
   toggleSelectedEventName(eventName: string) {
-    const selected = this.#selectedEventNames;
-    const index = selected.indexOf(eventName);
+    const index = this.selectedEventNames.indexOf(eventName);
 
     if (index !== -1) {
-      selected.splice(index, 1);
+      this.selectedEventNames.splice(index, 1);
     } else {
-      selected.push(eventName);
+      this.selectedEventNames.push(eventName);
     }
   }
 
-  #filteredEvents = $derived(() => {
-    return this.currentDateEvents.filter(
+  readonly filteredEvents = $derived(
+    this.currentDateEvents.filter(
       (evt) =>
         this.selectedEventNames.length == 0 ||
         this.selectedEventNames.includes(evt.name)
-    );
-  });
-  get filteredEvents(): ProtestEvent[] {
-    return this.#filteredEvents();
-  }
+    )
+  );
 
   #isRepeatingChange = false;
   #currentRepeatDirection: "next" | "prev" | null = null;
@@ -167,10 +143,17 @@ export class EventFilter {
     } else if (this.#currentRepeatDirection === "prev") {
       this.selectPreviousDate();
     }
-    this.#repeatTimer = setTimeout(this.#continuousDateChange, REPEAT_INTERVAL);
+    this.#repeatTimer = setTimeout(
+      () => this.#continuousDateChange,
+      REPEAT_INTERVAL
+    );
   }
 
   constructor(eventsStore: EventStore) {
     this.eventsStore = eventsStore;
+    $effect(() => {
+      this.currentDateIndex =
+        eventsStore.allDatesWithEventCounts.length === 0 ? -1 : 0;
+    });
   }
 }

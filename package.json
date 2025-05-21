@@ -4,8 +4,8 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "scrape": "node scripts/scrapeAllTabs.js",
-    "scrapecached": "node scripts/scrapeAllTabs.js --use-cache",
+    "scrape": "tsx scripts/scrapeAllTabs.js",
+    "scrapecached": "tsx scripts/scrapeAllTabs.js --use-cache",
     "update-prebuilt-data": "node scripts/scrapeAllTabs.js --updatePrebuiltData",
     "setup": "node scripts/downloadPrecinctsSpatialIndex.js",
     "dev": "vite dev",
@@ -48,6 +48,7 @@
     "globals": "^16.1.0",
     "leaflet": "^1.9.4",
     "title-case": "^4.3.2",
+    "tsx": "^4.19.4",
     "typescript-eslint": "^8.32.1"
   }
 }

@@ -11,6 +11,7 @@
   let markerLayerGroup: LayerGroup | null = null;
   let popupCloseTimer: ReturnType<typeof setTimeout> | null = null;
   let isTouchDevice = false;
+  
   export let className = '';
 
   const pageState = getPageStateFromContext();

@@ -1,5 +1,5 @@
 export interface ProtestEventDataJson {
-  events: Record<string, ProtestEvent>;
+  events: Record<string, ProtestEvent[]>;
   locations: Record<string, Location>;
   updatedAt: string;
 }

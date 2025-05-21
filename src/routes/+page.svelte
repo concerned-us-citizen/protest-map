@@ -1,34 +1,49 @@
 <script lang="ts">
-  import { onMount, onDestroy } from 'svelte';
-  import { browser } from '$app/environment';
-  import type { ProtestEventDataJson } from '$lib/types.ts';
   import { isWideViewport } from '$lib/store/viewportStore.svelte';
   import MapDisplay from '$lib/MapDisplay.svelte';
   import ProtestMapTour from '$lib/ProtestMapTour.svelte';
   import EventInfo from '$lib/EventInfo.svelte';
   import EventsFilter from '$lib/EventsFilter.svelte';
   import { playIconSvg, pauseIconSvg, filterIconSvg, infoIconSvg } from '$lib/icons';
-  import { formatDateIndicatingFuture } from '$lib/util/dates.js';
+  import { formatDateIndicatingFuture } from '$lib/util/date.js';
   import { createPageStateInContext } from '$lib/store/PageState.svelte';
   import { countAndLabel } from '$lib/util/string';
   import Timeline from '$lib/Timeline.svelte';
   import IconButton from '$lib/IconButton.svelte';
 
-  export let data: ProtestEventDataJson;
+  const { data } = $props();
 
   let pageState = createPageStateInContext();
 
-  // EventInfo becomes visible any time currentDate changes after mounting.
-  let mounted = false;
-  $: if (mounted && pageState.filter.currentDate !== undefined) {
-    pageState.showEventInfo();
-  }
+  $effect(() => {
 
-  let hasLoaded = false;
-  $: if (!hasLoaded && data) {
-    pageState.eventStore.loadData(data);
-    hasLoaded = true;
-  }
+    pageState.helpVisible = !hasShownTourCookieExists();
+
+    window.addEventListener('keydown', handleKeydown);
+    window.addEventListener('keyup', handleKeyup);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeydown);
+      window.removeEventListener('keyup', handleKeyup);
+      pageState.cleanup();
+    }
+  });
+
+  let hasLoaded = $state(false);
+  $effect(() => {
+    if (hasLoaded === false && data) {
+      pageState.eventStore.loadData(data);
+      hasLoaded = true;
+    }
+  });
+
+  // EventInfo becomes visible any time currentDate changes after loading.
+  $effect(() => {
+    if (hasLoaded === false) return;
+    if (pageState.filter.currentDate !== undefined) {
+      pageState.showEventInfo();
+    }
+  });
 
   function handleKeydown(event: KeyboardEvent) {
     if (event.metaKey || event.ctrlKey || event.altKey) return;
@@ -112,25 +127,6 @@
   function hasShownTourCookieExists() {
     return document.cookie.split('; ').some(row => row.startsWith('hasShownTour='));
   }
-
-  onMount(async () => {
-    mounted = true;
-    if (browser) {
-      pageState.helpVisible = !hasShownTourCookieExists();
-
-      window.addEventListener('keydown', handleKeydown);
-      window.addEventListener('keyup', handleKeyup);
-    }
-  });
-
-  onDestroy(() => {
-    if (browser) {
-      window.removeEventListener('keydown', handleKeydown);
-      window.removeEventListener('keyup', handleKeyup);
-    }
-    pageState.cleanup();
-  });
-  
 </script>
 
 <svelte:head>
@@ -142,20 +138,21 @@
 <MapDisplay/>
 
 <div class="title-stats-and-filter-container">
-  <div class="title-and-stats-container panel">
-
-    <h1 class="title">
-      Map of Protests
-    </h1>
-    <div class="date-range">
-      {pageState.eventStore.formattedDateRange}
-    </div>
-    <div class="attribution-link">
-      <i>Provided by <a
-        href="https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748"
-        target="_blank"
-        title={pageState.eventStore.formattedUpdatedAt}
-      >We (the People) Dissent</a></i>
+  <div class="title-and-stats-container">
+    <div class="title-container panel">
+      <h1 class="title">
+        Map of Protests
+      </h1>
+      <div class="date-range">
+        {pageState.eventStore.formattedDateRange}
+      </div>
+      <div class="attribution-link">
+        <i>Provided by <a
+          href="https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748"
+          target="_blank"
+          title={pageState.eventStore.formattedUpdatedAt}
+        >We (the People) Dissent</a></i>
+      </div>
     </div>
 
     <div class="current-date-stats panel">
@@ -204,7 +201,7 @@
 </div>
 
 {#if pageState.helpVisible}
-  <ProtestMapTour dataLastUpdated={data?.updatedAt} onClose={() => {
+  <ProtestMapTour onClose={() => {
     pageState.helpVisible = false;
     saveShownTourToCookie();
   }} />
@@ -216,8 +213,7 @@
   top: var(--toolbar-margin);
   left: 50%;
   transform: translateX(-50%);
-  max-width: calc(100vw - 2 * (var(--icon-button-size) + 2 * var(--toolbar-margin)));
-  width: fit-content;
+  max-width: calc(100vw - 2 * (var(--icon-button-size) - 2 * var(--toolbar-margin)));
   background: transparent;
 }
 
@@ -225,19 +221,30 @@
   border-radius: var(--panel-border-radius);
   padding: var(--panel-padding);
   background-color: var(--panel-background-color);
+  overflow: hidden;
 }
 
 .title-and-stats-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 1rem;
+  align-items: stretch;
+  gap: 0.5rem;
 }
 
-h1 {
+.current-date-stats {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: space-between; 
+  gap: 1em; 
+}
+
+.title {
   font-size: 1.1em;
-  font-weight: bold;
-  margin: 0px;
+  font-weight: 700;
+  margin: 0;
+  padding: 0;
+  text-align: center;
 }
 
 .date-range {
@@ -254,11 +261,18 @@ h1 {
 }
 
 .toolbar {
-  background-color: var(--panel-background-color);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: var(--toolbar-margin);
+  right: var(--toolbar-margin);
+  border: 2px solid rgba(0,0,0,0.2);
+  border-radius: 2px;
+  z-index: 800;
 }
 
 .toolbar > :global(:not(:last-child)) {
-  border-bottom: 1px solid #ccc; /* Separator line, slightly darker than #ddd */
+  border-bottom: 1px solid #ccc;
 }
 
 .toolbar > :global(:last-child) {
@@ -271,13 +285,11 @@ h1 {
   left: 50%;
   transform: translateX(-50%);
   width: calc(100vw - 2 * var(--toolbar-margin));
-  width: fit-content;
-}
-
-@media (max-width: var(--bp-wide)) {
-  .timeline-and-eventinfo {
-    max-width: 800px;
-  }
+  max-width: calc(600px - 2 * var(--toolbar-margin));
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: .4em;
 }
 
 </style>

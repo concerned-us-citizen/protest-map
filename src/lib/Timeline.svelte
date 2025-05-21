@@ -1,12 +1,10 @@
 <script lang="ts">
   import HistogramSlider from "./HistogramSlider.svelte";
   import { getPageStateFromContext } from "./store/PageState.svelte";
-  import type { Nullable } from "./types";
 
   const pageState = getPageStateFromContext();
 
-  let selectedDateWithEventCount: Nullable<{ date: Date, eventCount: number }> = null;
-  $: selectedDateWithEventCount = pageState.eventStore.allDatesWithEventCounts.find(dc => dc.date === pageState.filter.currentDate) ?? null;
+  let selectedDateWithEventCount = $derived(pageState.eventStore.allDatesWithEventCounts.find(dc => dc.date === pageState.filter.currentDate) ?? null);
 
   let isRepeatingChange = false;
   let currentRepeatDirection: 'next' | 'prev' | null = null;
@@ -60,35 +58,77 @@
 <div class="timeline">
   <button
     class="nav-button prev"
-    on:click={() => pageState.filter.selectPreviousDate()}
-    on:mousedown={() => startDateRepeat('prev')}
-    on:mouseup={stopDateRepeat}
-    on:mouseleave={stopDateRepeat}
-    on:touchstart={() => startDateRepeat('prev')}
-    on:touchend={stopDateRepeat}
-    on:touchcancel={stopDateRepeat}
+    onclick={() => pageState.filter.selectPreviousDate()}
+    onmousedown={() => startDateRepeat('prev')}
+    onmouseup={stopDateRepeat}
+    onmouseleave={stopDateRepeat}
+    ontouchstart={() => startDateRepeat('prev')}
+    ontouchend={stopDateRepeat}
+    ontouchcancel={stopDateRepeat}
     aria-label="Previous Date"
   >‹</button>
   <HistogramSlider
+    className="slider"
     items={pageState.eventStore.allDatesWithEventCounts}
     selectedItem={selectedDateWithEventCount}
-    onSelect={dc => pageState.filter.currentDate = dc.date}
+    onSelect={dc => pageState.filter.setCurrentDate(dc.date)}
     magnitudeFor={item => item.eventCount}
     firstShadedItemIndex={items => items.findIndex(item => item.date >= new Date())}
     />
     <button
       class="nav-button next"
-      on:click={() => pageState.filter.selectNextDate()}
-      on:mousedown={() => startDateRepeat('next')}
-      on:mouseup={stopDateRepeat}
-      on:mouseleave={stopDateRepeat}
-      on:touchstart={() => startDateRepeat('next')}
-      on:touchend={stopDateRepeat}
-      on:touchcancel={stopDateRepeat}
+      onclick={() => pageState.filter.selectNextDate()}
+      onmousedown={() => startDateRepeat('next')}
+      onmouseup={stopDateRepeat}
+      onmouseleave={stopDateRepeat}
+      ontouchstart={() => startDateRepeat('next')}
+      ontouchend={stopDateRepeat}
+      ontouchcancel={stopDateRepeat}
       aria-label="Next Date"
     >›</button>
 </div>
 
 <style>
+  .timeline {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: .3em;
+    padding: .3em 0;
+    position: static;
+    height: 3rem;
+    transform: none;
+    background-color: #f5f5f5f2;
+    border-radius: 8px;
+    box-shadow: 0 -2px 10px #0000001a;
+    z-index: 1;
+    pointer-events: auto;
+  }
+
+  /* slider stretches */
+  .timeline > :global(:nth-child(2)) {
+    flex: 1;
+  }
+
+
+  .timeline button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: none;
+    color: #555;
+    font-size: 2em;
+    font-weight: 700;
+    padding: 0 0.4em;
+    line-height: 1;
+    height: auto;
+    min-width: auto;
+    border-radius: 0;
+    cursor: pointer;
+    outline: none;
+    touch-action: manipulation;
+  }
 
 </style>

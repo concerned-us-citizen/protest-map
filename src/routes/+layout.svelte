@@ -21,16 +21,4 @@
   });
 </script>
 
-<style>
-  /* Global css variables*/
-:root {
-  --toolbar-margin: 0.9375em;
-  --icon-size: 2.75em;
-  --icon-button-icon-size: 1.75em;
-  --panel-background-color: rgba(255, 255, 255, 0.95);
-  --panel-border-radius: '1em';
-  --panel-padding: '1em';
-}
-</style>
-
 <slot />

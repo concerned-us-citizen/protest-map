@@ -1,89 +1,106 @@
 <script lang="ts" generics="T">
   import { browser } from '$app/environment';
-  import { onDestroy, createEventDispatcher } from 'svelte';
+  import { onDestroy } from 'svelte';
   import type { Nullable } from './types';
 
-  export let items: T[];
-  export let selectedItem: Nullable<T>;
-  export let magnitudeFor: (_item: T) => number;
-  export let firstShadedItemIndex: (_items: T[]) => number;
-  export let onSelect: (_item: T) =>  void;
-  export let className = '';
-
-  let maxMagnitude: number = 0;
-  $: maxMagnitude = Math.max(0, ...items.map(magnitudeFor));
-
-  let futureStartIndex = -1;
-  let futureEndIndex = -1;
-  let futureRectX = 0;
-  let futureRectWidth = 0;
-
-  $: if (items.length > 0) {
-    futureStartIndex = firstShadedItemIndex(items);
-    if (futureStartIndex !== -1) {
-      futureEndIndex = items.length - 1;
-      futureRectX = getBarX(futureStartIndex); // No gap offset
-      // Calculate width: (number of future bars) * barWidth (no gap)
-      futureRectWidth = (futureEndIndex - futureStartIndex + 1) * barWidth;
-    } else {
-      futureStartIndex = -1; // Reset if no future events found
-    }
-  } else {
-    futureStartIndex = -1; // Reset if no data
+  interface Props {
+    items: T[];
+    selectedItem: Nullable<T>;
+    magnitudeFor: (_item: T) => number;
+    firstShadedItemIndex: (_items: T[]) => number;
+    onSelect: (_item: T) => void;
+    className?: string;
   }
 
-  const dispatch = createEventDispatcher<{ dragstart: void, dragend: void }>();
+  const {
+    items,
+    selectedItem,
+    magnitudeFor,
+    firstShadedItemIndex,
+    onSelect,
+    className = ''
+  } : Props = $props();
 
 
-  // Calculate barWidth based on available width
-  let actualSvgWrapperWidth = 300; // Default, will be updated by bind:clientWidth
-  
-  $: if (browser && svgWrapperElement) { // Ensure element is available in browser
-    actualSvgWrapperWidth = svgWrapperElement.clientWidth;
-  }
+  let maxMagnitude = $derived(Math.max(0, ...items.map(magnitudeFor)));
 
-  // Calculate barWidth based on available width
-  let svgWidth = 300; // Default, will be calculated based on bars
-
-  $: if (browser && svgWrapperElement) { // Ensure element is available in browser
-    actualSvgWrapperWidth = svgWrapperElement.clientWidth;
-  }
-
-  $: if (items.length > 0 && actualSvgWrapperWidth > 0) {
-    const minBarWidth = 1; // Define a minimum bar width (reduced to 1px)
-    const idealBarWidth = actualSvgWrapperWidth / items.length; // No gap
-
-    // Calculate barWidth: use ideal width if >= min, otherwise use min
-    barWidth = Math.max(minBarWidth, idealBarWidth);
-    // Ensure barWidth is at least 1px
-    barWidth = Math.max(1, barWidth);
-
-    // Calculate svgWidth based on the final barWidth
-    svgWidth = items.length * barWidth; // No gap
-
-  } else if (items.length === 1 && actualSvgWrapperWidth > 0) {
-    barWidth = actualSvgWrapperWidth; // Single bar takes full width
-    svgWidth = actualSvgWrapperWidth;
-  } else {
-    barWidth = 10; // Fallback if no data or width not determined
-    svgWidth = 300; // Fallback SVG width
-  }
-  let svgElement: SVGSVGElement;
-  let svgWrapperElement: HTMLDivElement; // For binding clientWidth
-  let isDragging = false;
-
-  const svgHeight = 36;
-  let barWidth = 10;
-  const maxBarHeight = 22;
   const bottomPadding = 0;
   const topPadding = 3;
+
+  let svgWrapperElement: HTMLDivElement;
+  let svgWrapperWidth = $state(300);
+  let svgWrapperHeight = $state(40);
+
+  let resizeObserver: ResizeObserver;
+
+  $effect(() => {
+    if (!browser || !svgWrapperElement) return;
+
+    resizeObserver = new ResizeObserver(() => {
+      // This will trigger recomputation
+      svgWrapperWidth = svgWrapperElement.clientWidth;
+      svgWrapperHeight = svgWrapperElement.clientHeight;
+    });
+
+    resizeObserver.observe(svgWrapperElement);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  });
+
+  $effect(() => {
+    console.log(`SvgWrapperHeight: ${svgWrapperHeight}`)
+  })
+
+  let barWidth = $derived.by(() => {
+    console.log("calculating bar width");
+    if (items.length > 0 && svgWrapperWidth > 0) {
+      const minBarWidth = 1; // Define a minimum bar width (reduced to 1px)
+      const idealBarWidth = svgWrapperWidth / items.length; // No gap
+
+      // Calculate barWidth: use ideal width if >= min, otherwise use min
+      let result = Math.max(minBarWidth, idealBarWidth);
+      // Ensure barWidth is at least 1px
+      result = Math.max(1, result);
+      return result;
+    } else if (items.length === 1 && svgWrapperWidth > 0) {
+      return svgWrapperWidth; // Single bar takes full width
+    } else {
+      return 10;
+    }
+  });
+
+  let futureStartIndex = $state(-1);
+  let futureEndIndex = $state(-1);
+  let futureRectX = $state(0);
+  let futureRectWidth = $state(0);
+
+  $effect(() => {
+    if (items.length > 0) {
+      futureStartIndex = firstShadedItemIndex(items);
+      if (futureStartIndex !== -1) {
+        futureEndIndex = items.length - 1;
+        futureRectX = getBarX(futureStartIndex); // No gap offset
+        // Calculate width: (number of future bars) * barWidth (no gap)
+        futureRectWidth = (futureEndIndex - futureStartIndex + 1) * barWidth;
+      } else {
+        futureStartIndex = -1; // Reset if no future events found
+      }
+    } else {
+      futureStartIndex = -1; // Reset if no data
+    }
+  });
+  
+  let svgElement: SVGSVGElement;
+  let isDragging = false;
 
   function getBarX(index: number): number {
     return index * barWidth;
   }
 
   function getBarHeight(locationCount: number): number {
-    return Math.max(1, (locationCount / maxMagnitude) * maxBarHeight); // Ensure min height of 1 for visibility
+    return Math.max(1, (locationCount / maxMagnitude) * svgWrapperHeight); // Ensure min height of 1 for visibility
   }
 
    // --- Drag logic placeholder ---
@@ -104,7 +121,6 @@
   function onMouseDown(event: MouseEvent) {
     if (!browser) return;
     isDragging = true;
-    dispatch('dragstart');
     const index = getIndexFromMouseEvent(event);
     if (index !== null && items[index]) {
       onSelect(items[index]);
@@ -127,9 +143,6 @@
 
   function onMouseUp() {
     if (!browser) return;
-    if (isDragging) {
-      dispatch('dragend');
-    }
     isDragging = false;
     window.removeEventListener('mousemove', onMouseMove);
     window.removeEventListener('mouseup', onMouseUp);
@@ -152,7 +165,6 @@
   function onTouchStart(event: TouchEvent) {
     if (!browser) return;
     isDragging = true;
-    dispatch('dragstart');
     const index = getIndexFromTouchEvent(event);
     if (index !== null && items[index]) {
       onSelect(items[index]);
@@ -176,9 +188,6 @@
 
   function onTouchEnd() {
     if (!browser) return;
-    if (isDragging) {
-      dispatch('dragend');
-    }
     isDragging = false;
     window.removeEventListener('touchmove', onTouchMove);
     window.removeEventListener('touchend', onTouchEnd);
@@ -194,62 +203,93 @@
   });
 </script>
 
-<div class={`histogram-slider ${className}`}>
-  <div class="svg-wrapper" 
-  bind:clientWidth={actualSvgWrapperWidth} 
-  bind:this={svgWrapperElement}
-  style="--svg-height: {svgHeight}px">
-    <!-- svelte-ignore a11y-interactive-supports-focus -->
-    <svg
-      bind:this={svgElement}
-      width={svgWidth}
-      height={svgHeight}
-      on:mousedown={onMouseDown}
-      on:touchstart={onTouchStart}
-      role="slider"
-      aria-valuemin="0"
-      aria-valuemax={items.length -1}
-      aria-valuenow={items.findIndex(d => d === selectedItem)}
-      aria-orientation="horizontal"
-    >
-      {#if futureStartIndex !== -1}
-        <rect
-          class="future-events-highlight"
-          x={futureRectX}
-          y={topPadding - 2}
-          width={futureRectWidth}
-          height={svgHeight - bottomPadding - topPadding + 4}
-        />
-      {/if}
-      {#if items.length > 0}
-        {#each items as item, i}
-          {#if item === selectedItem}
-            <rect
-              class="selected-background-highlight"
-              x={getBarX(i)}
-              y={topPadding - 2}
-              width={barWidth}
-              height={svgHeight - bottomPadding - topPadding + 4}
-            />
-          {/if}
+<div class={`histogram-slider ${className}`}
+  bind:this={svgWrapperElement}>
+  <!-- svelte-ignore a11y_interactive_supports_focus -->
+  <svg
+    bind:this={svgElement}
+    onmousedown={onMouseDown}
+    ontouchstart={onTouchStart}
+    role="slider"
+    aria-valuemin="0"
+    aria-valuemax={items.length - 1}
+    aria-valuenow={items.findIndex(d => d === selectedItem)}
+    aria-orientation="horizontal"
+  >
+    {#if futureStartIndex !== -1}
+      <rect
+        class="future-events-highlight"
+        x={futureRectX}
+        y={topPadding - 2}
+        width={futureRectWidth}
+        height={svgWrapperHeight - bottomPadding - topPadding + 4}
+      />
+    {/if}
+    {#if items.length > 0}
+      {#each items as item, i}
+        {#if item === selectedItem}
           <rect
-            class="data-bar"
-            class:selected={item === selectedItem}
+            class="selected-background-highlight"
             x={getBarX(i)}
-            y={svgHeight - getBarHeight(magnitudeFor(item)) - bottomPadding}
+            y={topPadding - 2}
             width={barWidth}
-            height={getBarHeight(magnitudeFor(item))}
-            on:click={() => onSelect(item)}
-            role="option"
-            aria-selected={item === selectedItem}
-            on:keydown={(e) => { if (e.key === 'Enter' || e.key === ' ') onSelect(item); }}
-            />
-        {/each}
-      {/if}
-    </svg>
-  </div>
+            height={svgWrapperHeight - bottomPadding - topPadding + 4}
+          />
+        {/if}
+        <rect
+          class="data-bar"
+          class:selected={item === selectedItem}
+          x={getBarX(i)}
+          y={svgWrapperHeight - getBarHeight(magnitudeFor(item)) - bottomPadding}
+          width={barWidth}
+          height={getBarHeight(magnitudeFor(item))}
+          onclick={() => onSelect(item)}
+          role="option"
+          aria-selected={item === selectedItem}
+          onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') onSelect(item); }}
+          />
+      {/each}
+    {/if}
+  </svg>
 </div>
 
 <style>
 
+  .histogram-slider {
+    display: flex;
+    align-items: stretch;
+    justify-content: stretch;
+  }
+  .histogram-slider:active {
+    cursor: grabbing;
+  }
+
+  svg {
+    display: block; /* Remove extra space below SVG */
+    width: 100%;
+    height: 100%;
+  }
+  
+  .selected-background-highlight {
+    fill: #FFD580; /* Light orange for selected background highlight */
+  }
+
+  rect.data-bar {
+    fill: #00008B; /* Dark blue for standard bars */
+    transition: fill 0.2s ease-in-out;
+  }
+
+
+  rect.data-bar:hover {
+    fill: #4169E1; /* RoyalBlue on hover */
+  }
+
+  rect.data-bar.selected {
+    fill: #FFA500; /* Orange for selected bars */
+  }
+
+.future-events-highlight {
+    fill: #A9A9A9; /* Medium gray */
+    opacity: 0.5; /* Semi-transparent */
+  }
 </style>

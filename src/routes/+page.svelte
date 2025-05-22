@@ -2,8 +2,8 @@
   import { isWideViewport } from '$lib/store/viewportStore.svelte';
   import MapDisplay from '$lib/MapDisplay.svelte';
   import ProtestMapTour from '$lib/ProtestMapTour.svelte';
-  import EventInfo from '$lib/EventInfo.svelte';
-  import EventsFilter from '$lib/EventsFilter.svelte';
+  import EventInfoPanel from '$lib/EventInfoPanel.svelte';
+  import FilterPanel from '$lib/FilterPanel.svelte';
   import { playIconSvg, pauseIconSvg, filterIconSvg, infoIconSvg } from '$lib/icons';
   import { formatDateIndicatingFuture } from '$lib/util/date.js';
   import { createPageStateInContext } from '$lib/store/PageState.svelte';
@@ -37,7 +37,7 @@
     }
   });
 
-  // EventInfo becomes visible any time currentDate changes after loading.
+  // EventInfoPanel becomes visible any time currentDate changes after loading.
   $effect(() => {
     if (hasLoaded === false) return;
     if (pageState.filter.currentDate !== undefined) {
@@ -162,7 +162,7 @@
   </div>
 
   {#if pageState.filterVisible && pageState.filter.currentDateHasEventNames }
-      <EventsFilter className="filter panel" onClose={() => pageState.filterVisible = false} />
+      <FilterPanel className="filter panel" onClose={() => pageState.filterVisible = false} />
   {/if}
 </div>
 
@@ -194,7 +194,7 @@
 <div class="timeline-and-eventinfo">
 
   {#if pageState.eventInfoVisible}
-    <EventInfo />
+    <EventInfoPanel />
   {/if}
 
   <Timeline />
@@ -213,6 +213,7 @@
   top: var(--toolbar-margin);
   left: 50%;
   transform: translateX(-50%);
+  min-width: 13em;
   max-width: calc(100vw - 2 * (var(--icon-button-size) - 2 * var(--toolbar-margin)));
   background: transparent;
 }
@@ -224,6 +225,17 @@
   overflow: hidden;
 }
 
+.title-container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: .3em;
+}
+
+.title-container .attribution-link {
+  font-size: .6em;
+}
+
 .title-and-stats-container {
   display: flex;
   flex-direction: column;
@@ -232,11 +244,13 @@
 }
 
 .current-date-stats {
+  font-size: .9em;
   display: flex;
   flex-direction: row;
   align-items: baseline;
   justify-content: space-between; 
   gap: 1em; 
+  white-space: nowrap;
 }
 
 .title {

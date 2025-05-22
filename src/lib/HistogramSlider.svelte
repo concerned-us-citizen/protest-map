@@ -49,14 +49,9 @@
     };
   });
 
-  $effect(() => {
-    console.log(`SvgWrapperHeight: ${svgWrapperHeight}`)
-  })
-
   let barWidth = $derived.by(() => {
-    console.log("calculating bar width");
     if (items.length > 0 && svgWrapperWidth > 0) {
-      const minBarWidth = 1; // Define a minimum bar width (reduced to 1px)
+      const minBarWidth = 1; // Define a minimum bar width
       const idealBarWidth = svgWrapperWidth / items.length; // No gap
 
       // Calculate barWidth: use ideal width if >= min, otherwise use min

@@ -26,13 +26,13 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black for dimming */
+    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 10px; /* Add some padding inside the content area */
-    z-index: 9999; /* Ensure it's above all other content */
-    pointer-events: auto; /* Allow pointer events on the background itself */
-    box-sizing: border-box; /* Include padding in the element's total width */
+    padding: 10px; 
+    z-index: 9999;
+    pointer-events: auto; 
+    box-sizing: border-box; 
   }
 </style>

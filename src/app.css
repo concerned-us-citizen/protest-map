@@ -19,14 +19,3 @@ body {
   --panel-border-radius: 0.4em;
   --panel-padding: 0.5em 1em;
 }
-
-.tour-image {
-  /* Define the global style here */
-  width: 300px;
-}
-
-@media (max-width: 768px) {
-  .tour-image {
-    width: 250px;
-  }
-}

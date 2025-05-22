@@ -177,11 +177,11 @@
       color: rgb(23, 78, 154);
   }
 
-  .title-container { /* Updated class name */
+  .title-container {
     flex-grow: 1;
   }
 
-  .title-container h1 { /* Updated class name */
+  .title-container h1 {
     font-size: 1.5em;
     font-weight: bold;
     margin: 5px 0 10px -10px;

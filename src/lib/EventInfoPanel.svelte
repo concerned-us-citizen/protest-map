@@ -35,21 +35,18 @@
 <style>
   .event-info {
     font-size: 0.9em;
-    padding: 0 5px; /* Minimal padding, adjust as needed */
-    background-color: rgba(245, 245, 245, 0.8); /* Semi-transparent background */
+    background-color: rgba(245, 245, 245, 0.8);
     border-radius: 8px;
-    padding: 8px; /* Match slider padding */
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); /* Match slider shadow */
-    font-size: 0.9em; /* Match slider font size */
-    transition: opacity 0.3s ease-in-out; /* Fade transition */
-    max-height: 40px; /* Constrain height to be similar to slider */
-    overflow: hidden; /* Hide overflowing content */
-    display: flex; /* Use flexbox for vertical centering */
+    padding: .5em;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); 
+    font-size: 0.9em; 
+    transition: opacity 0.3s ease-in-out;
+    overflow: hidden; 
+    display: flex; 
     flex-direction: column;
     align-items: stretch;
-    word-break: break-word; /* Allow long words to break */
+    gap: .2em;
   }
-  /* Style for the event info panel */
 
   .counts-line {
     font-size: 0.9em;
@@ -57,8 +54,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    /* Removed flexbox properties from here */
-    align-items: center; /* Vertically align items */
+    align-items: center;
   }
 
   .counts-line strong {
@@ -86,5 +82,16 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  .counts-line {
+    container-type: inline-size;
+    container-name: counts-line;
+  }
+
+  @container counts-line (max-width: 18em) {
+    .counts-line .date-display {
+      display: none;
+    }
   }
 </style>

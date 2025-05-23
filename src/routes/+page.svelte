@@ -1,6 +1,5 @@
 <script lang="ts">
   import { isWideViewport } from '$lib/store/viewportStore.svelte';
-  import MapDisplay from '$lib/MapDisplay.svelte';
   import ProtestMapTour from '$lib/ProtestMapTour.svelte';
   import EventInfoPanel from '$lib/EventInfoPanel.svelte';
   import FilterPanel from '$lib/FilterPanel.svelte';
@@ -10,6 +9,7 @@
   import { countAndLabel } from '$lib/util/string';
   import Timeline from '$lib/Timeline.svelte';
   import IconButton from '$lib/IconButton.svelte';
+  import EventMap from '$lib/EventMap.svelte';
 
   const { data } = $props();
 
@@ -135,7 +135,7 @@
   <meta property="og:description" content={`An interactive map of protests ${pageState.eventStore.formattedDateRange}`} />
 </svelte:head>
 
-<MapDisplay/>
+ <EventMap />
 
 <div class="title-stats-and-filter-container">
   <div class="title-and-stats-container">

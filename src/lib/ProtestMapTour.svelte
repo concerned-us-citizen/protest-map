@@ -1,13 +1,11 @@
 <script lang="ts">
   import Tour from "./Tour.svelte";
   import CreditsPanel from "./CreditsPanel.svelte";
-  export let onClose: () => void;
-  export let className = '';
+  let { onClose, className = '' } = $props();
 
 </script>
 
-<Tour className={className}
-steps={[
+<Tour className={className} steps={[
   {
     title: "US Protests Map",
     description: `

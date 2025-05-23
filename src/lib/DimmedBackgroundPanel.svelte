@@ -2,7 +2,7 @@
   import { createEventDispatcher } from 'svelte';
 
   const dispatch = createEventDispatcher();
-  export let className = '';
+  let { children, className = '' } = $props();
 
   function handleBackgroundClick(event: MouseEvent) {
     // Dismiss only if the click is directly on the dimmed background, not on the content panel
@@ -15,8 +15,8 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class={`dimmed-background ${className}`} on:click={handleBackgroundClick}>
-    <slot/>
+<div class={`dimmed-background ${className}`} onclick={handleBackgroundClick}>
+    {@render children()}
 </div>
 
 <style>

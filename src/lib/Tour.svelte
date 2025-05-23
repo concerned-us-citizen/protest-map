@@ -1,31 +1,50 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount, onDestroy } from 'svelte';
+  import { createEventDispatcher } from 'svelte';
   import { quintOut } from 'svelte/easing';
   import { crossfade } from 'svelte/transition';
   import { markerSvg } from './icons';
   import DimmedBackgroundPanel from './DimmedBackgroundPanel.svelte';
-  import type { Component } from 'svelte';
   import InlineSvg from './InlineSvg.svelte';
+  import type { Nullable } from './types';
 
   const dispatch = createEventDispatcher();
 
-  export let steps: {
+   type Step = {
     title: string;
     description?: string;
+    // Not great to avoid type checking here, but doing it properly is ugly at this point. 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    component?: Component<any>;
+    component?: any;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     props?: Record<string, any>;
-  }[];
-  export let className = '';
+  };
 
-  export let currentStepIndex: number = 0;
+  interface Props {
+    steps: Step[];
+    className?: string;
+  }
 
-  let panelElement: HTMLElement;
+  const {
+    steps,
+    className = ''
+  }: Props = $props();
 
-  $: currentStep = steps[currentStepIndex];
-  $: showPrevious = currentStepIndex > 0;
-  $: showNext = currentStepIndex < steps.length - 1;
+  let currentStepIndex = $state(0);
+  let currentStep = $derived(steps[currentStepIndex]);
+  let Component = $derived(currentStep?.component);
+  let showPrevious = $derived(currentStepIndex > 0);
+  let showNext = $derived(currentStepIndex < steps.length - 1);
+
+  let panelElement: Nullable<HTMLElement> = $state(null);
+  $effect(() => {
+      panelElement?.addEventListener('touchstart', handleTouchStart as EventListenerOrEventListenerObject);
+      panelElement?.addEventListener('touchend', handleTouchEnd as EventListenerOrEventListenerObject);
+      return () => {
+        panelElement?.removeEventListener('touchstart', handleTouchStart as EventListenerOrEventListenerObject);
+        panelElement?.removeEventListener('touchend', handleTouchEnd as EventListenerOrEventListenerObject);
+      }
+  });
+
 
   function dismiss() {
     dispatch('dismiss');
@@ -68,22 +87,6 @@
     }
   };
 
-  onMount(() => {
-    // Add touch event listeners to the panel element
-    if (panelElement) {
-      panelElement.addEventListener('touchstart', handleTouchStart as EventListenerOrEventListenerObject);
-      panelElement.addEventListener('touchend', handleTouchEnd as EventListenerOrEventListenerObject);
-    }
-  });
-
-  onDestroy(() => {
-    // Clean up touch event listeners
-    if (panelElement) {
-      panelElement.removeEventListener('touchstart', handleTouchStart as EventListenerOrEventListenerObject);
-      panelElement.removeEventListener('touchend', handleTouchEnd as EventListenerOrEventListenerObject);
-    }
-  });
-
   // Crossfade transition for step content
   const [send, receive] = crossfade({
     duration: 300,         
@@ -103,23 +106,22 @@
             <h1>{currentStep.title}</h1>
           </div>
         </div>
-        {#if currentStep.component}
-          <!-- eslint-disable-next-line @typescript-eslint/no-explicit-any -->
-          <svelte:component this={currentStep.component} {...currentStep.props as Record<string, any>} />
+        {#if currentStep?.component}
+          <Component {...(currentStep.props || {})} />
         {:else}
           <!-- eslint-disable-next-line svelte/no-at-html-tags -->
           <p class="description-text">{@html currentStep.description}</p>
         {/if}
         <div class="footer">
-          <button class="link-button" on:click={dismiss}>Dismiss</button>
+          <button class="link-button" onclick={dismiss}>Dismiss</button>
           <div class="progress-indicator">
             {#each steps as _, i}
               <div class="step-circle" class:active={i === currentStepIndex}></div>
             {/each}
           </div>
           <div class="navigation-buttons">
-            <button class="link-button" on:click={previousStep} class:hidden={!showPrevious}>Prev</button>
-            <button class="link-button" on:click={nextStep} class:disabled={!showNext}>Next</button>
+            <button class="link-button" onclick={previousStep} class:hidden={!showPrevious}>Prev</button>
+            <button class="link-button" onclick={nextStep} class:disabled={!showNext}>Next</button>
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 <script lang="ts">
-  export let content: string;
+  let { content } = $props();
 </script>
 
 <!-- Render raw SVG HTML safely -->

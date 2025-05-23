@@ -2,8 +2,7 @@
   import { getPageStateFromContext } from "./store/PageState.svelte";
   import { countAndLabel } from "./util/string";
 
-  export let onClose: () => void;
-  export let className = '';
+  let { onClose, className = '' } = $props();
 
   const pageState = getPageStateFromContext();
   const eventNamesWithLocationCounts = pageState.filter.currentDateEventNamesWithLocationCounts;
@@ -11,7 +10,7 @@
 </script>
 
 <div class={`events-filter-component ${className}`}>
-  <button class="close-button" on:click={onClose} aria-label="Close filter">×</button>
+  <button class="close-button" onclick={onClose} aria-label="Close filter">×</button>
   <h4 class="filter-title">{countAndLabel(eventNamesWithLocationCounts, "Event")}</h4>
   {#if eventNamesWithLocationCounts.length > 0}
     <div class="events-section-description">(Tap to toggle one or more)</div>
@@ -23,7 +22,7 @@
           <li class="filter-item">
             <button
               type="button"
-              on:click|stopPropagation={() => pageState.filter.toggleSelectedEventName(event.name)}
+              onclick={(e) => { e.stopPropagation(); pageState.filter.toggleSelectedEventName(event.name)}}
               class:selected-event={pageState.filter.selectedEventNames.includes(event.name)}
             >
               <span class="event-name-in-list">{event.name || 'Unnamed'}</span>
@@ -42,7 +41,7 @@
   .events-filter-component {
     display: flex;
     flex-direction: column;
-    position: relative; /* For positioning the close button */
+    position: relative; 
   }
   .close-button {
     position: absolute;

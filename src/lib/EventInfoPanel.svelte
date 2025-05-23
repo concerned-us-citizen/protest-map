@@ -5,7 +5,7 @@
   import { countAndLabel } from "./util/string";
   import { getPageStateFromContext } from "./store/PageState.svelte";
 
-  export let className = '';
+  let { className = '' } = $props();
 
   const pageState = getPageStateFromContext();
 </script>

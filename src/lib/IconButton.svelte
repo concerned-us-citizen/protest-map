@@ -1,16 +1,13 @@
 <script lang="ts">
   import InlineSvg from './InlineSvg.svelte';
-  export let onClick: () => void;
-  export let icon: string; 
-  export let className = '';
-  export let disabled = false;
-  export let label: string; // used for both title and aria-label
+
+  let { onClick, icon, className = '', disabled = false, label } = $props();
 </script>
 
 <button
   class={`icon-button ${className}`}
   class:disabled={disabled}
-  on:click={() => !disabled && onClick()}
+  onclick={() => !disabled && onClick()}
   title={label}
   aria-label={label}
   {disabled}

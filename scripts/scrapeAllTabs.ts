@@ -9,6 +9,7 @@ import {
 import { mkdir } from "fs/promises";
 import { toTitleCase } from "../src/lib/util/string.ts";
 import { stripPropsFromValues } from "../src/lib/util/misc.ts";
+import { ProtestEventJson } from "../src/lib/types.ts";
 
 const DOC_ID = "1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A";
 const OUTPUT_DIR = "./static/data";
@@ -193,16 +194,11 @@ function normalizeNames(rawEvents) {
   });
 }
 
-type Event = {
-  date: string;
-  name: string;
-  link: string;
-  location: string;
-};
-
 async function normalizeByLocationAndGroupByDate(originalEvents) {
   const locations = {};
-  const events: Event[] = [];
+  const events: ProtestEventJson[] = [];
+
+  let curId = 0;
 
   for (const event of originalEvents) {
     const locKey = getLocationKey(event);
@@ -218,6 +214,7 @@ async function normalizeByLocationAndGroupByDate(originalEvents) {
       };
     }
     events.push({
+      id: curId++,
       date: event.date,
       name: event.name,
       link: event.link,

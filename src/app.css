@@ -15,10 +15,17 @@ body {
   --toolbar-margin: 0.9375em;
   --icon-size: 1.8em;
   --icon-button-size: 2.3em;
+  --max-title-panel-width: calc(
+    100vw - 2 * (var(--icon-button-size) - 2 * var(--toolbar-margin))
+  );
   --panel-background-color: #fffc;
   --panel-border-radius: 0.4em;
   --panel-padding-h: 1em;
   --panel-padding-v: 0.5em;
+
+  --selected-color: #e8f0fe;
+  --hover-color: #f0f0f0;
+  --hover-selected-color: #dceafe;
 
   /* Suppress default OS long press actions on mobile */
   user-select: none;
@@ -28,6 +35,11 @@ body {
 }
 
 body.touch-device {
-  --icon-size: 2.5em; /* Increased size for touch devices */
-  --icon-button-size: 4em; /* Increased size for touch devices */
+  --icon-size: 2.5em;
+  --icon-button-size: 4em;
+  --max-title-panel-width: calc(
+    100vw - (var(--icon-button-size) - 3 * var(--toolbar-margin))
+  );
+  --hover-color: transparent;
+  --hover-selected-color: var(--selected-color);
 }

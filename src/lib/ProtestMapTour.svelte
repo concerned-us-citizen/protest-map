@@ -22,8 +22,8 @@
     title: "Colored Locations",
     description: `
     <p>Locations appear on the map as protest signs, colored in shades of red or blue to reflect the 2024 presidential voter preferences of the surrounding precinct.</p>
-    <p>These results use the margin by which Trump or Harris won the election in that precinct, from data compiled by the New York Times.</p>
-    <p>Data for some precincts isn't available; where absent, signs are presented in gray.</p>
+    <p>Colors come from the margin by which Trump or Harris won the election in that precinct, using data compiled by the New York Times.</p>
+    <p>Data for some precincts isn't available. Where absent, signs are presented in gray.</p>
     `,
   },
   {

@@ -28,7 +28,8 @@
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: stretch;
     align-items: center;
     padding: 10px; 
     z-index: 9999;

@@ -15,14 +15,17 @@ body {
   --toolbar-margin: 0.9375em;
   --icon-size: 1.8em;
   --icon-button-size: 2.3em;
-  --max-title-panel-width: calc(
+  --available-title-panel-width: calc(
     100vw - 2 * (var(--icon-button-size) - 2 * var(--toolbar-margin))
   );
+  --title-panel-width: min(var(--available-title-panel-width), 20em);
   --panel-background-color: #fffc;
   --panel-border-radius: 0.4em;
   --panel-padding-h: 1em;
   --panel-padding-v: 0.5em;
 
+  --filtered-color: rgb(190, 40, 40);
+  --accent-color: #ffd580;
   --selected-color: #e8f0fe;
   --hover-color: #f0f0f0;
   --hover-selected-color: #dceafe;
@@ -37,8 +40,8 @@ body {
 body.touch-device {
   --icon-size: 2.5em;
   --icon-button-size: 4em;
-  --max-title-panel-width: calc(
-    100vw - (var(--icon-button-size) - 3 * var(--toolbar-margin))
+  --available-title-panel-width: calc(
+    100vw - (var(--icon-button-size) + 2 * var(--toolbar-margin))
   );
   --hover-color: transparent;
   --hover-selected-color: var(--selected-color);

@@ -37,7 +37,7 @@ export class EventStore {
 
   readonly formattedUpdatedAt = $derived(
     this.updatedAt
-      ? `Protest data last refreshed ${formatDateTime(this.updatedAt)}`
+      ? `Data last refreshed ${formatDateTime(this.updatedAt)}`
       : "Not yet updated"
   );
 

@@ -266,7 +266,7 @@
   }
   
   .selected-background-highlight {
-    fill: #FFD580; /* Light orange for selected background highlight */
+    fill: var(--accent-color);
   }
 
   rect.data-bar {

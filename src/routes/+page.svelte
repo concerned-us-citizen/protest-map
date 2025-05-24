@@ -37,6 +37,8 @@
     }
   });
 
+  let isFiltering = $derived(pageState.filter.selectedEventNames.length > 0);
+
   // EventInfoPanel becomes visible any time currentDate changes after loading.
   $effect(() => {
     if (hasLoaded === false) return;
@@ -157,7 +159,16 @@
 
       <div class="current-date-stats panel">
         <b>{formatDateIndicatingFuture(pageState.filter.currentDate)}</b>
-        <div class="location-count">{countAndLabel(pageState.filter.currentDateEvents, 'location')}</div>
+        <div class="location-count">
+
+          {#if isFiltering}
+            <div class="is-filtering-indicator">
+              {pageState.filter.filteredEvents.length} of {countAndLabel(pageState.filter.currentDateEvents, 'location')}
+            </div>
+          {:else}
+            {countAndLabel(pageState.filter.currentDateEvents, 'location')}
+          {/if}
+        </div>
       </div>
     </div>
 
@@ -209,8 +220,7 @@
   top: var(--toolbar-margin);
   left: 50%;
   transform: translateX(-50%);
-  min-width: 13em;
-  max-width: var(--max-title-panel-width);
+  width: var(--title-panel-width); 
   background: transparent;
   display: flex;
   flex-direction: column;
@@ -255,6 +265,10 @@
   justify-content: space-between; 
   gap: 1em; 
   white-space: nowrap;
+}
+
+.is-filtering-indicator {
+  color: var(--filtered-color);
 }
 
 .title {

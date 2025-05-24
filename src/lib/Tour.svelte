@@ -135,22 +135,14 @@
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    padding: 20px;
-    min-height: 400px;
-    min-width: 500px;
-    max-width: 500px;
+    padding: 1.3em;
+    width: min(25em, 80vw);
     display: flex;
     flex-direction: column;
     position: relative;
-    max-height: 95vh;
+    height: min(30em, 95vh);
   }
 
-  @media (max-width: 600px) {
-    .tour-panel {
-      min-width: 82vw;
-      min-height: 440px; /* Taller height for mobile */
-    }
-  }
 
   .panel-content {
     display: flex;
@@ -273,6 +265,6 @@
   }
 
   :global(.tour-image) {
-    max-width: 80vw;
+    max-width: min(80vw, 20em);
   }
 </style>

@@ -54,10 +54,10 @@
       </div>
     {/each}
   </div>
+  <p class="last-updated">
+    {pageState.eventStore.formattedUpdatedAt}
+  </p>
 </div>
-<p class="last-updated">
-  {pageState.eventStore.formattedUpdatedAt}
-</p>
 
 <style>
   .content {

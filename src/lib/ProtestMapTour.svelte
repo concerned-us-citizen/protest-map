@@ -1,7 +1,12 @@
 <script lang="ts">
   import Tour from "./Tour.svelte";
   import CreditsPanel from "./CreditsPanel.svelte";
+  import { deviceInfo } from "./store/DeviceInfo.svelte";
+  import { titleCase } from "title-case";
   let { onClose, className = '' } = $props();
+
+  let tapping = deviceInfo.tappingOrClicking;
+  let tap = deviceInfo.tapOrClick;
 
 </script>
 
@@ -25,22 +30,22 @@
     title: "Animating The Dates",
     description: `
     <p>You can watch the protests play out over time, by toggling the Play/Pause buttons.</p>
-    <p>You can also press the spacebar to toggle animation if it's available.</p>
+    <p>You can also use the spacebar to toggle animation if it's available.</p>
     `,
   },
   {
     title: "Using the Timeline",
     description: `
-    <p>Instead of animating, you can step through the dates by clicking the arrow buttons (or the left or right arrow keys if available).</p>
+    <p>Instead of animating, you can step through the dates by ${tapping} the arrow buttons (or the left or right arrow keys if available).</p>
     <img src="timeline.png" class='tour-image' />
-    <p>You can select a particular date by tapping within the timeline.</p>
+    <p>You can select a particular date by ${tapping} within the timeline.</p>
     <p>You can also "scrub" through the dates, by dragging across the timeline to see the map animate as you move.</p>
     `,
   },
   {
     title: "View Location Details",
     description: `
-    <p>Tapping a location will present more detail about it - you can navigate to a Wikipedia entry on it, or to the associated event's link.</p>
+    <p>${titleCase(tapping)} a location will present more detail about it - you can navigate to a Wikipedia entry on it, or to the associated event's link.</p>
     <img src="info-popup.png" class='tour-image'/>
     `,
   },
@@ -49,14 +54,13 @@
     description: `
     <p>Each protest location is associated with an event (e.g."Hands Off!"). In many cases, there are multiple events on a given day.</p>
     <img src="event-filter.png" class='tour-image' />
-    <p>To see specific events' locations, tap the filter tool button to see the list of events. Then tap one or more names from that list.</p>
+    <p>To see specific events' locations, ${tap} the filter tool button to see the list of events. Then ${tap} one or more names from that list.</p>
     `,
   },
   {
     title: "Change the Map's View",
     description: `
-    <p>You can zoom and pan (pinch and drag on mobile devices) around the map to reveal more locations or see areas in more detail.</p>
-    <p>The map initially shows only the continental US, but there are more protests (e.g. Alaska and Hawaii).</p>
+    <p>You can ${deviceInfo.isTouchDevice ? "pinch and drag" : "pan and zoom"} around the map to reveal more locations or see areas in more detail.</p>
     `,
   },
   {

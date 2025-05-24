@@ -189,7 +189,7 @@ function normalizeNames(rawEvents) {
   return rawEvents.map((event) => {
     const { name: originalName, ...rest } = event;
     const normalizedName =
-      correctedEventNames[originalName] ?? toTitleCase(originalName);
+      correctedEventNames[originalName] ?? toTitleCase(originalName).trim();
     return { name: normalizedName, ...rest };
   });
 }

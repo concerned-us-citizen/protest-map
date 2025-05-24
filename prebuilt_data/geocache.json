@@ -27198,5 +27198,2405 @@
     "lat": 38.3363062,
     "lon": -81.6122744,
     "displayName": "West Virginia State Capitol, 1900, Kanawha Boulevard East, East End, Charleston, Kanawha County, West Virginia, 25305, United States"
+  },
+  "891 e parks hwy newcomb park 99654 wasilla ak": {
+    "lat": 61.5824216,
+    "lon": -149.442563,
+    "displayName": "Wasilla, Matanuska-Susitna Borough, Alaska, United States"
+  },
+  "west 4th str & north ocotillo 85602 benson az": {
+    "lat": 31.9678611,
+    "lon": -110.294517,
+    "displayName": "Benson, Cochise County, Arizona, United States"
+  },
+  "15414 n 7th str 85022 phoenix az": {
+    "lat": 33.4484367,
+    "lon": -112.074141,
+    "displayName": "Phoenix, Maricopa County, Arizona, United States"
+  },
+  "e cambridge ave & n 18th pl 85016 phoenix az": {
+    "lat": 33.4484367,
+    "lon": -112.074141,
+    "displayName": "Phoenix, Maricopa County, Arizona, United States"
+  },
+  "707 s colcord rd 85541 payson az": {
+    "lat": 34.2358384,
+    "lon": -111.3256788,
+    "displayName": "South Colcord Road, Payson, Gila County, Arizona, 85072, United States"
+  },
+  "north 35th ave & west peoria ave 85053 phoenix az": {
+    "lat": 33.4484367,
+    "lon": -112.074141,
+    "displayName": "Phoenix, Maricopa County, Arizona, United States"
+  },
+  "24831 n 67th ave 85310 glendale az": {
+    "lat": 33.6942183,
+    "lon": -112.2030909,
+    "displayName": "North 67th Avenue, Glendale, Maricopa County, Arizona, 85310, United States"
+  },
+  "2077  e university dr 85288 tempe az": {
+    "lat": 33.4216526,
+    "lon": -111.8973381,
+    "displayName": "Tesla Tempe - Service Center, 2077, East University Drive, Tempe Cascade, Tempe, Maricopa County, Arizona, 85281, United States"
+  },
+  "south eliseo dr & bon air rd 94904 kentfield ca": {
+    "lat": 37.9519958,
+    "lon": -122.5572116,
+    "displayName": "Kentfield, Marin County, California, 94957, United States"
+  },
+  "pacific coast hwy & main street 90740 seal beach ca": {
+    "lat": 33.7423967,
+    "lon": -118.1055926,
+    "displayName": "Seal Beach, Orange County, California, United States"
+  },
+  "17243 pacific coast hwy 90742 sunset beach ca": {
+    "lat": 33.7117724,
+    "lon": -118.0635418,
+    "displayName": "Jack in the Box, 17243, Pacific Coast Highway, Sunset Beach, Huntington Harbor, Huntington Beach, Orange County, California, 90742, United States"
+  },
+  "pacific coast hwy & main street 92648 huntington beach ca": {
+    "lat": 33.6783336,
+    "lon": -118.000016,
+    "displayName": "Huntington Beach, Orange County, California, United States"
+  },
+  "newport blvd & east 17th str 92627 costa mesa ca": {
+    "lat": 33.6633386,
+    "lon": -117.903317,
+    "displayName": "Costa Mesa, Orange County, California, United States"
+  },
+  "california 1 & mori point trail 94044 pacifica ca": {
+    "lat": 37.5980374,
+    "lon": -122.4995234,
+    "displayName": "Pacifica, San Mateo County, California, 94044, United States"
+  },
+  "pacific coast hwy & newport blvd 92663 newport beach ca": {
+    "lat": 33.6170092,
+    "lon": -117.9294401,
+    "displayName": "Newport Beach, Orange County, California, United States"
+  },
+  "main beach 92651 laguna beach ca": {
+    "lat": 33.5426975,
+    "lon": -117.785366,
+    "displayName": "Laguna Beach, Orange County, California, United States"
+  },
+  "california 1 & jamboree rd 92660 newport beach ca": {
+    "lat": 33.6170092,
+    "lon": -117.9294401,
+    "displayName": "Newport Beach, Orange County, California, United States"
+  },
+  "pacific coast hwy & crown valley pkwy 92629 dana point ca": {
+    "lat": 33.4669721,
+    "lon": -117.6981075,
+    "displayName": "Dana Point, Orange County, California, United States"
+  },
+  "400 hitchcock way 93105 santa barbara ca": {
+    "lat": 34.43361,
+    "lon": -119.745049,
+    "displayName": "400, Hitchcock Way, Vista Del Monte, Santa Barbara, Santa Barbara County, California, 93105, United States"
+  },
+  "660 stanford shopping ctr 94304 palo alto ca": {
+    "lat": 37.4431921,
+    "lon": -122.1709163,
+    "displayName": "Stanford Shopping Center, 660, Stanford Shopping Center, Stanford, Palo Alto, Santa Clara County, California, 94304, United States"
+  },
+  "160 n pacific coast hwy 92651 laguna beach ca": {
+    "lat": 33.503951,
+    "lon": -117.7454498,
+    "displayName": "Pacific Coast Highway, South Laguna, Laguna Beach, Orange County, California, 92651, United States"
+  },
+  "ventura blvd & factory stores dr 93010 camarillo ca": {
+    "lat": 34.2176371,
+    "lon": -119.0383541,
+    "displayName": "Camarillo, Ventura County, California, United States"
+  },
+  "1901 del monte blvd 93955 seaside ca": {
+    "lat": 36.6171464,
+    "lon": -121.8438533,
+    "displayName": "Tesla Seaside, CA, 1901, Del Monte Boulevard, Seaside, Monterey County, California, 93955, United States"
+  },
+  "6701 amador plaza rd 94568 dublin ca": {
+    "lat": 37.7027365,
+    "lon": -121.9249152,
+    "displayName": "Tesla Store and Service Center, 6701, Amador Plaza Road, Dublin, Alameda County, California, 94568, United States"
+  },
+  "university dr & santa cruz ave 94025 menlo park ca": {
+    "lat": 37.4519671,
+    "lon": -122.177992,
+    "displayName": "Menlo Park, San Mateo County, California, 94025, United States"
+  },
+  "airport blvd & skylane blvd 95403 santa rosa ca": {
+    "lat": 38.4404925,
+    "lon": -122.7141049,
+    "displayName": "Santa Rosa, Sonoma County, California, United States"
+  },
+  "los feliz blvd & riverside dr 90027 los angeles ca": {
+    "lat": 34.0536909,
+    "lon": -118.242766,
+    "displayName": "Los Angeles, Los Angeles County, California, United States"
+  },
+  "perez road at hwy 111 92234 cathedral city ca": {
+    "lat": 33.7810031,
+    "lon": -116.464076,
+    "displayName": "Cathedral City, Riverside County, California, United States"
+  },
+  "east olive ave & n wishon ave 93728 fresno ca": {
+    "lat": 36.7394421,
+    "lon": -119.78483,
+    "displayName": "Fresno, Fresno County, California, United States"
+  },
+  "2 freeway & wawona by pedestrian bridge 90027 los angeles ca": {
+    "lat": 34.0536909,
+    "lon": -118.242766,
+    "displayName": "Los Angeles, Los Angeles County, California, United States"
+  },
+  "5 freeway & wawona??? 90027 los angeles ca": {
+    "lat": 34.0536909,
+    "lon": -118.242766,
+    "displayName": "Los Angeles, Los Angeles County, California, United States"
+  },
+  "high str & macarthur blvd 94619 oakland ca": {
+    "lat": 37.8044557,
+    "lon": -122.271356,
+    "displayName": "Oakland, Alameda County, California, United States"
+  },
+  "3075 adeline st 94703 berkeley ca": {
+    "lat": 37.852418,
+    "lon": -122.2695282,
+    "displayName": "Sutter Adeline Care Center, 3075, Adeline Street, Lorin, Berkeley, Alameda County, California, 94703, United States"
+  },
+  "main str & burton dr 93428 cambria ca": {
+    "lat": 35.5641425,
+    "lon": -121.081106,
+    "displayName": "Cambria, San Luis Obispo County, California, United States"
+  },
+  "100 s main str 95472 sebastopol ca": {
+    "lat": 38.4021038,
+    "lon": -122.824222,
+    "displayName": "Sebastopol, Sonoma County, California, 95472, United States"
+  },
+  "4180 el camino real 94306 palo alto ca": {
+    "lat": 37.4108245,
+    "lon": -122.1245312,
+    "displayName": "Tesla, 4180, El Camino Real, Ventura, Palo Alto, Santa Clara County, California, 94306, United States"
+  },
+  "2253 main str 93428 cambria ca": {
+    "lat": 35.5641425,
+    "lon": -121.081106,
+    "displayName": "Cambria, San Luis Obispo County, California, United States"
+  },
+  "grand ave & west san marcos blvd 92078 san marcos ca": {
+    "lat": 33.1352995,
+    "lon": -117.1743395,
+    "displayName": "San Marcos, San Diego County, California, United States"
+  },
+  "221 w crest str 92025 escondido ca": {
+    "lat": 33.1216751,
+    "lon": -117.0814849,
+    "displayName": "Escondido, San Diego County, California, United States"
+  },
+  "broadway & e napa str 95476 sonoma ca": {
+    "lat": 38.2919984,
+    "lon": -122.4578582,
+    "displayName": "Sonoma, Sonoma County, California, 95476, United States"
+  },
+  "1050 main str 93428 cambria ca": {
+    "lat": 35.5641425,
+    "lon": -121.081106,
+    "displayName": "Cambria, San Luis Obispo County, California, United States"
+  },
+  "f street & rialto ave 92405 san bernadino ca": {
+    "lat": 38.0285487,
+    "lon": -121.9619851,
+    "displayName": "San Bernadino Court, Bay Point, Contra Costa County, California, United States"
+  },
+  "1000 kansas ave 95351 modesto ca": {
+    "lat": 37.645908,
+    "lon": -121.021197,
+    "displayName": "1000, Kansas Avenue, Modesto, Stanislaus County, California, 95351, United States"
+  },
+  "north indian hill blvd & foothill blvd 91711 claremont ca": {
+    "lat": 34.0966764,
+    "lon": -117.7197785,
+    "displayName": "Claremont, Los Angeles County, California, 91711, United States"
+  },
+  "2001 east street hwy 113 pedestrian overpass 95776 woodland ca": {
+    "lat": 38.6786109,
+    "lon": -121.7733285,
+    "displayName": "Woodland, Yolo County, California, United States"
+  },
+  "castro valley blvd & redwood rd 94546 castro valley ca": {
+    "lat": 37.6945519,
+    "lon": -122.0857432,
+    "displayName": "Castro Valley, Alameda County, California, United States"
+  },
+  "m & 21st str (courthouse park) 95340 merced ca": {
+    "lat": 37.3029568,
+    "lon": -120.4843269,
+    "displayName": "Merced, Merced County, California, United States"
+  },
+  "college avee & ashby ave 94705 berkeley ca": {
+    "lat": 37.8708393,
+    "lon": -122.272863,
+    "displayName": "Berkeley, Alameda County, California, United States"
+  },
+  "soscol ave & 3rd str 94559 napa ca": {
+    "lat": 38.2971367,
+    "lon": -122.2855293,
+    "displayName": "Napa, Napa County, California, 94558, United States"
+  },
+  "26501 aliso creek rd 92656 aliso viejo ca": {
+    "lat": 33.5793779,
+    "lon": -117.7237237,
+    "displayName": "26501, Aliso Creek Road, Aliso Viejo, Orange County, California, 92656, United States"
+  },
+  "2395 san pablo ave 94564 pinole ca": {
+    "lat": 38.0058051,
+    "lon": -122.2902515,
+    "displayName": "2395, San Pablo Avenue, Pinole, Contra Costa County, California, 94564, United States"
+  },
+  "3286 airway dr 95403 santa rosa ca": {
+    "lat": 38.4740762,
+    "lon": -122.737572,
+    "displayName": "Tesla NA-US-CA - Santa Rosa - 3286 Airway Dr, 3286, Airway Drive, Santa Rosa, Sonoma County, California, 95403, United States"
+  },
+  "415 fletcher pkwy 92020 el cajon ca": {
+    "lat": 32.8075972,
+    "lon": -116.9680748,
+    "displayName": "415, Fletcher Parkway, El Cajon, San Diego County, California, 92020, United States"
+  },
+  "1001 admiral callaghan ln 94591 vallejo ca": {
+    "lat": 38.135504,
+    "lon": -122.220299,
+    "displayName": "Tesla Vallejo, 1001, Admiral Callaghan Lane, Vallejo, Solano County, California, 94591, United States"
+  },
+  "1246 broadway plaza #1094 94596 walnut creek ca": {
+    "lat": 37.8963398,
+    "lon": -122.058253,
+    "displayName": "Tesla Walnut Creek, 1246, Broadway Plaza, Walnut Creek, Contra Costa County, California, 94596, United States"
+  },
+  "mccaslin blvd & marshall rd 80027 superior co": {
+    "lat": 39.9527634,
+    "lon": -105.1685977,
+    "displayName": "Superior, Boulder County, Colorado, 80027, United States"
+  },
+  "5700 s broadway 80121 littleton co": {
+    "lat": 39.6126103,
+    "lon": -104.9872446,
+    "displayName": "Tesla Service Center, 5700, South Broadway, Littleton, Arapahoe County, Colorado, 80121, United States"
+  },
+  "1450 s havana st 80012 aurora co": {
+    "lat": 39.6897853,
+    "lon": -104.8651259,
+    "displayName": "1450, South Havana Street, Aurora, Arapahoe County, Colorado, 80012, United States"
+  },
+  "north 12th str & patterson rd 81506 grand junction co": {
+    "lat": 39.0672568,
+    "lon": -108.56448,
+    "displayName": "Grand Junction, Mesa County, Colorado, United States"
+  },
+  "39 e 104th ave 80234 northglenn co": {
+    "lat": 39.8854274,
+    "lon": -104.9872831,
+    "displayName": "East 104th Avenue, Northglenn, Adams County, Colorado, 80233, United States"
+  },
+  "7 n main str 06107 west hartford ct": {
+    "lat": 41.7620447,
+    "lon": -72.7420399,
+    "displayName": "West Hartford, Capitol Planning Region, Connecticut, United States"
+  },
+  "46 west str 06759 litchfield ct": {
+    "lat": 41.747319,
+    "lon": -73.1887243,
+    "displayName": "Litchfield, Northwest Hills Planning Region, Connecticut, United States"
+  },
+  "10 main str 06776 new milford ct": {
+    "lat": 41.5770993,
+    "lon": -73.4105803,
+    "displayName": "New Milford, Western Connecticut Planning Region, Connecticut, United States"
+  },
+  "pt barnum square 06801 bethel ct": {
+    "lat": 41.3712063,
+    "lon": -73.4140097,
+    "displayName": "Bethel, Western Connecticut Planning Region, Connecticut, 06801, United States"
+  },
+  "rte 177 & rte 4 06085 unionville ct": {
+    "lat": 41.7579647,
+    "lon": -72.8869321,
+    "displayName": "Unionville, Farmington, Capitol Planning Region, Connecticut, 06085, United States"
+  },
+  "10 s eagleville rd 06268 mansfield ct": {
+    "lat": 41.7880194,
+    "lon": -72.2740241,
+    "displayName": "10, South Eagleville Road, Eagleville, Mansfield, Capitol Planning Region, Connecticut, 06268, United States"
+  },
+  "611 old post rd (old town hall) 06824 fairfield ct": {
+    "lat": 41.1412078,
+    "lon": -73.2637258,
+    "displayName": "Fairfield, Greater Bridgeport Planning Region, Connecticut, United States"
+  },
+  "549 storrs rd (rte 89 & 195) 06250 mansfield ct": {
+    "lat": 41.7782147,
+    "lon": -72.2131565,
+    "displayName": "Mansfield, Capitol Planning Region, Connecticut, United States"
+  },
+  "us 1 & rte 24 & old landing rd 19971 rehoboth beach de": {
+    "lat": 38.7164771,
+    "lon": -75.0835107,
+    "displayName": "Rehoboth Beach, Sussex County, Delaware, United States"
+  },
+  "de-1 rehoboth beach 19971 rehoboth beach de": {
+    "lat": 38.6845171,
+    "lon": -75.0710745,
+    "displayName": "1, Hazlett Avenue, Indian Beach, Rehoboth Beach, Sussex County, Delaware, 19971, United States"
+  },
+  "2501 n main str 32609 gainesville fl": {
+    "lat": 29.6519684,
+    "lon": -82.3249846,
+    "displayName": "Gainesville, Alachua County, Florida, United States"
+  },
+  "16775 state rd 50 34711 clermont fl": {
+    "lat": 28.5551912,
+    "lon": -81.7669488,
+    "displayName": "Clermont, Lake County, Florida, 32711, United States"
+  },
+  "dunlawton ave & s clyde morris blvd 32127 port orange fl": {
+    "lat": 29.1386874,
+    "lon": -80.9968286,
+    "displayName": "Port Orange, Volusia County, Florida, United States"
+  },
+  "1400 glades rd 33431 boca raton fl": {
+    "lat": 26.3657801,
+    "lon": -80.1146431,
+    "displayName": "Whole Foods Market, 1400, Glades Road, Boca Raton, Palm Beach County, Florida, 33431, United States"
+  },
+  "west dearborn str & old englewood rd 34223 englewood fl": {
+    "lat": 26.9620053,
+    "lon": -82.3525952,
+    "displayName": "Englewood, Sarasota County, Florida, 34223, United States"
+  },
+  "2829 n federal hwy 33306 fort lauderdale fl": {
+    "lat": 26.1629926,
+    "lon": -80.115684,
+    "displayName": "2829, North Federal Highway, North Bal Harbor, Fort Lauderdale, Broward County, Florida, 33306, United States"
+  },
+  "8501 w sunrise blvd, ste 100 33322 plantation fl": {
+    "lat": 26.1275862,
+    "lon": -80.2331036,
+    "displayName": "Plantation, Broward County, Florida, United States"
+  },
+  "9200 113th str n 33772 seminole fl": {
+    "lat": 27.8400919,
+    "lon": -82.7911248,
+    "displayName": "Seminole, Pinellas County, Florida, 33772, United States"
+  },
+  "210 w lemon str 33815 lakeland fl": {
+    "lat": 28.0394654,
+    "lon": -81.9498042,
+    "displayName": "Lakeland, Polk County, Florida, United States"
+  },
+  "9025 49th str n 33782 pinellas park fl": {
+    "lat": 27.8428025,
+    "lon": -82.6995444,
+    "displayName": "Pinellas Park, Pinellas County, Florida, United States"
+  },
+  "3333 s pinnacle hills pkwy 72758 rogers ar": {
+    "lat": 36.3051421,
+    "lon": -94.1870829,
+    "displayName": "3333, South Pinnacle Hills Parkway, Rogers, Benton County, Arkansas, 72758, United States"
+  },
+  "4220 n 7th ave 85013 phoenix az": {
+    "lat": 33.4974465,
+    "lon": -112.0838942,
+    "displayName": "Copper Star Coffee, 4220, North 7th Avenue, Phoenix, Maricopa County, Arizona, 85013, United States"
+  },
+  "2035 n central ave 85004 phoenix az": {
+    "lat": 33.4707941,
+    "lon": -112.0730845,
+    "displayName": "2035, North Central Avenue, Encanto, Phoenix, Maricopa County, Arizona, 85004, United States"
+  },
+  "2000 e carson dr 85282 tempe az": {
+    "lat": 33.3841527,
+    "lon": -111.9011703,
+    "displayName": "2000, East Carson Drive, McClintock Manor, Tempe, Maricopa County, Arizona, 85282, United States"
+  },
+  "2077 e university drive 85288 tempe az": {
+    "lat": 33.4216526,
+    "lon": -111.8973381,
+    "displayName": "Tesla Tempe - Service Center, 2077, East University Drive, Tempe Cascade, Tempe, Maricopa County, Arizona, 85281, United States"
+  },
+  "250 w 2nd st 85364 yuma az": {
+    "lat": 32.7233951,
+    "lon": -114.6227612,
+    "displayName": "250, West 2nd Street, Yuma, Yuma County, Arizona, 85364, United States"
+  },
+  "1200 w main st 91801 alhambra ca": {
+    "lat": 34.0912668,
+    "lon": -118.1360646,
+    "displayName": "Tesla Alhambra-1200 West Main Street, 1200, West Main Street, Alhambra, Los Angeles County, California, 91801, United States"
+  },
+  "1225 lincoln way 95603 auburn ca": {
+    "lat": 38.8978016,
+    "lon": -121.0745242,
+    "displayName": "1225, Lincoln Way, Auburn, Placer County, California, 95603, United States"
+  },
+  "42170 big bear blvd 92315 big bear lake ca": {
+    "lat": 34.2524267,
+    "lon": -116.8851861,
+    "displayName": "Vons, 42170, Big Bear Boulevard, Big Bear Lake, San Bernardino County, California, 92315, United States"
+  },
+  "imperial hwy & state college blvd 92821 brea ca": {
+    "lat": 33.9170444,
+    "lon": -117.888855,
+    "displayName": "Brea, Orange County, California, United States"
+  },
+  "2627 n hollywood way 91505 burbank ca": {
+    "lat": 34.1962171,
+    "lon": -118.3489846,
+    "displayName": "2627, North Hollywood Way, Burbank, Los Angeles County, California, 91505, United States"
+  },
+  "amc walkway 91501 burbank ca": {
+    "lat": 34.1812089,
+    "lon": -118.307201,
+    "displayName": "Burbank, Los Angeles County, California, United States"
+  },
+  "20629 redwood rd 94546 castro valley ca": {
+    "lat": 37.6962235,
+    "lon": -122.0750151,
+    "displayName": "Safeway, 20629, Redwood Road, Castro Valley, Alameda County, California, 94546, United States"
+  },
+  "2255 otay lakes rd 91915 chula vista ca": {
+    "lat": 32.647912,
+    "lon": -116.9664516,
+    "displayName": "2255, Otay Lakes Road, Eastlake Greens, Chula Vista, San Diego County, California, 91915, United States"
+  },
+  "1500 collins ave 94014 colma ca": {
+    "lat": 37.6707595,
+    "lon": -122.4628665,
+    "displayName": "Tesla Serramonte, 1500, Collins Avenue, Colma, San Mateo County, California, 94014, United States"
+  },
+  "201 casa buena drive. 94925 corte madera ca": {
+    "lat": 37.9242456,
+    "lon": -122.5145935,
+    "displayName": "Tesla Corte Madera-201 Casa Buena Dr, 201, Casa Buena Drive, Meadowsweet, Corte Madera, Marin County, California, 94925, United States"
+  },
+  "9770 culver blvd 90232 culver city ca": {
+    "lat": 34.0216998,
+    "lon": -118.396021,
+    "displayName": "9770, Culver Boulevard, Downtown Culver City, Culver City, Los Angeles County, California, 90232, United States"
+  },
+  "san pablo dam rd & appian way 94803 el sobrante ca": {
+    "lat": 37.9774476,
+    "lon": -122.2949894,
+    "displayName": "El Sobrante, Contra Costa County, California, 94803, United States"
+  },
+  "1261 travis blvd 94533 fairfield ca": {
+    "lat": 38.258005,
+    "lon": -122.0491501,
+    "displayName": "1261, Travis Boulevard, Fairfield, Solano County, California, 94533, United States"
+  },
+  "325 pacific coast hwy 92648 huntington beach ca": {
+    "lat": 33.6568807,
+    "lon": -118.0021194,
+    "displayName": "Huntington Beach Visitor Information, 325, Pacific Coast Highway, Huntington Beach, Orange County, California, 92648, United States"
+  },
+  "2801 barranca pkwy 92606 irvine ca": {
+    "lat": 33.6939723,
+    "lon": -117.8255194,
+    "displayName": "Tesla Irvine-Barranca Pkwy, 2801, Barranca Parkway, Irvine Business Complex, Irvine, Orange County, California, 92606, United States"
+  },
+  "1 civic center plaza 92606 irvine ca": {
+    "lat": 33.686212,
+    "lon": -117.8264271,
+    "displayName": "Irvine City Hall, 1, Civic Center Plaza, Westpark, Irvine, Orange County, California, 92606, United States"
+  },
+  "city hall 92606 irvine ca": {
+    "lat": 33.6856969,
+    "lon": -117.825981,
+    "displayName": "Irvine, Orange County, California, United States"
+  },
+  "7961 university ave 91942 la mesa ca": {
+    "lat": 32.7643052,
+    "lon": -117.0263858,
+    "displayName": "7961, University Avenue, La Mesa, San Diego County, California, 91942, United States"
+  },
+  "1800 e spring 90755 long beach ca": {
+    "lat": 33.8112131,
+    "lon": -118.1695321,
+    "displayName": "Tesla Long Beach - 1800 E Spring St, 1800, East Spring Street, Long Beach, Los Angeles County, California, 90755, United States"
+  },
+  "13500 ventura blvd 91423 los angeles ca": {
+    "lat": 34.147289,
+    "lon": -118.427322,
+    "displayName": "13500, Ventura Boulevard, Sherman Oaks Neighborhood Council District, Los Angeles, Los Angeles County, California, 91423, United States"
+  },
+  "4956 york blvd 90042 los angeles ca": {
+    "lat": 34.1215749,
+    "lon": -118.2078364,
+    "displayName": "4956, York Boulevard, Highland Park, Los Angeles, Los Angeles County, California, 90042, United States"
+  },
+  "12051 ventura blvd 91604 los angeles ca": {
+    "lat": 34.1439012,
+    "lon": -118.3949898,
+    "displayName": "Chase, 12051, Ventura Boulevard, Studio City Neighborhood Council District, Los Angeles, Los Angeles County, California, 91604, United States"
+  },
+  "11766 wilshire blvd 90025 los angeles ca": {
+    "lat": 34.048063,
+    "lon": -118.4619562,
+    "displayName": "Consulate General of Finland, 11766, Wilshire Boulevard, Brentwood, Los Angeles, Los Angeles County, California, 90025, United States"
+  },
+  "90027 los angeles ca": {
+    "lat": 34.0536909,
+    "lon": -118.242766,
+    "displayName": "Los Angeles, Los Angeles County, California, United States"
+  },
+  "3401 riverside dr 90027 los angeles ca": {
+    "lat": 34.113198,
+    "lon": -118.268343,
+    "displayName": "3401, Riverside Drive, Los Feliz Neighborhood Council District, Los Angeles, Los Angeles County, California, 90027, United States"
+  },
+  "echo park 90026 los angeles ca": {
+    "lat": 34.0707905,
+    "lon": -118.2598962,
+    "displayName": "Echo Park Avenue, Angeleno Heights, Echo Park, Los Angeles, Los Angeles County, California, 90026, United States"
+  },
+  "15500 los gatos blvd 95032 los gatos ca": {
+    "lat": 37.2421903,
+    "lon": -121.959885,
+    "displayName": "15500, Los Gatos Boulevard, Los Gatos, Santa Clara County, California, 95032, United States"
+  },
+  "window on the bay park 93940 monterey ca": {
+    "lat": 36.600256,
+    "lon": -121.8946388,
+    "displayName": "Monterey, Monterey County, California, United States"
+  },
+  "13005 sherman way 91605 north hollywood ca": {
+    "lat": 34.201275,
+    "lon": -118.4162,
+    "displayName": "13005, Sherman Way, North Hollywood West Neighborhood Council District, Los Angeles, Los Angeles County, California, 91605, United States"
+  },
+  "fruitvale ave & macarthur blvd 94602 oakland ca": {
+    "lat": 37.8044557,
+    "lon": -122.271356,
+    "displayName": "Oakland, Alameda County, California, United States"
+  },
+  "grand ave & lake park ave 94610 oakland ca": {
+    "lat": 37.8044557,
+    "lon": -122.271356,
+    "displayName": "Oakland, Alameda County, California, United States"
+  },
+  "euclid ave. & holt blvd 91764 ontario ca": {
+    "lat": 34.065846,
+    "lon": -117.64843,
+    "displayName": "Ontario, San Bernardino County, California, United States"
+  },
+  "73710 fred waring dr 92260 palm desert ca": {
+    "lat": 33.7288179,
+    "lon": -116.382571,
+    "displayName": "Palm Desert, Riverside County, California, United States"
+  },
+  "660 stanford shopping center suite 359b 94034 palo alto ca": {
+    "lat": 37.4443293,
+    "lon": -122.1598465,
+    "displayName": "Palo Alto, Santa Clara County, California, United States"
+  },
+  "855 el camino real 94301 palo alto ca": {
+    "lat": 37.4385075,
+    "lon": -122.1604719,
+    "displayName": "Pact, 855, El Camino Real, Palo Alto, Santa Clara County, California, 94301, United States"
+  },
+  "117 w colorado blvd 91105 pasadena ca": {
+    "lat": 34.1459912,
+    "lon": -118.1530322,
+    "displayName": "Tesla, 117, West Colorado Boulevard, Old Pasadena, Pasadena, Los Angeles County, California, 91105, United States"
+  },
+  "1570 e colorado blvd 91106 pasadena ca": {
+    "lat": 34.1450683,
+    "lon": -118.1174783,
+    "displayName": "Cafe de Leche, 1570, East Colorado Boulevard, Pasadena, Los Angeles County, California, 91106, United States"
+  },
+  "e. washington & petaluma blvd 94952 petaluma ca": {
+    "lat": 38.2325829,
+    "lon": -122.636465,
+    "displayName": "Petaluma, Sonoma County, California, United States"
+  },
+  "7920 lindbergh drive 92508 riverside ca": {
+    "lat": 33.9061215,
+    "lon": -117.3246397,
+    "displayName": "Tesla, 7920, Lindbergh Drive, Mission Grove, Riverside, Riverside County, California, 92508, United States"
+  },
+  "w linden st & iowa ave 92507 riverside ca": {
+    "lat": 33.9824949,
+    "lon": -117.374238,
+    "displayName": "Riverside, Riverside County, California, United States"
+  },
+  "2535 arden way 95825 sacramento ca": {
+    "lat": 38.5965252,
+    "lon": -121.402748,
+    "displayName": "Tesla Sacramento, 2535, Arden Way, Sacramento County, California, 95825, United States"
+  },
+  "1828 broadway 95818 sacramento ca": {
+    "lat": 38.5603913,
+    "lon": -121.4888576,
+    "displayName": "Chevron, 1828, Broadway, Land Park, Sacramento, Sacramento County, California, 95818, United States"
+  },
+  "1315 10th st 95814 sacramento ca": {
+    "lat": 38.5765689,
+    "lon": -121.4934011,
+    "displayName": "California State Capitol, 1315, 10th Street, Downtown, Sacramento, Sacramento County, California, 95814, United States"
+  },
+  "999 van ness ave. 94109 san francisco ca": {
+    "lat": 37.7845742,
+    "lon": -122.4214469,
+    "displayName": "999, Van Ness Avenue, Western Addition, San Francisco, California, 94109, United States"
+  },
+  "999 van ness ave 94109 san francisco ca": {
+    "lat": 37.7845742,
+    "lon": -122.4214469,
+    "displayName": "999, Van Ness Avenue, Western Addition, San Francisco, California, 94109, United States"
+  },
+  "1528 s el camino real 94402 san mateo ca": {
+    "lat": 37.5534031,
+    "lon": -122.3157796,
+    "displayName": "Small Fry Dance Club, 1528, South El Camino Real, Hayward Park, San Mateo, San Mateo County, California, 94402, United States"
+  },
+  "3286 airway drive 95403 santa rosa ca": {
+    "lat": 38.4740762,
+    "lon": -122.737572,
+    "displayName": "Tesla NA-US-CA - Santa Rosa - 3286 Airway Dr, 3286, Airway Drive, Santa Rosa, Sonoma County, California, 95403, United States"
+  },
+  "california ave bridge over the 405 freeway 90755 signal hill ca": {
+    "lat": 33.804826,
+    "lon": -118.168259,
+    "displayName": "Signal Hill, Los Angeles County, California, United States"
+  },
+  "5151 pacific ave 95207 stockton ca": {
+    "lat": 37.9952557,
+    "lon": -121.3193097,
+    "displayName": "San Joaquin Delta College, 5151, Pacific Avenue, Stockton, San Joaquin County, California, 95207, United States"
+  },
+  "750 e el camino real 94087 sunnyvale ca": {
+    "lat": 37.3574896,
+    "lon": -122.0208178,
+    "displayName": "Tesla Sunnyvale, 750, East El Camino Real, Green Tree Center, Sunnyvale, Santa Clara County, California, 94087, United States"
+  },
+  "1246 broadway plaza,suite 1094 94596 walnut creek ca": {
+    "lat": 37.8963398,
+    "lon": -122.058253,
+    "displayName": "Tesla Walnut Creek, 1246, Broadway Plaza, Walnut Creek, Contra Costa County, California, 94596, United States"
+  },
+  "ygnacio valley rd & civic dr 94596 walnut creek ca": {
+    "lat": 37.9020731,
+    "lon": -122.0618702,
+    "displayName": "Walnut Creek, Contra Costa County, California, United States"
+  },
+  "1323 motor city dr 80905 colorado springs co": {
+    "lat": 38.8153317,
+    "lon": -104.8303219,
+    "displayName": "Tesla, 1323, Motor City Drive, Mill Street Neighborhood, Colorado Springs, El Paso County, Colorado, 80905, United States"
+  },
+  "100 e speer bvd 80203 denver co": {
+    "lat": 39.7264061,
+    "lon": -104.9859671,
+    "displayName": "Speer Boulevard, Capitol Hill, Denver, Colorado, 80273, United States"
+  },
+  "2601 south college ave 80525 fort collins co": {
+    "lat": 40.5524403,
+    "lon": -105.0768986,
+    "displayName": "2601, South College Avenue, Warren Farms, Fort Collins, Larimer County, Colorado, 80525, United States"
+  },
+  "1606 n lincoln 80537 loveland co": {
+    "lat": 40.40977,
+    "lon": -105.0725499,
+    "displayName": "Tesla, 1606, North Lincoln Avenue, Loveland, Larimer County, Colorado, 80537, United States"
+  },
+  "10701 melody dr, suite 500 80234 northglen co": {
+    "lat": 38.8605342,
+    "lon": -104.7614088,
+    "displayName": "Northglen, Colorado Springs, El Paso County, Colorado, United States"
+  },
+  "2 s marshall rd (intersection mccaslin blvd, s marshall rd) 80027 superior co": {
+    "lat": 39.9527634,
+    "lon": -105.1685977,
+    "displayName": "Superior, Boulder County, Colorado, 80027, United States"
+  },
+  "connecticut 20 & us 202 06035 granby ct": {
+    "lat": 41.9538298,
+    "lon": -72.789313,
+    "displayName": "Granby, Capitol Planning Region, Connecticut, United States"
+  },
+  "210 capitol ave 06106 hartford ct": {
+    "lat": 41.7641119,
+    "lon": -72.6823114,
+    "displayName": "210, Capitol Avenue, Elm Street Historic District, Frog Hollow, Hartford, Connecticut, 06106, United States"
+  },
+  "15 under mountain rd 06068 salisbury ct": {
+    "lat": 41.9847776,
+    "lon": -73.4226346,
+    "displayName": "15, Under Mountain Road, Salisbury, Northwest Hills Planning Region, Connecticut, 06068, United States"
+  },
+  "1 parker harding plaza 06880 westport ct": {
+    "lat": 41.141303,
+    "lon": -73.362441,
+    "displayName": "1, Parker Harding Plaza, Westport, Western Connecticut Planning Region, Connecticut, 06880, United States"
+  },
+  "3307 m st. nw 20007 washington d.c.": {
+    "lat": 38.9052514,
+    "lon": -77.0667449,
+    "displayName": "Brandy Melville, 3307, M Street Northwest, Georgetown, Ward 2, Washington, District of Columbia, 20007, United States"
+  },
+  "35 columbus monument drive northeast 20002 washington dc": {
+    "lat": 38.8950368,
+    "lon": -77.0365427,
+    "displayName": "Washington, District of Columbia, United States"
+  },
+  "the ellipse 20004 washington dc": {
+    "lat": 38.8950368,
+    "lon": -77.0365427,
+    "displayName": "Washington, District of Columbia, United States"
+  },
+  "120 constitution ave ne 20002 washington dc": {
+    "lat": 38.8921077,
+    "lon": -77.003697,
+    "displayName": "120, Constitution Avenue Northeast, Ward 6, Washington, District of Columbia, 20002, United States"
+  },
+  "16th st nw & columbia rd nw 20009 washington dc": {
+    "lat": 38.8950368,
+    "lon": -77.0365427,
+    "displayName": "Washington, District of Columbia, United States"
+  },
+  "19971 rehoboth beach de": {
+    "lat": 38.7164771,
+    "lon": -75.0835107,
+    "displayName": "Rehoboth Beach, Sussex County, Delaware, United States"
+  },
+  "3000 s federal hwy 33483 delray beach fl": {
+    "lat": 26.4375805,
+    "lon": -80.071785,
+    "displayName": "Federal Highway, Tropic Isle, Delray Beach, Palm Beach County, Florida, 33483, United States"
+  },
+  "2501 n main st 32609 gainesville fl": {
+    "lat": 29.675594,
+    "lon": -82.3205037,
+    "displayName": "2501, North Main Street, Gainesville, Alachua County, Florida, 32609, United States"
+  },
+  "5500 nw 111th blvd 32653 gainesville fl": {
+    "lat": 29.6519684,
+    "lon": -82.3249846,
+    "displayName": "Gainesville, Alachua County, Florida, United States"
+  },
+  "krome ave & sw 12th s 33194 miami fl": {
+    "lat": 25.7741728,
+    "lon": -80.19362,
+    "displayName": "Miami, Miami-Dade County, Florida, United States"
+  },
+  "195 n rosalind ave 32801 orlando fl": {
+    "lat": 28.5438176,
+    "lon": -81.3751847,
+    "displayName": "Walt Disney Amphitheater, 195, North Rosalind Avenue, Central Buisness District, Orlando, Orange County, Florida, 32801, United States"
+  },
+  "9200 113th st n 33772 seminole fl": {
+    "lat": 27.8587452,
+    "lon": -82.7964902,
+    "displayName": "Seminole Community Library, 9200, 113th Street North, Seminole, Pinellas County, Florida, 33772, United States"
+  },
+  "171 sw flagler ave 34994 stuart fl": {
+    "lat": 27.2002033,
+    "lon": -80.255474,
+    "displayName": "171, Southwest Flagler Avenue, Stuart, Martin County, Florida, 34994, United States"
+  },
+  "2121 briarcliff road 30329 atlanta ga": {
+    "lat": 33.803413,
+    "lon": -84.3356144,
+    "displayName": "Old Briarcliff Road Northeast, Atlanta, DeKalb County, Georgia, 30322, United States"
+  },
+  "400 cherokee ave se 30312 atlanta ga usa": {
+    "lat": 33.7437114,
+    "lon": -84.3731098,
+    "displayName": "400, Cherokee Avenue Southeast, Cabbagetown, Atlanta, Fulton County, Georgia, 30312, United States"
+  },
+  "30329 druid hills ga usa": {
+    "lat": 33.7803832,
+    "lon": -84.336036,
+    "displayName": "Druid Hills, DeKalb County, Georgia, 30322, United States"
+  },
+  "204 glynn st s 30214 fayetteville ga usa": {
+    "lat": 33.4463237,
+    "lon": -84.4549945,
+    "displayName": "204, Glynn Street South, Fayetteville, Fayette County, Georgia, 30214, United States"
+  },
+  "210 washington st nw 30501 gainesville ga usa": {
+    "lat": 34.2978794,
+    "lon": -83.8240663,
+    "displayName": "Gainesville, Hall County, Georgia, 30501, United States"
+  },
+  "30060 marietta ga usa": {
+    "lat": 33.9528472,
+    "lon": -84.5496148,
+    "displayName": "Marietta, Cobb County, Georgia, United States"
+  },
+  "610 atlanta dr 30075 roswell ga usa": {
+    "lat": 34.02332,
+    "lon": -84.360022,
+    "displayName": "Roswell, Fulton County, Georgia, United States"
+  },
+  "30076 roswell ga usa": {
+    "lat": 34.02332,
+    "lon": -84.360022,
+    "displayName": "Roswell, Fulton County, Georgia, United States"
+  },
+  "6605  abercorn st 31405 savannah ga usa": {
+    "lat": 32.0170002,
+    "lon": -81.1123727,
+    "displayName": "6605, Abercorn Street, Habersham Woods, Savannah, Chatham County, Georgia, 31405, United States"
+  },
+  "valdosta ga": {
+    "lat": 30.8327022,
+    "lon": -83.2784851,
+    "displayName": "Valdosta, Lowndes County, Georgia, United States"
+  },
+  "16001 barnesville st 30395 zebulon ga usa": {
+    "lat": 33.1019471,
+    "lon": -84.3321407,
+    "displayName": "Barnesville Street, Zebulon, Pike County, Georgia, 30295, United States"
+  },
+  "hilo hi usa": {
+    "lat": 19.7073734,
+    "lon": -155.08158,
+    "displayName": "Hilo, Hawaiʻi County, Hawaii, 96720, United States"
+  },
+  "96734 kailua hi usa": {
+    "lat": 21.393623,
+    "lon": -157.743759,
+    "displayName": "Kailua, Honolulu County, Hawaii, United States"
+  },
+  "greenhill rd & rownd st 50613 cedar falls ia": {
+    "lat": 42.5361805,
+    "lon": -92.447758,
+    "displayName": "Cedar Falls, Black Hawk County, Iowa, United States"
+  },
+  "52101 decorah ia": {
+    "lat": 43.3041609,
+    "lon": -91.7859098,
+    "displayName": "Decorah, Winneshiek County, Iowa, United States"
+  },
+  "cecil d. andrus park 83702 boise id": {
+    "lat": 43.6166048,
+    "lon": -116.2003783,
+    "displayName": "Cecil D. Andrus Park Plaza, Downtown, Boise, Ada County, Idaho, 83701, United States"
+  },
+  "10 public square 62220 belleville il": {
+    "lat": 38.5135805,
+    "lon": -89.9841627,
+    "displayName": "Belleville, Saint Clair County, Illinois, United States"
+  },
+  "east main street 62901 carbondale il": {
+    "lat": 37.7333528,
+    "lon": -89.1891613,
+    "displayName": "East Main Street, Carbondale, Jackson County, Illinois, 62901, United States"
+  },
+  "901 n rush st 60611 chicago il": {
+    "lat": 41.8993345,
+    "lon": -87.6266015,
+    "displayName": "Tesla, 901, North Rush Street, Magnificent Mile, Near North Side, Chicago, Cook County, Illinois, 60611, United States"
+  },
+  "federal plaza 60604 chicago il": {
+    "lat": 41.8788366,
+    "lon": -87.6296599,
+    "displayName": "Federal Plaza, Printer's Row, Loop, Chicago, Cook County, Illinois, 60604, United States"
+  },
+  "7500 roosevelt 60130 forest park il usa": {
+    "lat": 41.8794989,
+    "lon": -87.8136997,
+    "displayName": "Forest Park, Proviso Township, Cook County, Illinois, 60130, United States"
+  },
+  "main and 2nd streets 61443 kewanee il": {
+    "lat": 41.2455927,
+    "lon": -89.9248303,
+    "displayName": "Kewanee, Henry County, Illinois, 61443, United States"
+  },
+  "3200 ogden ave 60532 lisle il": {
+    "lat": 41.7972771,
+    "lon": -88.1151089,
+    "displayName": "Tesla of Naperville, 3200, East Ogden Avenue, Lisle, DuPage County, Illinois, 60532, United States"
+  },
+  "1200 skokie blvd 60062 northbrook il": {
+    "lat": 42.1522408,
+    "lon": -87.8015894,
+    "displayName": "Skokie Boulevard, Lee Acres, Northbrook, Northfield Township, Cook County, Illinois, 60035, United States"
+  },
+  "715 s calhoun st 46802 fort wayne in": {
+    "lat": 41.0798509,
+    "lon": -85.1393709,
+    "displayName": "Allen County Courthouse, 715, South Calhoun Street, Fort Wayne Downtown District, Fort Wayne, Allen County, Indiana, 46802, United States"
+  },
+  "700 n pennslyvania st 46204 indianapolis in usa": {
+    "lat": 39.7683331,
+    "lon": -86.1583502,
+    "displayName": "Indianapolis, Marion County, Indiana, United States"
+  },
+  "200 w washington st 46204 indianapolis in usa": {
+    "lat": 39.7686147,
+    "lon": -86.1626183,
+    "displayName": "Indiana State Capitol Building, 200, West Washington Street, Indianapolis, Marion, Indiana, 46204, United States"
+  },
+  "8825 nelson b klein pkwy 46250 indianapolis in usa": {
+    "lat": 39.915394,
+    "lon": -86.0619926,
+    "displayName": "Federal Bureau of Investigation Indianapolis Field Office, 8825, Nelson B. Klein Parkway, Indianapolis, Marion County, Indiana, 46250, United States"
+  },
+  "310 e 96th st 46240 indianapolis in usa": {
+    "lat": 39.9283034,
+    "lon": -86.1525886,
+    "displayName": "310, East 96th Street, Indianapolis, Hamilton County, Indiana, 46240, United States"
+  },
+  "8826 nelson b klein pkwy 46250 indianapolis in usa": {
+    "lat": 39.9139454,
+    "lon": -86.065107,
+    "displayName": "8826, Nelson B. Klein Parkway, Indianapolis, Marion County, Indiana, 46250, United States"
+  },
+  "logansport in usa": {
+    "lat": 40.7542375,
+    "lon": -86.3625191,
+    "displayName": "Logansport, Cass County, Indiana, 46947, United States"
+  },
+  "147 oak st 47802 terre haute in usa": {
+    "lat": 39.4613101,
+    "lon": -87.4159054,
+    "displayName": "147, Oak Street, Terre Haute, Vigo County, Indiana, 47807, United States"
+  },
+  "615 n detroit st 46580 warsaw in": {
+    "lat": 41.2442303,
+    "lon": -85.8525836,
+    "displayName": "615, North Detroit Street, Lakeside Park, Warsaw, Kosciusko County, Indiana, 46580, United States"
+  },
+  "1100 w oak st 46077 zionsville in usa": {
+    "lat": 39.952023,
+    "lon": -86.2750359,
+    "displayName": "Zionsville Town Hall, 1100, West Oak Street, Zionsville, Boone County, Indiana, 46077, United States"
+  },
+  "600 ames st 66006 baldwin city ks": {
+    "lat": 38.782286,
+    "lon": -95.187654,
+    "displayName": "600, Ames Street, Baldwin City, Douglas County, Kansas, 66006, United States"
+  },
+  "25 n 7th st/courthouse 52632 keokuk ks": {
+    "lat": 40.3973423,
+    "lon": -91.385202,
+    "displayName": "Keokuk, Lee County, Iowa, 52632, United States"
+  },
+  "maurer rd x w 87th st 66219 lenexa ks": {
+    "lat": 38.9697458,
+    "lon": -94.7845837,
+    "displayName": "Lenexa, Johnson County, Kansas, United States"
+  },
+  "9400 pflumm rd 66215 lenexa ks usa": {
+    "lat": 38.9586575,
+    "lon": -94.743398,
+    "displayName": "Shawnee Mission Unitarian Universalist Church, 9400, Pflumm Road, Lenexa, Johnson County, Kansas, 66215, United States"
+  },
+  "1250 poydras st 70113 new orleans ks usa": {
+    "lat": 29.9759983,
+    "lon": -90.0782127,
+    "displayName": "New Orleans, Orleans Parish, Louisiana, United States"
+  },
+  "100 e santa fe st fountain 66061 olathe ks": {
+    "lat": 38.8838856,
+    "lon": -94.81887,
+    "displayName": "Olathe, Johnson County, Kansas, United States"
+  },
+  "3550 sw 5th suite b 66606 topeka ks": {
+    "lat": 39.049011,
+    "lon": -95.677556,
+    "displayName": "Topeka, Shawnee County, Kansas, United States"
+  },
+  "e douglas ave x n broadway 67202 wichita ks": {
+    "lat": 37.6922361,
+    "lon": -97.3375448,
+    "displayName": "Wichita, Sedgwick County, Kansas, United States"
+  },
+  "11701 gateworth way 40243 louisville ky": {
+    "lat": 38.2542376,
+    "lon": -85.759407,
+    "displayName": "Louisville, Jefferson County, Kentucky, United States"
+  },
+  "raytheon co, 362 lowell st 1810 andover ma": {
+    "lat": 42.65717,
+    "lon": -71.1408776,
+    "displayName": "Andover, Essex County, Massachusetts, United States"
+  },
+  "odell veterans memorial park, 56-98 broadway 01915 beverly ma": {
+    "lat": 42.5489744,
+    "lon": -70.8781883,
+    "displayName": "Beverly, Essex County, Massachusetts, United States"
+  },
+  "888 boylston 02199 boston ma": {
+    "lat": 42.3480424,
+    "lon": -71.082783,
+    "displayName": "888 Boylston Street, 888, Boylston Street, Block G, Back Bay, Boston, Suffolk County, Massachusetts, 02199, United States"
+  },
+  "liberty mall 2133 boston ma": {
+    "lat": 42.3565605,
+    "lon": -71.0634158,
+    "displayName": "Liberty Mall, Beacon Hill, Boston, Suffolk County, Massachusetts, 02108, United States"
+  },
+  "840 providence hwy 2026 dedham ma": {
+    "lat": 42.237319,
+    "lon": -71.1785842,
+    "displayName": "840, Providence Highway, Dedham, Norfolk County, Massachusetts, 02026, United States"
+  },
+  "falmouth village green 02540 falmouth ma": {
+    "lat": 41.5514979,
+    "lon": -70.6147519,
+    "displayName": "Falmouth, Barnstable County, Massachusetts, United States"
+  },
+  "5 washington st 01749 hudson ma": {
+    "lat": 42.3912469,
+    "lon": -71.5705228,
+    "displayName": "Saint Luke's Episcopal Church, 5, Washington Street, Hudson, Middlesex County, Massachusetts, 01749, United States"
+  },
+  "36 s main st 01938 ipswich ma": {
+    "lat": 42.6781522,
+    "lon": -70.8370958,
+    "displayName": "Hall-Haskell House, 36, South Main Street, Ipswich, Essex County, Massachusetts, 01938, United States"
+  },
+  "50 prince street 1060 northampton ma": {
+    "lat": 42.3096182,
+    "lon": -72.646688,
+    "displayName": "L-3 KEO Mfg, 50, Prince Street, Northampton, Hampshire County, Massachusetts, 01063, United States"
+  },
+  "446 damon rd 01060 northampton ma": {
+    "lat": 42.337945,
+    "lon": -72.6363685,
+    "displayName": "Damon Road, Northampton, Hampshire County, Massachusetts, 01060, United States"
+  },
+  "98 accord park drive 2061 norwell ma": {
+    "lat": 42.1665512,
+    "lon": -70.8877393,
+    "displayName": "Tesla Norwell, 98, Accord Park Drive, Queen Anne's Corner, Accord, Norwell, Plymouth County, Massachusetts, 02061, United States"
+  },
+  "26 court st 02360 plymouth ma": {
+    "lat": 41.9569111,
+    "lon": -70.6669793,
+    "displayName": "Plymouth Town Hall, 26, Court Street, Plymouth Village Historic District, Plymouth, Plymouth County, Massachusetts, 02360, United States"
+  },
+  "457 pleasant street 02472 watertown ma": {
+    "lat": 42.3667666,
+    "lon": -71.2042922,
+    "displayName": "Tesla Boston-Watertown, 457, Pleasant Street, Bemis, Watertown, Middlesex County, Massachusetts, 02458, United States"
+  },
+  "intersection of e. main st., w main st., south st. & milk st 01581 westborough ma": {
+    "lat": 42.2694308,
+    "lon": -71.6129907,
+    "displayName": "Westborough, Worcester County, Massachusetts, 01581, United States"
+  },
+  "the roundabout 1267 williamstown ma": {
+    "lat": 42.7135472,
+    "lon": -73.2094566,
+    "displayName": "Williamstown, Berkshire County, Massachusetts, 01267, United States"
+  },
+  "1500 n charles st 21201 baltimore md usa": {
+    "lat": 39.3074201,
+    "lon": -76.6156582,
+    "displayName": "Baltimore Penn Station, 1500, North Charles Street, Charles North, Baltimore, Maryland, 21201, United States"
+  },
+  "233 fredrick rd 21228 catonsville md usa": {
+    "lat": 39.2720504,
+    "lon": -76.7318456,
+    "displayName": "Catonsville, Baltimore County, Maryland, 21228, United States"
+  },
+  "9706 gorman rd overpass 20723 howard county md": {
+    "lat": 39.2138844,
+    "lon": -76.8844933,
+    "displayName": "Howard County Medical plaza, Harper's Choice, Columbia, Howard County, Maryland, United States"
+  },
+  "laurel md usa": {
+    "lat": 39.0984317,
+    "lon": -76.8485094,
+    "displayName": "Laurel, Prince George's County, Maryland, 20707, United States"
+  },
+  "9428 reisterstown rd (owings mills) 21117 owings mills md": {
+    "lat": 39.4012185,
+    "lon": -76.7551063,
+    "displayName": "Tesla, 9428, Reisterstown Road, Tobin, Chattolanee, Owings Mills, Baltimore County, Maryland, 21117, United States"
+  },
+  "1300 rockville pike 20852 rockville md": {
+    "lat": 39.069528,
+    "lon": -77.130452,
+    "displayName": "1300, Rockville Pike, Rockcrest, Rockville, Montgomery County, Maryland, 20852, United States"
+  },
+  "2320 broadbrich dr 20904 silver spring md usa": {
+    "lat": 38.9959461,
+    "lon": -77.0276231,
+    "displayName": "Silver Spring, Montgomery County, Maryland, 20910, United States"
+  },
+  "longley bridge, court st 4210 auburn me": {
+    "lat": 44.0979903,
+    "lon": -70.2312137,
+    "displayName": "Auburn, Androscoggin County, Maine, 04210, United States"
+  },
+  "harlow st & central st 4401 bangor me": {
+    "lat": 44.8016255,
+    "lon": -68.7713289,
+    "displayName": "Bangor, Penobscot County, Maine, 04401, United States"
+  },
+  "post office square 4915 belfast me": {
+    "lat": 44.4261759,
+    "lon": -69.0065207,
+    "displayName": "Belfast, Waldo County, Maine, 04915, United States"
+  },
+  "18 union st 04614 blue hill me": {
+    "lat": 44.4128265,
+    "lon": -68.5893934,
+    "displayName": "Blue Hill Town Hall, 18, Union Street, Blue Hill, Hancock County, Maine, 04614, United States"
+  },
+  "maine street 4011 brunswick me": {
+    "lat": 43.9109871,
+    "lon": -69.9631154,
+    "displayName": "Maine Street, Brunswick, Cumberland County, Maine, 04011, United States"
+  },
+  "mine street 4011 brunswick me": {
+    "lat": 43.9166529,
+    "lon": -69.9659438,
+    "displayName": "Brunswick, Cumberland County, Maine, 04011, United States"
+  },
+  "camden village green 4843 camden me": {
+    "lat": 44.210265,
+    "lon": -69.065552,
+    "displayName": "Camden, Knox County, Maine, 04843, United States"
+  },
+  "union river bridge 04605 ellsworth me": {
+    "lat": 44.5414596,
+    "lon": -68.4243599,
+    "displayName": "Ellsworth, Hancock County, Maine, United States"
+  },
+  "post office 04938 farmington me": {
+    "lat": 44.671094,
+    "lon": -70.151825,
+    "displayName": "Farmington, Franklin County, Maine, United States"
+  },
+  "72 lisbon 04240 lewiston me usa": {
+    "lat": 44.0725749,
+    "lon": -70.1620265,
+    "displayName": "72, Old Lisbon Road, Lewiston, Androscoggin County, Maine, 04240, United States"
+  },
+  "longfellow square 4102 portland me": {
+    "lat": 43.6573605,
+    "lon": -70.2586618,
+    "displayName": "Portland, Cumberland County, Maine, United States"
+  },
+  "294 main st 04841 rockland me usa": {
+    "lat": 44.1013585,
+    "lon": -69.1091329,
+    "displayName": "294, Main Street, Rockland, Knox County, Maine, 04841, United States"
+  },
+  "main st & park st 4841 rockland me": {
+    "lat": 44.1048327,
+    "lon": -69.1091823,
+    "displayName": "Rockland, Knox County, Maine, 04841, United States"
+  },
+  "erskine park/casco bridge 4106 s portland me": {
+    "lat": 43.6382443,
+    "lon": -70.2529189,
+    "displayName": "South Portland, Cumberland County, Maine, 04106, United States"
+  },
+  "general dynamics 04072 saco me": {
+    "lat": 43.5007555,
+    "lon": -70.4429451,
+    "displayName": "Saco, York County, Maine, 04072, United States"
+  },
+  "04106 south portland me usa": {
+    "lat": 43.6382443,
+    "lon": -70.2529189,
+    "displayName": "South Portland, Cumberland County, Maine, 04106, United States"
+  },
+  "verona bridge 4416 verona island me": {
+    "lat": 44.5656403,
+    "lon": -68.7904198,
+    "displayName": "Verona Island, Hancock County, Maine, 04416, United States"
+  },
+  "425 n main st 101 49221 adrian mi": {
+    "lat": 41.8975152,
+    "lon": -84.0373054,
+    "displayName": "Adrian, Lenawee County, Michigan, 49221, United States"
+  },
+  "3530 jackson rd 48103 ann arbor mi": {
+    "lat": 42.2813722,
+    "lon": -83.7484616,
+    "displayName": "Ann Arbor, Washtenaw County, Michigan, United States"
+  },
+  "stone school road & birch hollow drive 48108 ann arbor mi": {
+    "lat": 42.2813722,
+    "lon": -83.7484616,
+    "displayName": "Ann Arbor, Washtenaw County, Michigan, United States"
+  },
+  "9201 quaday ave ne 55330 otsego mn": {
+    "lat": 45.2838041,
+    "lon": -93.5642334,
+    "displayName": "9201, Quaday Avenue Northeast, Otsego, Wright County, Minnesota, 55330, United States"
+  },
+  "1107 hazeltine blvd 55318 chaska mn": {
+    "lat": 44.8355476,
+    "lon": -93.6007345,
+    "displayName": "1107, Hazeltine Boulevard, Hazeltine, Chaska, Carver County, Minnesota, 55318, United States"
+  },
+  "700 ottawa ave n 55422 golden valley mn": {
+    "lat": 44.9863973,
+    "lon": -93.3398499,
+    "displayName": "700, Ottawa Avenue North, Golden Valley, Hennepin County, Minnesota, 55422, United States"
+  },
+  "9800 hudson blvd n 55042 lake elmo mn": {
+    "lat": 44.949279,
+    "lon": -92.908329,
+    "displayName": "9800, Hudson Boulevard North, Lake Elmo, Washington County, Minnesota, 55042, United States"
+  },
+  "dodd blvd & cedar ave 55044 lakeville mn": {
+    "lat": 44.650051,
+    "lon": -93.2432791,
+    "displayName": "Lakeville, Dakota County, Minnesota, 55044, United States"
+  },
+  "george perry floyd sq 55407 minneapolis mn": {
+    "lat": 44.9772995,
+    "lon": -93.2654692,
+    "displayName": "Minneapolis, Hennepin County, Minnesota, United States"
+  },
+  "ford pkwy, ford bridge 55116 saint paul mn": {
+    "lat": 44.9497487,
+    "lon": -93.0931028,
+    "displayName": "Saint Paul, Ramsey County, Minnesota, United States"
+  },
+  "corner of summit & snelling aves 55105 st. paul mn": {
+    "lat": 44.9497487,
+    "lon": -93.0931028,
+    "displayName": "Saint Paul, Ramsey County, Minnesota, United States"
+  },
+  "1123 wilkes blvd 65201 columbia mo": {
+    "lat": 38.9607544,
+    "lon": -92.3229146,
+    "displayName": "Hamilton-Brown Shoe Factory, 1123, Wilkes Boulevard, Shoe Factory District, Columbia, Boone County, Missouri, 65201, United States"
+  },
+  "10111 state line rd 64114 kansas city mo": {
+    "lat": 38.9446557,
+    "lon": -94.6073753,
+    "displayName": "Tesla, 10111, State Line Road, Kansas City, Johnson County, Kansas, 64114, United States"
+  },
+  "400 e 9th st 64106 kansas city mo": {
+    "lat": 39.103489,
+    "lon": -94.578208,
+    "displayName": "400, East 9th Street, Central Downtown, Central Business District KC, Downtown Kansas City, Kansas City, Jackson County, Missouri, 64106, United States"
+  },
+  "east 9th street & oak street 64106 kansas city mo": {
+    "lat": 39.100105,
+    "lon": -94.5781416,
+    "displayName": "Kansas City, Jackson County, Missouri, United States"
+  },
+  "500 chestnut st 63101 st. louis mo": {
+    "lat": 38.6268788,
+    "lon": -90.1925071,
+    "displayName": "Chestnut Street, Downtown, Saint Louis, Missouri, 63101, United States"
+  },
+  "5711 s. lindbergh blvd 63123 st. louis mo": {
+    "lat": 38.5226932,
+    "lon": -90.349755,
+    "displayName": "5711, South Lindbergh Boulevard, Concord, Saint Louis County, Missouri, 63123, United States"
+  },
+  "39201 jackson ms": {
+    "lat": 32.2998686,
+    "lon": -90.1830408,
+    "displayName": "Jackson, Hinds County, Mississippi, United States"
+  },
+  "400 high st 39201 jackson ms": {
+    "lat": 32.305126,
+    "lon": -90.182958,
+    "displayName": "400, High Street, Jackson, Hinds County, Mississippi, 39201, United States"
+  },
+  "1450 twin lakes ave 59718 boseman mt": {
+    "lat": 35.9473367,
+    "lon": -77.7928201,
+    "displayName": "Boseman Place, Five Points, Rocky Mount, Edgecombe County, North Carolina, 27801, United States"
+  },
+  "400 n main st 59701 butte mt": {
+    "lat": 46.016215,
+    "lon": -112.535968,
+    "displayName": "400, North Main Street, Uptown, Butte, Silver Bow County, Montana, 59701, United States"
+  },
+  "2402 dr. m.l.k. jr blvd 28562 new bern nc": {
+    "lat": 35.1084931,
+    "lon": -77.0441143,
+    "displayName": "New Bern, Craven County, North Carolina, United States"
+  },
+  "7101 glenwood ave 27612 raleigh nc": {
+    "lat": 35.86428,
+    "lon": -78.7146299,
+    "displayName": "7101, Glenwood Avenue, Raleigh, Wake County, North Carolina, 27612, United States"
+  },
+  "1100 n. washington st. 68850 lexington ne": {
+    "lat": 40.7848572,
+    "lon": -99.7408243,
+    "displayName": "Lexington Middle School, 1100, North Washington Street, Donald Price Mobile Home Park, Lexington, Dawson County, Nebraska, 68850, United States"
+  },
+  "612 grant st 68310 beatrice ne": {
+    "lat": 40.2712082,
+    "lon": -96.7459172,
+    "displayName": "Gage County Courthouse, 612, Grant Street, Beatrice, Gage County, Nebraska, 68310, United States"
+  },
+  "south 11th street & farnam street 68102 omaha ne": {
+    "lat": 41.2587459,
+    "lon": -95.9383758,
+    "displayName": "Omaha, Douglas County, Nebraska, United States"
+  },
+  "north 72nd st & dodge st 68132 omaha ne": {
+    "lat": 41.2587459,
+    "lon": -95.9383758,
+    "displayName": "Omaha, Douglas County, Nebraska, United States"
+  },
+  "new hampshire 113 & new hampshire 153 03818 conway nh": {
+    "lat": 43.9784926,
+    "lon": -71.1205372,
+    "displayName": "Conway, Carroll County, New Hampshire, United States"
+  },
+  "crystal avenue & east broadway 03038 derry nh": {
+    "lat": 42.8808677,
+    "lon": -71.3264492,
+    "displayName": "Derry, Rockingham County, New Hampshire, 03038, United States"
+  },
+  "24 calef hwy 03042 epping nh": {
+    "lat": 43.0244122,
+    "lon": -71.075612,
+    "displayName": "Kume Steakhouse, 24, Calef Highway, Epping, Rockingham County, New Hampshire, 03042, United States"
+  },
+  "west main street & u.s. 202 03244 hillsborough nh": {
+    "lat": 43.1149568,
+    "lon": -71.8948666,
+    "displayName": "Hillsborough, Hillsborough County, New Hampshire, 03244, United States"
+  },
+  "129 new hampshire rte 175 03245 holderness nh": {
+    "lat": 43.732406,
+    "lon": -71.588974,
+    "displayName": "Holderness, Grafton County, New Hampshire, 03245, United States"
+  },
+  "central square 03431 keene nh": {
+    "lat": 42.9339157,
+    "lon": -72.2782376,
+    "displayName": "Central Square, Keene, Cheshire County, New Hampshire, 03431, United States"
+  },
+  "mammoth road & new hampshire 102 03053 londonderry nh": {
+    "lat": 42.8650869,
+    "lon": -71.3739532,
+    "displayName": "Londonderry, Rockingham County, New Hampshire, 03053, United States"
+  },
+  "2454 lafayette road (public grass strip) 3801 portsmouth nh": {
+    "lat": 43.0702223,
+    "lon": -70.7548621,
+    "displayName": "Portsmouth, Rockingham County, New Hampshire, United States"
+  },
+  "17 freetown rd 03077 raymond nh": {
+    "lat": 43.0206916,
+    "lon": -71.1658432,
+    "displayName": "17, Freetown Road, Raymond, Rockingham County, New Hampshire, 03077, United States"
+  },
+  "136 s main st 03894 wolfeboro nh": {
+    "lat": 43.5844468,
+    "lon": -71.2081336,
+    "displayName": "136, South Main Street, Wolfeboro, Carroll County, New Hampshire, 03894, United States"
+  },
+  "1170 haddon ave 08108 collingswood nj": {
+    "lat": 39.9155623,
+    "lon": -75.0665464,
+    "displayName": "Haddon Avenue, Collingswood, Camden County, New Jersey, 08108, United States"
+  },
+  "269 nj-35 07724 eatontown nj": {
+    "lat": 40.2819685,
+    "lon": -74.0485204,
+    "displayName": "269, Kings Highway, Eatontown, Monmouth County, New Jersey, 07724, United States"
+  },
+  "3050 nj-38 08054 mt laurel nj": {
+    "lat": 39.9698837,
+    "lon": -74.8708199,
+    "displayName": "Prospectors Steakhouse & Saloon, 3050, NJ 38, Mount Laurel Township, Burlington County, New Jersey, 08054, United States"
+  },
+  "1001 tilton rd 8225 northfield nj": {
+    "lat": 39.378729,
+    "lon": -74.55431,
+    "displayName": "1001, Tilton Road, Northfield, Atlantic County, New Jersey, 08225, United States"
+  },
+  "300 sidney rd 08854 piscataway nj": {
+    "lat": 40.5413334,
+    "lon": -74.4654262,
+    "displayName": "Sidney Road, Newtown, Piscataway Township, Middlesex County, New Jersey, 08854, United States"
+  },
+  "33 washington st 8753 toms river nj": {
+    "lat": 39.9531861,
+    "lon": -74.1966266,
+    "displayName": "33, Washington Street, Downtown, Toms River, Ocean County, New Jersey, 08753, United States"
+  },
+  "1501 san pedro dr se 87108 albuquerque nm": {
+    "lat": 35.053963,
+    "lon": -106.57778,
+    "displayName": "1501, San Pedro Drive Southeast, Albuquerque, Bernalillo County, New Mexico, 87108, United States"
+  },
+  "4th street northwest & lomas boulevard northwest 87102 albuquerque nm": {
+    "lat": 35.0915375,
+    "lon": -106.6528049,
+    "displayName": "Lomas Boulevard Northwest, Albuquerque, Bernalillo County, New Mexico, 87102, United States"
+  },
+  "200 e picacho ave 88001 las cruces nm": {
+    "lat": 32.3156922,
+    "lon": -106.7783657,
+    "displayName": "Thomas Branigan Memorial Library, 200, East Picacho Avenue, Las Cruces, Doña Ana County, New Mexico, 88005, United States"
+  },
+  "new mexico 528 & southern blvd southeast 87124 rio rancho nm": {
+    "lat": 35.2702448,
+    "lon": -106.6329806,
+    "displayName": "Rio Rancho, Sandoval County, New Mexico, United States"
+  },
+  "4200 nm-528 87144 rio rancho nm": {
+    "lat": 35.2744917,
+    "lon": -106.6185528,
+    "displayName": "Pat D'Arco Highway, Rio Rancho, Sandoval County, New Mexico, 87048, United States"
+  },
+  "camino de la placita & civic plaza drive 87571 taos nm": {
+    "lat": 36.4072377,
+    "lon": -105.573284,
+    "displayName": "Taos, Taos County, New Mexico, 87571, United States"
+  },
+  "10416 s eastern ave 89052 henderson nv": {
+    "lat": 36.0012823,
+    "lon": -115.10718,
+    "displayName": "10416, South Eastern Avenue, Henderson, Clark County, Nevada, 89052, United States"
+  },
+  "765 n nellis blvd 5 89110 las vegas nv": {
+    "lat": 36.171697,
+    "lon": -115.1463536,
+    "displayName": "Las Vegas, Clark County, Nevada, United States"
+  },
+  "9732 s virginina st 89511 reno nv": {
+    "lat": 39.5261206,
+    "lon": -119.8126581,
+    "displayName": "Reno, Washoe County, Nevada, United States"
+  },
+  "975 kirman ave 89052 reno nv": {
+    "lat": 39.5162327,
+    "lon": -119.7982721,
+    "displayName": "VA Sierra Nevada Health Care System, 975, Kirman Avenue, Reno Experience District, Reno, Washoe County, Nevada, 89502, United States"
+  },
+  "washington ave 12224 albany ny": {
+    "lat": 42.6912533,
+    "lon": -73.824004,
+    "displayName": "Washington Avenue, City of Albany, Albany County, New York, 12205, United States"
+  },
+  "2375 rochester rd 14424 canandaigua ny": {
+    "lat": 42.9162915,
+    "lon": -77.3022937,
+    "displayName": "2375, Rochester Road, Town of Canandaigua, Ontario County, New York, 14424, United States"
+  },
+  "liberty square 12428 ellenville ny": {
+    "lat": 41.716912,
+    "lon": -74.3931929,
+    "displayName": "Liberty Square, Village of Ellenville, Town of Wawarsing, Ulster County, New York, 12428, United States"
+  },
+  "1 school st 11542 glen cove ny": {
+    "lat": 40.8648078,
+    "lon": -73.6318381,
+    "displayName": "1, School Street, City of Glen Cove, Nassau County, New York, 11542, United States"
+  },
+  "700 warren st 12534 hudson ny": {
+    "lat": 42.247413,
+    "lon": -73.783465,
+    "displayName": "700, Warren Street, Oakdale, City of Hudson, Columbia County, New York, 12534, United States"
+  },
+  "6th avenue 10036 manhattan ny": {
+    "lat": 40.7554917,
+    "lon": -73.9836418,
+    "displayName": "6th Avenue, Theater District, Manhattan Community Board 5, Manhattan, New York County, City of New York, New York, 10019, United States"
+  },
+  "the battery 10004 manhattan ny": {
+    "lat": 40.7055009,
+    "lon": -74.0172783,
+    "displayName": "The Ritz-Carlton Residences​ at Battery Park City, 10, Little West Street, Whitehall, Manhattan, New York County, City of New York, New York, 10004, United States"
+  },
+  "union square 10003 manhattan ny": {
+    "lat": 40.7896239,
+    "lon": -73.9598939,
+    "displayName": "Manhattan, New York County, City of New York, New York, United States"
+  },
+  "115 kisco avenue 10549 mt. kisco ny": {
+    "lat": 41.2140074,
+    "lon": -73.7264559,
+    "displayName": "115, Kisco Avenue, Village/Town of Mount Kisco, Westchester County, New York, 10549, United States"
+  },
+  "hudson st 10014 new york ny": {
+    "lat": 40.7348015,
+    "lon": -74.0061017,
+    "displayName": "Hudson Street, West Village, Manhattan, New York County, City of New York, New York, 10014, United States"
+  },
+  "720 west 181st st 10033 new york ny": {
+    "lat": 40.8502607,
+    "lon": -73.9368174,
+    "displayName": "720, West 181st Street, Hudson Heights, Manhattan Community Board 12, Manhattan, New York County, City of New York, New York, 10033, United States"
+  },
+  "423 e 23rd st 10010 new york ny": {
+    "lat": 40.7370702,
+    "lon": -73.9768987,
+    "displayName": "Veteran Affairs New York Harbor Healthcare System, 423, East 23rd Street, Kips Bay, Manhattan Community Board 6, Manhattan, New York County, City of New York, New York, 10010, United States"
+  },
+  "broadway & west 96th st 10025 new york ny": {
+    "lat": 40.7127281,
+    "lon": -74.0060152,
+    "displayName": "City of New York, New York, United States"
+  },
+  "17 state st 10004 new york ny": {
+    "lat": 40.7029112,
+    "lon": -74.0139782,
+    "displayName": "17, State Street, Whitehall, Manhattan, New York County, City of New York, New York, 10004, United States"
+  },
+  "abdington square, hudson st 10014 new york ny": {
+    "lat": 40.7127281,
+    "lon": -74.0060152,
+    "displayName": "City of New York, New York, United States"
+  },
+  "26 federal plaza, broadway entrance (between duane & worth sts) 10278 new york ny": {
+    "lat": 40.7127281,
+    "lon": -74.0060152,
+    "displayName": "City of New York, New York, United States"
+  },
+  "st. francis hospital & heart center 11576 roslyn ny": {
+    "lat": 40.7998227,
+    "lon": -73.6509621,
+    "displayName": "Village of Roslyn, Town of North Hempstead, Nassau County, New York, United States"
+  },
+  "54 olmsted rd 10583 scarsdale ny": {
+    "lat": 40.9979026,
+    "lon": -73.7897236,
+    "displayName": "Scarsdale Public Library, 54, Olmsted Road, Murray Hill, Village of Scarsdale, Westchester County, New York, 10583, United States"
+  },
+  "4 3rd st 12180 troy ny": {
+    "lat": 42.7323189,
+    "lon": -73.6899377,
+    "displayName": "4, 3rd Street, Downtown, City of Troy, Rensselaer County, New York, 12180, United States"
+  },
+  "routes 191 & 100 13640 wellesley island ny": {
+    "lat": 44.3152044,
+    "lon": -76.0240532,
+    "displayName": "Wellesley Island State Park, Town of Orleans, Jefferson County, New York, 13692, United States"
+  },
+  "5245 ridge avenue 45213 cincinnati oh": {
+    "lat": 39.1719472,
+    "lon": -84.4269052,
+    "displayName": "Ridge Road, Cincinnati, Columbia Township, Hamilton County, Ohio, 45213, United States"
+  },
+  "4099 easton loop w 43219 columbus oh": {
+    "lat": 40.0522413,
+    "lon": -82.9181792,
+    "displayName": "Tesla Columbus, 4099, Easton Loop West, Easton, Columbus, Sharon, Franklin County, Ohio, 43219, United States"
+  },
+  "mayme moore park 43203 columbus oh": {
+    "lat": 39.9622601,
+    "lon": -83.0007065,
+    "displayName": "Columbus, Franklin County, Ohio, United States"
+  },
+  "woodbine avenue 45432 dayton oh": {
+    "lat": 39.7358198,
+    "lon": -84.1212465,
+    "displayName": "Woodbine Avenue, Belmont, Dayton, Montgomery County, Ohio, 45432, United States"
+  },
+  "deeds point metropark 45404 dayton oh": {
+    "lat": 39.7589478,
+    "lon": -84.1916069,
+    "displayName": "Dayton, Montgomery County, Ohio, United States"
+  },
+  "345 high st 45011 hamilton oh": {
+    "lat": 39.3984602,
+    "lon": -84.5594041,
+    "displayName": "One Renaissance Center, 345, High Street, German Village Historic District, Hamilton, Butler County, Ohio, 45011, United States"
+  },
+  "5180 mayfield rd 44124 lyndhurst oh": {
+    "lat": 41.519825,
+    "lon": -81.4920182,
+    "displayName": "5180, Mayfield Road, Lyndhurst, Cuyahoga County, Ohio, 44124, United States"
+  },
+  "5275 abbe rd n 44035 sheffield oh": {
+    "lat": 41.4205037,
+    "lon": -82.0772014,
+    "displayName": "5275, North Abbe Road, College Green, Sheffield, Lorain County, Ohio, 44035, United States"
+  },
+  "sw ellsworth st & sw 4th ave 97321 albany or": {
+    "lat": 44.6365071,
+    "lon": -123.1059324,
+    "displayName": "Albany, Linn County, Oregon, United States"
+  },
+  "11975 sw 2nd st 97005 beaverton or": {
+    "lat": 45.4853755,
+    "lon": -122.8000398,
+    "displayName": "Social Security Administration, 11975, Southwest 2nd Street, Downtown Beaverton, Central Beaverton, Beaverton, Washington County, Oregon, 97005, United States"
+  },
+  "288 n hemlock st 97110 cannon beach or": {
+    "lat": 45.899762,
+    "lon": -123.9610099,
+    "displayName": "288, North Hemlock Street, Cannon Beach, Clatsop County, Oregon, 97110, United States"
+  },
+  "9191 se sunnyside rd 97015 clackamas county or": {
+    "lat": 45.4334111,
+    "lon": -122.5703117,
+    "displayName": "9191, Southeast Sunnyside Road, Harmony, Sunnyside, Clackamas County, Oregon, 97015, United States"
+  },
+  "se monterey ave & se bob schumacher rd 97086 clackamas county or": {
+    "lat": 45.3327869,
+    "lon": -122.5990319,
+    "displayName": "Clackamas County Red Soils Campus, Oregon City, Clackamas County, Oregon, United States"
+  },
+  "intersection of main and ellendale 97338 dallas or": {
+    "lat": 44.9189206,
+    "lon": -123.315869,
+    "displayName": "Dallas, Polk County, Oregon, 97338, United States"
+  },
+  "10645 northeast tanasbourne dr 97124 hillsboro or": {
+    "lat": 45.5403144,
+    "lon": -122.8695284,
+    "displayName": "Sportsman's Warehouse, 10645, Northeast Tanasbourne Drive, Tanasbourne, Hillsboro, Washington County, Oregon, 97124, United States"
+  },
+  "232 n state st 97034 lake oswego or": {
+    "lat": 45.4175647,
+    "lon": -122.6634219,
+    "displayName": "232, North State Street, Lake View Village, Lake Oswego, Clackamas County, Oregon, 97034, United States"
+  },
+  "225 nw adams st 97128 mcminnville or": {
+    "lat": 45.2100367,
+    "lon": -123.194463,
+    "displayName": "McMinnville, Yamhill County, Oregon, 97128, United States"
+  },
+  "14700 se mcloughlin blvd 97267 milwaukie or": {
+    "lat": 45.4172649,
+    "lon": -122.629421,
+    "displayName": "Starbucks, 14700, Southeast McLoughlin Boulevard, Oak Grove, Milwaukie, Clackamas County, Oregon, 97267, United States"
+  },
+  "1634 oregon st 97465 port orford or": {
+    "lat": 42.7515373,
+    "lon": -124.4972463,
+    "displayName": "1634, Oregon Coast Highway, Port Orford, Curry County, Oregon, 97465, United States"
+  },
+  "1300 se stark st #203 97214 portland or": {
+    "lat": 45.5202471,
+    "lon": -122.674194,
+    "displayName": "Portland, Multnomah County, Oregon, United States"
+  },
+  "5515 sw canyon ct 97221 portland or": {
+    "lat": 45.5096043,
+    "lon": -122.7343587,
+    "displayName": "Verde Cocina, 5515, Southwest Canyon Court, Southwest Hills, Portland, Multnomah County, Oregon, 97221, United States"
+  },
+  "1300 se stark st 97214 portland or": {
+    "lat": 45.518968,
+    "lon": -122.6521412,
+    "displayName": "Washington High School, 1300, Southeast Stark Street, Central Eastside, Buckman, Portland, Multnomah County, Oregon, 97214, United States"
+  },
+  "4330 s macadam ave 97238 portland or": {
+    "lat": 45.4918592,
+    "lon": -122.6714293,
+    "displayName": "Tesla, 4330, South Macadam Avenue, South Waterfront, South Portland, Portland, Multnomah County, Oregon, 97239, United States"
+  },
+  "ne 33rd ave & ne knott st 97212 portland or": {
+    "lat": 45.5202471,
+    "lon": -122.674194,
+    "displayName": "Portland, Multnomah County, Oregon, United States"
+  },
+  "2250 nw flanders st 97210 portland or": {
+    "lat": 45.5253192,
+    "lon": -122.6975818,
+    "displayName": "2250, Northwest Flanders Street, Nob Hill, Northwest District, Portland, Multnomah County, Oregon, 97210, United States"
+  },
+  "sw oleson rd & sw garden home rd 97223 portland or": {
+    "lat": 45.5202471,
+    "lon": -122.674194,
+    "displayName": "Portland, Multnomah County, Oregon, United States"
+  },
+  "se division st & se 38th avenue 97214 portland or": {
+    "lat": 45.5202471,
+    "lon": -122.674194,
+    "displayName": "Portland, Multnomah County, Oregon, United States"
+  },
+  "9320 se market st 97216 portland or": {
+    "lat": 45.510685,
+    "lon": -122.567495,
+    "displayName": "9320, Southeast Market Street, Montavilla, Portland, Multnomah County, Oregon, 97216, United States"
+  },
+  "ne 53rd ave & ne hoyt st 97213 portland or": {
+    "lat": 45.5202471,
+    "lon": -122.674194,
+    "displayName": "Portland, Multnomah County, Oregon, United States"
+  },
+  "2755 mission street 97302 salem or": {
+    "lat": 44.9218463,
+    "lon": -123.0080627,
+    "displayName": "2755, Mission Street Southeast, Salem, Marion County, Oregon, 97302, United States"
+  },
+  "10069 sw cascade ave 97223 tigard or": {
+    "lat": 45.4444066,
+    "lon": -122.782027,
+    "displayName": "Southwest Cascade Avenue, Greenburg Road, Tigard, Washington County, Oregon, 97223, United States"
+  },
+  "4999 lousie dr 17055 mechanicsburg pa": {
+    "lat": 40.2101972,
+    "lon": -77.0047276,
+    "displayName": "Mechanicsburg, Cumberland County, Pennsylvania, United States"
+  },
+  "1475 old york rd 19001 abington township pa": {
+    "lat": 40.1239964,
+    "lon": -75.1155979,
+    "displayName": "Bridgestone, 1475, Old York Road, Abington Township, Montgomery County, Pennsylvania, 19001, United States"
+  },
+  "1125 s cedar crest blvd 18103 allentown pa": {
+    "lat": 40.5721062,
+    "lon": -75.5190484,
+    "displayName": "The Rose Professional Building, 1125, South Cedar Crest Boulevard, Dorneyville, Allentown, Lehigh County, Pennsylvania, 18103, United States"
+  },
+  "3555 benner pike 16823 bellefonte pa": {
+    "lat": 40.8955973,
+    "lon": -77.7877438,
+    "displayName": "3555, Benner Pike, Bellefonte, Centre County, Pennsylvania, 16823, United States"
+  },
+  "2151 emrick blvd 18020 bethlehem pa": {
+    "lat": 40.652356,
+    "lon": -75.2919437,
+    "displayName": "Peoples Security Bank, 2151, Emrick Boulevard, Harvey's Corner, Bethlehem, Northampton County, Pennsylvania, 18020, United States"
+  },
+  "1400 brockwell st 15017 bridgeville pa": {
+    "lat": 40.3612605,
+    "lon": -80.1215073,
+    "displayName": "Tesla Pittsburgh-Presto, 1400, Brockwell Street, Newbury Market, Bridgeville, Allegheny County, Pennsylvania, 15017, United States"
+  },
+  "68 s sillyman st 17929 cressona pa": {
+    "lat": 40.6316308,
+    "lon": -76.1931543,
+    "displayName": "Cressona Borough Hall, 68, South Sillyman Street, Cressona, Schuylkill County, Pennsylvania, 17929, United States"
+  },
+  "470 lancaster ave 19333 devon pa": {
+    "lat": 40.0458501,
+    "lon": -75.4332369,
+    "displayName": "Tesla Devon, 470, Lancaster Avenue, Devon, Easttown Township, Chester County, Pennsylvania, 19333, United States"
+  },
+  "11 lincoln square 17325 gettysburg pa": {
+    "lat": 39.8304136,
+    "lon": -77.2306494,
+    "displayName": "Gettysburg Licensed Town Guides, 11, Lincoln Square, Gettysburg, Adams County, Pennsylvania, 17325, United States"
+  },
+  "corner of main st & madison st 19446 lansdale pa": {
+    "lat": 40.2414952,
+    "lon": -75.2837862,
+    "displayName": "Lansdale, Montgomery County, Pennsylvania, United States"
+  },
+  "high st & route 743 17550 maytown pa": {
+    "lat": 40.0754317,
+    "lon": -76.5820749,
+    "displayName": "Maytown, East Donegal Township, Lancaster County, Pennsylvania, 17550, United States"
+  },
+  "independence hall 19106 philadelphia pa": {
+    "lat": 39.9488872,
+    "lon": -75.150026,
+    "displayName": "Independence Hall, 520, Chestnut Street, Center City, Society Hill, Philadelphia, Philadelphia County, Pennsylvania, 19106, United States"
+  },
+  "2000 market st 19103 philadelphia pa": {
+    "lat": 39.9532677,
+    "lon": -75.1736782,
+    "displayName": "2000, Market Street, Center City, Rittenhouse Square, Philadelphia, Philadelphia County, Pennsylvania, 19103, United States"
+  },
+  "200 w allens ln 19119 philadelphia pa": {
+    "lat": 40.0575027,
+    "lon": -75.194694,
+    "displayName": "200, West Allens Lane, Allen Lane, West Mount Airy, Northwest Philadelphia, Philadelphia, Philadelphia County, Pennsylvania, 19119, United States"
+  },
+  "5th and market st 19106 philadelphia pa": {
+    "lat": 39.9527237,
+    "lon": -75.1635262,
+    "displayName": "Philadelphia, Philadelphia County, Pennsylvania, United States"
+  },
+  "200 chestnut street 19106 philadelphia pa": {
+    "lat": 39.9479786,
+    "lon": -75.1447658,
+    "displayName": "United States Custom House, 200, Chestnut Street, Center City, Society Hill, Philadelphia, Philadelphia County, Pennsylvania, 19106, United States"
+  },
+  "10675 perry hwy 15090 pine township pa": {
+    "lat": 40.6137631,
+    "lon": -80.0560517,
+    "displayName": "Wexford Post Office, 10675, Perry Highway, Wexford, Pine Township, Allegheny County, Pennsylvania, 15090, United States"
+  },
+  "east liberty 15206 pittsburgh pa": {
+    "lat": 40.4610149,
+    "lon": -79.9254956,
+    "displayName": "East Liberty Presbyterian Church, 116, South Highland Avenue, East Liberty, Pittsburgh, Allegheny County, Pennsylvania, 15206, United States"
+  },
+  "south braddock ave & forbes ave 15221 pittsburgh pa": {
+    "lat": 40.4416941,
+    "lon": -79.9900861,
+    "displayName": "Pittsburgh, Allegheny County, Pennsylvania, United States"
+  },
+  "murray ave & beacon street 15217 pittsburgh pa": {
+    "lat": 40.4416941,
+    "lon": -79.9900861,
+    "displayName": "Pittsburgh, Allegheny County, Pennsylvania, United States"
+  },
+  "1198 baltimore pike 19064 springfield pa": {
+    "lat": 39.9134562,
+    "lon": -75.3484803,
+    "displayName": "1198, Baltimore Pike, Swarthmore, Delaware County, Pennsylvania, 19064, United States"
+  },
+  "700 york rd 18974 warminster pa": {
+    "lat": 40.2112332,
+    "lon": -75.1008705,
+    "displayName": "700, York Road, Warminster Village, Warminster Township, Bucks County, Pennsylvania, 18974, United States"
+  },
+  "pa-16 & pa-997 17268 waynesboro pa": {
+    "lat": 39.7526859,
+    "lon": -77.5730146,
+    "displayName": "Clayton Avenue, Waynesboro, Franklin County, Pennsylvania, 17268, United States"
+  },
+  "1568 west chester pike 19382 west chester pa": {
+    "lat": 39.9658706,
+    "lon": -75.5249358,
+    "displayName": "Tesla West Chester, 1568, West Chester Pike, West Chester, Chester County, Pennsylvania, 19382, United States"
+  },
+  "1101 west chester pike west chester pa": {
+    "lat": 39.9693637,
+    "lon": -75.5746008,
+    "displayName": "Social Security Administration, 1101, West Chester Pike, Golf Club Apartments, West Goshen, West Chester, Chester County, Pennsylvania, 19382, United States"
+  },
+  "14010 perry hwy 15090 wexford pa": {
+    "lat": 40.6461809,
+    "lon": -80.0709965,
+    "displayName": "Tesla Pittsburgh-Wexford, 14010, Perry Highway, Warrendale, Marshall Township, Allegheny County, Pennsylvania, 15090, United States"
+  },
+  "130 bellevue ave 02840 newport ri": {
+    "lat": 41.4848121,
+    "lon": -71.3075976,
+    "displayName": "UBS Financial Services, 130, Bellevue Avenue, Newport, Newport County, Rhode Island, 02840, United States"
+  },
+  "77 reservoir ave 2907 providence ri": {
+    "lat": 41.794389,
+    "lon": -71.42705,
+    "displayName": "Popeyes, 77, Reservoir Avenue, Elmwood, Providence, Providence County, Rhode Island, 02907, United States"
+  },
+  "1 bridge street 2903 providence ri": {
+    "lat": 41.764907,
+    "lon": -71.38978,
+    "displayName": "1, Bridge Street, Pawtuxet, Cranston, Providence County, Rhode Island, 02905, United States"
+  },
+  "82 smith st 02903 providence ri": {
+    "lat": 41.8308956,
+    "lon": -71.4149587,
+    "displayName": "Rhode Island State Capitol Building, 82, Smith Street, Downtown, Providence, Providence County, Rhode Island, 02903, United States"
+  },
+  "516 oakland ave 29730 rock hill sc": {
+    "lat": 34.9365658,
+    "lon": -81.0274334,
+    "displayName": "516, Oakland Avenue, Rock Hill, York County, South Carolina, 29730, United States"
+  },
+  "3020 n germantown pkwy 38133 bartlett tn": {
+    "lat": 35.2045329,
+    "lon": -89.8739753,
+    "displayName": "Bartlett, Shelby County, West Tennessee, Tennessee, United States"
+  },
+  "poplar ave & west st 38138 germantown tn": {
+    "lat": 35.0867577,
+    "lon": -89.8100858,
+    "displayName": "Germantown, Shelby County, West Tennessee, Tennessee, United States"
+  },
+  "3211 peoples st 37604 johnson city tn": {
+    "lat": 36.3457255,
+    "lon": -82.4002691,
+    "displayName": "Ross, 3211, Peoples Street, Avondale Forest, Greenfield Heights, Johnson City, Washington County, East Tennessee, Tennessee, 37604, United States"
+  },
+  "504 market st 37902 knoxville tn": {
+    "lat": 35.9603948,
+    "lon": -83.9210261,
+    "displayName": "Knoxville, Knox County, East Tennessee, Tennessee, United States"
+  },
+  "200 administration rd 37830 oak ridge tn": {
+    "lat": 36.0246431,
+    "lon": -84.236136,
+    "displayName": "200, Administration Road, Jackson Square, Oak Ridge, Anderson County, East Tennessee, Tennessee, 37830, United States"
+  },
+  "1414 parkway 37862 sevierville tn": {
+    "lat": 35.8384934,
+    "lon": -83.574201,
+    "displayName": "Walmart Supercenter, 1414, Parkway, Sevierville, Sevier County, East Tennessee, Tennessee, 37862, United States"
+  },
+  "8533 tn-73 37882 townsend tn": {
+    "lat": 35.6753657,
+    "lon": -83.7557282,
+    "displayName": "Townsend, Blount County, East Tennessee, Tennessee, United States"
+  },
+  "north lamar & 3rd st 78753 austin tx": {
+    "lat": 30.2711286,
+    "lon": -97.7436995,
+    "displayName": "Austin, Travis County, Texas, United States"
+  },
+  "1100 congress ave 78701 austin tx": {
+    "lat": 30.276485,
+    "lon": -97.739768,
+    "displayName": "1100, Congress Avenue, Medical District, Austin, Travis County, Texas, 78701, United States"
+  },
+  "12th st & ih 35 78701 austin tx": {
+    "lat": 30.2711286,
+    "lon": -97.7436995,
+    "displayName": "Austin, Travis County, Texas, United States"
+  },
+  "422 guadalupe st 78701 austin tx": {
+    "lat": 30.2681425,
+    "lon": -97.7475183,
+    "displayName": "Rosen's Bagels, 422, Guadalupe Street, Warehouse District, Austin, Travis County, Texas, 78701, United States"
+  },
+  "501 w 5th st 78701 austin tx": {
+    "lat": 30.268082,
+    "lon": -97.7483738,
+    "displayName": "United States Courthouse, 501, West 5th Street, Warehouse District, Austin, Travis County, Texas, 78701, United States"
+  },
+  "2607 tx-36, hwy 290 77833 brenham tx": {
+    "lat": 30.1626646,
+    "lon": -96.4231033,
+    "displayName": "US Highway 290 West, Brenham, Washington County, Texas, 77833, United States"
+  },
+  "77833 brenham tx": {
+    "lat": 30.1668828,
+    "lon": -96.3977442,
+    "displayName": "Brenham, Washington County, Texas, United States"
+  },
+  "602 s shoreline blvd 78401 corpus christi tx": {
+    "lat": 27.7825886,
+    "lon": -97.3944826,
+    "displayName": "South Shoreline Boulevard, Downtown, Corpus Christi, Nueces County, Texas, 78401, United States"
+  },
+  "6500 cedar springs rd 75235 dallas tx": {
+    "lat": 32.8324173,
+    "lon": -96.8376053,
+    "displayName": "6500, Cedar Springs Road, Dallas, Dallas County, Texas, 75235, United States"
+  },
+  "2222 28th st 77550 galveston tx": {
+    "lat": 29.287498,
+    "lon": -94.793944,
+    "displayName": "2222, 28th Street, Galveston, Galveston County, Texas, 77550, United States"
+  },
+  "9633 westheimer 77063 houston tx": {
+    "lat": 29.7363573,
+    "lon": -95.5375991,
+    "displayName": "Tesla Gallery & Service Center, 9633, Westheimer Road, Houston, Harris County, Texas, 77063, United States"
+  },
+  "5300 memorial dr 77007 houston tx": {
+    "lat": 29.7626484,
+    "lon": -95.4145559,
+    "displayName": "5300, Memorial Drive, Washington Avenue Coalition / Memorial Park, Houston, Harris County, Texas, 77007, United States"
+  },
+  "13302 westheimer rd 77077 houston tx": {
+    "lat": 29.735933,
+    "lon": -95.6247857,
+    "displayName": "13302, Westheimer Road, Houston, Harris County, Texas, 77077, United States"
+  },
+  "16200 dillard dr 77040 houston tx": {
+    "lat": 29.7589382,
+    "lon": -95.3676974,
+    "displayName": "Houston, Harris County, Texas, United States"
+  },
+  "1100 university ave 77340 huntsville tx": {
+    "lat": 30.723672,
+    "lon": -95.550551,
+    "displayName": "1100, University Avenue, Huntsville, Walker County, Texas, 77340, United States"
+  },
+  "15830 northwest fwy 77040 jersey village tx": {
+    "lat": 29.8716579,
+    "lon": -95.551746,
+    "displayName": "Northwest Freeway, Jersey Village, Harris County, Texas, 77040, United States"
+  },
+  "league city tx": {
+    "lat": 29.5074538,
+    "lon": -95.0949303,
+    "displayName": "League City, Galveston County, Texas, 77573, United States"
+  },
+  "257 grand ave 76092 southlake tx": {
+    "lat": 32.9435681,
+    "lon": -97.1302066,
+    "displayName": "Tesla, 257, Grand Avenue, Southlake Town Square, Southlake, Tarrant County, Texas, 76092, United States"
+  },
+  "1601 lake robbins dr 77380 the woodlands tx": {
+    "lat": 30.1609696,
+    "lon": -95.4610504,
+    "displayName": "The Woodlands Waterway Marriott Hotel & Convention Center, 1601, Lake Robbins Drive, Town Center, The Woodlands, Montgomery County, Texas, 77380, United States"
+  },
+  "3308 kemp blvd ste 1 76308 wichita falls tx": {
+    "lat": 33.9004572,
+    "lon": -98.5020777,
+    "displayName": "Wichita Falls, Wichita County, Texas, United States"
+  },
+  "tx": {
+    "lat": 31.2638905,
+    "lon": -98.5456116,
+    "displayName": "Texas, United States"
+  },
+  "199 n main st 84321 logan ut": {
+    "lat": 41.7286515,
+    "lon": -111.8350798,
+    "displayName": "Main Street, Logan, Cache County, Utah, 84321, United States"
+  },
+  "utah state capitol 84114 salt lake city ut": {
+    "lat": 40.7774401,
+    "lon": -111.8881972,
+    "displayName": "Utah State Capitol Building, 350, State Street, Marmalade District, Salt Lake City, Salt Lake County, Utah, 84103, United States"
+  },
+  "125 state st 84138 salt lake city ut": {
+    "lat": 40.7723374,
+    "lon": -111.889437,
+    "displayName": "LDS Church North Office Building, 125, State Street, Salt Lake City, Salt Lake County, Utah, 84150, United States"
+  },
+  "ut": {
+    "lat": 39.4225192,
+    "lon": -111.714358,
+    "displayName": "Utah, United States"
+  },
+  "2710 s glebe rd 22206 arlington va": {
+    "lat": 38.8445762,
+    "lon": -77.0784917,
+    "displayName": "Tesla, 2710, South Glebe Road, Long Branch Creek, Shirlington, Arlington County, Virginia, 22206, United States"
+  },
+  "70 n mason st 22802 harrisonburg va": {
+    "lat": 38.4497428,
+    "lon": -78.8663725,
+    "displayName": "70, North Mason Street, Harrisonburg, Virginia, 22802, United States"
+  },
+  "intersection of south king street & marathon drive 20175 leesburg va": {
+    "lat": 39.1154506,
+    "lon": -77.5645607,
+    "displayName": "Leesburg, Loudoun County, Virginia, United States"
+  },
+  "100 park central plaza 20111 manassas park va": {
+    "lat": 38.7664671,
+    "lon": -77.4420351,
+    "displayName": "La Finca, 100, Park Central Plaza, Village at Manassas Park, Manassas Park, Virginia, 20111, United States"
+  },
+  "corner of st. paul's blvd & city hall ave 23510 norfolk va": {
+    "lat": 36.8493695,
+    "lon": -76.2899539,
+    "displayName": "Norfolk, Virginia, United States"
+  },
+  "elbit systems of america 24019 roanoke va": {
+    "lat": 37.270973,
+    "lon": -79.9414313,
+    "displayName": "Roanoke, Virginia, United States"
+  },
+  "8500 tyco rd 22182 vienna va": {
+    "lat": 38.9317682,
+    "lon": -77.2396681,
+    "displayName": "Tesla, 8500, Tyco Road, Ash Grove, Vienna, Fairfax County, Virginia, 22182, United States"
+  },
+  "8500 tyco road 22182 vienna va": {
+    "lat": 38.9317682,
+    "lon": -77.2396681,
+    "displayName": "Tesla, 8500, Tyco Road, Ash Grove, Vienna, Fairfax County, Virginia, 22182, United States"
+  },
+  "2293 upton dr 23454 virginia beach va": {
+    "lat": 36.7568894,
+    "lon": -76.0058223,
+    "displayName": "2293, Upton Drive, Nimmo, Virginia Beach, Virginia, 23454, United States"
+  },
+  "5201 monticello ave 23188 williamsburg va": {
+    "lat": 37.2755483,
+    "lon": -76.7413997,
+    "displayName": "Williamsburg-James City County Courthouse, 5201, Monticello Avenue, Indigo Terrace, New Town, Williamsburg, James City County, Virginia, 23188, United States"
+  },
+  "350 western ave 5301 brattleboro vt": {
+    "lat": 42.8504151,
+    "lon": -72.5800429,
+    "displayName": "350, Western Avenue, Brattleboro, Windham County, Vermont, 05301, United States"
+  },
+  "345 pine st 5401 burlington vt": {
+    "lat": 44.4694794,
+    "lon": -73.2154483,
+    "displayName": "345, Pine Street, Five Sisters, South End, Burlington, Chittenden County, Vermont, 05401, United States"
+  },
+  "1210 main st 5454 fairfax vt": {
+    "lat": 44.6652883,
+    "lon": -73.0087203,
+    "displayName": "Fairfax, Franklin County, Vermont, 05454, United States"
+  },
+  "4845 main st 5255 manchester vt": {
+    "lat": 43.1637747,
+    "lon": -73.0719969,
+    "displayName": "Manchester, Bennington County, Vermont, 05254, United States"
+  },
+  "5255 manchester vt": {
+    "lat": 43.1637747,
+    "lon": -73.0719969,
+    "displayName": "Manchester, Bennington County, Vermont, 05254, United States"
+  },
+  "259 us-7 05468 milton vt": {
+    "lat": 44.6237843,
+    "lon": -73.1222715,
+    "displayName": "Hannaford, 259, U.S. Route 7 South, West View, Milton, Chittenden County, Vermont, 05468, United States"
+  },
+  "state & main 05602 montpelier vt": {
+    "lat": 44.2602244,
+    "lon": -72.5750364,
+    "displayName": "Montpelier, Washington County, Vermont, 05602, United States"
+  },
+  "so main st & fairfield st 05478 saint albans city vt": {
+    "lat": 44.8107911,
+    "lon": -73.0833607,
+    "displayName": "Saint Albans City, Franklin County, Vermont, 05479, United States"
+  },
+  "1001 shelburne road 05403 south burlington vt": {
+    "lat": 44.4412623,
+    "lon": -73.2105608,
+    "displayName": "M&T Bank, 1001, Shelburne Road, Twin Orchards, South Burlington, Chittenden County, Vermont, 05403, United States"
+  },
+  "99202 !!spokane wa": {
+    "lat": 47.6571934,
+    "lon": -117.42351,
+    "displayName": "Spokane, Spokane County, Washington, United States"
+  },
+  "123 2nd st 98230 blaine wa": {
+    "lat": 48.9999579,
+    "lon": -122.7516133,
+    "displayName": "2nd Street, Blaine, Whatcom County, Washington, 98230, United States"
+  },
+  "boulevard rd se over i-5 98501 east olympia wa": {
+    "lat": 46.9675218,
+    "lon": -122.8367721,
+    "displayName": "East Olympia, Thurston County, Washington, United States"
+  },
+  "griffin ave & porter street 98022 enumclaw wa": {
+    "lat": 47.2047793,
+    "lon": -121.9916371,
+    "displayName": "Enumclaw, King County, Washington, 98022, United States"
+  },
+  "3809 broadway 98201 everett wa": {
+    "lat": 47.9672458,
+    "lon": -122.2009455,
+    "displayName": "3809, Broadway, Port Gardner, Everett, Snohomish County, Washington, 98201, United States"
+  },
+  "6th street & central way 98033 kirkland wa": {
+    "lat": 47.677025,
+    "lon": -122.2052266,
+    "displayName": "Central Way, Kirkland, King County, Washington, 98033, United States"
+  },
+  "1805 n pepper lane 99019 liberty lake wa": {
+    "lat": 47.6721612,
+    "lon": -117.1132011,
+    "displayName": "1805, North Pepper Lane, Liberty Lake, Spokane County, Washington, 99019, United States"
+  },
+  "17731 pacific hwy 98037 lynnwood wa": {
+    "lat": 47.8379487,
+    "lon": -122.3004581,
+    "displayName": "17731, Highway 99, Lynnwood, Snohomish County, Washington, 98037, United States"
+  },
+  "3711 196th st sw 98036 lynnwood wa": {
+    "lat": 47.8214542,
+    "lon": -122.2837643,
+    "displayName": "Lynnwood Convention Center, 3711, 196th Street Southwest, Lynnwood, Snohomish County, Washington, 98036, United States"
+  },
+  "88th street overpass on i-5 98270 marysville wa": {
+    "lat": 48.0517429,
+    "lon": -122.1768209,
+    "displayName": "Marysville, Snohomish County, Washington, United States"
+  },
+  "16400 bothell everett hwy 98012 mill creek wa": {
+    "lat": 47.8633035,
+    "lon": -122.2186787,
+    "displayName": "Bothell-Everett Highway, Mill Creek, Snohomish County, Washington, 98012, United States"
+  },
+  "11707 mukilteo speedway 98275 mukilteo wa": {
+    "lat": 47.8928976,
+    "lon": -122.286874,
+    "displayName": "11707, Mukilteo Speedway, Mukilteo, Snohomish County, Washington, 98275, United States"
+  },
+  "4th and water street 98501 olympia wa": {
+    "lat": 47.0451022,
+    "lon": -122.8950075,
+    "displayName": "Olympia, Thurston County, Washington, United States"
+  },
+  "601 omache dr 98841 omak wa": {
+    "lat": 48.4172116,
+    "lon": -119.5094146,
+    "displayName": "Burger King, 601, Omache Drive, Omak, Okanogan County, Washington, 98841, United States"
+  },
+  "161st avenue northwest & remond way 98052 remond wa": {
+    "lat": 47.4642758,
+    "lon": 3.9859822,
+    "displayName": "Les Genétres Rémond, Magny, Avallon, Yonne, Bourgogne-Franche-Comté, France métropolitaine, 89200, France"
+  },
+  "700 s grady way 98057 renton wa": {
+    "lat": 47.4723819,
+    "lon": -122.2112036,
+    "displayName": "Tesla, 700, South Grady Way, Renton, King County, Washington, 98057, United States"
+  },
+  "4800 beacon ave s 98108 seattle wa": {
+    "lat": 47.5598375,
+    "lon": -122.3040736,
+    "displayName": "Gulf, 4800, Beacon Avenue South, Rainier Vista, Rainier Valley, Seattle, King County, Washington, 98108, United States"
+  },
+  "4701 california ave sw 98116 seattle wa": {
+    "lat": 47.5609682,
+    "lon": -122.3871315,
+    "displayName": "4701, California Avenue Southwest, Alaska Junction, West Seattle, Seattle, King County, Washington, 98116, United States"
+  },
+  "columbia park 98118 seattle wa": {
+    "lat": 47.6038321,
+    "lon": -122.330062,
+    "displayName": "Seattle, King County, Washington, United States"
+  },
+  "5th ave ne & ne 50th st 98105 seattle wa": {
+    "lat": 47.6038321,
+    "lon": -122.330062,
+    "displayName": "Seattle, King County, Washington, United States"
+  },
+  "6th ave s & yesler way 98104 seattle wa": {
+    "lat": 47.6038321,
+    "lon": -122.330062,
+    "displayName": "Seattle, King County, Washington, United States"
+  },
+  "1660 s columbian way 98108 seattle wa": {
+    "lat": 47.5626854,
+    "lon": -122.3084242,
+    "displayName": "VA Medical Center - Seattle, 1660, South Columbian Way, South Seattle, Seattle, King County, Washington, 98108, United States"
+  },
+  "2734 ne 45th st 98105 seattle wa": {
+    "lat": 47.661291,
+    "lon": -122.2963419,
+    "displayName": "2734, Northeast 45th Street, East Campus, University District, Seattle, King County, Washington, 98105, United States"
+  },
+  "435 westlake ave n 98109 seattle wa": {
+    "lat": 47.623051,
+    "lon": -122.3387199,
+    "displayName": "Tesla, 435, Westlake Avenue North, South Lake Union, Belltown, Seattle, King County, Washington, 98109, United States"
+  },
+  "southwest andover street & fauntleroy way southwest 98126 seattle wa": {
+    "lat": 47.6038321,
+    "lon": -122.330062,
+    "displayName": "Seattle, King County, Washington, United States"
+  },
+  "15510 aurora ave n 98133 shoreline wa": {
+    "lat": 47.7417883,
+    "lon": -122.3448289,
+    "displayName": "15510, Aurora Avenue North, Evergreen, Parkwood, Shoreline, King County, Washington, 98133, United States"
+  },
+  "2nd street & avenue d 98290 snohomish wa": {
+    "lat": 47.9200675,
+    "lon": -122.0981362,
+    "displayName": "Avenue D, Northwest Snohomish, Snohomish, Snohomish County, Washington, 98291, United States"
+  },
+  "3922 n normandie st 99205 spokane wa": {
+    "lat": 47.6937536,
+    "lon": -117.4137203,
+    "displayName": "3922, North Normandie Street, Spokane, Spokane County, Washington, 99205, United States"
+  },
+  "3321 w indian trail rd 99208 spokane wa": {
+    "lat": 47.7175426,
+    "lon": -117.4614361,
+    "displayName": "3321, West Indian Trail Road, Balboa / South Indian Trail, Spokane, Spokane County, Washington, 99208, United States"
+  },
+  "6916 ne fourth plain blvd 98661 vancouver wa": {
+    "lat": 45.6456515,
+    "lon": -122.6012706,
+    "displayName": "Tesla Supercharger, 6916, Northeast Fourth Plain Boulevard, Bagley Downs, Vancouver, Clark County, Washington, 98661, United States"
+  },
+  "11325 se mill plain blvd 98684 vancouver wa": {
+    "lat": 45.6200483,
+    "lon": -122.5562721,
+    "displayName": "Peet's Coffee, 11325, Southeast Mill Plain Boulevard, Vancouver, Clark County, Washington, 98684, United States"
+  },
+  "east evergreen boulevard & east reserve street 98663 vancouver wa": {
+    "lat": 45.6306954,
+    "lon": -122.6744557,
+    "displayName": "Vancouver, Clark County, Washington, United States"
+  },
+  "west college avenue & north appleton street 54911 appleton wi": {
+    "lat": 44.2613967,
+    "lon": -88.4069744,
+    "displayName": "Appleton, Outagamie County, Wisconsin, United States"
+  },
+  "1 north bridge street 54729 chippewa falls wi": {
+    "lat": 44.9415141,
+    "lon": -91.3986009,
+    "displayName": "North Bridge Street, Chippewa Falls, Chippewa County, Wisconsin, 54729, United States"
+  },
+  "500 s barstow st 54701 eau claire wi": {
+    "lat": 44.8088228,
+    "lon": -91.4980826,
+    "displayName": "Eau Claire Federal Building & U.S. Courthouse, 500, South Barstow Street, Third Ward, Eau Claire, Eau Claire County, Wisconsin, 54701, United States"
+  },
+  "525 n peters ave 54937 fond du lac wi": {
+    "lat": 43.7900014,
+    "lon": -88.4728566,
+    "displayName": "North Peters Avenue, Fond du Lac, Fond du Lac County, Wisconsin, 54937, United States"
+  },
+  "400 la crosse st 54601 la crosse wi": {
+    "lat": 43.817179,
+    "lon": -91.248872,
+    "displayName": "400, La Crosse Street, Downtown, La Crosse, La Crosse County, Wisconsin, 54601, United States"
+  },
+  "3059 e washington ave 53714 madison wi": {
+    "lat": 43.1050938,
+    "lon": -89.3413308,
+    "displayName": "3059, East Washington Avenue, Eken Park, Madison, Dane County, Wisconsin, 53704, United States"
+  },
+  "6624 seybold rd 53719 madison wi": {
+    "lat": 43.051863,
+    "lon": -89.496777,
+    "displayName": "6624, Seybold Road, Madison, Town of Middleton, Dane County, Wisconsin, 53719, United States"
+  },
+  "veterans parkway and south central avenue 54449 marshfield wi": {
+    "lat": 44.6662287,
+    "lon": -90.1740313,
+    "displayName": "Marshfield, Wood County, Wisconsin, United States"
+  },
+  "colectivo lakefront 53202 milwaukee wi": {
+    "lat": 43.053545,
+    "lon": -87.8868706,
+    "displayName": "Colectivo Coffee Lakefront Cafe, 1701, North Lincoln Memorial Drive, East Side, Milwaukee, Milwaukee County, Wisconsin, 53202, United States"
+  },
+  "315 n main st 54901 oshkosh wi": {
+    "lat": 44.0170919,
+    "lon": -88.5376329,
+    "displayName": "315, North Main Street, River East, Oshkosh, Winnebago County, Wisconsin, 54901, United States"
+  },
+  "1400 s marquette rd 53821 prairie du chien wi": {
+    "lat": 43.035144,
+    "lon": -91.137691,
+    "displayName": "1400, South Marquette Road, Prairie du Chien, Crawford County, Wisconsin, 53821, United States"
+  },
+  "133 n main st rice lake wi": {
+    "lat": 45.5029145,
+    "lon": -91.7333404,
+    "displayName": "133, North Main Street, Rice Lake, Barron County, Wisconsin, 54868, United States"
+  },
+  "1074 w fond du lac st 54971 ripon wi": {
+    "lat": 43.85319,
+    "lon": -88.8589448,
+    "displayName": "1074, West Fond du Lac Street, Ripon, Fond du Lac County, Wisconsin, 54971, United States"
+  },
+  "1320 main st 54481 stevens point wi": {
+    "lat": 44.5237571,
+    "lon": -89.5791491,
+    "displayName": "Stevens Point Post Office, 1320, Main Street, Stevens Point, Portage County, Wisconsin, 54481, United States"
+  },
+  "300 e main st 53590 sun prairie wi": {
+    "lat": 43.1831694,
+    "lon": -89.210624,
+    "displayName": "300, East Main Street, Cannery Square, Sun Prairie, Dane County, Wisconsin, 53590, United States"
+  },
+  "1900 kanawha blvd east 25305 charleston wv": {
+    "lat": 38.3363062,
+    "lon": -81.6122744,
+    "displayName": "West Virginia State Capitol, 1900, Kanawha Boulevard East, East End, Charleston, Kanawha County, West Virginia, 25305, United States"
+  },
+  "300 foxcroft ave 25401 martinsburg wv": {
+    "lat": 39.4510939,
+    "lon": -77.9889296,
+    "displayName": "300, Foxcroft Avenue, Foxcroft Towne Center in Martinsburg, Martinsburg, Berkeley County, West Virginia, 25401, United States"
+  },
+  "152 dukes road w3 0sl london great britain": {
+    "lat": 51.5237825,
+    "lon": -0.139949,
+    "displayName": "Royal Anthropological Institute of Great Britain and Ireland, 50, Fitzroy Street, Fitzrovia, London Borough of Camden, London, Greater London, England, W1T 6DY, United Kingdom"
+  },
+  "99202 spokane wa": {
+    "lat": 47.6571934,
+    "lon": -117.42351,
+    "displayName": "Spokane, Spokane County, Washington, United States"
   }
 }

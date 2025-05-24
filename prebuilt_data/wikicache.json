@@ -11263,5 +11263,230 @@
     "title": "Fairfax, Vermont",
     "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Fairfax%2C_Vermont_%2817129795518%29.jpg/500px-Fairfax%2C_Vermont_%2817129795518%29.jpg",
     "pageUrl": "https://en.wikipedia.org/wiki/Fairfax%2C%20Vermont"
+  },
+  "benson,az": {
+    "title": "Benson, Arizona",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/The_Benson_Visitor_Center%2C_a_replica_of_the_Benson_railroad_station.jpg/500px-The_Benson_Visitor_Center%2C_a_replica_of_the_Benson_railroad_station.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Benson%2C%20Arizona"
+  },
+  "kentfield,ca": {
+    "title": "Kentfield, California",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Marin_County_California_Incorporated_and_Unincorporated_areas_Kentfield_Highlighted.svg/500px-Marin_County_California_Incorporated_and_Unincorporated_areas_Kentfield_Highlighted.svg.png",
+    "pageUrl": "https://en.wikipedia.org/wiki/Kentfield%2C%20California"
+  },
+  "sunset beach,ca": {
+    "title": "Sunset Beach, California",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Sunset_Beach_-10.JPG/500px-Sunset_Beach_-10.JPG",
+    "pageUrl": "https://en.wikipedia.org/wiki/Sunset%20Beach%2C%20California"
+  },
+  "costa mesa,ca": {
+    "title": "Costa Mesa, California",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Diego_Sep%C3%BAlveda_Adobe_2013-11-02_17-26-03.jpg/500px-Diego_Sep%C3%BAlveda_Adobe_2013-11-02_17-26-03.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Costa%20Mesa%2C%20California"
+  },
+  "dana point,ca": {
+    "title": "Dana Point, California",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Dana_Point_a_city_in_southern_Orange_County_CA_Photo_D_Ramey_Logan.jpg/500px-Dana_Point_a_city_in_southern_Orange_County_CA_Photo_D_Ramey_Logan.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Dana%20Point%2C%20California"
+  },
+  "san bernadino,ca": {
+    "title": "San Bernardino, California",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/SanBernardinoStationStreetside_%28cropped%29.jpg/500px-SanBernardinoStationStreetside_%28cropped%29.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/San%20Bernardino%2C%20California"
+  },
+  "pinole,ca": {
+    "title": "Pinole, California",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/DowntownPinole_%28cropped%29.jpg/500px-DowntownPinole_%28cropped%29.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Pinole%2C%20California"
+  },
+  "seminole,fl": {
+    "title": "Seminole, Florida",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Seminole%2CFlorida%2CUSA._-_panoramio.jpg/500px-Seminole%2CFlorida%2CUSA._-_panoramio.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Seminole%2C%20Florida"
+  },
+  "pinellas park,fl": {
+    "title": "Pinellas Park, Florida",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Pinellas_County_Florida_Incorporated_and_Unincorporated_areas_Pinellas_Park_Highlighted.svg/500px-Pinellas_County_Florida_Incorporated_and_Unincorporated_areas_Pinellas_Park_Highlighted.svg.png",
+    "pageUrl": "https://en.wikipedia.org/wiki/Pinellas%20Park%2C%20Florida"
+  },
+  "northglen,co": {
+    "title": "Hollywoodbets",
+    "image": null,
+    "pageUrl": "https://en.wikipedia.org/wiki/Hollywoodbets"
+  },
+  "druid hills,ga": {
+    "title": "Druid Hills, Georgia",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/CDC_HDR_I.jpg/500px-CDC_HDR_I.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Druid%20Hills%2C%20Georgia"
+  },
+  "zebulon,ga": {
+    "title": "Zebulon, Georgia",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Zebulon_City_Hall.JPG/500px-Zebulon_City_Hall.JPG",
+    "pageUrl": "https://en.wikipedia.org/wiki/Zebulon%2C%20Georgia"
+  },
+  "logansport,in": {
+    "title": "Logansport, Indiana",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Four_buildings_on_Broadway_in_Logansport.jpg/500px-Four_buildings_on_Broadway_in_Logansport.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Logansport%2C%20Indiana"
+  },
+  "zionsville,in": {
+    "title": "Zionsville, Indiana",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Zionsville%2C_Indiana_street.png/500px-Zionsville%2C_Indiana_street.png",
+    "pageUrl": "https://en.wikipedia.org/wiki/Zionsville%2C%20Indiana"
+  },
+  "keokuk,ks": {
+    "title": "Linn Valley, Kansas",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Map_of_Linn_Co%2C_Ks%2C_USA.png/500px-Map_of_Linn_Co%2C_Ks%2C_USA.png",
+    "pageUrl": "https://en.wikipedia.org/wiki/Linn%20Valley%2C%20Kansas"
+  },
+  "new orleans,ks": {
+    "title": "Battle of New Orleans",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Battle_of_New_Orleans%2C_Jean_Hyacinthe_de_Laclotte.jpg/500px-Battle_of_New_Orleans%2C_Jean_Hyacinthe_de_Laclotte.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Battle%20of%20New%20Orleans"
+  },
+  "westborough,ma": {
+    "title": "Westborough, Massachusetts",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Nathan_Fisher_House%2C_Westborough%2C_Massachusetts.jpg/500px-Nathan_Fisher_House%2C_Westborough%2C_Massachusetts.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Westborough%2C%20Massachusetts"
+  },
+  "camden,me": {
+    "title": "Camden, Maine",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Camden_Maine_October_2021_001.jpg/500px-Camden_Maine_October_2021_001.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Camden%2C%20Maine"
+  },
+  "s portland,me": {
+    "title": "Portland, Maine",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/TheOldPort.jpg/500px-TheOldPort.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Portland%2C%20Maine"
+  },
+  "boseman,mt": {
+    "title": "Bozeman, Montana",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Bozeman_MT_aerial.jpg/500px-Bozeman_MT_aerial.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Bozeman%2C%20Montana"
+  },
+  "lexington,ne": {
+    "title": "Lexington, Nebraska",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Dowtown_Lexington%2C_Nebraska.jpg/500px-Dowtown_Lexington%2C_Nebraska.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Lexington%2C%20Nebraska"
+  },
+  "holderness,nh": {
+    "title": "Holderness, New Hampshire",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Squam_Lake_from_the_Asquam_House%2C_Holderness%2C_NH.jpg/500px-Squam_Lake_from_the_Asquam_House%2C_Holderness%2C_NH.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Holderness%2C%20New%20Hampshire"
+  },
+  "londonderry,nh": {
+    "title": "Londonderry, New Hampshire",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Londonderry_Grange_in_autumn_2.jpg/500px-Londonderry_Grange_in_autumn_2.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Londonderry%2C%20New%20Hampshire"
+  },
+  "henderson,nv": {
+    "title": "Henderson, Nevada",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Lake_Las_Vegas_aerial_view.jpg/500px-Lake_Las_Vegas_aerial_view.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Henderson%2C%20Nevada"
+  },
+  "ellenville,ny": {
+    "title": "Ellenville, New York",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Downtown_Ellenville%2C_NY.JPG/500px-Downtown_Ellenville%2C_NY.JPG",
+    "pageUrl": "https://en.wikipedia.org/wiki/Ellenville%2C%20New%20York"
+  },
+  "glen cove,ny": {
+    "title": "Glen Cove, New York",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Glen_Cove_NY_Beach.jpg/500px-Glen_Cove_NY_Beach.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Glen%20Cove%2C%20New%20York"
+  },
+  "scarsdale,ny": {
+    "title": "Scarsdale, New York",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/ScarsdalePostOffice.JPG/500px-ScarsdalePostOffice.JPG",
+    "pageUrl": "https://en.wikipedia.org/wiki/Scarsdale%2C%20New%20York"
+  },
+  "troy,ny": {
+    "title": "Troy, New York",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Troy_NY_Fall.jpg/500px-Troy_NY_Fall.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Troy%2C%20New%20York"
+  },
+  "wellesley island,ny": {
+    "title": "Wellesley Island State Park",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Gfp-new-york-wellesley-island-state-park-lake-and-shore.jpg/500px-Gfp-new-york-wellesley-island-state-park-lake-and-shore.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Wellesley%20Island%20State%20Park"
+  },
+  "hamilton,oh": {
+    "title": "Hamilton, Ohio",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Downtown_Hamilton_Ohio.jpg/500px-Downtown_Hamilton_Ohio.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Hamilton%2C%20Ohio"
+  },
+  "sheffield,oh": {
+    "title": "Sheffield, Ohio",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Jabez_and_Robbins_Burrell_House.jpg/500px-Jabez_and_Robbins_Burrell_House.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Sheffield%2C%20Ohio"
+  },
+  "cressona,pa": {
+    "title": "Cressona, Pennsylvania",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Pottsville_St%2C_Cressona_PA_01.JPG/500px-Pottsville_St%2C_Cressona_PA_01.JPG",
+    "pageUrl": "https://en.wikipedia.org/wiki/Cressona%2C%20Pennsylvania"
+  },
+  "pine township,pa": {
+    "title": "Pine Township, Pennsylvania",
+    "image": null,
+    "pageUrl": "https://en.wikipedia.org/wiki/Pine%20Township%2C%20Pennsylvania"
+  },
+  "newport,ri": {
+    "title": "Newport, Rhode Island",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Newport_Rhode_Island_Aerial_View.jpg/500px-Newport_Rhode_Island_Aerial_View.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Newport%2C%20Rhode%20Island"
+  },
+  "germantown,tn": {
+    "title": "Germantown, Tennessee",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Historic_downtown_Germantown_TN_16.jpg/500px-Historic_downtown_Germantown_TN_16.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Germantown%2C%20Tennessee"
+  },
+  "oak ridge,tn": {
+    "title": "Oak Ridge, Tennessee",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Oak-ridge-commemorative-walk1.jpg/500px-Oak-ridge-commemorative-walk1.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Oak%20Ridge%2C%20Tennessee"
+  },
+  "townsend,tn": {
+    "title": "Townsend, Tennessee",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Tuckaleechee-sunrise2.jpg/500px-Tuckaleechee-sunrise2.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Townsend%2C%20Tennessee"
+  },
+  "manassas park,va": {
+    "title": "Manassas Park, Virginia",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Manassas_Park.jpg/500px-Manassas_Park.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Manassas%20Park%2C%20Virginia"
+  },
+  "!!spokane,wa": {
+    "title": "Spokane, Washington",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Spokane_aerial%2C_May_2023_%28cropped%29.png/500px-Spokane_aerial%2C_May_2023_%28cropped%29.png",
+    "pageUrl": "https://en.wikipedia.org/wiki/Spokane%2C%20Washington"
+  },
+  "east olympia,wa": {
+    "title": "Olympia, Washington",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Olympia_Collage.jpg/500px-Olympia_Collage.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Olympia%2C%20Washington"
+  },
+  "mukilteo,wa": {
+    "title": "Mukilteo, Washington",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/USS_Nimitz_arrives_at_homeport._%2811422215434%29.jpg/500px-USS_Nimitz_arrives_at_homeport._%2811422215434%29.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Mukilteo%2C%20Washington"
+  },
+  "remond,wa": {
+    "title": "Hussein Maziq",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Hussein_Maziq.jpg/500px-Hussein_Maziq.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Hussein%20Maziq"
+  },
+  "marshfield,wi": {
+    "title": "Marshfield, Wisconsin",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Marshfield_Central_Ave_Historical_District.jpg/500px-Marshfield_Central_Ave_Historical_District.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Marshfield%2C%20Wisconsin"
+  },
+  "prairie du chien,wi": {
+    "title": "Prairie du Chien, Wisconsin",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/PDC-Aerial.jpg/500px-PDC-Aerial.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Prairie%20du%20Chien%2C%20Wisconsin"
+  },
+  "sun prairie,wi": {
+    "title": "Sun Prairie, Wisconsin",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/SunPrairieWisconsinDowntown.jpg/500px-SunPrairieWisconsinDowntown.jpg",
+    "pageUrl": "https://en.wikipedia.org/wiki/Sun%20Prairie%2C%20Wisconsin"
   }
 }

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { type Map as LeafletMap, type LayerGroup, type Popup } from 'leaflet';
+  import { type Map as LeafletMap, type LayerGroup } from 'leaflet';
   import { onMount, onDestroy, mount } from 'svelte';
   import EventPopup from '$lib/EventPopup.svelte';
   import { getPageStateFromContext } from '$lib/store/PageState.svelte';
@@ -23,7 +23,6 @@
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let sveltePopupInstance: Nullable<any> = null;
   let sveltePopupContainer: Nullable<HTMLElement> = null;
-  let leafletPopupInstance: Popup;
   let zoomControlInstance: Nullable<L.Control.Zoom> = $state(null);
 
   const pageState = getPageStateFromContext();
@@ -41,39 +40,7 @@
     const marker = e.layer as L.Marker<any>;
     const clickedEventAndLocation = (marker.options as ProtestEventMarkerOptions).protestEventAndLocation;
 
-    closePopup();
-
-    sveltePopupContainer = document.createElement('div');
-    sveltePopupInstance = mount(EventPopup, {
-      target: sveltePopupContainer,
-      props: { protestEventAndLocation: clickedEventAndLocation },
-    });
-
-    // The marker's position
-    const latlng = marker.getLatLng();
-
-    // We can't use leaflet's popupAnchor, since we're sharing a single popup 
-    // for performance (possibly 1000's of markers) and therefore
-    // not using bindPopup(). So we do this manually:
-    // To shift the popup visually "above" the marker, offset the lat/lng
-    // Calculate the offset in pixels, then convert to LatLng
-    const offsetPixels = {x: 0, y: -40}; // x, y (y negative is up)
-
-    // Project the marker's LatLng to a pixel point
-    const point = map.project(latlng);
-    const pointOffset = point.add(L.point(offsetPixels));
-    const latlngOffset = map.unproject(pointOffset);
-
-    leafletPopupInstance
-      .setLatLng(latlngOffset)
-      .setContent(sveltePopupContainer!)
-      .openOn(map);
-  }
-
-  function closePopup() {
-    if (!map) return;
-    
-    map.closePopup();
+    // Destroy any existing Svelte popup instance before creating a new one
     if (sveltePopupInstance) {
       sveltePopupInstance.destroy?.();
       sveltePopupInstance = null;
@@ -82,6 +49,41 @@
       sveltePopupContainer.remove();
       sveltePopupContainer = null;
     }
+
+    sveltePopupContainer = document.createElement('div');
+    sveltePopupInstance = mount(EventPopup, {
+      target: sveltePopupContainer,
+      props: { protestEventAndLocation: clickedEventAndLocation },
+    });
+
+    // Use Leaflet's bindPopup and openPopup
+    marker.bindPopup(sveltePopupContainer!, {
+      maxWidth: 300,
+      minWidth: 150,
+      closeButton: false,
+      autoClose: true,
+      autoPan: true,
+    }).openPopup();
+
+    // Listen for popup close event to destroy the Svelte component
+    marker.getPopup()?.on('remove', () => {
+      if (sveltePopupInstance) {
+        sveltePopupInstance.destroy?.();
+        sveltePopupInstance = null;
+      }
+      if (sveltePopupContainer) {
+        sveltePopupContainer.remove();
+        sveltePopupContainer = null;
+      }
+    });
+  }
+
+  function closePopup() {
+    if (!map) return;
+
+    map.closePopup();
+    // Leaflet handles destroying the DOM element when the popup is closed.
+    // The Svelte component destruction is handled by the 'remove' event listener on the popup.
   }
 
   // Close the popup when visible events change
@@ -127,13 +129,6 @@
       markerLayerGroup = L.featureGroup().addTo(map);
 
       markerLayerGroup?.on('click', handleMarkerClick);
-      leafletPopupInstance = L.popup({
-        maxWidth: 300,
-        minWidth: 150,
-        closeButton: false,
-        autoClose: true,
-        autoPan: true
-      });
 
     } catch (error) {
       console.error('onMount: Failed to load Leaflet or initialize map:', error);
@@ -245,6 +240,6 @@
     to {
       opacity: 0;
     }
-  }
+}
 
 </style>

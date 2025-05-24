@@ -110,11 +110,11 @@
       map = newMap;
 
       const continentalUSBounds = L.latLngBounds(
-        L.latLng(30, -125),
+        L.latLng(15, -170),
         L.latLng(47, -66)
       );
       const center = continentalUSBounds.getCenter();
-      map.setView(center, deviceInfo.isTouchDevice ? 3 : 4);
+      map.setView(center, deviceInfo.isTouchDevice ? 2 : 3);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors',
@@ -174,10 +174,6 @@
 </script>
 
 <div class={`map-container ${className} ${deviceInfo.isTouchDevice ? 'touch-device' : ''}`} bind:this={mapElement} tabindex="-1">
-  {#if !map}
-    <p class="loading-message">Loading map...</p>
-  {/if}
-
   {#if map && L && markerLayerGroup && pageState.filter.filteredEvents}
     {#each pageState.filter.filteredEvents as protestEvent (protestEvent.id)}
       {@const loc = pageState.eventStore.locations.get(protestEvent.location)}

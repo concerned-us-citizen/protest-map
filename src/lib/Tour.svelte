@@ -272,8 +272,7 @@
     text-decoration: underline;
   }
 
-  /* TODO make this dependent on the size of the container */
   :global(.tour-image) {
-    max-width: 17em;
+    max-width: 80vw;
   }
 </style>

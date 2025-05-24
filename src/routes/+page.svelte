@@ -21,7 +21,7 @@
 
     window.addEventListener('keydown', handleKeydown);
     window.addEventListener('keyup', handleKeyup);
-
+    
     return () => {
       window.removeEventListener('keydown', handleKeydown);
       window.removeEventListener('keyup', handleKeyup);
@@ -132,74 +132,75 @@
   <meta property="og:description" content={`An interactive map of protests ${pageState.eventStore.formattedDateRange}`} />
 </svelte:head>
 
+{#if pageState.eventStore.events.size > 0}
  <EventMap />
 
-<div class="title-stats-and-filter-container">
-  <div class="title-and-stats-container">
-    <div class="title-container panel">
-      <h1 class="title">
-        Map of Protests
-      </h1>
-      <div class="date-range">
-        {pageState.eventStore.formattedDateRange}
+  <div class="title-stats-and-filter-container">
+    <div class="title-and-stats-container">
+      <div class="title-container panel">
+        <h1 class="title">
+          Map of Protests
+        </h1>
+        <div class="date-range">
+          {pageState.eventStore.formattedDateRange}
+        </div>
+        {#if deviceInfo.isTall}
+        <div class="attribution-link">
+          <i>Provided by <a
+            href="https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748"
+            target="_blank"
+            title={pageState.eventStore.formattedUpdatedAt}
+          >We (the People) Dissent</a></i>
+        </div>
+        {/if}
       </div>
-      {#if deviceInfo.isTall}
-      <div class="attribution-link">
-        <i>Provided by <a
-          href="https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748"
-          target="_blank"
-          title={pageState.eventStore.formattedUpdatedAt}
-        >We (the People) Dissent</a></i>
+
+      <div class="current-date-stats panel">
+        <b>{formatDateIndicatingFuture(pageState.filter.currentDate)}</b>
+        <div class="location-count">{countAndLabel(pageState.filter.currentDateEvents, 'location')}</div>
       </div>
-      {/if}
     </div>
 
-    <div class="current-date-stats panel">
-      <b>{formatDateIndicatingFuture(pageState.filter.currentDate)}</b>
-      <div class="location-count">{countAndLabel(pageState.filter.currentDateEvents, 'location')}</div>
-    </div>
+    {#if pageState.filterVisible }
+        <FilterPanel className="filter panel" onClose={() => pageState.filterVisible = false} />
+    {/if}
   </div>
 
-  {#if pageState.filterVisible }
-      <FilterPanel className="filter panel" onClose={() => pageState.filterVisible = false} />
+  <div class="toolbar">
+    <IconButton
+      icon={pageState.autoplaying ? pauseIconSvg : playIconSvg}
+      onClick={() => pageState.toggleAutoplay()} 
+      label={pageState.autoplaying ? 'Pause Animation (Space)' : 'Play Animation (Space)'}
+    />
+
+    <IconButton
+      icon={filterIconSvg}
+      onClick={() => pageState.toggleFilterVisible() }
+      label={!pageState.filter.currentDateHasEventNames ? "No events to filter" : "Toggle Event Filter (F)"}
+      disabled={!pageState.filter.currentDateHasMultipleEventNames}
+    />
+
+    <IconButton
+      icon={infoIconSvg}
+      onClick={() => pageState.toggleHelpVisible()} 
+      label="Show Information Panel (I)"
+    />
+  </div>
+
+  <div class="timeline-and-eventinfo">
+    {#if pageState.eventInfoVisible}
+      <EventInfoPanel />
+    {/if}
+    <Timeline />
+  </div>
+
+  {#if pageState.helpVisible}
+    <ProtestMapTour onClose={() => {
+      pageState.helpVisible = false;
+      saveShownTourToCookie();
+    }} />
   {/if}
-</div>
 
-<div class="toolbar">
-  <IconButton
-    icon={pageState.autoplaying ? pauseIconSvg : playIconSvg}
-    onClick={() => pageState.toggleAutoplay()} 
-    label={pageState.autoplaying ? 'Pause Animation (Space)' : 'Play Animation (Space)'}
-  />
-
-  <IconButton
-    icon={filterIconSvg}
-    onClick={() => pageState.toggleFilterVisible() }
-    label={!pageState.filter.currentDateHasEventNames ? "No events to filter" : "Toggle Event Filter (F)"}
-    disabled={!pageState.filter.currentDateHasMultipleEventNames}
-  />
-
-  <IconButton
-    icon={infoIconSvg}
-    onClick={() => pageState.toggleHelpVisible()} 
-    label="Show Information Panel (I)"
-  />
-</div>
-
-<div class="timeline-and-eventinfo">
-
-  {#if pageState.eventInfoVisible}
-    <EventInfoPanel />
-  {/if}
-
-  <Timeline />
-</div>
-
-{#if pageState.helpVisible}
-  <ProtestMapTour onClose={() => {
-    pageState.helpVisible = false;
-    saveShownTourToCookie();
-  }} />
 {/if}
 
 <style>
@@ -209,7 +210,7 @@
   left: 50%;
   transform: translateX(-50%);
   min-width: 13em;
-  max-width: calc(100vw - 2 * (var(--icon-button-size) - 2 * var(--toolbar-margin)));
+  max-width: var(--max-title-panel-width);
   background: transparent;
   display: flex;
   flex-direction: column;

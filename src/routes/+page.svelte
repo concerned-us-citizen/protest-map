@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { isWideViewport } from '$lib/store/viewportStore.svelte';
+  import { deviceInfo } from '$lib/store/DeviceInfo.svelte.js';
   import ProtestMapTour from '$lib/ProtestMapTour.svelte';
   import EventInfoPanel from '$lib/EventInfoPanel.svelte';
   import FilterPanel from '$lib/FilterPanel.svelte';
@@ -85,20 +85,16 @@
 
     // ArrowLeft
     if (key === 'arrowleft' || code === 'ArrowLeft') {
-      if (!event.repeat) {
-        pageState.filter.selectPreviousDate();
-        pageState.filter.startDateRepeat("prev");
-      }
+      pageState.filter.selectPreviousDate();
+      pageState.filter.startDateRepeat("prev");
       event.preventDefault();
       return;
     }
 
     // ArrowRight
     if (key === 'arrowright' || code === 'ArrowRight') {
-      if (!event.repeat) {
-        pageState.filter.selectNextDate();
-        pageState.filter.startDateRepeat("next");
-      }
+      pageState.filter.selectNextDate();
+      pageState.filter.startDateRepeat("next");
       event.preventDefault();
       return;
     }
@@ -127,6 +123,7 @@
   function hasShownTourCookieExists() {
     return document.cookie.split('; ').some(row => row.startsWith('hasShownTour='));
   }
+  
 </script>
 
 <svelte:head>
@@ -146,6 +143,7 @@
       <div class="date-range">
         {pageState.eventStore.formattedDateRange}
       </div>
+      {#if deviceInfo.isTall}
       <div class="attribution-link">
         <i>Provided by <a
           href="https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748"
@@ -153,15 +151,16 @@
           title={pageState.eventStore.formattedUpdatedAt}
         >We (the People) Dissent</a></i>
       </div>
+      {/if}
     </div>
 
     <div class="current-date-stats panel">
       <b>{formatDateIndicatingFuture(pageState.filter.currentDate)}</b>
-      <div class="location-count">{countAndLabel(pageState.filter.currentDateEvents, isWideViewport ? 'location' : 'loc')}</div>
+      <div class="location-count">{countAndLabel(pageState.filter.currentDateEvents, 'location')}</div>
     </div>
   </div>
 
-  {#if pageState.filterVisible && pageState.filter.currentDateHasEventNames }
+  {#if pageState.filterVisible }
       <FilterPanel className="filter panel" onClose={() => pageState.filterVisible = false} />
   {/if}
 </div>
@@ -175,13 +174,9 @@
 
   <IconButton
     icon={filterIconSvg}
-    onClick={() => {
-      if (pageState.filter.currentDateEventNamesWithLocationCounts.length > 1) {
-        pageState.toggleFilterVisible();
-      }
-    }}
+    onClick={() => pageState.toggleFilterVisible() }
     label={!pageState.filter.currentDateHasEventNames ? "No events to filter" : "Toggle Event Filter (F)"}
-    disabled={!pageState.filter.currentDateHasEventNames}
+    disabled={!pageState.filter.currentDateHasMultipleEventNames}
   />
 
   <IconButton
@@ -216,11 +211,19 @@
   min-width: 13em;
   max-width: calc(100vw - 2 * (var(--icon-button-size) - 2 * var(--toolbar-margin)));
   background: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: .4em;
+}
+
+:global(body.touch-device) .title-stats-and-filter-container  {
+  left: var(--toolbar-margin);
+  transform: none;
 }
 
 .panel {
   border-radius: var(--panel-border-radius);
-  padding: var(--panel-padding);
+  padding: var(--panel-padding-v) var(--panel-padding-h);
   background-color: var(--panel-background-color);
   overflow: hidden;
 }
@@ -228,8 +231,8 @@
 .title-container {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  gap: .3em;
+  align-items: center;
+  gap: .2em;
 }
 
 .title-container .attribution-link {
@@ -240,7 +243,7 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 0.5rem;
+  gap: 0.2rem;
 }
 
 .current-date-stats {
@@ -267,6 +270,7 @@
   color: #555;
 }
 .attribution-link {
+  margin-top: .7em;
   font-size: 0.7em;
   color: #555;
 }

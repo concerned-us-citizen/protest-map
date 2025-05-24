@@ -6,6 +6,7 @@
   import EventMarker, { type ProtestEventMarkerOptions } from './EventMarker.svelte';
   import type { Nullable } from './types';
   import { browser } from '$app/environment';
+  import { deviceInfo } from '$lib/store/DeviceInfo.svelte';
 
   type LeafletModule = typeof import('leaflet');
 
@@ -19,12 +20,11 @@
   let L: LeafletModule | undefined = $state(undefined);
   let map: Nullable<LeafletMap> = $state(null);
   let markerLayerGroup: Nullable<LayerGroup> = $state(null);
-  let isTouchDevice: boolean = $state(false);
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let sveltePopupInstance: Nullable<any> = null;
   let sveltePopupContainer: Nullable<HTMLElement> = null;
   let leafletPopupInstance: Popup;
+  let zoomControlInstance: Nullable<L.Control.Zoom> = $state(null);
 
   const pageState = getPageStateFromContext();
 
@@ -106,21 +106,15 @@
 
       L = leaflet;
 
-      isTouchDevice = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
-
       const newMap = L.map(mapElement!, { zoomControl: false, keyboard: false, minZoom: 2 });
       map = newMap;
-
-      if (!isTouchDevice) {
-        L.control.zoom({ position: 'topleft' }).addTo(map);
-      }
 
       const continentalUSBounds = L.latLngBounds(
         L.latLng(30, -125),
         L.latLng(47, -66)
       );
       const center = continentalUSBounds.getCenter();
-      map.setView(center, isTouchDevice ? 3 : 4);
+      map.setView(center, deviceInfo.isTouchDevice ? 3 : 4);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors',
@@ -147,6 +141,22 @@
     }
   });
 
+  // Reactively add/remove zoom control based on device info
+  $effect(() => {
+    if (!map || !L) return;
+
+    const shouldShowZoom = !deviceInfo.isTouchDevice && deviceInfo.isWide;
+
+    if (shouldShowZoom && !zoomControlInstance) {
+      // Add zoom control if it should be shown and isn't already
+      zoomControlInstance = L.control.zoom({ position: 'topleft' }).addTo(map);
+    } else if (!shouldShowZoom && zoomControlInstance) {
+      // Remove zoom control if it shouldn't be shown and is present
+      zoomControlInstance.remove();
+      zoomControlInstance = null;
+    }
+  });
+
   onDestroy(() => {
     if (!browser) return;
 
@@ -163,7 +173,7 @@
   });
 </script>
 
-<div class={`map-container ${className}`} bind:this={mapElement} tabindex="-1">
+<div class={`map-container ${className} ${deviceInfo.isTouchDevice ? 'touch-device' : ''}`} bind:this={mapElement} tabindex="-1">
   {#if !map}
     <p class="loading-message">Loading map...</p>
   {/if}
@@ -172,7 +182,7 @@
     {#each pageState.filter.filteredEvents as protestEvent (protestEvent.id)}
       {@const loc = pageState.eventStore.locations.get(protestEvent.location)}
       {#if loc && loc.lat != null && loc.lon != null}
-        <EventMarker {L} {map} protestEventAndLocation={{event: protestEvent, location: loc}} {isTouchDevice} {markerLayerGroup} />
+        <EventMarker {L} {map} protestEventAndLocation={{event: protestEvent, location: loc}} {markerLayerGroup} />
       {/if}
     {/each}
   {/if}

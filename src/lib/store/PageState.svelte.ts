@@ -1,7 +1,7 @@
 import { setContext, getContext } from "svelte";
 import { EventStore } from "./EventStore.svelte";
 import { EventFilter } from "./EventFilter.svelte";
-import { isTallViewport } from "$lib/store/viewportStore.svelte";
+import { deviceInfo } from "$lib/store/DeviceInfo.svelte";
 import type { SetTimeoutId } from "$lib/types";
 
 const EVENTINFO_VISIBILITY_DURATION = 1000; // 1s
@@ -25,6 +25,8 @@ export class PageState {
   #autoplayTimer: SetTimeoutId = undefined;
 
   toggleFilterVisible() {
+    if (!this.filterVisible && !this.filter.currentDateHasMultipleEventNames)
+      return;
     this.filterVisible = !this.filterVisible;
     this.helpVisible = false;
   }
@@ -61,16 +63,18 @@ export class PageState {
         this.filter.currentDateIndex =
           (this.filter.currentDateIndex + 1) %
           this.eventStore.allDatesWithEventCounts.length;
+        // Schedule the next date advance
+        this.scheduleNextDateAdvance();
       }
     }, lingerTime);
   }
 
-  get eventInfoVisible() {
-    return isTallViewport || this._eventInfoVisible;
-  }
+  readonly eventInfoVisible = $derived(
+    deviceInfo.isTall || this._eventInfoVisible
+  );
 
   showEventInfo() {
-    if (!isTallViewport) {
+    if (!deviceInfo.isTall) {
       this._eventInfoVisible = true;
       this.#debouncedHideEventInfo();
     }

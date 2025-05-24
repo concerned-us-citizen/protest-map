@@ -17,5 +17,17 @@ body {
   --icon-button-size: 2.3em;
   --panel-background-color: #fffc;
   --panel-border-radius: 0.4em;
-  --panel-padding: 0.5em 1em;
+  --panel-padding-h: 1em;
+  --panel-padding-v: 0.5em;
+
+  /* Suppress default OS long press actions on mobile */
+  user-select: none;
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10+ */
+  touch-action: manipulation; /* Prevent default touch behaviors like context menu */
+}
+
+body.touch-device {
+  --icon-size: 2.5em; /* Increased size for touch devices */
+  --icon-button-size: 4em; /* Increased size for touch devices */
 }

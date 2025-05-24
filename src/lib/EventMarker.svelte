@@ -4,7 +4,7 @@
   import type { Marker, DivIcon, LayerGroup, Map } from 'leaflet';
   import type { Nullable, ProtestEventAndLocation } from './types';
   import { browser } from '$app/environment';
-
+ 
   export interface ProtestEventMarkerOptions extends L.MarkerOptions {
     protestEventAndLocation: ProtestEventAndLocation;
   }
@@ -13,7 +13,6 @@
       L: typeof import('leaflet');
       map: Map;
       protestEventAndLocation: ProtestEventAndLocation;
-      isTouchDevice: boolean;
       markerLayerGroup: LayerGroup;
   }
   const { L, map, protestEventAndLocation, markerLayerGroup }: EventMarkerProps = $props();

@@ -271,4 +271,9 @@
   .link-button:hover {
     text-decoration: underline;
   }
+
+  /* TODO make this dependent on the size of the container */
+  :global(.tour-image) {
+    max-width: 17em;
+  }
 </style>

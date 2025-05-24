@@ -5,8 +5,8 @@
   let { onClose, className = '' } = $props();
 
   const pageState = getPageStateFromContext();
-  const eventNamesWithLocationCounts = pageState.filter.currentDateEventNamesWithLocationCounts;
-  
+  const eventNamesWithLocationCounts = $derived(pageState.filter.currentDateEventNamesWithLocationCounts);
+
 </script>
 
 <div class={`events-filter-component ${className}`}>
@@ -25,8 +25,8 @@
               onclick={(e) => { e.stopPropagation(); pageState.filter.toggleSelectedEventName(event.name)}}
               class:selected-event={pageState.filter.selectedEventNames.includes(event.name)}
             >
-              <span class="event-name-in-list">{event.name || 'Unnamed'}</span>
-              <span class="event-count-in-list">({event.count})</span>
+              <div class="event-name-in-list">{event.name || 'Unnamed'}</div>
+              <div class="event-count-in-list">({event.count})</div>
             </button>
           </li>
         {/each}
@@ -42,11 +42,25 @@
     display: flex;
     flex-direction: column;
     position: relative; 
+    background: #fffe;
+    max-width: 20em;
+    border-radius: var(--panel-border-radius);
+    --panel-padding-h: .8em;
+    --highlight-border-h: .3em;
+    --highlight-border-v: .25em;
+    --selected-color: #e8f0fe;
+    --hover-color: #f0f0f0;
+    --hover-selected-color: #dceafe;
+    padding-left: calc(var(--panel-padding-h) - var(--highlight-border-h));
+    padding-right: calc(var(--panel-padding-h) - var(--highlight-border-h));
+    padding-top: calc(var(--panel-padding-v) - var(--highlight-border-v));
+    padding-bottom: calc(var(--panel-padding-v) - var(--highlight-border-v));
   }
+
   .close-button {
     position: absolute;
-    top: 2px;
-    right: 5px;
+    top: .1em;
+    right: .2em;
     background: none;
     border: none;
     font-size: 1.5em;
@@ -62,18 +76,22 @@
     font-style: italic;
     font-size: 0.75em;
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: .7em;
   }
   .filter-title {
     font-size: 0.9em;
     font-weight: bold;
-    margin-top: 8px; /* Explicitly remove top margin */
-    margin-bottom: 2px;
+    margin-top: .5em;
+    margin-bottom: .1em;
     text-align: center;
   }
   .event-list-scrollable-area {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
     overflow-y: auto;
-    max-height: 235px; /* Keep original height */
+    /* TODO this should take title and slider heights into account */
+    max-height: 30vh;
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
@@ -82,43 +100,45 @@
   }
   .event-list-scrollable-area ul {
     list-style-type: none !important;
-    padding-left: 0 !important;
+    padding: 0 !important;
     margin: 0;
   }
   .event-list-scrollable-area li.filter-item {
-    padding: 0; /* Padding will be on the button for hover effect */
+    display: block;
+    padding: 0;
     margin: 0;
-    /* border-bottom: 1px solid #eee; Moved to button, or keep on li if preferred */
   }
 
   .event-list-scrollable-area li.filter-item button {
     background: none;
-    border: 0px solid transparent !important;
     font: inherit;
     color: inherit;
-    text-align: left;
     width: 100%;
+    text-align: left;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: start;
     font-size: 0.85em;
-    padding: 4px 8px; /* Added horizontal padding */
-    border-bottom: 1px solid #eee;
+    border-radius: 5px;
+    margin-top: 1px;
+    padding: 0;
+    --background-color: transparent;
+    border-left: var(--highlight-border-h) solid var(--background-color);
+    border-right: var(--highlight-border-h) solid var(--background-color);
+    border-top: var(--highlight-border-v) solid var(--background-color);
+    border-bottom: var(--highlight-border-v) solid var(--background-color);
+    background-color: var(--background-color);
     cursor: pointer;
-    margin: 0 -8px; /* Negative margin to extend hover background if padding is on button */
   }
-   .event-list-scrollable-area li.filter-item:last-child button {
-    border-bottom: none;
+  .event-list-scrollable-area li.filter-item button:hover {
+    --background-color: var(--hover-color);
   }
   .event-list-scrollable-area li.filter-item button.selected-event {
     font-weight: bold;
-    background-color: #e8f0fe; /* Light blue for selected, distinct from hover */
-  }
-  .event-list-scrollable-area li.filter-item button:hover {
-    background-color: #f0f0f0;
+    --background-color: var(--selected-color);
   }
   .event-list-scrollable-area li.filter-item button.selected-event:hover {
-    background-color: #dceaff; /* Slightly darker blue for selected hover */
+    --background-color: var(--hover-selected-color);
   }
   .no-events-message { /* Style for the "no events" paragraph */
     font-size: 0.8em;

@@ -76,6 +76,10 @@ export class EventFilter {
     this.currentDateEventNamesWithLocationCounts.length > 0
   );
 
+  readonly currentDateHasMultipleEventNames = $derived(
+    this.currentDateEventNamesWithLocationCounts.length > 1
+  );
+
   readonly selectedEventNames = $state<string[]>([]);
 
   toggleSelectedEventName(eventName: string) {
@@ -151,9 +155,16 @@ export class EventFilter {
 
   constructor(eventsStore: EventStore) {
     this.eventsStore = eventsStore;
+    // Initialize currentDateIndex to be 0 or -1 any time the eventsStore's items change
     $effect(() => {
       this.currentDateIndex =
         eventsStore.allDatesWithEventCounts.length === 0 ? -1 : 0;
+    });
+
+    // Clear selectedEventNames any time currentDateIndex changes.
+    $effect(() => {
+      void this.currentDateIndex;
+      this.selectedEventNames.length = 0;
     });
   }
 }

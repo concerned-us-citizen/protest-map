@@ -3,7 +3,6 @@
   import { quintOut } from 'svelte/easing';
   import { crossfade } from 'svelte/transition';
   import { markerSvg } from './icons';
-  import DimmedBackgroundPanel from './DimmedBackgroundPanel.svelte';
   import InlineSvg from './InlineSvg.svelte';
   import type { Nullable } from './types';
 
@@ -87,6 +86,14 @@
     }
   };
 
+  function handleBackgroundClick(event: MouseEvent) {
+    // Dismiss only if the click is directly on the dimmed background, not on the content panel
+    if (event.target === event.currentTarget) {
+      // TODO seems wrong - should just have a handler
+      dispatch('dismiss');
+    }
+  }
+
   // Crossfade transition for step content
   const [send, receive] = crossfade({
     duration: 300,         
@@ -95,74 +102,91 @@
 </script>
 
 {#if currentStep}
-  <DimmedBackgroundPanel className={className} on:dismiss={dismiss}>
-    <div class="tour-panel" bind:this={panelElement}>
-      <div class="panel-content" in:receive={{ key: currentStepIndex }} out:send={{ key: currentStepIndex }}>
-        <div class="header">
-          <div class="icon-container">
-            <InlineSvg content={markerSvg}/>
-          </div>
-          <div class="title-container">
-            <h1>{currentStep.title}</h1>
-          </div>
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+  <div class={`dimmed-background ${className}`} onclick={handleBackgroundClick}>
+    <div class="tour-panel" bind:this={panelElement} in:receive={{ key: currentStepIndex }} out:send={{ key: currentStepIndex }}>
+      <div class="header">
+        <div class="icon-container">
+          <InlineSvg content={markerSvg}/>
         </div>
+        <div class="title-container">
+          <h1>{currentStep.title}</h1>
+        </div>
+      </div>
+      <div class="vertical-scroll">
         {#if currentStep?.component}
           <Component {...(currentStep.props || {})} />
         {:else}
           <!-- eslint-disable-next-line svelte/no-at-html-tags -->
           <p class="description-text">{@html currentStep.description}</p>
         {/if}
-        <div class="footer">
-          <button class="link-button" onclick={dismiss}>Dismiss</button>
-          <div class="progress-indicator">
-            {#each steps as _, i}
-              <div class="step-circle" class:active={i === currentStepIndex}></div>
-            {/each}
-          </div>
-          <div class="navigation-buttons">
-            <button class="link-button" onclick={previousStep} class:hidden={!showPrevious}>Prev</button>
-            <button class="link-button" onclick={nextStep} class:disabled={!showNext}>Next</button>
-          </div>
+      </div>
+      <div class="footer">
+        <button class="link-button" onclick={dismiss}>Dismiss</button>
+        <div class="progress-indicator">
+          {#each steps as _, i}
+            <div class="step-circle" class:active={i === currentStepIndex}></div>
+          {/each}
+        </div>
+        <div class="navigation-buttons">
+          <button class="link-button" onclick={previousStep} class:hidden={!showPrevious}>Prev</button>
+          <button class="link-button" onclick={nextStep} class:disabled={!showNext}>Next</button>
         </div>
       </div>
     </div>
-  </DimmedBackgroundPanel>
+  </div>
 {/if}
 
 <style>
+  .dimmed-background {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: var(--toolbar-margin); 
+    pointer-events: auto; 
+    box-sizing: border-box; 
+    z-index: 1000;
+  }
+
   .tour-panel {
     pointer-events: auto; /* Re-enable clicks for the panel */
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    padding: 1.3em;
-    width: min(25em, 80vw);
+    padding: var(--toolbar-margin);
+    width: min(20em, 100vw - 4 * var(--toolbar-margin));
+    height: min(30em, calc(100vh - 4 * var(--toolbar-margin)));
     display: flex;
+    gap: 1em;
     flex-direction: column;
-    position: relative;
-    height: min(30em, 95vh);
   }
 
-
-  .panel-content {
+  .vertical-scroll {
+    overflow-y: auto;
+    flex: 1;
     display: flex;
     flex-direction: column;
-    height: 100%;
-    flex-grow: 1;
-    overflow-y: auto;
+    justify-content: stretch;
   }
 
   .header {
     display: flex;
+    flex-direction: row;
     align-items: flex-start;
-    margin-bottom: -20px;
   }
 
   .icon-container {
     width: 80px;
     height: auto;
     margin: -25px 10px 0px -15px;
-    flex-shrink: 0;
   }
 
   .icon-container :global(svg) {
@@ -171,14 +195,10 @@
       color: rgb(23, 78, 154);
   }
 
-  .title-container {
-    flex-grow: 1;
-  }
-
   .title-container h1 {
     font-size: 1.5em;
     font-weight: bold;
-    margin: 5px 0 10px -10px;
+    margin: 5px 0 10px 0;
   }
 
   @media (max-width: 600px) {
@@ -188,9 +208,7 @@
   }
 
   .description-text { /* New style for description */
-    font-size: 1em;
     margin: 0 0 15px 0; /* Add some margin below description */
-    flex-grow: 1;
     text-align: left;
   }
 
@@ -198,6 +216,7 @@
 
   .footer {
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
     align-items: center; /* Center items vertically */
     margin-top: auto; /* Push footer to the bottom */
@@ -219,7 +238,7 @@
   .step-circle {
     width: 10px;
     height: 10px;
-    background-color: #ccc; /* Default color */
+    background-color: #ccc;
     border-radius: 50%;
     transition: background-color 0.3s ease;
   }
@@ -230,9 +249,8 @@
       height: 8px;
     }
   }
-
   .step-circle.active {
-    background-color: #007bff; /* Highlight color */
+    background-color: #007bff;
   }
 
   .navigation-buttons {
@@ -253,7 +271,7 @@
   .link-button {
     background: none;
     border: none;
-    color: #007bff; /* Link color */
+    color: #007bff; 
     cursor: pointer;
     padding: 0;
     font-size: 1em;

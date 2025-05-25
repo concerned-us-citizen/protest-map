@@ -130,5 +130,16 @@
     outline: none;
     touch-action: manipulation;
   }
+  /* Compact view on phones in landscape (same is isShort above)*/
+/* 
+ * Note we have to hardwire the max-width here, can't use css variables,
+ * and can't dynamically set the width from a TS variable unless
+ * we want to use svelte:head. Keep this BREAKPOINT in sync with DeviceInfo.svelte.
+ */
+@media (max-height: 400px) {
+  .timeline {
+    height: 2em;
+  }
+}
 
 </style>

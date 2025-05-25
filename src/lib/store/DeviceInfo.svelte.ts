@@ -3,6 +3,11 @@ export class DeviceInfo {
   #height = $state(typeof window !== "undefined" ? window.innerHeight : 0);
   #isTouchDevice = $state(false);
 
+  /*
+   * TODO need a better strategy for sharing breakpoints. They aren't currently, since
+   * media queries can't use css variables, and we can't dynamically set the width from a TS variable unless
+   * we want to use svelte:head.  So when making changes to the below, search for BREAKPOINT.
+   */
   static wideBreakpoint = 768;
   static tallBreakpoint = 600;
   static shortBreakpoint = 400;

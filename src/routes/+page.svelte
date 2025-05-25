@@ -163,6 +163,9 @@
 
         <div class="current-date-stats panel">
           <b>{formatDateIndicatingFuture(pageState.filter.currentDate)}</b>
+          {#if deviceInfo.isShort}
+            protests
+          {/if}
           <div class="location-count">
 
             {#if isFiltering}
@@ -273,6 +276,29 @@
   justify-content: space-between; 
   gap: 1em; 
   white-space: nowrap;
+}
+
+/* Compact view on phones in landscape (same is isShort above)*/
+/* 
+ * Note we have to hardwire the max-width here, can't use css variables,
+ * and can't dynamically set the width from a TS variable unless
+ * we want to use svelte:head. Keep this BREAKPOINT in sync with DeviceInfo.svelte.
+ */
+@media (max-height: 400px) {
+  .current-date-stats {
+    justify-content: start;
+    gap: .25em;
+  }
+
+  .title-stats-and-filter-container {
+    left: var(--toolbar-margin);
+    transform: none;
+    width: auto !important; 
+  }
+
+  .location-count {
+    margin-left: 1em;
+  }
 }
 
 .is-filtering-indicator {

@@ -12,12 +12,6 @@
         }
       }, { capture: true }); // Use capture to catch the event early
 
-      const root = document.documentElement;
-
-      // Keep code based breakpoints in sync with css
-      root.style.setProperty('--bp-wide', `${DeviceInfo.wideBreakpoint}px`);
-      root.style.setProperty('--bp-tall', `${DeviceInfo.tallBreakpoint}px`);
-
       if (deviceInfo.isTouchDevice) {
         document.body.classList.add('touch-device');
       }

@@ -14,7 +14,7 @@
   {
     title: "US Protests Map",
     description: `
-    <p>This map shows recent and planned US protest locations over time, compiled from data collected by <a href="https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748" target="_blank">We (the People) Dissent</a>. It is updated hourly from that list.</p>
+    <p>This map shows recent and planned US protest locations over time, compiled from data collected by <a href="https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748" target="_blank">We (the People) Dissent</a>. It is updated daily from that list.</p>
     <p>Locations are presented by date, and you can either play an animation of the compiled dates or select specific days manually.</p>
     `,
   },

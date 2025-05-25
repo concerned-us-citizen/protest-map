@@ -56,7 +56,7 @@
       className: 'svg-marker',
       iconSize: [iconSize, iconSize],
       iconAnchor: [iconSize / 2, iconSize],
-      popupAnchor: [0, -iconSize]
+      popupAnchor: [0, -3 * iconSize/4]
     });
 
     markerInstance = L.marker(

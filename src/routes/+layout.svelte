@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
   import '../app.css';
-  import { DeviceInfo, deviceInfo } from '$lib/store/DeviceInfo.svelte';
+  import { deviceInfo } from '$lib/store/DeviceInfo.svelte';
  
   onMount(() => {
     if (browser) {

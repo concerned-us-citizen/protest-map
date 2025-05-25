@@ -1,6 +1,11 @@
 TODO
-- move date functions specific from lib to scraper 
-- do all normalization in scraper, none in page.svelte
-- convert date strings to dates in the maps
-- get stores working everywhere
+- move geocoding to the other project
 - replace pixels with vw/vh, em
+
+Severe:
+
+Moderate:
+- filter button doesn't close filter anymore
+- map popup appears above title panel in z-order
+- question mark vs info icon
+- tour doesn't scroll when in landscape

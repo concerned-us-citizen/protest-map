@@ -1519,16 +1519,6 @@
     "lon": -71.4295686,
     "displayName": "Holliston Town Hall, 703, Washington Street, Holliston, Middlesex County, Massachusetts, 01746, United States"
   },
-  "499 barnstable road 2601 hyannis ma usa": {
-    "lat": 41.663753,
-    "lon": -70.28678,
-    "displayName": "499, Barnstable Road, Hyannis, Barnstable, Barnstable County, Massachusetts, 02601, United States"
-  },
-  "bark haul rd 1106 longmeadow ma usa": {
-    "lat": 42.0383198,
-    "lon": -72.5954014,
-    "displayName": "Bark Haul Road, Longmeadow, Hampden County, Massachusetts, 01106, United States"
-  },
   "02155 medford ma usa": {
     "lat": 42.4172954,
     "lon": -71.1023384,
@@ -1713,11 +1703,6 @@
     "lat": 43.9063514,
     "lon": -69.8280922,
     "displayName": "04530, Bath, Sagadahoc County, Maine, United States"
-  },
-  "45 water st 4005 biddeford me usa": {
-    "lat": 43.4918774,
-    "lon": -70.4481806,
-    "displayName": "45, Water Street, Biddeford, York County, Maine, 04005, United States"
   },
   "18 union st 04614 blue hill me usa": {
     "lat": 44.4128265,
@@ -2549,11 +2534,6 @@
     "lon": -71.0533918,
     "displayName": "Kingston, Rockingham County, New Hampshire, United States"
   },
-  "51 n park st 3766 lebanon nh usa": {
-    "lat": 43.6433069,
-    "lon": -72.2518043,
-    "displayName": "Lebanon City Hall, 51, North Park Street, Lebanon, Grafton County, New Hampshire, 03766, United States"
-  },
   "274 dells rd 03561 littleton nh usa": {
     "lat": 44.3091189,
     "lon": -71.7978151,
@@ -2609,11 +2589,6 @@
     "lon": -74.1692436,
     "displayName": "51, Park Place, Teachers Village, Newark, Essex County, New Jersey, 07102, United States"
   },
-  "central ave 8226 ocean city nj usa": {
-    "lat": 39.942666,
-    "lon": -74.3858892,
-    "displayName": "Central Avenue, Roosevelt City, Manchester Township, Ocean County, New Jersey, United States"
-  },
   "07055 passaic nj usa": {
     "lat": 40.8587042,
     "lon": -74.1287587,
@@ -2644,20 +2619,10 @@
     "lon": -74.3154024,
     "displayName": "7, Fadem Road, Springfield, Union County, New Jersey, 07081, United States"
   },
-  "8608 trenton nj usa": {
-    "lat": 40.2203074,
-    "lon": -74.7659,
-    "displayName": "Trenton, Mercer County, New Jersey, United States"
-  },
   "vineland nj usa": {
     "lat": 39.4862777,
     "lon": -75.0254256,
     "displayName": "Vineland, Cumberland County, New Jersey, United States"
-  },
-  "7006 west caldwell nj usa": {
-    "lat": 40.8409329,
-    "lon": -74.3018154,
-    "displayName": "West Caldwell, Essex County, New Jersey, 07006, United States"
   },
   "30 clinton rd 07006 west caldwell nj usa": {
     "lat": 40.8508682,
@@ -3854,11 +3819,6 @@
     "lon": -73.1537972,
     "displayName": "05753, Middlebury, Addison County, Vermont, United States"
   },
-  "115 state st 5633 montpelier vt usa": {
-    "lat": 44.2626941,
-    "lon": -72.5807647,
-    "displayName": "Vermont State Capitol, 115, State Street, Montpelier Historic District, Montpelier, Washington County, Vermont, 05602, United States"
-  },
   "05661 morristown vt usa": {
     "lat": 44.5607045,
     "lon": -72.6049803,
@@ -4198,11 +4158,6 @@
     "lat": 42.7267727,
     "lon": -87.8112959,
     "displayName": "Walden III Middle and High School, 2340, Mohr Avenue, West Racine, Racine, Racine County, Wisconsin, 53405, United States"
-  },
-  "2420 kentucky st 534005 racine wi usa": {
-    "lat": 42.7001616,
-    "lon": -87.830888,
-    "displayName": "S.C. Johnson Elementary School, 2420, Kentucky Street, West Racine, Racine, Racine County, Wisconsin, 53405, United States"
   },
   "3510 kinzie ave 53405 racine wi usa": {
     "lat": 42.7226904,
@@ -5254,16 +5209,6 @@
     "lon": -72.5878667,
     "displayName": "Mount Holyoke, Hadley, Hampshire County, Massachusetts, 01061, United States"
   },
-  "s main st 1364 orange ma usa": {
-    "lat": 33.7302048,
-    "lon": -117.8678751,
-    "displayName": "1364, South Main Street, Madison Park, Santa Ana, Orange County, California, 92707, United States"
-  },
-  "70 ma-28 2653 orleans ma usa": {
-    "lat": 41.787518,
-    "lon": -69.9878752,
-    "displayName": "70, South Orleans Road, Orleans, Barnstable County, Massachusetts, 02653, United States"
-  },
   "1305 hancock st 02169 quincy ma usa": {
     "lat": 42.2509238,
     "lon": -71.0043089,
@@ -5293,26 +5238,6 @@
     "lat": 39.0564075,
     "lon": -76.9602235,
     "displayName": "Tesla Silver Spring, 2320, Broadbirch Drive, Rolling Acres, Fairland, Montgomery County, Maryland, 20904, United States"
-  },
-  "179 lisbon st 4240 lewiston me usa": {
-    "lat": 44.0955417,
-    "lon": -70.2168871,
-    "displayName": "179, Lisbon Street, Lewiston, Androscoggin County, Maine, 04240, United States"
-  },
-  "72 lisbon st 4240 lewiston me usa": {
-    "lat": 44.047724,
-    "lon": -70.1188993,
-    "displayName": "72, Lisbon Street, Lisbon, Androscoggin County, Maine, 04250, United States"
-  },
-  "16 o'brien ave 4654 machias me usa": {
-    "lat": 44.711776,
-    "lon": -67.4576474,
-    "displayName": "16, O'Brien Avenue, Machias, Washington County, Maine, 04654, United States"
-  },
-  "1 kennedy memorial dr 4901 waterville me usa": {
-    "lat": 44.5408316,
-    "lon": -69.6496011,
-    "displayName": "CVS Pharmacy, 1, Kennedy Memorial Drive, Waterville, Kennebec County, Maine, 04901, United States"
   },
   "100 youell ave se 49506 grand rapids mi usa": {
     "lat": 42.960944,
@@ -5399,25 +5324,10 @@
     "lon": -97.6003848,
     "displayName": "68361, Geneva, Fillmore County, Nebraska, United States"
   },
-  "central square 3431 keene nh usa": {
-    "lat": 42.9339157,
-    "lon": -72.2782376,
-    "displayName": "Central Square, Keene, Cheshire County, New Hampshire, 03431, United States"
-  },
-  "market square 3801 portsmouth nh usa": {
-    "lat": 43.0769993,
-    "lon": -70.757748,
-    "displayName": "Market Square, Downtown, Portsmouth, Rockingham County, New Hampshire, 03802, United States"
-  },
   "nh usa": {
     "lat": 43.4849133,
     "lon": -71.6553992,
     "displayName": "New Hampshire, United States"
-  },
-  "269 nj-35 7724 eatontown nj usa": {
-    "lat": 40.2841344,
-    "lon": -74.0496292,
-    "displayName": "269, Kings Highway, Eatontown, Monmouth County, New Jersey, 07724, United States"
   },
   "7 fadem road 07081 springfield nj usa": {
     "lat": 40.6840041,
@@ -5643,11 +5553,6 @@
     "lat": 45.461165,
     "lon": -98.4848503,
     "displayName": "215, 4th Avenue Southeast, Aberdeen Historic District, Aberdeen, Aberdeen Township, Brown County, South Dakota, 57401, United States"
-  },
-  "3855 crossville tn usa": {
-    "lat": 35.9208339,
-    "lon": -85.3959583,
-    "displayName": "3855, Crossville Highway, Bon Air, White County, Middle Tennessee, Tennessee, 38583, United States"
   },
   "216 montvue rd 37919 knoxville tn usa": {
     "lat": 35.9234264,
@@ -6484,11 +6389,6 @@
     "lon": -82.4681811,
     "displayName": "Skateland USA, 7514, White Horse Road, White Oak Hills, Berea, Greenville County, South Carolina, 29611, United States"
   },
-  "6804 brookfield ct usa": {
-    "lat": 37.984527,
-    "lon": -87.3933141,
-    "displayName": "6804, Brookfield Court, Warrick County, Indiana, 47630, United States"
-  },
   "06422 durham ct usa": {
     "lat": 41.4641911,
     "lon": -72.687545,
@@ -6514,11 +6414,6 @@
     "lon": -72.9250518,
     "displayName": "New Haven, South Central Connecticut Planning Region, Connecticut, United States"
   },
-  "6320 new london ct usa": {
-    "lat": 41.3556187,
-    "lon": -72.0997804,
-    "displayName": "New London, Southeastern Connecticut Planning Region, Connecticut, 06320, United States"
-  },
   "new milford ct usa": {
     "lat": 41.5770993,
     "lon": -73.4105803,
@@ -6529,11 +6424,6 @@
     "lon": -105.2647006,
     "displayName": "Newton Court, Boulder, Boulder County, Colorado, United States"
   },
-  "6851 norwalk ct usa": {
-    "lat": 41.1175966,
-    "lon": -73.4078968,
-    "displayName": "Norwalk, Western Connecticut Planning Region, Connecticut, United States"
-  },
   "06360 norwich ct usa": {
     "lat": 41.536406,
     "lon": -72.084041,
@@ -6543,11 +6433,6 @@
     "lat": 42.0089773,
     "lon": -73.4100949,
     "displayName": "06068, Salisbury, Northwest Hills Planning Region, Connecticut, United States"
-  },
-  "6790 torrington ct usa": {
-    "lat": 41.8006523,
-    "lon": -73.1212214,
-    "displayName": "Torrington, Northwest Hills Planning Region, Connecticut, 06790, United States"
   },
   "waterbury ct usa": {
     "lat": 41.5538091,
@@ -7414,11 +7299,6 @@
     "lon": -70.9754432,
     "displayName": "Bridgewater, Plymouth County, Massachusetts, United States"
   },
-  "2446 brookline ma usa": {
-    "lat": 35.4935765,
-    "lon": -97.5677962,
-    "displayName": "2446, North Brookline Avenue, Oklahoma City, Oklahoma County, Oklahoma, 73107, United States"
-  },
   "21613 cambridge ma usa": {
     "lat": 38.5615577,
     "lon": -76.0869025,
@@ -7444,11 +7324,6 @@
     "lon": -70.8959844,
     "displayName": "02719, Fairhaven, Bristol County, Massachusetts, United States"
   },
-  "2540 falmouth ma usa": {
-    "lat": 41.6523999,
-    "lon": -70.3742512,
-    "displayName": "2540, Falmouth Road, Centerville, Barnstable, Barnstable County, Massachusetts, 02635, United States"
-  },
   "01702 framingham ma usa": {
     "lat": 42.2866107,
     "lon": -71.4288946,
@@ -7464,20 +7339,10 @@
     "lon": -72.6256298,
     "displayName": "01040, Holyoke, Hampden County, Massachusetts, United States"
   },
-  "1749 hudson ma usa": {
-    "lat": 39.5881749,
-    "lon": -79.6844484,
-    "displayName": "1749, Hudson, Preston County, West Virginia, 26519, United States"
-  },
   "02601 hyannis ma usa": {
     "lat": 41.6567394,
     "lon": -70.3009728,
     "displayName": "02601, Hyannis, Barnstable, Barnstable County, Massachusetts, United States"
-  },
-  "1938 ipswich ma usa": {
-    "lat": 42.679273,
-    "lon": -70.8411583,
-    "displayName": "Ipswich, Essex County, Massachusetts, 01938, United States"
   },
   "01238 lee ma usa": {
     "lat": 42.3073477,
@@ -7493,11 +7358,6 @@
     "lat": 42.4990118,
     "lon": -70.862196,
     "displayName": "01945, Marblehead, Essex County, Massachusetts, United States"
-  },
-  "2054 millis ma usa": {
-    "lat": 42.1674963,
-    "lon": -71.3572212,
-    "displayName": "Millis, Norfolk County, Massachusetts, 02054, United States"
   },
   "montague ma usa": {
     "lat": 42.6084416,
@@ -7518,16 +7378,6 @@
     "lat": 42.699264,
     "lon": -73.1129291,
     "displayName": "Main Street, Freeman Grove Historic District, North Adams, Berkshire County, Massachusetts, 01247, United States"
-  },
-  "1060 northampton ma usa": {
-    "lat": 42.2297018,
-    "lon": -72.6287747,
-    "displayName": "1060, Northampton Street, Holyoke, Hampden County, Massachusetts, 01040, United States"
-  },
-  "1364 orange ma usa": {
-    "lat": 42.5908656,
-    "lon": -72.3097766,
-    "displayName": "Orange, Franklin County, Massachusetts, 01364, United States"
   },
   "02360 plymouth ma usa": {
     "lat": 41.9376152,
@@ -7554,11 +7404,6 @@
     "lon": -76.4699365,
     "displayName": "Southern Maryland Practical Shooters, Suburban Mobile Estates, Lexington Park, Saint Mary's County, Maryland, 20653, United States"
   },
-  "1129 springfield ma usa": {
-    "lat": 42.117687,
-    "lon": -72.514931,
-    "displayName": "WILBRAHAM / PINEVIEW, Wilbraham Road, Sixteen Acres, Springfield, Hampden County, Massachusetts, 01119, United States"
-  },
   "stoneham ma usa": {
     "lat": 42.4802635,
     "lon": -71.0993581,
@@ -7568,11 +7413,6 @@
     "lat": 42.6759988,
     "lon": -71.7446126,
     "displayName": "01474, Townsend, Middlesex County, Massachusetts, United States"
-  },
-  "1879 tyngsborough ma usa": {
-    "lat": 42.6761451,
-    "lon": -71.4227726,
-    "displayName": "Tyngsborough, Middlesex County, Massachusetts, 01879, United States"
   },
   "02451 waltham ma usa": {
     "lat": 42.3905986,
@@ -7594,25 +7434,10 @@
     "lon": -71.2956449,
     "displayName": "02482, Wellesley, Norfolk County, Massachusetts, United States"
   },
-  "1266 west stockbridge ma usa": {
-    "lat": 42.3343193,
-    "lon": -73.3678369,
-    "displayName": "West Stockbridge, Berkshire County, Massachusetts, 01266, United States"
-  },
-  "2189 weymouth ma usa": {
-    "lat": 30.3126621,
-    "lon": -81.5158173,
-    "displayName": "2189, Weymouth Circle East, Sandalwood, Jacksonville, Duval County, Florida, 32246, United States"
-  },
   "01267 williamstown ma usa": {
     "lat": 42.7101783,
     "lon": -73.2025854,
     "displayName": "01267, Williamstown, Berkshire County, Massachusetts, United States"
-  },
-  "1605 worcester ma usa": {
-    "lat": 42.2969727,
-    "lon": -71.4791212,
-    "displayName": "1605, Worcester Road, Framingham, Middlesex County, Massachusetts, 01701, United States"
   },
   "annapolis md usa": {
     "lat": 38.9786401,
@@ -7694,85 +7519,15 @@
     "lon": -77.0276231,
     "displayName": "Silver Spring, Montgomery County, Maryland, 20910, United States"
   },
-  "4210 auburn me usa": {
-    "lat": 44.0979903,
-    "lon": -70.2312137,
-    "displayName": "Auburn, Androscoggin County, Maine, 04210, United States"
-  },
-  "4401 bangor me usa": {
-    "lat": 44.8016255,
-    "lon": -68.7713289,
-    "displayName": "Bangor, Penobscot County, Maine, 04401, United States"
-  },
-  "4915 belfast me usa": {
-    "lat": 44.4261759,
-    "lon": -69.0065207,
-    "displayName": "Belfast, Waldo County, Maine, 04915, United States"
-  },
-  "4537 boothbay me usa": {
-    "lat": 43.8762661,
-    "lon": -69.6340697,
-    "displayName": "Boothbay, Lincoln County, Maine, United States"
-  },
-  "4009 bridgton me usa": {
-    "lat": 44.0543839,
-    "lon": -70.7088701,
-    "displayName": "Bridgton, Cumberland County, Maine, 04009, United States"
-  },
-  "4736 caribou me usa": {
-    "lat": 46.8606301,
-    "lon": -68.0116807,
-    "displayName": "Caribou, Aroostook County, Maine, 04736, United States"
-  },
-  "4605 ellsworth me usa": {
-    "lat": 44.5414596,
-    "lon": -68.4243599,
-    "displayName": "Ellsworth, Hancock County, Maine, United States"
-  },
-  "4938 farmington me usa": {
-    "lat": 44.671094,
-    "lon": -70.151825,
-    "displayName": "Farmington, Franklin County, Maine, United States"
-  },
   "04064 old orchard beach me usa": {
     "lat": 43.5169774,
     "lon": -70.3898895,
     "displayName": "04064, Old Orchard Beach, York County, Maine, United States"
   },
-  "4281 paris me usa": {
-    "lat": 44.2614578,
-    "lon": -70.5009798,
-    "displayName": "Paris, Oxford County, Maine, 04281, United States"
-  },
-  "4101 portland me usa": {
-    "lat": 43.6573605,
-    "lon": -70.2586618,
-    "displayName": "Portland, Cumberland County, Maine, United States"
-  },
   "04101 portland me usa": {
     "lat": 43.6593151,
     "lon": -70.2570949,
     "displayName": "04101, Portland, Cumberland County, Maine, United States"
-  },
-  "4841 rockland me usa": {
-    "lat": 44.1048327,
-    "lon": -69.1091823,
-    "displayName": "Rockland, Knox County, Maine, 04841, United States"
-  },
-  "4901 waterville me usa": {
-    "lat": 44.5524176,
-    "lon": -69.6313607,
-    "displayName": "Waterville, Kennebec County, Maine, United States"
-  },
-  "4090 wells me usa": {
-    "lat": 43.3220487,
-    "lon": -70.5807422,
-    "displayName": "Wells, York County, Maine, 04090, United States"
-  },
-  "3909 york me usa": {
-    "lat": 43.1439384,
-    "lon": -70.6505274,
-    "displayName": "York, York County, Maine, United States"
   },
   "adrian mi usa": {
     "lat": 41.8975152,
@@ -8174,11 +7929,6 @@
     "lon": -102.4638125,
     "displayName": "Rushville, Sheridan County, Nebraska, United States"
   },
-  "3576 colebrook nh usa": {
-    "lat": 44.8942649,
-    "lon": -71.4964125,
-    "displayName": "Colebrook, Coös County, New Hampshire, 03576, United States"
-  },
   "37203 concord nh usa": {
     "lat": 43.207178,
     "lon": -71.537476,
@@ -8188,11 +7938,6 @@
     "lat": 42.8885,
     "lon": -71.2954567,
     "displayName": "03038, Derry, Rockingham County, New Hampshire, United States"
-  },
-  "3820 dover nh usa": {
-    "lat": 43.1981117,
-    "lon": -70.8739761,
-    "displayName": "Dover, Strafford County, New Hampshire, 03820, United States"
   },
   "03431 keene nh usa": {
     "lat": 42.937186,
@@ -8209,11 +7954,6 @@
     "lon": -71.0533918,
     "displayName": "Kingston, Rockingham County, New Hampshire, United States"
   },
-  "3801 portsmouth nh usa": {
-    "lat": 43.0702223,
-    "lon": -70.7548621,
-    "displayName": "Portsmouth, Rockingham County, New Hampshire, United States"
-  },
   "03848 rockingham county nh usa": {
     "lat": 42.9433081,
     "lon": -70.9757518,
@@ -8228,26 +7968,6 @@
     "lat": 43.58437,
     "lon": -71.207886,
     "displayName": "Wolfeboro, Carroll County, New Hampshire, United States"
-  },
-  "8401 atlantic city nj usa": {
-    "lat": 39.3642852,
-    "lon": -74.4229351,
-    "displayName": "Atlantic City, Atlantic County, New Jersey, United States"
-  },
-  "7003 bloomfield nj usa": {
-    "lat": 40.7934789,
-    "lon": -74.1979277,
-    "displayName": "Bloomfield, Essex County, New Jersey, 07003, United States"
-  },
-  "7028 glen ridge nj usa": {
-    "lat": 40.805378,
-    "lon": -74.2037566,
-    "displayName": "Glen Ridge, Essex County, New Jersey, 07028, United States"
-  },
-  "8530 lambertville nj usa": {
-    "lat": 40.3656188,
-    "lon": -74.9454055,
-    "displayName": "Lambertville, Hunterdon County, New Jersey, 08530, United States"
   },
   "newton nj usa": {
     "lat": 41.0582103,
@@ -8944,11 +8664,6 @@
     "lon": -71.4128343,
     "displayName": "Providence, Providence County, Rhode Island, United States"
   },
-  "2891 westerly ri usa": {
-    "lat": 41.3775996,
-    "lon": -71.8272911,
-    "displayName": "Westerly, South County, Rhode Island, United States"
-  },
   "29902 beaufort sc usa": {
     "lat": 32.4188941,
     "lon": -80.6908397,
@@ -9263,11 +8978,6 @@
     "lat": 44.4731764,
     "lon": -73.2111746,
     "displayName": "05401, Burlington, Chittenden County, Vermont, United States"
-  },
-  "5452 essex junction vt usa": {
-    "lat": 44.4906817,
-    "lon": -73.11136,
-    "displayName": "Essex Junction, Chittenden County, Vermont, United States"
   },
   "05403 south burlington vt usa": {
     "lat": 44.4410404,
@@ -9614,11 +9324,6 @@
     "lon": -72.6082423,
     "displayName": "01038, Hatfield, Hampshire County, Massachusetts, United States"
   },
-  "1085 westfield ma usa": {
-    "lat": 42.117443,
-    "lon": -72.737007,
-    "displayName": "NOBLE / MCKINLEY, Noble Street, Westfield, Hampden County, Massachusetts, 01085, United States"
-  },
   "01085 westfield ma usa": {
     "lat": 42.1209671,
     "lon": -72.7334406,
@@ -9628,16 +9333,6 @@
     "lat": 39.1310337,
     "lon": -76.8639873,
     "displayName": "20723, Howard County, Maryland, United States"
-  },
-  "4240 lewiston me usa": {
-    "lat": 44.1004515,
-    "lon": -70.2150294,
-    "displayName": "Lewiston, Androscoggin County, Maine, 04240, United States"
-  },
-  "elm plaza 4901 waterville me usa": {
-    "lat": 44.5681244,
-    "lon": -69.6405642,
-    "displayName": "Elm Plaza, Waterville, Kennebec County, Maine, United States"
   },
   "27705 durham nc usa": {
     "lat": 36.0176781,
@@ -9744,11 +9439,6 @@
     "lon": -85.0461224,
     "displayName": "East Carrollton Recreation Center, 410, North Lake Drive, Carrollton, Carroll County, Georgia, 30117, United States"
   },
-  "1106 longmeadow ma usa": {
-    "lat": 42.0410394,
-    "lon": -72.5842951,
-    "displayName": "1106, Longmeadow Street, Longmeadow, Hampden County, Massachusetts, 01106, United States"
-  },
   "01106 longmeadow ma usa": {
     "lat": 42.0542661,
     "lon": -72.5670584,
@@ -9774,11 +9464,6 @@
     "lon": -121.0760058,
     "displayName": "Bonitata Boutique Wine, 291, Auburn Folsom Road, Auburn, Placer County, California, 95603, United States"
   },
-  "6268 mansfield ct usa": {
-    "lat": 41.7782147,
-    "lon": -72.2131565,
-    "displayName": "Mansfield, Capitol Planning Region, Connecticut, United States"
-  },
   "34639 land o' lakes fl usa": {
     "lat": 28.2188992,
     "lon": -82.4575938,
@@ -9789,11 +9474,6 @@
     "lon": -86.1566201,
     "displayName": "46202, Indianapolis, Marion County, Indiana, United States"
   },
-  "1373 south deerfield ma usa": {
-    "lat": 26.2998523,
-    "lon": -80.1035814,
-    "displayName": "1373, South Deerfield Avenue, Coral Manor, Deerfield Beach, Broward County, Florida, 33441, United States"
-  },
   "01089 west springfield ma usa": {
     "lat": 42.1146066,
     "lon": -72.6265333,
@@ -9803,11 +9483,6 @@
     "lat": 39.2951934,
     "lon": -76.6218075,
     "displayName": "21201, Baltimore, Maryland, United States"
-  },
-  "4005 biddeford me usa": {
-    "lat": 43.4925843,
-    "lon": -70.4533844,
-    "displayName": "Biddeford, York County, Maine, 04005, United States"
   },
   "55066 redwing mn usa": {
     "lat": 46.8499939,
@@ -10239,11 +9914,6 @@
     "lon": -105.1699552,
     "displayName": "Marshall Road, Superior, Boulder County, Colorado, 80027, United States"
   },
-  "6268 mansfield ct united states": {
-    "lat": 41.7782147,
-    "lon": -72.2131565,
-    "displayName": "Mansfield, Capitol Planning Region, Connecticut, United States"
-  },
   "20007 washington dc dc united states": {
     "lat": 38.9109107,
     "lon": -77.0677543,
@@ -10474,90 +10144,20 @@
     "lon": -71.08188,
     "displayName": "02199, Boston, Suffolk County, Massachusetts, United States"
   },
-  "2139 boston ma united states": {
-    "lat": 42.3554334,
-    "lon": -71.060511,
-    "displayName": "Boston, Suffolk County, Massachusetts, United States"
-  },
-  "2131 boston ma united states": {
-    "lat": 42.3554334,
-    "lon": -71.060511,
-    "displayName": "Boston, Suffolk County, Massachusetts, United States"
-  },
-  "2203 boston ma united states": {
-    "lat": 42.3554334,
-    "lon": -71.060511,
-    "displayName": "Boston, Suffolk County, Massachusetts, United States"
-  },
-  "2150 chelsea ma united states": {
-    "lat": 34.1133537,
-    "lon": -84.611942,
-    "displayName": "2150, Chelsea Lane, Kellogg Creek, Cherokee County, Georgia, 30102, United States"
-  },
   "02026 deham ma united states": {
     "lat": 38.3237359,
     "lon": -85.5397741,
     "displayName": "Deham Drive, Ballardsville, Louisville, Jefferson County, Kentucky, 40241, United States"
-  },
-  "2540 falmouth ma united states": {
-    "lat": 41.6523999,
-    "lon": -70.3742512,
-    "displayName": "2540, Falmouth Road, Centerville, Barnstable, Barnstable County, Massachusetts, 02635, United States"
-  },
-  "1420 fitchburg ma united states": {
-    "lat": 42.4390913,
-    "lon": -84.3010149,
-    "displayName": "1420, East Fitchburg Road, Bunker Hill Township, Ingham County, Michigan, 49285, United States"
-  },
-  "1451 harvard ma united states": {
-    "lat": 38.9265621,
-    "lon": -77.0341839,
-    "displayName": "1451, Harvard Street Northwest, Columbia Heights, Ward 1, Washington, District of Columbia, 20009, United States"
-  },
-  "1040 holyoke ma united states": {
-    "lat": 47.7176412,
-    "lon": -117.3964476,
-    "displayName": "1040, East Holyoke Avenue, Spokane, Spokane County, Washington, 99208, United States"
-  },
-  "1749 hudson ma united states": {
-    "lat": 39.5881749,
-    "lon": -79.6844484,
-    "displayName": "1749, Hudson, Preston County, West Virginia, 26519, United States"
-  },
-  "1938 ipswich ma united states": {
-    "lat": 42.679273,
-    "lon": -70.8411583,
-    "displayName": "Ipswich, Essex County, Massachusetts, 01938, United States"
-  },
-  "1106 longmeadow ma united states": {
-    "lat": 42.0410394,
-    "lon": -72.5842951,
-    "displayName": "1106, Longmeadow Street, Longmeadow, Hampden County, Massachusetts, 01106, United States"
   },
   "lynn ma united states": {
     "lat": 42.466763,
     "lon": -70.9494939,
     "displayName": "Lynn, Essex County, Massachusetts, United States"
   },
-  "2563 sandwich ma united states": {
-    "lat": 41.6684141,
-    "lon": -88.629934,
-    "displayName": "2563, West Sandwich Road, Sandwich Township, DeKalb County, Illinois, 60548, United States"
-  },
-  "1373 south deerfield ma united states": {
-    "lat": 26.2998523,
-    "lon": -80.1035814,
-    "displayName": "1373, South Deerfield Avenue, Coral Manor, Deerfield Beach, Broward County, Florida, 33441, United States"
-  },
   "02472 watertown ma united states": {
     "lat": 42.3676444,
     "lon": -71.1753037,
     "displayName": "02472, Watertown, Middlesex County, Massachusetts, United States"
-  },
-  "1085 westfield ma united states": {
-    "lat": 42.117443,
-    "lon": -72.737007,
-    "displayName": "NOBLE / MCKINLEY, Noble Street, Westfield, Hampden County, Massachusetts, 01085, United States"
   },
   "21291 baltimore md united states": {
     "lat": 39.2908816,
@@ -10603,46 +10203,6 @@
     "lat": 38.9959461,
     "lon": -77.0276231,
     "displayName": "Silver Spring, Montgomery County, Maryland, 20910, United States"
-  },
-  "4330 augusta me united states": {
-    "lat": 44.3169922,
-    "lon": -69.7734278,
-    "displayName": "Augusta, Kennebec County, Maine, 04330, United States"
-  },
-  "4005 biddeford me united states": {
-    "lat": 43.4925843,
-    "lon": -70.4533844,
-    "displayName": "Biddeford, York County, Maine, 04005, United States"
-  },
-  "4009 bridgton me united states": {
-    "lat": 44.0543839,
-    "lon": -70.7088701,
-    "displayName": "Bridgton, Cumberland County, Maine, 04009, United States"
-  },
-  "4736 caribou me united states": {
-    "lat": 46.8606301,
-    "lon": -68.0116807,
-    "displayName": "Caribou, Aroostook County, Maine, 04736, United States"
-  },
-  "4240 lewiston me united states": {
-    "lat": 44.1004515,
-    "lon": -70.2150294,
-    "displayName": "Lewiston, Androscoggin County, Maine, 04240, United States"
-  },
-  "4841 rockland me united states": {
-    "lat": 44.1048327,
-    "lon": -69.1091823,
-    "displayName": "Rockland, Knox County, Maine, 04841, United States"
-  },
-  "elm plaza 4901 waterville me united states": {
-    "lat": 44.5681244,
-    "lon": -69.6405642,
-    "displayName": "Elm Plaza, Waterville, Kennebec County, Maine, United States"
-  },
-  "4901 waterville me united states": {
-    "lat": 44.5524176,
-    "lon": -69.6313607,
-    "displayName": "Waterville, Kennebec County, Maine, United States"
   },
   "ann arbor mi united states": {
     "lat": 42.2813722,
@@ -12154,11 +11714,6 @@
     "lon": -73.4531375,
     "displayName": "06810, Danbury, Western Connecticut Planning Region, Connecticut, United States"
   },
-  "6082 enfield ct united states": {
-    "lat": 41.9789387,
-    "lon": -72.5755109,
-    "displayName": "Enfield, Capitol Planning Region, Connecticut, United States"
-  },
   "06830 greenwich ct united states": {
     "lat": 41.0326546,
     "lon": -73.629676,
@@ -12173,11 +11728,6 @@
     "lat": 41.7485295,
     "lon": -72.6964211,
     "displayName": "06106, Hartford, Capitol Planning Region, Connecticut, United States"
-  },
-  "6455 middletown ct united states": {
-    "lat": 41.5623178,
-    "lon": -72.6509061,
-    "displayName": "Middletown, Lower Connecticut River Valley Planning Region, Connecticut, United States"
   },
   "06511 new haven ct united states": {
     "lat": 41.3190423,
@@ -12744,11 +12294,6 @@
     "lon": -85.4656604,
     "displayName": "47240, Greensburg, Decatur County, Indiana, United States"
   },
-  "1236 indianapolis in united states": {
-    "lat": 39.2110509,
-    "lon": -85.9298101,
-    "displayName": "1236, Indianapolis Road, Corn Brook, Columbus, Bartholomew County, Indiana, 47201, United States"
-  },
   "46901 kokomo in united states": {
     "lat": 40.4953382,
     "lon": -86.1420868,
@@ -12904,16 +12449,6 @@
     "lon": -72.7012998,
     "displayName": "01341, Conway, Franklin County, Massachusetts, United States"
   },
-  "1027 easthampton ma united states": {
-    "lat": 42.2708804,
-    "lon": -72.6719579,
-    "displayName": "Easthampton, Hampshire County, Massachusetts, United States"
-  },
-  "1702 framingham ma united states": {
-    "lat": 42.2773177,
-    "lon": -71.4165905,
-    "displayName": "Framingham, Middlesex County, Massachusetts, United States"
-  },
   "01033 granby ma united states": {
     "lat": 42.2489979,
     "lon": -72.522716,
@@ -12943,11 +12478,6 @@
     "lat": 42.3911483,
     "lon": -71.5570491,
     "displayName": "01749, Hudson, Middlesex County, Massachusetts, United States"
-  },
-  "2601 hyannis ma united states": {
-    "lat": 41.6534847,
-    "lon": -70.2823732,
-    "displayName": "Hyannis, Barnstable, Barnstable County, Massachusetts, United States"
   },
   "02050 marshfield ma united states": {
     "lat": 42.1074037,
@@ -12983,11 +12513,6 @@
     "lat": 41.4473264,
     "lon": -70.6037609,
     "displayName": "02568, Tisbury, Dukes County, Massachusetts, United States"
-  },
-  "1469 townsend ma united states": {
-    "lat": 33.8075325,
-    "lon": -84.8998166,
-    "displayName": "1469, Townsend Road, New Georgia Estates, Paulding County, Georgia, 30180, United States"
   },
   "02451 waltham ma united states": {
     "lat": 42.3905986,
@@ -13064,16 +12589,6 @@
     "lon": -68.8022778,
     "displayName": "04401, Bangor, Penobscot County, Maine, United States"
   },
-  "4915 belfast me united states": {
-    "lat": 44.4261759,
-    "lon": -69.0065207,
-    "displayName": "Belfast, Waldo County, Maine, 04915, United States"
-  },
-  "4011 brunswick me united states": {
-    "lat": 43.9166529,
-    "lon": -69.9659438,
-    "displayName": "Brunswick, Cumberland County, Maine, 04011, United States"
-  },
   "04938 farmington me united states": {
     "lat": 44.6615852,
     "lon": -70.123803,
@@ -13083,16 +12598,6 @@
     "lat": 43.1018589,
     "lon": -70.7353227,
     "displayName": "03904, Kittery, York County, Maine, United States"
-  },
-  "4652 lubec me united states": {
-    "lat": 44.861172,
-    "lon": -66.983501,
-    "displayName": "Lubec, Washington County, Maine, 04652, United States"
-  },
-  "4654 machias me united states": {
-    "lat": 44.7143592,
-    "lon": -67.4582679,
-    "displayName": "Machias, Washington County, Maine, 04654, United States"
   },
   "04271 paris me united states": {
     "lat": 44.2621087,
@@ -13113,11 +12618,6 @@
     "lat": 43.3164222,
     "lon": -70.6082481,
     "displayName": "04090, Wells, York County, Maine, United States"
-  },
-  "3909 york me united states": {
-    "lat": 43.1439384,
-    "lon": -70.6505274,
-    "displayName": "York, York County, Maine, United States"
   },
   "49221 adrian mi united states": {
     "lat": 41.8942745,
@@ -13729,21 +13229,6 @@
     "lon": -71.7776002,
     "displayName": "03561, Littleton, Grafton County, New Hampshire, United States"
   },
-  "3101 manchester nh united states": {
-    "lat": 42.9956397,
-    "lon": -71.4547891,
-    "displayName": "Manchester, Hillsborough County, New Hampshire, United States"
-  },
-  "3060 nashua nh united states": {
-    "lat": 42.7656251,
-    "lon": -71.4677032,
-    "displayName": "Nashua, Hillsborough County, New Hampshire, United States"
-  },
-  "3257 new london nh united states": {
-    "lat": 43.414026,
-    "lon": -71.985168,
-    "displayName": "New London, Merrimack County, New Hampshire, United States"
-  },
   "07003 bloomfield nj united states": {
     "lat": 40.8033927,
     "lon": -74.1897817,
@@ -13754,20 +13239,10 @@
     "lon": -75.2387374,
     "displayName": "08302, Bridgeton, Cumberland County, New Jersey, United States"
   },
-  "8805 bridgewater nj united states": {
-    "lat": 40.5931225,
-    "lon": -74.604954,
-    "displayName": "Bridgewater Township, Somerset County, New Jersey, United States"
-  },
   "08210 cape may nj united states": {
     "lat": 39.0868647,
     "lon": -74.830693,
     "displayName": "08210, Middle Township, Cape May County, New Jersey, United States"
-  },
-  "8540 franklin township nj united states": {
-    "lat": 40.4784936,
-    "lon": -74.5392118,
-    "displayName": "Franklin Township, Somerset County, New Jersey, United States"
   },
   "08205 galloway nj united states": {
     "lat": 39.4728366,
@@ -13838,11 +13313,6 @@
     "lat": 40.2204706,
     "lon": -74.7621713,
     "displayName": "08608, Trenton, Mercer County, New Jersey, United States"
-  },
-  "7043 upr montclair nj united states": {
-    "lat": 40.8462107,
-    "lon": -74.2012565,
-    "displayName": "Upper Montclair, Montclair, Essex County, New Jersey, 07043, United States"
   },
   "88310 alamogordo nm united states": {
     "lat": 32.903214,
@@ -15879,11 +15349,6 @@
     "lon": -70.8719271,
     "displayName": "Newburyport, Essex County, Massachusetts, 01950, United States"
   },
-  "rte 116 & sugarloaf street 1373 south deerfield ma usa": {
-    "lat": 42.4773097,
-    "lon": -72.6078667,
-    "displayName": "South Deerfield, Deerfield, Franklin County, Massachusetts, 01373, United States"
-  },
   "overpass 21701 frederick md usa": {
     "lat": 39.415779,
     "lon": -77.4127562,
@@ -16419,11 +15884,6 @@
     "lon": -76.2899539,
     "displayName": "Norfolk, Virginia, United States"
   },
-  "north st and west st 5443 bristol vt usa": {
-    "lat": 44.1332662,
-    "lon": -73.0785227,
-    "displayName": "Bristol, Addison County, Vermont, United States"
-  },
   "05743 fair haven vt usa": {
     "lat": 43.5947898,
     "lon": -73.2659674,
@@ -16689,11 +16149,6 @@
     "lon": -84.6154897,
     "displayName": "Kennesaw, Cobb County, Georgia, United States"
   },
-  "national mall no sponsor listed !! washington dc usa": {
-    "lat": 38.8950368,
-    "lon": -77.0365427,
-    "displayName": "Washington, District of Columbia, United States"
-  },
   "5380 us-158 27006 advance nc usa": {
     "lat": 35.9412851,
     "lon": -80.4096455,
@@ -16874,11 +16329,6 @@
     "lon": -72.6075851,
     "displayName": "Holyoke, Hampden County, Massachusetts, 01040, United States"
   },
-  "ipsw-42a_113 1938 ipswich ma usa": {
-    "lat": 42.679273,
-    "lon": -70.8411583,
-    "displayName": "Ipswich, Essex County, Massachusetts, 01938, United States"
-  },
   "west 40th street & roland ave 21211 baltimore md usa": {
     "lat": 39.2908816,
     "lon": -76.610759,
@@ -16903,16 +16353,6 @@
     "lat": 43.9133661,
     "lon": -69.8140298,
     "displayName": "Bath, Sagadahoc County, Maine, 04530, United States"
-  },
-  "u.s. 302 & maine 117 4009 bridgton me usa": {
-    "lat": 44.0543839,
-    "lon": -70.7088701,
-    "displayName": "Bridgton, Cumberland County, Maine, 04009, United States"
-  },
-  "294 main st 4841 rockland me usa": {
-    "lat": 44.1048327,
-    "lon": -69.1091823,
-    "displayName": "Rockland, Knox County, Maine, 04841, United States"
   },
   "3530 jackson rd 48103 ann arbor mi usa": {
     "lat": 42.2813722,
@@ -17179,11 +16619,6 @@
     "lon": -88.4069744,
     "displayName": "Appleton, Outagamie County, Wisconsin, United States"
   },
-  "152 dukes road w30sl london usa": {
-    "lat": 41.1436709,
-    "lon": -80.1486716,
-    "displayName": "London, Springfield Township, Mercer County, Pennsylvania, United States"
-  },
   "200 garrison ave 72901 fort smith ak usa": {
     "lat": 35.3880338,
     "lon": -94.4265011,
@@ -17278,11 +16713,6 @@
     "lat": 43.3041609,
     "lon": -91.7859098,
     "displayName": "Decorah, Winneshiek County, Iowa, United States"
-  },
-  "837702 boise id usa": {
-    "lat": 43.6166163,
-    "lon": -116.200886,
-    "displayName": "Boise, Ada County, Idaho, United States"
   },
   "main st & little ave 83422 driggs id usa": {
     "lat": 43.7231753,
@@ -24399,11 +23829,6 @@
     "lon": -70.8816156,
     "displayName": "Broadway, Beverly Center Business District, Beverly, Essex County, Massachusetts, 01915, United States"
   },
-  "840 providence hwy 2026 dedham ma usa": {
-    "lat": 42.237319,
-    "lon": -71.1785842,
-    "displayName": "840, Providence Highway, Dedham, Norfolk County, Massachusetts, 02026, United States"
-  },
   "falmoutn village green 02540 falmouth ma usa": {
     "lat": 41.5514979,
     "lon": -70.6147519,
@@ -24413,11 +23838,6 @@
     "lat": 41.7641696,
     "lon": -70.4996597,
     "displayName": "Sandwich Town Hall, 100, Route 6A, Sandwich, Barnstable County, Massachusetts, 02563, United States"
-  },
-  "457 pleasant street 2472 watertown ma usa": {
-    "lat": 42.3667666,
-    "lon": -71.2042922,
-    "displayName": "Tesla Boston-Watertown, 457, Pleasant Street, Bemis, Watertown, Middlesex County, Massachusetts, 02458, United States"
   },
   "falls road & smith avenue 21209 baltimore md usa": {
     "lat": 39.2908816,
@@ -24538,21 +23958,6 @@
     "lat": 46.8712901,
     "lon": -114.0049785,
     "displayName": "Cregg Lane, Riverfront, Missoula, Missoula County, Montana, 59807, United States"
-  },
-  "2454 lafayette road 3801 portsmouth nh usa": {
-    "lat": 43.0347192,
-    "lon": -70.7831081,
-    "displayName": "Salud at The Green, 2454, Lafayette Road, Portsmouth, Rockingham County, New Hampshire, 03801, United States"
-  },
-  "1605 rte 70 w 8002 cherry hill nj usa": {
-    "lat": 39.9348351,
-    "lon": -75.0307264,
-    "displayName": "Cherry Hill Township, Camden County, New Jersey, United States"
-  },
-  "530 rte 17 7652 paramus nj usa": {
-    "lat": 40.9452911,
-    "lon": -74.0735899,
-    "displayName": "Paramus, Bergen County, New Jersey, United States"
   },
   "1501 san pedro dr se 87108 albuquerque nm usa": {
     "lat": 35.053963,
@@ -24743,11 +24148,6 @@
     "lat": 41.2411556,
     "lon": -77.0011096,
     "displayName": "Williamsport, Lycoming County, Pennsylvania, United States"
-  },
-  "77 reservoir ave 2907 providence ri usa": {
-    "lat": 41.794389,
-    "lon": -71.42705,
-    "displayName": "Popeyes, 77, Reservoir Avenue, Elmwood, Providence, Providence County, Rhode Island, 02907, United States"
   },
   "1100 gervais st 29208 columbia sc usa": {
     "lat": 34.0003435,
@@ -25008,11 +24408,6 @@
     "lat": 44.8596498,
     "lon": -92.6255048,
     "displayName": "River Falls, Pierce County, Wisconsin, 54022, United States"
-  },
-  "152 dukes road w3 0sl london usa": {
-    "lat": 41.1436709,
-    "lon": -80.1486716,
-    "displayName": "London, Springfield Township, Mercer County, Pennsylvania, United States"
   },
   "echo park los angeles ca usa": {
     "lat": 34.0707905,
@@ -25969,11 +25364,6 @@
     "lon": -92.0178202,
     "displayName": "Lafayette, Lafayette Parish, Louisiana, United States"
   },
-  "e pleasant st 1002 amherst ma usa": {
-    "lat": 42.3812321,
-    "lon": -72.5192795,
-    "displayName": "East Pleasant Street, Amherst, Hampshire County, Massachusetts, 01002, United States"
-  },
   "raytheon co, 362 lowell st 01810 andover ma usa": {
     "lat": 42.65717,
     "lon": -71.1408776,
@@ -25994,35 +25384,15 @@
     "lon": -70.8781883,
     "displayName": "Beverly, Essex County, Massachusetts, United States"
   },
-  "888 boylston street 2199 boston ma usa": {
-    "lat": 42.3480424,
-    "lon": -71.082783,
-    "displayName": "888 Boylston Street, 888, Boylston Street, Block G, Back Bay, Boston, Suffolk County, Massachusetts, 02199, United States"
-  },
   "massachusetts state house 02133 boston ma usa": {
     "lat": 42.358602,
     "lon": -71.0638751,
     "displayName": "Massachusetts State House, 24, Beacon Street, Beacon Hill, Boston, Suffolk County, Massachusetts, 02108, United States"
   },
-  "beacon & harvard st 2446 brookline ma usa": {
-    "lat": 42.332918,
-    "lon": -71.1187829,
-    "displayName": "Brookline, Norfolk County, Massachusetts, United States"
-  },
   "north main street 03301 concord ma usa": {
     "lat": 43.2129382,
     "lon": -71.5396787,
     "displayName": "North Main Street, Concord, Merrimack County, New Hampshire, 03301, United States"
-  },
-  "840 providence highway 2026 dedham ma usa": {
-    "lat": 42.237319,
-    "lon": -71.1785842,
-    "displayName": "840, Providence Highway, Dedham, Norfolk County, Massachusetts, 02026, United States"
-  },
-  "falmouth village green 2540 falmouth ma usa": {
-    "lat": 41.5514979,
-    "lon": -70.6147519,
-    "displayName": "Falmouth, Barnstable County, Massachusetts, United States"
   },
   "282 wisdom way 01301 greenfield ma usa": {
     "lat": 42.5757555,
@@ -26034,40 +25404,10 @@
     "lon": -72.6192083,
     "displayName": "Colrain Street, Greenfield, Franklin County, Massachusetts, 01301, United States"
   },
-  "25 russell street 1035 hadley ma usa": {
-    "lat": 42.3369876,
-    "lon": -72.6171636,
-    "displayName": "Russell Street, Hadley, Hampshire County, Massachusetts, 01035, United States"
-  },
-  "1066 hatfield ma usa": {
-    "lat": 42.3732087,
-    "lon": -72.596091,
-    "displayName": "Hatfield, Hampshire County, Massachusetts, United States"
-  },
-  "121 north st 2043 hingham ma usa": {
-    "lat": 42.2429532,
-    "lon": -70.8892609,
-    "displayName": "Hingham Post Office, 121, North Street, Hingham Center, Hingham, Plymouth County, Massachusetts, 02043, United States"
-  },
   "5 washington st 01749 hudson ma usa": {
     "lat": 42.3912469,
     "lon": -71.5705228,
     "displayName": "Saint Luke's Episcopal Church, 5, Washington Street, Hudson, Middlesex County, Massachusetts, 01749, United States"
-  },
-  "36 s main st 1938 ipswich ma usa": {
-    "lat": 42.6781522,
-    "lon": -70.8370958,
-    "displayName": "Hall-Haskell House, 36, South Main Street, Ipswich, Essex County, Massachusetts, 01938, United States"
-  },
-  "n & s common st 1905 lynn ma usa": {
-    "lat": 42.4631863,
-    "lon": -70.9575793,
-    "displayName": "South Common Street, Central Square Historic District, Lynn, Essex County, Massachusetts, 01902, United States"
-  },
-  "360 n main st 2048 mansfield ma usa": {
-    "lat": 42.0314821,
-    "lon": -71.2187175,
-    "displayName": "360, North Main Street, Mansfield, Bristol County, Massachusetts, 02048, United States"
   },
   "39 nathan ellis hwy 02649 mashpee ma usa": {
     "lat": 41.6196212,
@@ -26089,11 +25429,6 @@
     "lon": -69.9893623,
     "displayName": "60, Main Street, Orleans, Barnstable County, Massachusetts, 02653, United States"
   },
-  "east st & elm st 1201 pittsfield ma usa": {
-    "lat": 42.4484778,
-    "lon": -73.2541069,
-    "displayName": "Pittsfield, Berkshire County, Massachusetts, United States"
-  },
   "us-1 01969 rowley ma usa": {
     "lat": 42.6982801,
     "lon": -70.9118969,
@@ -26114,20 +25449,10 @@
     "lon": -71.3369973,
     "displayName": "Seekonk, Bristol County, Massachusetts, United States"
   },
-  "boston road & parker street 1129 springfield ma usa": {
-    "lat": 39.7990175,
-    "lon": -89.6439575,
-    "displayName": "Springfield, Sangamon County, Illinois, United States"
-  },
   "taunton green 02780 taunton ma usa": {
     "lat": 41.9021619,
     "lon": -71.0937889,
     "displayName": "Taunton Green, Taunton, Bristol County, Massachusetts, 02780, United States"
-  },
-  "475 pleasant street 2472 watertown ma usa": {
-    "lat": 42.3664826,
-    "lon": -71.2057984,
-    "displayName": "475, Pleasant Street, Bemis, Watertown, Middlesex County, Massachusetts, 02472, United States"
   },
   "elm & main st 01085 westfield ma usa": {
     "lat": 42.1205411,
@@ -26529,45 +25854,10 @@
     "lon": -71.3264492,
     "displayName": "Derry, Rockingham County, New Hampshire, 03038, United States"
   },
-  "24 calef hwy 3042 epping nh usa": {
-    "lat": 43.0283021,
-    "lon": -71.0738164,
-    "displayName": "24, Calef Highway, Epping, Rockingham County, New Hampshire, 03042, United States"
-  },
-  "w main st & u.s. 202 3224 hillsborough nh usa": {
-    "lat": 43.1149568,
-    "lon": -71.8948666,
-    "displayName": "Hillsborough, Hillsborough County, New Hampshire, 03244, United States"
-  },
-  "124 main st 3848 kingston nh usa": {
-    "lat": 42.9364768,
-    "lon": -71.0533918,
-    "displayName": "Kingston, Rockingham County, New Hampshire, United States"
-  },
   "129 nh rte 175 03245 plymouth nh usa": {
     "lat": 43.7572734,
     "lon": -71.6885443,
     "displayName": "Plymouth, Grafton County, New Hampshire, 03264, United States"
-  },
-  "17 freetown rd 3077 raymond nh usa": {
-    "lat": 43.0355981,
-    "lon": -71.1639508,
-    "displayName": "17, Freetown Road, Raymond, Rockingham County, New Hampshire, 03077, United States"
-  },
-  "136 s main st 3894 wolfeboro nh usa": {
-    "lat": 43.5844468,
-    "lon": -71.2081336,
-    "displayName": "136, South Main Street, Wolfeboro, Carroll County, New Hampshire, 03894, United States"
-  },
-  "18 york st 8530 lambertville nj usa": {
-    "lat": 40.3684651,
-    "lon": -74.9455763,
-    "displayName": "Lambertville City Hall, 18, York Street, Lambertville, Hunterdon County, New Jersey, 08530, United States"
-  },
-  "100 corporate dr 8833 lebanon nj usa": {
-    "lat": 40.645312,
-    "lon": -74.834968,
-    "displayName": "100, Corporate Drive, Lebanon, Hunterdon County, New Jersey, 08833, United States"
   },
   "151 knollcroft road 07939 lyons nj usa": {
     "lat": 40.6683967,
@@ -26584,26 +25874,6 @@
     "lon": -74.1955215,
     "displayName": "West Market Street, Roseville, Newark, Essex County, New Jersey, 07107, United States"
   },
-  "303 university ave 7102 newark nj usa": {
-    "lat": 40.7391994,
-    "lon": -74.1796984,
-    "displayName": "Physical Education Building, 303, University Avenue, Teachers Village, The Ironbound, Newark, Essex County, New Jersey, 07102, United States"
-  },
-  "1909 new road 8225 northfield nj usa": {
-    "lat": 39.3690594,
-    "lon": -74.5600899,
-    "displayName": "1909, New Road, Northfield, Atlantic County, New Jersey, 08225, United States"
-  },
-  "201 shore rd 8225 northfield nj usa": {
-    "lat": 39.3767871,
-    "lon": -74.5375345,
-    "displayName": "201, Shore Road, Linwood Gables, Northfield, Atlantic County, New Jersey, 08225, United States"
-  },
-  "530 route 17 7652 paramus nj usa": {
-    "lat": 40.9452911,
-    "lon": -74.0735899,
-    "displayName": "Paramus, Bergen County, New Jersey, United States"
-  },
   "07503 paterson nj usa": {
     "lat": 40.9167654,
     "lon": -74.171811,
@@ -26613,11 +25883,6 @@
     "lat": 39.9531861,
     "lon": -74.1966266,
     "displayName": "33, Washington Street, Downtown, Toms River, Ocean County, New Jersey, 08753, United States"
-  },
-  "131-137 w state st 8608 trenton nj usa": {
-    "lat": 40.2204064,
-    "lon": -74.7669952,
-    "displayName": "West State Street, Mill Hill, Trenton, Mercer County, New Jersey, 08618, United States"
   },
   "1501 san pedro dr 87108 albuquerque nm usa": {
     "lat": 35.0841034,
@@ -28219,11 +27484,6 @@
     "lon": -85.759407,
     "displayName": "Louisville, Jefferson County, Kentucky, United States"
   },
-  "raytheon co, 362 lowell st 1810 andover ma": {
-    "lat": 42.65717,
-    "lon": -71.1408776,
-    "displayName": "Andover, Essex County, Massachusetts, United States"
-  },
   "odell veterans memorial park, 56-98 broadway 01915 beverly ma": {
     "lat": 42.5489744,
     "lon": -70.8781883,
@@ -28233,16 +27493,6 @@
     "lat": 42.3480424,
     "lon": -71.082783,
     "displayName": "888 Boylston Street, 888, Boylston Street, Block G, Back Bay, Boston, Suffolk County, Massachusetts, 02199, United States"
-  },
-  "liberty mall 2133 boston ma": {
-    "lat": 42.3565605,
-    "lon": -71.0634158,
-    "displayName": "Liberty Mall, Beacon Hill, Boston, Suffolk County, Massachusetts, 02108, United States"
-  },
-  "840 providence hwy 2026 dedham ma": {
-    "lat": 42.237319,
-    "lon": -71.1785842,
-    "displayName": "840, Providence Highway, Dedham, Norfolk County, Massachusetts, 02026, United States"
   },
   "falmouth village green 02540 falmouth ma": {
     "lat": 41.5514979,
@@ -28259,20 +27509,10 @@
     "lon": -70.8370958,
     "displayName": "Hall-Haskell House, 36, South Main Street, Ipswich, Essex County, Massachusetts, 01938, United States"
   },
-  "50 prince street 1060 northampton ma": {
-    "lat": 42.3096182,
-    "lon": -72.646688,
-    "displayName": "L-3 KEO Mfg, 50, Prince Street, Northampton, Hampshire County, Massachusetts, 01063, United States"
-  },
   "446 damon rd 01060 northampton ma": {
     "lat": 42.337945,
     "lon": -72.6363685,
     "displayName": "Damon Road, Northampton, Hampshire County, Massachusetts, 01060, United States"
-  },
-  "98 accord park drive 2061 norwell ma": {
-    "lat": 42.1665512,
-    "lon": -70.8877393,
-    "displayName": "Tesla Norwell, 98, Accord Park Drive, Queen Anne's Corner, Accord, Norwell, Plymouth County, Massachusetts, 02061, United States"
   },
   "26 court st 02360 plymouth ma": {
     "lat": 41.9569111,
@@ -28288,11 +27528,6 @@
     "lat": 42.2694308,
     "lon": -71.6129907,
     "displayName": "Westborough, Worcester County, Massachusetts, 01581, United States"
-  },
-  "the roundabout 1267 williamstown ma": {
-    "lat": 42.7135472,
-    "lon": -73.2094566,
-    "displayName": "Williamstown, Berkshire County, Massachusetts, 01267, United States"
   },
   "1500 n charles st 21201 baltimore md usa": {
     "lat": 39.3074201,
@@ -28329,40 +27564,10 @@
     "lon": -77.0276231,
     "displayName": "Silver Spring, Montgomery County, Maryland, 20910, United States"
   },
-  "longley bridge, court st 4210 auburn me": {
-    "lat": 44.0979903,
-    "lon": -70.2312137,
-    "displayName": "Auburn, Androscoggin County, Maine, 04210, United States"
-  },
-  "harlow st & central st 4401 bangor me": {
-    "lat": 44.8016255,
-    "lon": -68.7713289,
-    "displayName": "Bangor, Penobscot County, Maine, 04401, United States"
-  },
-  "post office square 4915 belfast me": {
-    "lat": 44.4261759,
-    "lon": -69.0065207,
-    "displayName": "Belfast, Waldo County, Maine, 04915, United States"
-  },
   "18 union st 04614 blue hill me": {
     "lat": 44.4128265,
     "lon": -68.5893934,
     "displayName": "Blue Hill Town Hall, 18, Union Street, Blue Hill, Hancock County, Maine, 04614, United States"
-  },
-  "maine street 4011 brunswick me": {
-    "lat": 43.9109871,
-    "lon": -69.9631154,
-    "displayName": "Maine Street, Brunswick, Cumberland County, Maine, 04011, United States"
-  },
-  "mine street 4011 brunswick me": {
-    "lat": 43.9166529,
-    "lon": -69.9659438,
-    "displayName": "Brunswick, Cumberland County, Maine, 04011, United States"
-  },
-  "camden village green 4843 camden me": {
-    "lat": 44.210265,
-    "lon": -69.065552,
-    "displayName": "Camden, Knox County, Maine, 04843, United States"
   },
   "union river bridge 04605 ellsworth me": {
     "lat": 44.5414596,
@@ -28379,25 +27584,10 @@
     "lon": -70.1620265,
     "displayName": "72, Old Lisbon Road, Lewiston, Androscoggin County, Maine, 04240, United States"
   },
-  "longfellow square 4102 portland me": {
-    "lat": 43.6573605,
-    "lon": -70.2586618,
-    "displayName": "Portland, Cumberland County, Maine, United States"
-  },
   "294 main st 04841 rockland me usa": {
     "lat": 44.1013585,
     "lon": -69.1091329,
     "displayName": "294, Main Street, Rockland, Knox County, Maine, 04841, United States"
-  },
-  "main st & park st 4841 rockland me": {
-    "lat": 44.1048327,
-    "lon": -69.1091823,
-    "displayName": "Rockland, Knox County, Maine, 04841, United States"
-  },
-  "erskine park/casco bridge 4106 s portland me": {
-    "lat": 43.6382443,
-    "lon": -70.2529189,
-    "displayName": "South Portland, Cumberland County, Maine, 04106, United States"
   },
   "general dynamics 04072 saco me": {
     "lat": 43.5007555,
@@ -28408,11 +27598,6 @@
     "lat": 43.6382443,
     "lon": -70.2529189,
     "displayName": "South Portland, Cumberland County, Maine, 04106, United States"
-  },
-  "verona bridge 4416 verona island me": {
-    "lat": 44.5656403,
-    "lon": -68.7904198,
-    "displayName": "Verona Island, Hancock County, Maine, 04416, United States"
   },
   "425 n main st 101 49221 adrian mi": {
     "lat": 41.8975152,
@@ -28584,11 +27769,6 @@
     "lon": -71.3739532,
     "displayName": "Londonderry, Rockingham County, New Hampshire, 03053, United States"
   },
-  "2454 lafayette road (public grass strip) 3801 portsmouth nh": {
-    "lat": 43.0702223,
-    "lon": -70.7548621,
-    "displayName": "Portsmouth, Rockingham County, New Hampshire, United States"
-  },
   "17 freetown rd 03077 raymond nh": {
     "lat": 43.0206916,
     "lon": -71.1658432,
@@ -28614,20 +27794,10 @@
     "lon": -74.8708199,
     "displayName": "Prospectors Steakhouse & Saloon, 3050, NJ 38, Mount Laurel Township, Burlington County, New Jersey, 08054, United States"
   },
-  "1001 tilton rd 8225 northfield nj": {
-    "lat": 39.378729,
-    "lon": -74.55431,
-    "displayName": "1001, Tilton Road, Northfield, Atlantic County, New Jersey, 08225, United States"
-  },
   "300 sidney rd 08854 piscataway nj": {
     "lat": 40.5413334,
     "lon": -74.4654262,
     "displayName": "Sidney Road, Newtown, Piscataway Township, Middlesex County, New Jersey, 08854, United States"
-  },
-  "33 washington st 8753 toms river nj": {
-    "lat": 39.9531861,
-    "lon": -74.1966266,
-    "displayName": "33, Washington Street, Downtown, Toms River, Ocean County, New Jersey, 08753, United States"
   },
   "1501 san pedro dr se 87108 albuquerque nm": {
     "lat": 35.053963,
@@ -29069,16 +28239,6 @@
     "lon": -71.3075976,
     "displayName": "UBS Financial Services, 130, Bellevue Avenue, Newport, Newport County, Rhode Island, 02840, United States"
   },
-  "77 reservoir ave 2907 providence ri": {
-    "lat": 41.794389,
-    "lon": -71.42705,
-    "displayName": "Popeyes, 77, Reservoir Avenue, Elmwood, Providence, Providence County, Rhode Island, 02907, United States"
-  },
-  "1 bridge street 2903 providence ri": {
-    "lat": 41.764907,
-    "lon": -71.38978,
-    "displayName": "1, Bridge Street, Pawtuxet, Cranston, Providence County, Rhode Island, 02905, United States"
-  },
   "82 smith st 02903 providence ri": {
     "lat": 41.8308956,
     "lon": -71.4149587,
@@ -29298,31 +28458,6 @@
     "lat": 37.2755483,
     "lon": -76.7413997,
     "displayName": "Williamsburg-James City County Courthouse, 5201, Monticello Avenue, Indigo Terrace, New Town, Williamsburg, James City County, Virginia, 23188, United States"
-  },
-  "350 western ave 5301 brattleboro vt": {
-    "lat": 42.8504151,
-    "lon": -72.5800429,
-    "displayName": "350, Western Avenue, Brattleboro, Windham County, Vermont, 05301, United States"
-  },
-  "345 pine st 5401 burlington vt": {
-    "lat": 44.4694794,
-    "lon": -73.2154483,
-    "displayName": "345, Pine Street, Five Sisters, South End, Burlington, Chittenden County, Vermont, 05401, United States"
-  },
-  "1210 main st 5454 fairfax vt": {
-    "lat": 44.6652883,
-    "lon": -73.0087203,
-    "displayName": "Fairfax, Franklin County, Vermont, 05454, United States"
-  },
-  "4845 main st 5255 manchester vt": {
-    "lat": 43.1637747,
-    "lon": -73.0719969,
-    "displayName": "Manchester, Bennington County, Vermont, 05254, United States"
-  },
-  "5255 manchester vt": {
-    "lat": 43.1637747,
-    "lon": -73.0719969,
-    "displayName": "Manchester, Bennington County, Vermont, 05254, United States"
   },
   "259 us-7 05468 milton vt": {
     "lat": 44.6237843,
@@ -29589,14 +28724,599 @@
     "lon": -77.9889296,
     "displayName": "300, Foxcroft Avenue, Foxcroft Towne Center in Martinsburg, Martinsburg, Berkeley County, West Virginia, 25401, United States"
   },
-  "152 dukes road w3 0sl london great britain": {
-    "lat": 51.5237825,
-    "lon": -0.139949,
-    "displayName": "Royal Anthropological Institute of Great Britain and Ireland, 50, Fitzroy Street, Fitzrovia, London Borough of Camden, London, Greater London, England, W1T 6DY, United Kingdom"
-  },
   "99202 spokane wa": {
     "lat": 47.6571934,
     "lon": -117.42351,
     "displayName": "Spokane, Spokane County, Washington, United States"
+  },
+  "raytheon co, 362 lowell st  andover ma": {
+    "lat": 42.65717,
+    "lon": -71.1408776,
+    "displayName": "Andover, Essex County, Massachusetts, United States"
+  },
+  "liberty mall  boston ma": {
+    "lat": 42.3565605,
+    "lon": -71.0634158,
+    "displayName": "Liberty Mall, Beacon Hill, Boston, Suffolk County, Massachusetts, 02108, United States"
+  },
+  "840 providence hwy  dedham ma": {
+    "lat": 42.2359433,
+    "lon": -71.1782556,
+    "displayName": "Tesla, 840, Providence Highway, Dedham, Norfolk County, Massachusetts, 02026, United States"
+  },
+  "50 prince street  northampton ma": {
+    "lat": 42.3096182,
+    "lon": -72.646688,
+    "displayName": "L-3 KEO Mfg, 50, Prince Street, Northampton, Hampshire County, Massachusetts, 01063, United States"
+  },
+  "98 accord park drive  norwell ma": {
+    "lat": 42.1665512,
+    "lon": -70.8877393,
+    "displayName": "Tesla Norwell, 98, Accord Park Drive, Queen Anne's Corner, Accord, Norwell, Plymouth County, Massachusetts, 02061, United States"
+  },
+  "the roundabout  williamstown ma": {
+    "lat": 42.7135472,
+    "lon": -73.2094566,
+    "displayName": "Williamstown, Berkshire County, Massachusetts, 01267, United States"
+  },
+  "longley bridge, court st  auburn me": {
+    "lat": 44.0979903,
+    "lon": -70.2312137,
+    "displayName": "Auburn, Androscoggin County, Maine, 04210, United States"
+  },
+  "harlow st & central st  bangor me": {
+    "lat": 44.8016255,
+    "lon": -68.7713289,
+    "displayName": "Bangor, Penobscot County, Maine, 04401, United States"
+  },
+  "post office square  belfast me": {
+    "lat": 44.4261759,
+    "lon": -69.0065207,
+    "displayName": "Belfast, Waldo County, Maine, 04915, United States"
+  },
+  "maine street  brunswick me": {
+    "lat": 43.9132433,
+    "lon": -69.9641826,
+    "displayName": "Maine Street, Brunswick, Cumberland County, Maine, 04011, United States"
+  },
+  "mine street  brunswick me": {
+    "lat": 43.9166529,
+    "lon": -69.9659438,
+    "displayName": "Brunswick, Cumberland County, Maine, 04011, United States"
+  },
+  "camden village green  camden me": {
+    "lat": 44.210265,
+    "lon": -69.065552,
+    "displayName": "Camden, Knox County, Maine, 04843, United States"
+  },
+  "longfellow square  portland me": {
+    "lat": 43.6573605,
+    "lon": -70.2586618,
+    "displayName": "Portland, Cumberland County, Maine, United States"
+  },
+  "main st & park st  rockland me": {
+    "lat": 44.1048327,
+    "lon": -69.1091823,
+    "displayName": "Rockland, Knox County, Maine, 04841, United States"
+  },
+  "erskine park/casco bridge  s portland me": {
+    "lat": 43.6382443,
+    "lon": -70.2529189,
+    "displayName": "South Portland, Cumberland County, Maine, 04106, United States"
+  },
+  "verona bridge  verona island me": {
+    "lat": 44.5656403,
+    "lon": -68.7904198,
+    "displayName": "Verona Island, Hancock County, Maine, 04416, United States"
+  },
+  "2454 lafayette road (public grass strip)  portsmouth nh": {
+    "lat": 43.0702223,
+    "lon": -70.7548621,
+    "displayName": "Portsmouth, Rockingham County, New Hampshire, United States"
+  },
+  "1001 tilton rd  northfield nj": {
+    "lat": 39.378729,
+    "lon": -74.55431,
+    "displayName": "1001, Tilton Road, Northfield, Atlantic County, New Jersey, 08225, United States"
+  },
+  "33 washington st  toms river nj": {
+    "lat": 39.9531861,
+    "lon": -74.1966266,
+    "displayName": "33, Washington Street, Downtown, Toms River, Ocean County, New Jersey, 08753, United States"
+  },
+  "77 reservoir ave  providence ri": {
+    "lat": 41.794389,
+    "lon": -71.42705,
+    "displayName": "Popeyes, 77, Reservoir Avenue, Elmwood, Providence, Providence County, Rhode Island, 02907, United States"
+  },
+  "1 bridge street  providence ri": {
+    "lat": 41.818384,
+    "lon": -71.4024,
+    "displayName": "1, Bridge Street, Fox Point, Providence, Providence County, Rhode Island, 02903, United States"
+  },
+  "350 western ave  brattleboro vt": {
+    "lat": 42.8506118,
+    "lon": -72.5804834,
+    "displayName": "350, Western Avenue, Brattleboro, Windham County, Vermont, 05301, United States"
+  },
+  "345 pine st  burlington vt": {
+    "lat": 44.4694794,
+    "lon": -73.2154483,
+    "displayName": "345, Pine Street, Five Sisters, South End, Burlington, Chittenden County, Vermont, 05401, United States"
+  },
+  "1210 main st  fairfax vt": {
+    "lat": 44.6701199,
+    "lon": -73.0146854,
+    "displayName": "1210, Main Street, Fairfax, Franklin County, Vermont, 05454, United States"
+  },
+  "4845 main st  manchester vt": {
+    "lat": 43.1764339,
+    "lon": -73.057468,
+    "displayName": "4845, Main Street, Manchester, Bennington County, Vermont, 05255, United States"
+  },
+  "152 dukes road  london great britain": {
+    "lat": 51.5237825,
+    "lon": -0.139949,
+    "displayName": "Royal Anthropological Institute of Great Britain and Ireland, 50, Fitzroy Street, Fitzrovia, London Borough of Camden, London, Greater London, England, W1T 6DY, United Kingdom"
+  },
+  "e pleasant st  amherst ma usa": {
+    "lat": 42.3818977,
+    "lon": -72.5192755,
+    "displayName": "East Pleasant Street, Amherst, Hampshire County, Massachusetts, 01002, United States"
+  },
+  "888 boylston street  boston ma usa": {
+    "lat": 42.3480424,
+    "lon": -71.082783,
+    "displayName": "888 Boylston Street, 888, Boylston Street, Block G, Back Bay, Boston, Suffolk County, Massachusetts, 02199, United States"
+  },
+  "beacon & harvard st  brookline ma usa": {
+    "lat": 42.332918,
+    "lon": -71.1187829,
+    "displayName": "Brookline, Norfolk County, Massachusetts, United States"
+  },
+  "840 providence highway  dedham ma usa": {
+    "lat": 42.2359433,
+    "lon": -71.1782556,
+    "displayName": "Tesla, 840, Providence Highway, Dedham, Norfolk County, Massachusetts, 02026, United States"
+  },
+  "25 russell street  hadley ma usa": {
+    "lat": 42.3421498,
+    "lon": -72.5919676,
+    "displayName": "Russell Street, Hadley Center Historic District, Hadley, Hampshire County, Massachusetts, 01035, United States"
+  },
+  "hatfield ma usa": {
+    "lat": 42.3732087,
+    "lon": -72.596091,
+    "displayName": "Hatfield, Hampshire County, Massachusetts, United States"
+  },
+  "121 north st  hingham ma usa": {
+    "lat": 42.2429532,
+    "lon": -70.8892609,
+    "displayName": "Hingham Post Office, 121, North Street, Hingham Center, Hingham, Plymouth County, Massachusetts, 02043, United States"
+  },
+  "bark haul rd  longmeadow ma usa": {
+    "lat": 42.0383198,
+    "lon": -72.5954014,
+    "displayName": "Bark Haul Road, Longmeadow, Hampden County, Massachusetts, 01106, United States"
+  },
+  "n & s common st  lynn ma usa": {
+    "lat": 42.4613986,
+    "lon": -70.9646816,
+    "displayName": "South Common Street, Lynn, Essex County, Massachusetts, 01904, United States"
+  },
+  "360 n main st  mansfield ma usa": {
+    "lat": 42.0314821,
+    "lon": -71.2187175,
+    "displayName": "360, North Main Street, Mansfield, Bristol County, Massachusetts, 02048, United States"
+  },
+  "s main st  orange ma usa": {
+    "lat": 42.5500137,
+    "lon": -72.2980293,
+    "displayName": "South Main Street, Orange, Franklin County, Massachusetts, 01364, United States"
+  },
+  "east st & elm st  pittsfield ma usa": {
+    "lat": 42.4484778,
+    "lon": -73.2541069,
+    "displayName": "Pittsfield, Berkshire County, Massachusetts, United States"
+  },
+  "boston road & parker street  springfield ma usa": {
+    "lat": 42.1018764,
+    "lon": -72.5886727,
+    "displayName": "Springfield, Hampden County, Massachusetts, United States"
+  },
+  "475 pleasant street  watertown ma usa": {
+    "lat": 42.3664826,
+    "lon": -71.2057984,
+    "displayName": "475, Pleasant Street, Bemis, Watertown, Middlesex County, Massachusetts, 02472, United States"
+  },
+  "w main st & u.s. 202  hillsborough nh usa": {
+    "lat": 43.1149568,
+    "lon": -71.8948666,
+    "displayName": "Hillsborough, Hillsborough County, New Hampshire, 03244, United States"
+  },
+  "124 main st  kingston nh usa": {
+    "lat": 42.928114,
+    "lon": -71.05424,
+    "displayName": "124, Main Street, West Kingston, Kingston, Rockingham County, New Hampshire, 03848, United States"
+  },
+  "51 n park st  lebanon nh usa": {
+    "lat": 43.6433069,
+    "lon": -72.2518043,
+    "displayName": "Lebanon City Hall, 51, North Park Street, Lebanon, Grafton County, New Hampshire, 03766, United States"
+  },
+  "2454 lafayette road  portsmouth nh usa": {
+    "lat": 43.0354561,
+    "lon": -70.7851471,
+    "displayName": "2454, Lafayette Road, Portsmouth, Rockingham County, New Hampshire, 03870, United States"
+  },
+  "18 york st  lambertville nj usa": {
+    "lat": 40.3684651,
+    "lon": -74.9455763,
+    "displayName": "Lambertville City Hall, 18, York Street, Lambertville, Hunterdon County, New Jersey, 08530, United States"
+  },
+  "100 corporate dr  lebanon nj usa": {
+    "lat": 40.645312,
+    "lon": -74.834968,
+    "displayName": "100, Corporate Drive, Lebanon, Hunterdon County, New Jersey, 08833, United States"
+  },
+  "303 university ave  newark nj usa": {
+    "lat": 40.7391994,
+    "lon": -74.1796984,
+    "displayName": "Physical Education Building, 303, University Avenue, Teachers Village, The Ironbound, Newark, Essex County, New Jersey, 07102, United States"
+  },
+  "1909 new road  northfield nj usa": {
+    "lat": 39.3690594,
+    "lon": -74.5600899,
+    "displayName": "1909, New Road, Northfield, Atlantic County, New Jersey, 08225, United States"
+  },
+  "201 shore rd  northfield nj usa": {
+    "lat": 39.3767871,
+    "lon": -74.5375345,
+    "displayName": "201, Shore Road, Linwood Gables, Northfield, Atlantic County, New Jersey, 08225, United States"
+  },
+  "530 route 17  paramus nj usa": {
+    "lat": 40.9452911,
+    "lon": -74.0735899,
+    "displayName": "Paramus, Bergen County, New Jersey, United States"
+  },
+  "131-137 w state st  trenton nj usa": {
+    "lat": 40.2230275,
+    "lon": -74.7756092,
+    "displayName": "West State Street, Central West, Trenton, Mercer County, New Jersey, 08618, United States"
+  },
+  "1605 rte 70 w  cherry hill nj usa": {
+    "lat": 39.9348351,
+    "lon": -75.0307264,
+    "displayName": "Cherry Hill Township, Camden County, New Jersey, United States"
+  },
+  "530 rte 17  paramus nj usa": {
+    "lat": 40.9452911,
+    "lon": -74.0735899,
+    "displayName": "Paramus, Bergen County, New Jersey, United States"
+  },
+  "national mall  !! washington dc usa": {
+    "lat": 38.8950368,
+    "lon": -77.0365427,
+    "displayName": "Washington, District of Columbia, United States"
+  },
+  "499 barnstable road  hyannis ma usa": {
+    "lat": 41.663753,
+    "lon": -70.28678,
+    "displayName": "499, Barnstable Road, Hyannis, Barnstable, Barnstable County, Massachusetts, 02601, United States"
+  },
+  "rte 116 & sugarloaf street  south deerfield ma usa": {
+    "lat": 42.4773097,
+    "lon": -72.6078667,
+    "displayName": "South Deerfield, Deerfield, Franklin County, Massachusetts, 01373, United States"
+  },
+  "45 water st  biddeford me usa": {
+    "lat": 43.4918774,
+    "lon": -70.4481806,
+    "displayName": "45, Water Street, Biddeford, York County, Maine, 04005, United States"
+  },
+  "central ave  ocean city nj usa": {
+    "lat": 39.2854365,
+    "lon": -74.5665138,
+    "displayName": "Central Avenue, The Gardens, Ocean City, Cape May County, New Jersey, 08226, United States"
+  },
+  "trenton nj usa": {
+    "lat": 40.2203074,
+    "lon": -74.7659,
+    "displayName": "Trenton, Mercer County, New Jersey, United States"
+  },
+  "north st and west st  bristol vt usa": {
+    "lat": 44.1332662,
+    "lon": -73.0785227,
+    "displayName": "Bristol, Addison County, Vermont, United States"
+  },
+  "115 state st  montpelier vt usa": {
+    "lat": 44.2626941,
+    "lon": -72.5807647,
+    "displayName": "Vermont State Capitol, 115, State Street, Montpelier Historic District, Montpelier, Washington County, Vermont, 05602, United States"
+  },
+  "2420 kentucky st  racine wi usa": {
+    "lat": 42.7001616,
+    "lon": -87.830888,
+    "displayName": "S.C. Johnson Elementary School, 2420, Kentucky Street, West Racine, Racine, Racine County, Wisconsin, 53405, United States"
+  },
+  "ipsw-42a_113  ipswich ma usa": {
+    "lat": 42.679273,
+    "lon": -70.8411583,
+    "displayName": "Ipswich, Essex County, Massachusetts, 01938, United States"
+  },
+  "70 ma-28  orleans ma usa": {
+    "lat": 41.7839302,
+    "lon": -69.9892856,
+    "displayName": "Nauset Regional Middle School, 70, South Orleans Road, Orleans, Barnstable County, Massachusetts, 02653, United States"
+  },
+  "179 lisbon st  lewiston me usa": {
+    "lat": 44.0955417,
+    "lon": -70.2168871,
+    "displayName": "179, Lisbon Street, Lewiston, Androscoggin County, Maine, 04240, United States"
+  },
+  "brookfield ct usa": {
+    "lat": 41.4825947,
+    "lon": -73.4095652,
+    "displayName": "Brookfield, Western Connecticut Planning Region, Connecticut, 06804, United States"
+  },
+  "norwalk ct usa": {
+    "lat": 41.1175966,
+    "lon": -73.4078968,
+    "displayName": "Norwalk, Western Connecticut Planning Region, Connecticut, United States"
+  },
+  "torrington ct usa": {
+    "lat": 41.8006523,
+    "lon": -73.1212214,
+    "displayName": "Torrington, Northwest Hills Planning Region, Connecticut, 06790, United States"
+  },
+  "brookline ma usa": {
+    "lat": 42.332918,
+    "lon": -71.1187829,
+    "displayName": "Brookline, Norfolk County, Massachusetts, United States"
+  },
+  "falmouth ma usa": {
+    "lat": 41.5514979,
+    "lon": -70.6147519,
+    "displayName": "Falmouth, Barnstable County, Massachusetts, United States"
+  },
+  "hudson ma usa": {
+    "lat": 42.3913503,
+    "lon": -71.5676895,
+    "displayName": "Hudson, Middlesex County, Massachusetts, 01749, United States"
+  },
+  "ipswich ma usa": {
+    "lat": 42.679273,
+    "lon": -70.8411583,
+    "displayName": "Ipswich, Essex County, Massachusetts, 01938, United States"
+  },
+  "millis ma usa": {
+    "lat": 42.1675082,
+    "lon": -71.3572763,
+    "displayName": "Millis, Norfolk County, Massachusetts, 02054, United States"
+  },
+  "northampton ma usa": {
+    "lat": 42.3178989,
+    "lon": -72.6311006,
+    "displayName": "Northampton, Hampshire County, Massachusetts, United States"
+  },
+  "orange ma usa": {
+    "lat": 42.5908656,
+    "lon": -72.3097766,
+    "displayName": "Orange, Franklin County, Massachusetts, 01364, United States"
+  },
+  "springfield ma usa": {
+    "lat": 42.1018764,
+    "lon": -72.5886727,
+    "displayName": "Springfield, Hampden County, Massachusetts, United States"
+  },
+  "tyngsborough ma usa": {
+    "lat": 42.6761451,
+    "lon": -71.4227726,
+    "displayName": "Tyngsborough, Middlesex County, Massachusetts, 01879, United States"
+  },
+  "west stockbridge ma usa": {
+    "lat": 42.3343193,
+    "lon": -73.3678369,
+    "displayName": "West Stockbridge, Berkshire County, Massachusetts, 01266, United States"
+  },
+  "weymouth ma usa": {
+    "lat": 42.2212188,
+    "lon": -70.9391625,
+    "displayName": "Weymouth, Norfolk County, Massachusetts, United States"
+  },
+  "bangor me usa": {
+    "lat": 44.8016255,
+    "lon": -68.7713289,
+    "displayName": "Bangor, Penobscot County, Maine, 04401, United States"
+  },
+  "belfast me usa": {
+    "lat": 44.4261759,
+    "lon": -69.0065207,
+    "displayName": "Belfast, Waldo County, Maine, 04915, United States"
+  },
+  "boothbay me usa": {
+    "lat": 43.8762661,
+    "lon": -69.6340697,
+    "displayName": "Boothbay, Lincoln County, Maine, United States"
+  },
+  "caribou me usa": {
+    "lat": 46.8606301,
+    "lon": -68.0116807,
+    "displayName": "Caribou, Aroostook County, Maine, 04736, United States"
+  },
+  "ellsworth me usa": {
+    "lat": 44.5414596,
+    "lon": -68.4243599,
+    "displayName": "Ellsworth, Hancock County, Maine, United States"
+  },
+  "paris me usa": {
+    "lat": 44.2614578,
+    "lon": -70.5009798,
+    "displayName": "Paris, Oxford County, Maine, 04281, United States"
+  },
+  "waterville me usa": {
+    "lat": 44.5524176,
+    "lon": -69.6313607,
+    "displayName": "Waterville, Kennebec County, Maine, United States"
+  },
+  "wells me usa": {
+    "lat": 43.3220487,
+    "lon": -70.5807422,
+    "displayName": "Wells, York County, Maine, 04090, United States"
+  },
+  "york me usa": {
+    "lat": 43.1439384,
+    "lon": -70.6505274,
+    "displayName": "York, York County, Maine, United States"
+  },
+  "colebrook nh usa": {
+    "lat": 44.8942649,
+    "lon": -71.4964125,
+    "displayName": "Colebrook, Coös County, New Hampshire, 03576, United States"
+  },
+  "dover nh usa": {
+    "lat": 43.1981117,
+    "lon": -70.8739761,
+    "displayName": "Dover, Strafford County, New Hampshire, 03820, United States"
+  },
+  "portsmouth nh usa": {
+    "lat": 43.0702223,
+    "lon": -70.7548621,
+    "displayName": "Portsmouth, Rockingham County, New Hampshire, United States"
+  },
+  "atlantic city nj usa": {
+    "lat": 39.3642852,
+    "lon": -74.4229351,
+    "displayName": "Atlantic City, Atlantic County, New Jersey, United States"
+  },
+  "bloomfield nj usa": {
+    "lat": 40.7934789,
+    "lon": -74.1979277,
+    "displayName": "Bloomfield, Essex County, New Jersey, 07003, United States"
+  },
+  "glen ridge nj usa": {
+    "lat": 40.805378,
+    "lon": -74.2037566,
+    "displayName": "Glen Ridge, Essex County, New Jersey, 07028, United States"
+  },
+  "lambertville nj usa": {
+    "lat": 40.3656188,
+    "lon": -74.9454055,
+    "displayName": "Lambertville, Hunterdon County, New Jersey, 08530, United States"
+  },
+  "westerly ri usa": {
+    "lat": 41.3775996,
+    "lon": -71.8272911,
+    "displayName": "Westerly, South County, Rhode Island, United States"
+  },
+  "westfield ma usa": {
+    "lat": 42.1205411,
+    "lon": -72.7489158,
+    "displayName": "Westfield, Hampden County, Massachusetts, United States"
+  },
+  "lewiston me usa": {
+    "lat": 44.1004515,
+    "lon": -70.2150294,
+    "displayName": "Lewiston, Androscoggin County, Maine, 04240, United States"
+  },
+  "elm plaza  waterville me usa": {
+    "lat": 44.5687827,
+    "lon": -69.6421539,
+    "displayName": "Elm Plaza, Waterville, Kennebec County, Maine, 04901, United States"
+  },
+  "longmeadow ma usa": {
+    "lat": 42.0504498,
+    "lon": -72.5824639,
+    "displayName": "Longmeadow, Hampden County, Massachusetts, 01106, United States"
+  },
+  "mansfield ct usa": {
+    "lat": 41.7782147,
+    "lon": -72.2131565,
+    "displayName": "Mansfield, Capitol Planning Region, Connecticut, United States"
+  },
+  "south deerfield ma usa": {
+    "lat": 42.4773097,
+    "lon": -72.6078667,
+    "displayName": "South Deerfield, Deerfield, Franklin County, Massachusetts, 01373, United States"
+  },
+  "biddeford me usa": {
+    "lat": 43.4925843,
+    "lon": -70.4533844,
+    "displayName": "Biddeford, York County, Maine, 04005, United States"
+  },
+  "chelsea ma united states": {
+    "lat": 42.3912241,
+    "lon": -71.0369301,
+    "displayName": "Chelsea, Suffolk County, Massachusetts, 02150, United States"
+  },
+  "harvard ma united states": {
+    "lat": 42.501419,
+    "lon": -71.5845822,
+    "displayName": "Harvard, Worcester County, Massachusetts, United States"
+  },
+  "sandwich ma united states": {
+    "lat": 41.7579043,
+    "lon": -70.4968152,
+    "displayName": "Sandwich, Barnstable County, Massachusetts, United States"
+  },
+  "augusta me united states": {
+    "lat": 44.3169922,
+    "lon": -69.7734278,
+    "displayName": "Augusta, Kennebec County, Maine, 04330, United States"
+  },
+  "enfield ct united states": {
+    "lat": 41.9789387,
+    "lon": -72.5755109,
+    "displayName": "Enfield, Capitol Planning Region, Connecticut, United States"
+  },
+  "middletown ct united states": {
+    "lat": 41.5623178,
+    "lon": -72.6509061,
+    "displayName": "Middletown, Lower Connecticut River Valley Planning Region, Connecticut, United States"
+  },
+  "easthampton ma united states": {
+    "lat": 42.2708804,
+    "lon": -72.6719579,
+    "displayName": "Easthampton, Hampshire County, Massachusetts, United States"
+  },
+  "brunswick me united states": {
+    "lat": 43.9166529,
+    "lon": -69.9659438,
+    "displayName": "Brunswick, Cumberland County, Maine, 04011, United States"
+  },
+  "lubec me united states": {
+    "lat": 44.861172,
+    "lon": -66.983501,
+    "displayName": "Lubec, Washington County, Maine, 04652, United States"
+  },
+  "machias me united states": {
+    "lat": 44.7143592,
+    "lon": -67.4582679,
+    "displayName": "Machias, Washington County, Maine, 04654, United States"
+  },
+  "nashua nh united states": {
+    "lat": 42.7656251,
+    "lon": -71.4677032,
+    "displayName": "Nashua, Hillsborough County, New Hampshire, United States"
+  },
+  "new london nh united states": {
+    "lat": 43.414026,
+    "lon": -71.985168,
+    "displayName": "New London, Merrimack County, New Hampshire, United States"
+  },
+  "bridgewater nj united states": {
+    "lat": 40.5931225,
+    "lon": -74.604954,
+    "displayName": "Bridgewater Township, Somerset County, New Jersey, United States"
+  },
+  "franklin township nj united states": {
+    "lat": 40.4784936,
+    "lon": -74.5392118,
+    "displayName": "Franklin Township, Somerset County, New Jersey, United States"
+  },
+  "upr montclair nj united states": {
+    "lat": 40.8462107,
+    "lon": -74.2012565,
+    "displayName": "Upper Montclair, Montclair, Essex County, New Jersey, 07043, United States"
   }
 }

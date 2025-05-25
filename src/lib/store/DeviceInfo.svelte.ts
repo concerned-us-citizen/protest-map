@@ -5,9 +5,11 @@ export class DeviceInfo {
 
   static wideBreakpoint = 768;
   static tallBreakpoint = 600;
+  static shortBreakpoint = 400;
 
   readonly isWide = $derived(this.#width >= DeviceInfo.wideBreakpoint);
   readonly isTall = $derived(this.#height >= DeviceInfo.tallBreakpoint);
+  readonly isShort = $derived(this.height <= DeviceInfo.shortBreakpoint);
   readonly isTouchDevice = $derived(this.#isTouchDevice);
 
   readonly tapOrClick = $derived(this.#isTouchDevice ? "tap" : "click");

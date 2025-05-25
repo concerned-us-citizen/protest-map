@@ -137,66 +137,74 @@
 {#if pageState.eventStore.events.size > 0}
  <EventMap />
 
-  <div class="title-stats-and-filter-container">
-    <div class="title-and-stats-container">
-      <div class="title-container panel">
-        <h1 class="title">
-          Map of Protests
-        </h1>
-        <div class="date-range">
-          {pageState.eventStore.formattedDateRange}
-        </div>
-        {#if deviceInfo.isTall}
-        <div class="attribution-link">
-          <i>Provided by <a
-            href="https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748"
-            target="_blank"
-            title={pageState.eventStore.formattedUpdatedAt}
-          >We (the People) Dissent</a></i>
-        </div>
-        {/if}
-      </div>
 
-      <div class="current-date-stats panel">
-        <b>{formatDateIndicatingFuture(pageState.filter.currentDate)}</b>
-        <div class="location-count">
+    <div class="title-stats-and-filter-container">
+      <div class="title-and-stats-container">
 
-          {#if isFiltering}
-            <div class="is-filtering-indicator">
-              {pageState.filter.filteredEvents.length} of {countAndLabel(pageState.filter.currentDateEvents, 'location')}
+        {#if !deviceInfo.isShort}
+          <div class="title-container panel">
+            <h1 class="title">
+              Map of Protests
+            </h1>
+            <div class="date-range">
+              {pageState.eventStore.formattedDateRange}
             </div>
-          {:else}
-            {countAndLabel(pageState.filter.currentDateEvents, 'location')}
-          {/if}
+            {#if deviceInfo.isTall}
+            <div class="attribution-link">
+              <i>Provided by <a
+                href="https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748"
+                target="_blank"
+                title={pageState.eventStore.formattedUpdatedAt}
+              >We (the People) Dissent</a></i>
+            </div>
+            {/if}
+          </div>
+        {/if}
+
+        <div class="current-date-stats panel">
+          <b>{formatDateIndicatingFuture(pageState.filter.currentDate)}</b>
+          <div class="location-count">
+
+            {#if isFiltering}
+              <div class="is-filtering-indicator">
+                {pageState.filter.filteredEvents.length} of {countAndLabel(pageState.filter.currentDateEvents, 'location')}
+              </div>
+            {:else}
+              {countAndLabel(pageState.filter.currentDateEvents, 'location')}
+            {/if}
+          </div>
         </div>
       </div>
+
+  {#if !deviceInfo.isShort}
+      {#if pageState.filterVisible }
+          <FilterPanel className="filter panel" onClose={() => pageState.filterVisible = false} />
+      {/if}
+  {/if}
     </div>
 
-    {#if pageState.filterVisible }
-        <FilterPanel className="filter panel" onClose={() => pageState.filterVisible = false} />
-    {/if}
-  </div>
+  {#if !deviceInfo.isShort}
+    <div class="toolbar">
+      <IconButton
+        icon={pageState.autoplaying ? pauseIconSvg : playIconSvg}
+        onClick={() => pageState.toggleAutoplay()} 
+        label={pageState.autoplaying ? 'Pause Animation (Space)' : 'Play Animation (Space)'}
+      />
 
-  <div class="toolbar">
-    <IconButton
-      icon={pageState.autoplaying ? pauseIconSvg : playIconSvg}
-      onClick={() => pageState.toggleAutoplay()} 
-      label={pageState.autoplaying ? 'Pause Animation (Space)' : 'Play Animation (Space)'}
-    />
+      <IconButton
+        icon={filterIconSvg}
+        onClick={() => pageState.toggleFilterVisible() }
+        label={!pageState.filter.currentDateHasEventNames ? "No events to filter" : "Toggle Event Filter (F)"}
+        disabled={!pageState.filter.currentDateHasMultipleEventNames}
+      />
 
-    <IconButton
-      icon={filterIconSvg}
-      onClick={() => pageState.toggleFilterVisible() }
-      label={!pageState.filter.currentDateHasEventNames ? "No events to filter" : "Toggle Event Filter (F)"}
-      disabled={!pageState.filter.currentDateHasMultipleEventNames}
-    />
-
-    <IconButton
-      icon={infoIconSvg}
-      onClick={() => pageState.toggleHelpVisible()} 
-      label="Show Information Panel (I)"
-    />
-  </div>
+      <IconButton
+        icon={infoIconSvg}
+        onClick={() => pageState.toggleHelpVisible()} 
+        label="Show Information Panel (I)"
+      />
+    </div>
+  {/if}
 
   <div class="timeline-and-eventinfo">
     {#if pageState.eventInfoVisible}

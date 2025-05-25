@@ -10,6 +10,12 @@
 
 </script>
 
+<svelte:head>
+  <link rel="preload" as="image" href="timeline.png" />
+  <link rel="preload" as="image" href="info-popup.png" />
+  <link rel="preload" as="image" href="event-filter.png" />
+</svelte:head>
+
 <Tour className={className} steps={[
   {
     title: "US Protests Map",
@@ -37,7 +43,7 @@
     title: "Using the Timeline",
     description: `
     <p>Instead of animating, you can step through the dates by ${tapping} the arrow buttons (or the left or right arrow keys if available).</p>
-    <img src="timeline.png" class='tour-image' />
+    <img src="timeline.png" class='tour-image'/>
     <p>You can select a particular date by ${tapping} within the timeline.</p>
     <p>You can also "scrub" through the dates, by dragging across the timeline to see the map animate as you move.</p>
     `,

@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Nullable, ProtestEventAndLocation } from '$lib/types'; 
+  import { attributions } from './attributions';
 
   interface Props {
     protestEventAndLocation: Nullable<ProtestEventAndLocation>;
@@ -7,8 +8,6 @@
 
   const { protestEventAndLocation }: Props = $props();
   const { event, location } = protestEventAndLocation ?? { event: null, location: null };
-
-  const nytAttributionUrl = "https://github.com/nytimes/presidential-precinct-map-2024";
 
   let marginDisplay = $derived.by(() => {
     if (!location) {
@@ -53,7 +52,7 @@
       {/if}
     </div>
     {#if marginDisplay.show}
-      <a href="{nytAttributionUrl}" target="_blank" class="popup-margin-link">
+      <a href="{attributions.nytimesData.resourceLink}" target="_blank" class="popup-margin-link">
         <div class="popup-margin-display" style="color: {marginDisplay.marginColor};">
           <div class="popup-margin-title">2024 Margin</div>
           <div class="popup-margin-value">+{marginDisplay.absMarginPercent}</div>

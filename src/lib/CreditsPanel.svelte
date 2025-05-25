@@ -1,53 +1,17 @@
 <script lang="ts">
+  import { attributions } from './attributions';
   import { getPageStateFromContext } from './store/PageState.svelte';
 
   const { className } = $props();
 
   const pageState = getPageStateFromContext();
 
-  const attributions = [
-    {
-      description: 'Location data',
-      resourceName: 'We (the People) Dissent',
-      resourceLink: 'https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748'
-    },
-    {
-      description: 'Voting margins',
-      resourceName: 'The New York Times',
-      resourceLink: 'https://github.com/nytimes/presidential-precinct-map-2024'
-    },
-    {
-      description: 'App source',
-      resourceName: 'Protest Map',
-      resourceLink: 'https://github.com/concerned-us-citizen/protest-map'
-    },
-    {
-      description: 'Analytics',
-      resourceName: 'Goat Counter',
-      resourceLink: 'https://www.goatcounter.com'
-    },
-    {
-      description: 'Map Display',
-      resourceName: 'Leaflet',
-      resourceLink: 'https://leafletjs.com'
-    },
-    {
-      description: 'Geocoding',
-      resourceName: 'Nominatim',
-      resourceLink: 'https://nominatim.openstreetmap.org'
-    },
-    {
-      description: 'Protest icon',
-      resourceName: 'Fission Strategy',
-      resourceLink: 'https://thenounproject.com/icon/protest-15055/'
-    }
-  ];
 </script>
 
 <div class={`content ${className}`}>
   <p>Many thanks to the valuable efforts of these contributors:</p>
   <div class="attribution-container">
-    {#each attributions as attribution}
+    {#each Object.values(attributions) as attribution}
       <div class="attribution">
         <div class="description">{attribution.description}</div>
         <a href={attribution.resourceLink} target="_blank">{attribution.resourceName}</a>

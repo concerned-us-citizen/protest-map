@@ -13,6 +13,7 @@
     "lint": "eslint . --ext .js,.ts,.svelte",
     "lint:strict": "eslint . --ext .js,.ts,.svelte --max-warnings=0",
     "lint-data": "node scripts/lintData.js cache/events_raw.json",
+    "prune-bad-zips": "tsx scripts/pruneBadZips.ts",
     "preview": "vite preview",
     "prepare": "svelte-kit sync || echo ''",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",

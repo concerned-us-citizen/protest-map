@@ -1,5 +1,6 @@
 import fs from "fs/promises";
 import { existsSync } from "fs";
+import { isValidZipCode } from "../src/lib/util/string";
 
 const CACHE_FILE = "./cache/geocache.json";
 const BAD_CACHE_FILE = "./cache/bad_geocache.json";
@@ -59,6 +60,9 @@ async function fetchGeocode(url) {
 }
 
 async function geocodeFromService({ address, zip, city, state, country }) {
+  // Defend against poorly formed zips
+  zip = isValidZipCode(zip) ? zip : undefined;
+
   const allFieldsEmpty = [address, zip, city, state, country].every(
     (part) => !part?.trim()
   );

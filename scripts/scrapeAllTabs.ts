@@ -7,7 +7,7 @@ import {
   normalizeYearTo2025,
 } from "../src/lib/util/date.ts";
 import { mkdir } from "fs/promises";
-import { toTitleCase } from "../src/lib/util/string.ts";
+import { isValidZipCode, toTitleCase } from "../src/lib/util/string.ts";
 import { stripPropsFromValues } from "../src/lib/util/misc.ts";
 import { ProtestEventJson } from "../src/lib/types.ts";
 
@@ -179,7 +179,7 @@ function getLocationKey(event) {
   return parts.join("-");
 }
 
-function normalizeNames(rawEvents) {
+function normalizeRawEvents(rawEvents) {
   const correctedEventNames = {
     "": "Unnamed event",
     None: "Unnamed event",
@@ -187,10 +187,11 @@ function normalizeNames(rawEvents) {
   };
 
   return rawEvents.map((event) => {
-    const { name: originalName, ...rest } = event;
+    const { name: originalName, zip, ...rest } = event;
     const normalizedName =
       correctedEventNames[originalName] ?? toTitleCase(originalName).trim();
-    return { name: normalizedName, ...rest };
+    const normalizedZip = isValidZipCode(zip) ? zip : undefined;
+    return { name: normalizedName, zip: normalizedZip, ...rest };
   });
 }
 
@@ -318,11 +319,10 @@ const run = async () => {
       );
     }
 
-    const normalizedNameRawEvents = normalizeNames(rawEvents);
+    const normalizedRawEvents = normalizeRawEvents(rawEvents);
 
-    const normalizedEvents = await normalizeByLocationAndGroupByDate(
-      normalizedNameRawEvents
-    );
+    const normalizedEvents =
+      await normalizeByLocationAndGroupByDate(normalizedRawEvents);
 
     const augmentedLocations = await augmentLocations(
       normalizedEvents.locations

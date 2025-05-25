@@ -35,3 +35,21 @@ export function pluralize(
     typeof countOrList === "number" ? countOrList : countOrList.length;
   return count === 1 ? name : (pluralForm ?? `${name}s`);
 }
+
+export function isValidZipCode(
+  zipcodeString: string | undefined | null
+): boolean {
+  if (
+    zipcodeString === undefined ||
+    zipcodeString === null ||
+    zipcodeString === ""
+  ) {
+    return true;
+  }
+
+  // The regex pattern for a valid US ZIP code (5 digits or 5+4 digits with a hyphen)
+  const pattern: RegExp = /^\d{5}(-\d{4})?$/;
+
+  // Test the string against the pattern
+  return pattern.test(zipcodeString);
+}

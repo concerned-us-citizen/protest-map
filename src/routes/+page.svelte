@@ -138,7 +138,7 @@
  <EventMap />
 
 
-    <div class="title-stats-and-filter-container">
+    <div class="title-stats-and-filter-container hide-on-popup">
       <div class="title-and-stats-container">
 
         {#if !deviceInfo.isShort}
@@ -184,7 +184,7 @@
     </div>
 
   {#if !deviceInfo.isShort}
-    <div class="toolbar">
+    <div class="toolbar hide-on-popup">
       <IconButton
         icon={pageState.autoplaying ? pauseIconSvg : playIconSvg}
         onClick={() => pageState.toggleAutoplay()} 
@@ -332,5 +332,31 @@
   align-items: stretch;
   gap: .4em;
 }
+
+/* 
+Hide all overlays that might get occluded by a popup when one appears
+(those with .hide-on-popup, plus the built in leaflet zoom controls).
+Since leaflet lacks the ability to have popups on top.
+https://github.com/Leaflet/Leaflet/issues/4811#issuecomment-2346614599
+*/
+
+.hide-on-popup {
+  transition: opacity .5s;
+}
+:global(body:has(.leaflet-popup)) .hide-on-popup {
+  pointer-events: none;
+  opacity: 0;
+}
+:global(.leaflet-control) {
+  transition: opacity 0.5s;
+}
+
+:global(.leaflet-container:has(.leaflet-popup))
+  :global(:is(.leaflet-control-container, .leaflet-control-container *)) {
+  pointer-events: none;
+  opacity: 0;
+}
+
+
 
 </style>

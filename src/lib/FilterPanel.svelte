@@ -64,7 +64,7 @@
   .close-button {
     position: absolute;
     top: .1em;
-    right: .2em;
+    right: calc(var(--panel-padding-h) - var(--highlight-border-h));
     background: none;
     border: none;
     font-size: 1.5em;

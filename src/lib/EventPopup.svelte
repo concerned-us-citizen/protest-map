@@ -40,7 +40,9 @@
 <div class="popup-layout">
   {#if location}
     <div class="popup-image-container">
-      <img src="{location.image ? location.image : 'https://en.wikipedia.org/wiki/Springfield_(The_Simpsons)#/media/File:Springfield_(The_Simpsons).png'}" alt="{location.title}" />
+      <a href="{location.pageUrl}" target="_blank">
+        <img src="{location.image ? location.image : 'https://en.wikipedia.org/wiki/Springfield_(The_Simpsons)#/media/File:Springfield_(The_Simpsons).png'}" alt="{location.title}" />
+      </a>
     </div>
     <div class="popup-text-container">
       <a class="location-title" href="{location.pageUrl}" target="_blank"><strong>{location.title}</strong></a>
@@ -110,7 +112,7 @@
     text-decoration: underline;
   }
   .popup-text-container .event-title-link {
-    text-decoration: none;
+    text-decoration: underline;
     color: inherit;
     display: block;
   }

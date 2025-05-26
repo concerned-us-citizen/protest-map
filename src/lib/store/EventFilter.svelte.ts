@@ -1,6 +1,6 @@
 import { EventStore } from "./EventStore.svelte";
 import type { Nullable, SetTimeoutId } from "$lib/types";
-import { formatDate } from "$lib/util/date";
+import { formatDate, isFutureDate } from "$lib/util/date";
 
 const INITIAL_REPEAT_DELAY = 400; // ms
 const REPEAT_INTERVAL = 80; // ms
@@ -155,10 +155,12 @@ export class EventFilter {
 
   constructor(eventsStore: EventStore) {
     this.eventsStore = eventsStore;
-    // Initialize currentDateIndex to be 0 or -1 any time the eventsStore's items change
+    // Initialize currentDateIndex to be the date at or after the current system date
+    // (or - 1 if no match) any time the eventsStore's items change
     $effect(() => {
-      this.currentDateIndex =
-        eventsStore.allDatesWithEventCounts.length === 0 ? -1 : 0;
+      this.currentDateIndex = eventsStore.allDatesWithEventCounts.findIndex(
+        (dc) => isFutureDate(dc.date, true)
+      );
     });
 
     // Clear selectedEventNames any time currentDateIndex changes.

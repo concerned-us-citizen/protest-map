@@ -218,9 +218,13 @@ export const normalizeYearTo2025 = (dateStr: string): string | null => {
 };
 
 /**
- * Checks if a date string represents a date in the future.
+ * Checks if a date string represents a date in the future, or
+ * if includeToday is true, if it's today.
  */
-export const isFutureDate = (date: Date | null): boolean => {
+export const isFutureDate = (
+  date: Date | null,
+  includeToday = false
+): boolean => {
   if (!date) return false;
 
   const today = new Date();
@@ -228,7 +232,7 @@ export const isFutureDate = (date: Date | null): boolean => {
   today.setHours(0, 0, 0, 0);
   date.setHours(0, 0, 0, 0);
 
-  return date > today;
+  return includeToday ? date >= today : date > today;
 };
 
 export const formatDateIndicatingFuture = (date: Date | null) => {

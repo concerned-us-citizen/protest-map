@@ -118,6 +118,14 @@
       const center = continentalUSBounds.getCenter();
       map.setView(center, deviceInfo.isTouchDevice ? 2 : 3);
 
+      // Define bounds for the entire world
+      const worldBounds = L.latLngBounds(
+        L.latLng(-90, -180), // Southwest corner
+        L.latLng(90, 180)    // Northeast corner
+      );
+      // Restrict panning to the world bounds
+      map.setMaxBounds(worldBounds);
+
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors',
       }).addTo(map);

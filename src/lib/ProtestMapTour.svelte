@@ -60,7 +60,7 @@
     description: `
     <p>Each protest location is associated with an event (e.g."Hands Off!"). In many cases, there are multiple events on a given day.</p>
     <img src="event-filter.png" class='tour-image' />
-    <p>To see specific events' locations, ${tap} the filter tool button to see the list of events. Then ${tap} one or more names from that list.</p>
+    <p>To see specific events' locations, ${tap} on the location count next to the date to see the list of events. Then ${tap} one or more names from that list.</p>
     `,
   },
   {

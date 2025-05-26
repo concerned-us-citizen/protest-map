@@ -3,7 +3,7 @@
   import ProtestMapTour from '$lib/ProtestMapTour.svelte';
   import EventInfoPanel from '$lib/EventInfoPanel.svelte';
   import FilterPanel from '$lib/FilterPanel.svelte';
-  import { playIconSvg, pauseIconSvg, filterIconSvg, infoIconSvg } from '$lib/icons';
+  import { playIconSvg, pauseIconSvg, infoIconSvg } from '$lib/icons';
   import { formatDateIndicatingFuture } from '$lib/util/date.js';
   import { createPageStateInContext } from '$lib/store/PageState.svelte';
   import { countAndLabel } from '$lib/util/string';
@@ -167,14 +167,13 @@
             protests
           {/if}
           <div class="location-count">
-
+            <button class={`link-button ${isFiltering ? 'is-filtering-indicator' : ''}`} data-suppress-click-outside onclick={() => pageState.toggleFilterVisible()}>
             {#if isFiltering}
-              <div class="is-filtering-indicator">
-                {pageState.filter.filteredEvents.length} of {countAndLabel(pageState.filter.currentDateEvents, 'location')}
-              </div>
+                {pageState.filter.filteredEvents.length} of {countAndLabel(pageState.filter.currentDateEvents, 'location')} >
             {:else}
-              {countAndLabel(pageState.filter.currentDateEvents, 'location')}
+              {countAndLabel(pageState.filter.currentDateEvents, 'location')} >
             {/if}
+            </button>
           </div>
         </div>
       </div>
@@ -186,7 +185,6 @@
   {/if}
     </div>
 
-  {#if !deviceInfo.isShort}
     <div class="toolbar hide-on-popup">
       <IconButton
         icon={pageState.autoplaying ? pauseIconSvg : playIconSvg}
@@ -195,19 +193,11 @@
       />
 
       <IconButton
-        icon={filterIconSvg}
-        onClick={() => pageState.toggleFilterVisible() }
-        label={!pageState.filter.currentDateHasEventNames ? "No events to filter" : "Toggle Event Filter (F)"}
-        disabled={!pageState.filter.currentDateHasMultipleEventNames}
-      />
-
-      <IconButton
         icon={infoIconSvg}
         onClick={() => pageState.toggleHelpVisible()} 
         label="Show Information Panel (I)"
       />
     </div>
-  {/if}
 
   <div class="timeline-and-eventinfo">
     {#if pageState.eventInfoVisible}
@@ -274,7 +264,7 @@
   flex-direction: row;
   align-items: baseline;
   justify-content: space-between; 
-  gap: 1em; 
+  gap: .05em; 
   white-space: nowrap;
 }
 

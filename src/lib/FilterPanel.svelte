@@ -1,24 +1,31 @@
 <script lang="ts">
+  import { titleCase } from "title-case";
   import { clickOutside } from "./actions/clickOutside";
+  import { deviceInfo } from "./store/DeviceInfo.svelte";
   import { getPageStateFromContext } from "./store/PageState.svelte";
   import { countAndLabel } from "./util/string";
 
-  let { onClose, className = '', ...restProps } = $props();
+  let { className = '', ...restProps } = $props();
 
   const pageState = getPageStateFromContext();
   const eventNamesWithLocationCounts = $derived(pageState.filter.currentDateEventNamesWithLocationCounts);
 
 </script>
 
-<div class={`events-filter-component ${className}`} use:clickOutside={onClose} {...restProps}>
-  <button class="close-button" onclick={onClose} aria-label="Close filter">×</button>
-  <h4 class="filter-title">{countAndLabel(eventNamesWithLocationCounts, "Event")}</h4>
+<div class={`events-filter-component ${className}`} use:clickOutside={() => pageState.filterVisible=false} {...restProps}>
+  {#if pageState.filter.selectedEventNames.length > 0}
+  <h4 class="filter-title">From {pageState.filter.selectedEventNames.length} of {countAndLabel(eventNamesWithLocationCounts, "event")}:</h4>
+  {:else}
+  <h4 class="filter-title">From {countAndLabel(eventNamesWithLocationCounts, "protest event")}:</h4>
+  {/if}
   {#if eventNamesWithLocationCounts.length > 0}
     <div class="events-section-description">
       {#if pageState.filter.selectedEventNames.length > 0}
-      Filtered:  {countAndLabel(pageState.filter.selectedEventNames, "event")}, {countAndLabel(pageState.filter.filteredEvents, "location")}
+      <button class="link-button" onclick={() => pageState.filter.clearSelectedEventNames()}>
+        Clear Filter
+      </button>
       {:else}
-      (Tap to filter by one or more)
+      ({titleCase(deviceInfo.tapOrClick)} to filter by one or more)
       {/if}
     </div>
   {/if}
@@ -61,33 +68,23 @@
     padding-bottom: calc(var(--panel-padding-v) - var(--highlight-border-v));
   }
 
-  .close-button {
-    position: absolute;
-    top: .1em;
-    right: calc(var(--panel-padding-h) - var(--highlight-border-h));
-    background: none;
-    border: none;
-    font-size: 1.5em;
-    line-height: 1;
-    padding: 0;
-    cursor: pointer;
-    color: #888;
-  }
-  .close-button:hover {
-    color: #333;
-  }
   .events-section-description {
     font-style: italic;
-    font-size: 0.75em;
-    text-align: center;
+    font-size: 0.9em;
+    text-align: start;
+    margin-top: .3em;
     margin-bottom: .7em;
+    margin-left: var(--highlight-border-h);
+    margin-right: var(--highlight-border-h);
   }
   .filter-title {
     font-size: 0.9em;
     font-weight: bold;
     margin-top: .5em;
     margin-bottom: .1em;
-    text-align: center;
+    margin-left: var(--highlight-border-h);
+    margin-right: var(--highlight-border-h);
+    text-align: start;
   }
   .event-list-scrollable-area {
     display: flex;

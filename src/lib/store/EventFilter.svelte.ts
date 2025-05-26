@@ -92,6 +92,10 @@ export class EventFilter {
     }
   }
 
+  clearSelectedEventNames() {
+    this.selectedEventNames.length = 0;
+  }
+
   readonly filteredEvents = $derived(
     this.currentDateEvents.filter(
       (evt) =>
@@ -166,7 +170,7 @@ export class EventFilter {
     // Clear selectedEventNames any time currentDateIndex changes.
     $effect(() => {
       void this.currentDateIndex;
-      this.selectedEventNames.length = 0;
+      this.clearSelectedEventNames();
     });
   }
 }

@@ -5,11 +5,17 @@ export const clickOutside: Action<HTMLElement, () => void> = (
   callback
 ) => {
   const handleClick = (event: MouseEvent) => {
-    if (
-      node &&
-      !node.contains(event.target as Node) &&
-      !event.defaultPrevented
-    ) {
+    const target = event.target as HTMLElement | null;
+    // Check if clicked outside the node, and not default prevented
+    if (node && !node.contains(target) && !event.defaultPrevented) {
+      // Walk up ancestors from event.target, checking for attribute
+      let el = target;
+      while (el) {
+        if (el.hasAttribute && el.hasAttribute("data-suppress-click-outside")) {
+          return; // Suppress click outside behavior
+        }
+        el = el.parentElement;
+      }
       callback();
     }
   };

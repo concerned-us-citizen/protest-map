@@ -46,3 +46,13 @@ body.touch-device {
   --hover-color: transparent;
   --hover-selected-color: var(--selected-color);
 }
+
+.link-button {
+  background: none;
+  font-size: 1em;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: currentColor;
+}

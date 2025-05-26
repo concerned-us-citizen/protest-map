@@ -119,7 +119,7 @@
           <Component {...(currentStep.props || {})} />
         {:else}
           <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-          <p class="description-text">{@html currentStep.description}</p>
+          {@html currentStep.description}
         {/if}
       </div>
       <div class="footer">
@@ -165,7 +165,6 @@
     width: min(20em, 100vw - 4 * var(--toolbar-margin));
     height: min(30em, calc(100vh - 4 * var(--toolbar-margin)));
     display: flex;
-    gap: 1em;
     flex-direction: column;
   }
 
@@ -184,9 +183,9 @@
   }
 
   .icon-container {
-    width: 80px;
+    width: 4em;
     height: auto;
-    margin: -25px 10px 0px -15px;
+    margin: -1.2em 0 0 -.7em;
   }
 
   .icon-container :global(svg) {
@@ -207,12 +206,14 @@
     }
   }
 
-  .description-text { /* New style for description */
-    margin: 0 0 15px 0; /* Add some margin below description */
+  /* Has to be :global, since the p's are generated as inner html, 
+    (not visible to svelte) */
+
+  .vertical-scroll :global(p),
+  .vertical-scroll :global(img) { 
+    margin: 0 0 15px 0 !important; 
     text-align: left;
   }
-
-  /* Removed .title-description:last-child as description is moved */
 
   .footer {
     display: flex;

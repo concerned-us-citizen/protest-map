@@ -120,8 +120,8 @@
 
       // Define bounds for the entire world
       const worldBounds = L.latLngBounds(
-        L.latLng(-90, -180), // Southwest corner
-        L.latLng(90, 180)    // Northeast corner
+        L.latLng(-90, -220), // Southwest corner
+        L.latLng(90, 200)    // Northeast corner
       );
       // Restrict panning to the world bounds
       map.setMaxBounds(worldBounds);

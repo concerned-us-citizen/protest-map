@@ -158,7 +158,7 @@
     padding: 10px 0;
   }
   .event-name-in-list {
-    overflow-wrap: break-word;
+    overflow-wrap:anywhere;
   }
   .event-count-in-list {
     margin-left: 8px;

@@ -20,45 +20,45 @@
   {
     title: "US Protests Map",
     description: `
-    <p>This map shows recent and planned US protest locations over time, compiled from data collected by <a href="https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748" target="_blank">We (the People) Dissent</a>. It is updated daily from that list.</p>
-    <p>Locations are presented by date, and you can either play an animation of the compiled dates or select specific days manually.</p>
+    <p>This map shows recent and planned US protest locations over time, from data collected by <a href="https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748" target="_blank">We (the People) Dissent</a>. It's synced daily.</p>
+    <p>Locations are shown by date, which you can either animate or browse manually.</p>
     `,
   },
   {
     title: "Colored Locations",
     description: `
-    <p>Locations appear on the map as protest signs, colored in shades of red or blue to reflect the 2024 presidential voter preferences of the surrounding precinct.</p>
-    <p>Colors come from the margin by which Trump or Harris won the election in that precinct, using data compiled by the New York Times.</p>
+    <p>Protests are shaded red or blue to indicate the voter preferences of the surrounding precinct for the 2024 presidential election.</p>
+    <p>A precinct's shading comes from the margin by which Trump or Harris won the election there, using data compiled by the New York Times.</p>
     <p>Data for some precincts isn't available. Where absent, signs are presented in gray.</p>
     `,
   },
   {
-    title: "Animating The Dates",
+    title: "The Timeline",
     description: `
-    <p>You can watch the protests play out over time, by toggling the Play/Pause buttons.</p>
+    <p>You can step through time by ${tapping} the arrow buttons (or using left/right arrow keys if available).</p>
+    <img src="timeline.png" class='tour-image'/>
+    <p>You can also select a particular date by ${tapping} within the timeline.</p>
+    <p>Or "scrub" through the dates - drag across the timeline to see the map update.</p>
+    `,
+  },
+  {
+    title: "Animating Dates",
+    description: `
+    <p>Or you can press the Play button to watch protests play out over time.</p>
     <p>You can also use the spacebar to toggle animation if it's available.</p>
     `,
   },
   {
-    title: "Using the Timeline",
+    title: "Location Details",
     description: `
-    <p>Instead of animating, you can step through the dates by ${tapping} the arrow buttons (or the left or right arrow keys if available).</p>
-    <img src="timeline.png" class='tour-image'/>
-    <p>You can select a particular date by ${tapping} within the timeline.</p>
-    <p>You can also "scrub" through the dates, by dragging across the timeline to see the map animate as you move.</p>
-    `,
-  },
-  {
-    title: "View Location Details",
-    description: `
-    <p>${titleCase(tapping)} a location will present more detail about it - you can navigate to a Wikipedia entry on it, or to the associated event's link.</p>
+    <p>${titleCase(tapping)} a location will present more detail - you can navigate to its Wikipedia entry or the associated event's page (if it has one).</p>
     <img src="info-popup.png" class='tour-image'/>
     `,
   },
   {
     title: "View By Event",
     description: `
-    <p>Each protest location is associated with an event (e.g."Hands Off!"). In many cases, there are multiple events on a given day.</p>
+    <p>Each protest location is associated with an event (e.g."Hands Off!"). In most cases, there are multiple events on a given day.</p>
     <img src="event-filter.png" class='tour-image' />
     <p>To see specific events' locations, ${tap} on the location count next to the date to see the list of events. Then ${tap} one or more names from that list.</p>
     `,
@@ -66,7 +66,7 @@
   {
     title: "Change the Map's View",
     description: `
-    <p>You can ${deviceInfo.isTouchDevice ? "pinch and drag" : "pan and zoom"} around the map to reveal more locations or see areas in more detail.</p>
+    <p>You can ${deviceInfo.isTouchDevice ? "pinch and drag" : "pan and zoom"} around the map to see locations more clearly.</p>
     `,
   },
   {

@@ -350,7 +350,7 @@
 }
 
 /* 
-Hide all overlays that might get occluded by a popup when one appears
+Hide all overlays that might be occluded by a popup when one appears
 (those with .hide-on-popup, plus the built in leaflet zoom controls).
 Since leaflet lacks the ability to have popups on top.
 https://github.com/Leaflet/Leaflet/issues/4811#issuecomment-2346614599

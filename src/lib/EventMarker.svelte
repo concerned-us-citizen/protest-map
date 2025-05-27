@@ -117,37 +117,3 @@
     markerInstance = null;
   });
 </script>
-
-<style>
-
-:global(.leaflet-div-icon) {
-  background: none !important;
-  border: none !important;
-}
-
-:global(.location-cluster-marker) {
-  position: relative;
-  display: inline-block;
-}
-
-:global(.location-cluster-marker) > :global(.location-cluster-count) {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  font-size: 0.7em;
-  transform: translate(30%, 30%);
-  background: white;
-  color: #222;
-  border-radius: 50%;
-  min-width: 1.8em;
-  min-height: 1.8em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
-  pointer-events: none;
-  border: 2px solid #fff;
-  z-index: 1;
-}
-</style>

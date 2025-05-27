@@ -137,14 +137,6 @@
       const center = continentalUSBounds.getCenter();
       map.setView(center, deviceInfo.isTouchDevice ? 2 : 3);
 
-      // // Define bounds for the entire world
-      // const worldBounds = L.latLngBounds(
-      //   L.latLng(-90, -220), // Southwest corner
-      //   L.latLng(90, 200)    // Northeast corner
-      // );
-      // // Restrict panning to the world bounds
-      // map.setMaxBounds(worldBounds);
-
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors',
       }).addTo(map);
@@ -164,7 +156,6 @@
 
     } catch (error) {
       console.error('onMount: Failed to load Leaflet or initialize map:', error);
-      // No need to reset flags like processingInitialization, as onMount runs once.
     }
   });
 

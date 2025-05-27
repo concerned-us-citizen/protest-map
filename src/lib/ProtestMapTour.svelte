@@ -3,6 +3,7 @@
   import CreditsPanel from "./CreditsPanel.svelte";
   import { deviceInfo } from "./store/DeviceInfo.svelte";
   import { titleCase } from "title-case";
+  import { markerColor } from "./colors";
   let { onClose, className = '' } = $props();
 
   let tapping = deviceInfo.tappingOrClicking;
@@ -27,9 +28,9 @@
   {
     title: "Colored Locations",
     description: `
-    <p>Protests are shaded red or blue to indicate the voter preferences of the surrounding precinct for the 2024 presidential election.</p>
-    <p>A precinct's shading comes from the margin by which Trump or Harris won the election there, using data compiled by the New York Times.</p>
-    <p>Data for some precincts isn't available. Where absent, signs are presented in gray.</p>
+    <p>Protests are colored <span style='color:${markerColor.red}'>red</span> or <span style='color:${markerColor.blue}'>blue</span> (<span style='color:${markerColor.purple}'>purple</span> when clustered together) to show voter preferences of the surrounding precinct for the 2024 presidential election.</p>
+    <p>A precinct's color indicates the margin by which Trump or Harris won the election there, using data compiled by the New York Times.</p>
+    <p>Data for some precincts isn't available. Where absent, protests are colored <span style='color:${markerColor.unavailable}'>orange</span>.</p> 
     `,
   },
   {

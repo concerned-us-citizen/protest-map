@@ -6,10 +6,6 @@
   }
 
   const iconSize = 30;
-  const red = 'rgb(190, 40, 40)';
-  const blue = 'rgb(23, 78, 154)';
-  const purple = 'rgb(110, 48, 155)';
-  const unavailable = 'rgb(255, 140, 0)'; // currently orange;
 
   export const htmlForClusterMarker = (cluster: MarkerCluster) => {
     const count = cluster.getChildCount();
@@ -28,12 +24,12 @@
       return acc;
     }, {red: 0, blue: 0, unavailable: 0});
     const color = (counts.red === 0 && counts.blue === 0)
-      ? unavailable
+      ? markerColor.unavailable
       : (counts.red > 0 && counts.blue > 0)
-        ? purple
+        ? markerColor.purple
         : (counts.red > counts.blue)
-          ? red
-          : blue;
+          ? markerColor.red
+          : markerColor.blue;
     return `<div class='location-cluster-marker'>${htmlForMarker(color, 1)}<div class='location-cluster-count'>${count}</div>`;
   }
 
@@ -45,10 +41,10 @@
 
     const percentage = typeof pct === 'string' ? parseFloat(pct) : pct ?? 0;
     let color = pct === undefined || pct === null || isNaN(Number(pct)) 
-      ? unavailable
+      ? markerColor.unavailable
       : (percentage > 0)
-        ? blue
-        : red;
+        ? markerColor.blue
+        : markerColor.red;
 
     return htmlForMarker(color, 1);
   }
@@ -60,6 +56,7 @@
   import type { Marker, DivIcon, Map, MarkerClusterGroup, MarkerCluster } from 'leaflet';
   import type { Nullable } from './types';
   import { browser } from '$app/environment';
+  import { markerColor } from './colors';
   
   interface EventMarkerProps {
       L: typeof import('leaflet');

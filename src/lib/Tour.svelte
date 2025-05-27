@@ -185,7 +185,7 @@
 
   .icon-container {
     height: 4em;
-    width: auto;
+    width: 4em;
     /* Adjust for svg internal whitespace TODO fix in svg */
     margin: -.7em;
   }
@@ -286,6 +286,6 @@
   }
 
   :global(.tour-image) {
-    max-width: min(80vw, 20em);
+    max-width: min(80vw, 14em);
   }
 </style>

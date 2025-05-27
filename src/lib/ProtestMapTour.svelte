@@ -66,7 +66,8 @@
   {
     title: "Change the Map's View",
     description: `
-    <p>You can ${deviceInfo.isTouchDevice ? "pinch and drag" : "pan and zoom"} around the map to see locations more clearly.</p>
+    <p>You can ${deviceInfo.isTouchDevice ? "use pinch and drag gestures" : "pan and zoom with the mouse"} to see locations more clearly.</p>
+    <p>If a keyboard is available, you can also zoom with '+' or 'z', and unzoom with '-' or 'Z'.</p>
     `,
   },
   {

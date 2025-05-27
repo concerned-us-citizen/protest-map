@@ -179,13 +179,15 @@
   .header {
     display: flex;
     flex-direction: row;
-    align-items: flex-start;
+    align-items: center;
+    gap: .5em;
   }
 
   .icon-container {
-    width: 4em;
-    height: auto;
-    margin: -1.2em 0 0 -.7em;
+    height: 4em;
+    width: auto;
+    /* Adjust for svg internal whitespace TODO fix in svg */
+    margin: -.7em;
   }
 
   .icon-container :global(svg) {
@@ -197,7 +199,7 @@
   .title-container h1 {
     font-size: 1.5em;
     font-weight: bold;
-    margin: 5px 0 10px 0;
+    margin: 0;
   }
 
   @media (max-width: 600px) {
@@ -211,7 +213,7 @@
 
   .vertical-scroll :global(p),
   .vertical-scroll :global(img) { 
-    margin: 0 0 15px 0 !important; 
+    margin: 15px 0 0 0 !important; 
     text-align: left;
   }
 

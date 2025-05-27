@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { type Map as LeafletMap, type LayerGroup } from 'leaflet';
+  import { type MarkerClusterGroup, type Map as LeafletMap } from 'leaflet';
   import { onMount, onDestroy, mount } from 'svelte';
   import EventPopup from '$lib/EventPopup.svelte';
   import { getPageStateFromContext } from '$lib/store/PageState.svelte';
-  import EventMarker, { type ProtestEventMarkerOptions } from './EventMarker.svelte';
+  import EventMarker, { htmlForClusterMarker, type ProtestEventMarkerOptions } from './EventMarker.svelte';
   import type { Nullable } from './types';
   import { browser } from '$app/environment';
   import { deviceInfo } from '$lib/store/DeviceInfo.svelte';
@@ -19,7 +19,7 @@
   let mapElement: HTMLElement | undefined;
   let L: LeafletModule | undefined = $state(undefined);
   let map: Nullable<LeafletMap> = $state(null);
-  let markerLayerGroup: Nullable<LayerGroup> = $state(null);
+  let markerClusterGroup: Nullable<MarkerClusterGroup> = $state(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let sveltePopupInstance: Nullable<any> = null;
   let sveltePopupContainer: Nullable<HTMLElement> = null;
@@ -78,6 +78,18 @@
     });
   }
 
+  export function zoomIn() {
+    if (map) {
+      map.zoomIn();
+    }
+  }
+
+  export function zoomOut() {
+    if (map) {
+      map.zoomOut();
+    }
+  }
+
   function closePopup() {
     if (!map) return;
 
@@ -102,11 +114,18 @@
     }
 
     try {
-      // This has to be done dynamically because of SSR.
-      const leaflet: LeafletModule = await import('leaflet');
+      // These have to be done dynamically because of SSR.
+      await import('leaflet');
+      await import('leaflet.markercluster');
       await import('leaflet/dist/leaflet.css');
+      await import('leaflet.markercluster/dist/MarkerCluster.css');
+      await import('leaflet.markercluster/dist/MarkerCluster.Default.css');
 
-      L = leaflet;
+      // Deal with issue that markercluster module depends on a global L.
+      if (!window.L || typeof window.L.map !== 'function' || typeof window.L.markerClusterGroup !== 'function') {
+        throw new Error("Leaflet or MarkerCluster plugin not loaded correctly on window.L");
+      }
+      L = window.L as LeafletModule;
 
       const newMap = L.map(mapElement!, { zoomControl: false, keyboard: false, minZoom: 2 });
       map = newMap;
@@ -118,13 +137,13 @@
       const center = continentalUSBounds.getCenter();
       map.setView(center, deviceInfo.isTouchDevice ? 2 : 3);
 
-      // Define bounds for the entire world
-      const worldBounds = L.latLngBounds(
-        L.latLng(-90, -220), // Southwest corner
-        L.latLng(90, 200)    // Northeast corner
-      );
-      // Restrict panning to the world bounds
-      map.setMaxBounds(worldBounds);
+      // // Define bounds for the entire world
+      // const worldBounds = L.latLngBounds(
+      //   L.latLng(-90, -220), // Southwest corner
+      //   L.latLng(90, 200)    // Northeast corner
+      // );
+      // // Restrict panning to the world bounds
+      // map.setMaxBounds(worldBounds);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors',
@@ -134,9 +153,14 @@
         mapElement.addEventListener('keydown', handleMapKeyDown);
       }
 
-      markerLayerGroup = L.featureGroup().addTo(map);
+      markerClusterGroup = L.markerClusterGroup({
+        maxClusterRadius: 20,
+        iconCreateFunction: function(cluster) {
+          return L!.divIcon({ html: htmlForClusterMarker(cluster) });
+        }
+      }).addTo(map);
 
-      markerLayerGroup?.on('click', handleMarkerClick);
+      markerClusterGroup?.on('click', handleMarkerClick);
 
     } catch (error) {
       console.error('onMount: Failed to load Leaflet or initialize map:', error);
@@ -169,19 +193,19 @@
       }
       map.remove();
       map = null;
-      markerLayerGroup?.off('click', handleMarkerClick);
+      markerClusterGroup?.off('click', handleMarkerClick);
       L = undefined;
-      markerLayerGroup = null;
+      markerClusterGroup = null;
     }
   });
 </script>
 
 <div class={`map-container ${className} ${deviceInfo.isTouchDevice ? 'touch-device' : ''}`} bind:this={mapElement} tabindex="-1">
-  {#if map && L && markerLayerGroup && pageState.filter.filteredEvents}
+  {#if map && L && markerClusterGroup && pageState.filter.filteredEvents}
     {#each pageState.filter.filteredEvents as protestEvent (protestEvent.id)}
       {@const loc = pageState.eventStore.locations.get(protestEvent.location)}
       {#if loc && loc.lat != null && loc.lon != null}
-        <EventMarker {L} {map} protestEventAndLocation={{event: protestEvent, location: loc}} {markerLayerGroup} />
+        <EventMarker {L} {map} protestEventAndLocation={{event: protestEvent, location: loc}} {markerClusterGroup} />
       {/if}
     {/each}
   {/if}

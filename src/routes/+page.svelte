@@ -10,10 +10,13 @@
   import Timeline from '$lib/Timeline.svelte';
   import IconButton from '$lib/IconButton.svelte';
   import EventMap from '$lib/EventMap.svelte';
+  import type { Nullable } from '$lib/types.js';
 
   const { data } = $props();
 
   let pageState = createPageStateInContext();
+
+  let eventMap: Nullable<EventMap> = $state(null);
 
   $effect(() => {
 
@@ -100,6 +103,18 @@
       event.preventDefault();
       return;
     }
+
+    if (key === '+' || event.key === 'z') {
+      event.preventDefault();
+      eventMap?.zoomIn();
+      return;
+    }
+
+    if (key === '-' || event.key == 'Z') {
+      event.preventDefault();
+      eventMap?.zoomOut();
+      return;
+    }
   }
 
   function handleKeyup(event: KeyboardEvent) {
@@ -135,48 +150,48 @@
 </svelte:head>
 
 {#if pageState.eventStore.events.size > 0}
- <EventMap />
 
+ <EventMap bind:this={eventMap} />
 
-    <div class="title-stats-and-filter-container hide-on-popup">
-      <div class="title-and-stats-container">
+<div class="title-stats-and-filter-container hide-on-popup">
+  <div class="title-and-stats-container">
 
-        {#if !deviceInfo.isShort}
-          <div class="title-container panel">
-            <h1 class="title">
-              Map of Protests
-            </h1>
-            <div class="date-range">
-              {pageState.eventStore.formattedDateRange}
-            </div>
-            {#if deviceInfo.isTall}
-            <div class="attribution-link">
-              <i>Provided by <a
-                href="https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748"
-                target="_blank"
-                title={pageState.eventStore.formattedUpdatedAt}
-              >We (the People) Dissent</a></i>
-            </div>
-            {/if}
-          </div>
-        {/if}
-
-        <div class="current-date-stats panel">
-          <b>{formatDateIndicatingFuture(pageState.filter.currentDate)}</b>
-          {#if deviceInfo.isShort}
-            protests
-          {/if}
-          <div class="location-count">
-            <button class={`link-button ${isFiltering ? 'is-filtering-indicator' : ''}`} data-suppress-click-outside onclick={() => pageState.toggleFilterVisible()}>
-            {#if isFiltering}
-                {pageState.filter.filteredEvents.length} of {countAndLabel(pageState.filter.currentDateEvents, 'location')} >
-            {:else}
-              {countAndLabel(pageState.filter.currentDateEvents, 'location')} >
-            {/if}
-            </button>
-          </div>
+    {#if !deviceInfo.isShort}
+      <div class="title-container panel">
+        <h1 class="title">
+          Map of Protests
+        </h1>
+        <div class="date-range">
+          {pageState.eventStore.formattedDateRange}
         </div>
+        {#if deviceInfo.isTall}
+        <div class="attribution-link">
+          <i>Provided by <a
+            href="https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748"
+            target="_blank"
+            title={pageState.eventStore.formattedUpdatedAt}
+          >We (the People) Dissent</a></i>
+        </div>
+        {/if}
       </div>
+    {/if}
+
+    <div class="current-date-stats panel">
+      <b>{formatDateIndicatingFuture(pageState.filter.currentDate)}</b>
+      {#if deviceInfo.isShort}
+        protests
+      {/if}
+      <div class="location-count">
+        <button class={`link-button ${isFiltering ? 'is-filtering-indicator' : ''}`} data-suppress-click-outside onclick={() => pageState.toggleFilterVisible()}>
+        {#if isFiltering}
+            {pageState.filter.filteredEvents.length} of {countAndLabel(pageState.filter.currentDateEvents, 'location')} >
+        {:else}
+          {countAndLabel(pageState.filter.currentDateEvents, 'location')} >
+        {/if}
+        </button>
+      </div>
+    </div>
+  </div>
 
   {#if !deviceInfo.isShort}
       {#if pageState.filterVisible }

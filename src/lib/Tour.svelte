@@ -4,7 +4,6 @@
   import { crossfade } from 'svelte/transition';
   import { markerSvg } from './icons';
   import InlineSvg from './InlineSvg.svelte';
-  import type { Nullable } from './types';
 
   const dispatch = createEventDispatcher();
 
@@ -34,16 +33,6 @@
   let showPrevious = $derived(currentStepIndex > 0);
   let showNext = $derived(currentStepIndex < steps.length - 1);
 
-  let panelElement: Nullable<HTMLElement> = $state(null);
-  $effect(() => {
-      panelElement?.addEventListener('touchstart', handleTouchStart as EventListenerOrEventListenerObject);
-      panelElement?.addEventListener('touchend', handleTouchEnd as EventListenerOrEventListenerObject);
-      return () => {
-        panelElement?.removeEventListener('touchstart', handleTouchStart as EventListenerOrEventListenerObject);
-        panelElement?.removeEventListener('touchend', handleTouchEnd as EventListenerOrEventListenerObject);
-      }
-  });
-
 
   function dismiss() {
     dispatch('dismiss');
@@ -67,6 +56,7 @@
   const handleTouchStart = (event: Event | TouchEvent) => {
     if ('touches' in event) {
       touchStartX = event.touches[0].clientX;
+      event.preventDefault();
     }
   };
 
@@ -83,6 +73,7 @@
           nextStep();
         }
       }
+      event.preventDefault();
     }
   };
 
@@ -105,22 +96,24 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div class={`dimmed-background ${className}`} onclick={handleBackgroundClick}>
-    <div class="tour-panel" bind:this={panelElement} in:receive={{ key: currentStepIndex }} out:send={{ key: currentStepIndex }}>
-      <div class="header">
-        <div class="icon-container">
-          <InlineSvg content={markerSvg}/>
+    <div class="tour-panel" in:receive={{ key: currentStepIndex }} out:send={{ key: currentStepIndex }}>
+      <div class="swipe-panel" ontouchstart={handleTouchStart} ontouchend={handleTouchEnd} >
+        <div class="header">
+          <div class="icon-container">
+            <InlineSvg content={markerSvg}/>
+          </div>
+          <div class="title-container">
+            <h1>{currentStep.title}</h1>
+          </div>
         </div>
-        <div class="title-container">
-          <h1>{currentStep.title}</h1>
+        <div class="vertical-scroll">
+          {#if currentStep?.component}
+            <Component {...(currentStep.props || {})} />
+          {:else}
+            <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+            {@html currentStep.description}
+          {/if}
         </div>
-      </div>
-      <div class="vertical-scroll">
-        {#if currentStep?.component}
-          <Component {...(currentStep.props || {})} />
-        {:else}
-          <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-          {@html currentStep.description}
-        {/if}
       </div>
       <div class="footer">
         <button class="link-button" onclick={dismiss}>Dismiss</button>
@@ -151,13 +144,11 @@
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     padding: var(--toolbar-margin); 
-    pointer-events: auto; 
-    box-sizing: border-box; 
+    box-sizing: border-box;
     z-index: 1000;
   }
 
   .tour-panel {
-    pointer-events: auto; /* Re-enable clicks for the panel */
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -166,6 +157,13 @@
     height: min(30em, calc(100vh - 4 * var(--toolbar-margin)));
     display: flex;
     flex-direction: column;
+  }
+
+  .swipe-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
   }
 
   .vertical-scroll {

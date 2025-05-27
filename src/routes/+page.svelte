@@ -115,6 +115,13 @@
       eventMap?.zoomOut();
       return;
     }
+
+    // Unzoom to initial level (U or R)
+    if (key === 'u' || key === 'r') {
+      event.preventDefault();
+      eventMap?.resetZoom();
+      return;
+    }
   }
 
   function handleKeyup(event: KeyboardEvent) {

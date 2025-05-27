@@ -25,6 +25,9 @@
   let sveltePopupContainer: Nullable<HTMLElement> = null;
   let zoomControlInstance: Nullable<L.Control.Zoom> = $state(null);
 
+  let initialCenter: Nullable<L.LatLngExpression> = $state(null);
+  let initialZoom: Nullable<number> = $state(null);
+
   const pageState = getPageStateFromContext();
 
   const handleMapKeyDown = (event: KeyboardEvent): void => {
@@ -90,6 +93,12 @@
     }
   }
 
+  export function resetZoom() {
+    if (map && initialCenter && initialZoom !== null) {
+      map.setView(initialCenter, initialZoom);
+    }
+  }
+
   function closePopup() {
     if (!map) return;
 
@@ -135,7 +144,12 @@
         L.latLng(47, -66)
       );
       const center = continentalUSBounds.getCenter();
-      map.setView(center, deviceInfo.isTouchDevice ? 2 : 3);
+      const zoom = deviceInfo.isTouchDevice ? 2 : 3;
+      map.setView(center, zoom);
+
+      // Store initial view
+      initialCenter = center;
+      initialZoom = zoom;
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors',

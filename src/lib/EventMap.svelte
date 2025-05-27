@@ -154,7 +154,7 @@
       }
 
       markerClusterGroup = L.markerClusterGroup({
-        maxClusterRadius: 20,
+        maxClusterRadius: 15,
         iconCreateFunction: function(cluster) {
           return L!.divIcon({ html: htmlForClusterMarker(cluster) });
         }

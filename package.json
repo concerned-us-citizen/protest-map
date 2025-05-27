@@ -4,9 +4,9 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "scrape": "tsx scripts/scrapeAllTabs.js",
-    "scrapecached": "tsx scripts/scrapeAllTabs.js --use-cache",
-    "update-prebuilt-data": "tsx scripts/scrapeAllTabs.js --updatePrebuiltData",
+    "scrape": "tsx scripts/scrape/scrapeAllTabs.js",
+    "scrapecached": "tsx scripts/scrape/scrapeAllTabs.js --use-cache",
+    "update-prebuilt-data": "tsx scripts/scrape/scrapeAllTabs.js --updatePrebuiltData",
     "setup": "node scripts/downloadPrecinctsSpatialIndex.js",
     "dev": "vite dev",
     "build": "npm run check && npm run lint:strict && vite build",

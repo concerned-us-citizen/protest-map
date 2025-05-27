@@ -89,7 +89,6 @@ export const parseDateString = (dateStr: string): Date | null => {
     }
   }
 
-  console.log(`parseDateString failed to parse: "${dateStr}"`);
   return null;
 };
 
@@ -171,9 +170,12 @@ export const formatDateRange = (
  * @param {string | null | undefined} dateStr The date string to normalize.
  * @returns {string | null} The date string in YYYY-MM-DD format or null.
  */
-export const normalizeToYYYYMMDD = (dateStr: string): string | null => {
+export const normalizeToYYYYMMDD = (
+  dateStr?: string | undefined
+): string | undefined => {
+  if (!dateStr) return undefined;
   const d = parseDateString(dateStr);
-  if (!d) return null;
+  if (!d) return undefined;
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 };
 
@@ -186,7 +188,9 @@ export const normalizeToYYYYMMDD = (dateStr: string): string | null => {
  * @param {string | null | undefined} dateStr The date string in YYYY-MM-DD format.
  * @returns {string | null} The date string with the potentially normalized year, or null if input is null/undefined.
  */
-export const normalizeYearTo2025 = (dateStr: string): string | null => {
+export const normalizeYearTo2025 = (
+  dateStr?: string | undefined
+): string | null => {
   if (!dateStr) return null;
 
   const year = parseInt(dateStr.substring(0, 4), 10);

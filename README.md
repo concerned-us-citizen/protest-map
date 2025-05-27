@@ -8,7 +8,7 @@ This project displays recent and planned US protest locations over time on an in
 
 The project creates and deploys a static web site to GitHub Pages. It has two main components:
 
-1.  **Data Scraper (`scripts/scrapeAllTabs.js`):**
+1.  **Data Scraper (`scripts/scrape/scrapeAllTabs.js`):**
     *   This Node.js script fetches event data from a Google Sheet maintained by the volunteer organization [We (the People) Dissent](https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748).
     *   It augments this event data with:
         *   Geocoding information from [Nominatim](https://nominatim.openstreetmap.org) for event locations.
@@ -37,12 +37,12 @@ The project creates and deploys a static web site to GitHub Pages. It has two ma
 2.  **Generate Data:**
     *   Perform a live scrape and generate `static/data/data.json`:
         ```bash
-        node scripts/scrapeAllTabs.js
+        node scripts/scrape/scrapeAllTabs.js
         ```
     
     *   Once the first scrape has been performed, if you don't care about the latest event locations, you can suppress fetches using cached values instead, by adding --use-cache to scrapeAllTabs.js:
         ```bash
-        node scripts/scrapeAllTabs.js --use-cache
+        node scripts/scrape/scrapeAllTabs.js --use-cache
         ```
 
 3.  **Run SvelteKit Dev Server:**
@@ -83,6 +83,6 @@ Scrapes make use of prebuilt cache files to improve fetching/processing time of 
 To update the repo versions, run the following:
 
     ```bash
-    node scripts/scrapeAllTabs.js --updatePrebuiltData
+    node scripts/scrape/scrapeAllTabs.js --updatePrebuiltData
     ```
 Then commit changes and push to the repo.

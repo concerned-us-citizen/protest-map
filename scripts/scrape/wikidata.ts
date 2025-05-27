@@ -1,5 +1,6 @@
 import fs from "fs/promises";
 import { existsSync } from "fs";
+import { RawLocation } from "./types";
 
 const CACHE_FILE = "./cache/wikicache.json";
 const WIKIPEDIA_API = "https://en.wikipedia.org/w/api.php";
@@ -22,12 +23,12 @@ async function writeCache() {
 }
 
 // --- Normalize key to avoid duplicates ---
-function normalizeKey({ city, state }) {
+function normalizeKey({ city, state }: RawLocation) {
   return `${city?.trim().toLowerCase() || ""},${state?.trim().toLowerCase() || ""}`;
 }
 
 // --- External Wikipedia title search ---
-async function getWikipediaTitle(query) {
+async function getWikipediaTitle(query: string) {
   const url =
     `${WIKIPEDIA_API}?` +
     new URLSearchParams({
@@ -46,7 +47,7 @@ async function getWikipediaTitle(query) {
 }
 
 // --- Get image thumbnail for title ---
-async function getWikipediaImageData(title) {
+async function getWikipediaImageData(title: string) {
   const url =
     `${WIKIPEDIA_API}?` +
     new URLSearchParams({
@@ -61,7 +62,8 @@ async function getWikipediaImageData(title) {
   const res = await fetch(url);
   const data = await res.json();
   const pages = Object.values(data.query.pages);
-  const page = pages[0];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const page = pages[0] as any;
 
   return {
     title: page.title,
@@ -71,7 +73,7 @@ async function getWikipediaImageData(title) {
 }
 
 // --- Main lookup with caching ---
-export async function getWikipediaCityInfo({ city, state }) {
+export async function getWikipediaCityInfo({ city, state }: RawLocation) {
   const key = normalizeKey({ city, state });
 
   if (cache[key]) {
@@ -83,7 +85,6 @@ export async function getWikipediaCityInfo({ city, state }) {
   const query = state ? `${city} ${state}` : city;
   const title = await getWikipediaTitle(query);
   if (!title) {
-    console.warn(`⚠️  No Wikipedia title found for ${query}`);
     return null;
   }
 

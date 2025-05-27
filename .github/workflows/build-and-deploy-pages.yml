@@ -68,7 +68,7 @@ jobs:
       - name: Initialize cache with prebuilt data
         run: |
           mkdir -p cache
-          for f in geocache.json bad_geocache.json wikicache.json; do
+          for f in geocache.json bad_geocache.txt wikicache.json; do
             # Check if prebuilt_data file exists
             if [ -e "prebuilt_data/$f" ]; then
               # Check if cache file exists AND prebuilt_data file is NOT newer than cache file

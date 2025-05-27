@@ -1,20 +1,36 @@
 import { load } from "cheerio";
-import { loadGeocodeCache, geocode } from "./geocode.mjs";
-import { loadWikiCache, getWikipediaCityInfo } from "./wikidata.mjs";
-import { loadVotingInfo, fetchVotingInfo } from "./votingInfo.mjs";
+import { loadGeocodeCache, geocode } from "./geocode.js";
+import { loadWikiCache, getWikipediaCityInfo } from "./wikidata.js";
+import { loadVotingInfo, fetchVotingInfo } from "./votingInfo.js";
 import {
   normalizeToYYYYMMDD,
   normalizeYearTo2025,
-} from "../src/lib/util/date.ts";
+} from "../../src/lib/util/date.ts";
 import { mkdir } from "fs/promises";
-import { isValidZipCode, toTitleCase } from "../src/lib/util/string.ts";
-import { stripPropsFromValues } from "../src/lib/util/misc.ts";
-import { ProtestEventJson } from "../src/lib/types.ts";
+import { isValidZipCode, toTitleCase } from "../../src/lib/util/string.ts";
+import { stripPropsFromValues } from "../../src/lib/util/misc.ts";
+import { ProtestEventDataJson, ProtestEventJson } from "../../src/lib/types.ts";
+import { RawEvent, RawLocation } from "./types.ts";
 
 const DOC_ID = "1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A";
 const OUTPUT_DIR = "./static/data";
 const OUTPUT = `${OUTPUT_DIR}/data.json`;
 const RAW_OUTPUT = "./cache/events_raw.json";
+const INVALID_EVENTS_LOG = "./cache/invalidEvents.log";
+
+await loadGeocodeCache();
+await loadWikiCache();
+await loadVotingInfo();
+
+interface SpreadsheetTabInfo {
+  name: string;
+  gid: string;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function warn(str: string, arg?: any) {
+  console.warn(`⚠️ ${str}`, arg);
+}
 
 async function fetchHTML(url) {
   const res = await fetch(url);
@@ -22,20 +38,21 @@ async function fetchHTML(url) {
   return await res.text();
 }
 
-async function augmentLocations(locations) {
-  await loadGeocodeCache();
-  await loadWikiCache();
-  await loadVotingInfo();
-
+async function augmentLocations(locations: Record<string, RawLocation>) {
   const result = {};
 
   const keys = Object.keys(locations);
   for (const key of keys) {
-    //console.log(`Augmenting ${++i} of ${keys.length}`);
     const location = locations[key];
     try {
       const geo = await geocode(location);
+      if (!geo) {
+        throw new Error(`Could not geocode ${geo}`);
+      }
       const wiki = await getWikipediaCityInfo(location);
+      if (!wiki) {
+        warnInvalid(`No Wikipedia title ${location.city}`, location);
+      }
       const voting = await fetchVotingInfo(geo);
 
       result[key] = {
@@ -44,19 +61,14 @@ async function augmentLocations(locations) {
         ...wiki,
         pct_dem_lead: voting?.pct_dem_lead,
       };
-    } catch {
-      // console.warn(
-      //   `⚠️ Failed to augment: ${JSON.stringify(location)}\n  → ${err.message}`
-      // );
-      result[key] = location;
+    } catch (err) {
+      warn(`Failed to augment location ${err.message}`, location);
     }
   }
   return result;
 }
 
-type TabInfo = { name: string; gid: string };
-
-function extractTabsFromInitScript(html: string): TabInfo[] {
+function extractTabsFromInitScript(html: string): SpreadsheetTabInfo[] {
   const $ = load(html);
 
   const initScript = $("script")
@@ -68,7 +80,7 @@ function extractTabsFromInitScript(html: string): TabInfo[] {
     throw new Error("Could not find init() script.");
   }
 
-  const tabs: TabInfo[] = [];
+  const tabs: SpreadsheetTabInfo[] = [];
 
   const itemRegex = /items\.push\(\s*{([\s\S]*?)}\s*\);/g;
   let match: RegExpExecArray | null;
@@ -139,12 +151,10 @@ async function scrapeSheet({ name, gid }) {
   }
 
   const mappedRows = dataRows.map((row) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const obj: Record<string, any> = {};
+    const obj: RawEvent = { sheetName: name };
     headers.forEach((header, i) => {
       obj[header] = row[i] ?? null;
     });
-    obj.sheetName = name;
     return obj;
   });
 
@@ -158,8 +168,7 @@ async function scrapeAllSheets() {
   const mainHTML = await fetchHTML(url);
   const tabs = extractTabsFromInitScript(mainHTML);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const allRows: Record<string, any>[] = [];
+  const allRows: RawEvent[] = [];
 
   for (const tab of tabs) {
     console.log(`Scraping tab: ${tab.name}`);
@@ -172,32 +181,80 @@ async function scrapeAllSheets() {
   return allRows;
 }
 
-function getLocationKey(event) {
+function getLocationKey(event: RawLocation): string {
   const parts = [event.address, event.city, event.state]
     .map((p) => (p || "").toLowerCase())
     .filter(Boolean);
   return parts.join("-");
 }
+const correctedEventNames: Record<string, string> = {
+  "": "Unnamed event",
+  None: "Unnamed event",
+  "No name": "Unnamed event",
+};
 
-function normalizeRawEvents(rawEvents) {
-  const correctedEventNames = {
-    "": "Unnamed event",
-    None: "Unnamed event",
-    "No name": "Unnamed event",
-  };
+async function warnInvalid(str: string, event: RawEvent | RawLocation) {
+  warn(`[Validation Error] ${str}`, event);
 
-  return rawEvents.map((event) => {
-    const { name: originalName, zip, ...rest } = event;
-    const normalizedName =
-      correctedEventNames[originalName] ?? toTitleCase(originalName).trim();
-    const normalizedZip = isValidZipCode(zip) ? zip : undefined;
-    return { name: normalizedName, zip: normalizedZip, ...rest };
-  });
+  const logMessage = `${str} ${JSON.stringify(event)}\n`;
+  try {
+    await appendFile(INVALID_EVENTS_LOG, logMessage);
+  } catch (err) {
+    console.error(`Failed to write to invalid events log: ${err.message}`);
+  }
+}
+async function normalizeRawEvents(rawEvents: RawEvent[]): Promise<RawEvent[]> {
+  const normalizedEvents: RawEvent[] = []; // Array to store only valid, normalized events
+
+  for (const event of rawEvents) {
+    const { name, zip, date, ...rest } = event;
+
+    // 1. Normalize Name
+    const normalizedName = name
+      ? (correctedEventNames[name] ?? toTitleCase(name).trim())
+      : "Unnamed event";
+    if (!name) {
+      await warnInvalid("Missing or empty name", event);
+    }
+
+    // 2. Normalize and Validate Date (critical, skip event if invalid)
+    const normalizedDate = normalizeYearTo2025(normalizeToYYYYMMDD(date));
+    if (!normalizedDate) {
+      await warnInvalid("Bad date", event);
+      continue; // Skip to the next event in the loop
+    }
+
+    // 3. Normalize and Validate Zip (warn only)
+    let normalizedZip = zip?.trim();
+    if (!isValidZipCode(normalizedZip)) {
+      await warnInvalid(`Bad zipcode ${normalizedZip}`, event);
+      normalizedZip = undefined;
+    }
+
+    const candidateEvent = {
+      name: normalizedName,
+      zip: normalizedZip,
+      date: normalizedDate,
+      ...rest,
+    };
+
+    // 4. Geocode (critical, skip event if fails, await sequentially to be a good citizen)
+    if (!(await geocode(candidateEvent))) {
+      await warnInvalid("Could not geolocate address", event);
+      continue; // Skip to the next event in the loop
+    }
+
+    // If all checks pass, add the event to the result array
+    normalizedEvents.push(candidateEvent);
+  }
+
+  return normalizedEvents;
 }
 
-async function normalizeByLocationAndGroupByDate(originalEvents) {
-  const locations = {};
+async function createEventsByDateAndLocations(originalEvents: RawEvent[]) {
+  const locations: Record<string, RawLocation> = {};
   const events: ProtestEventJson[] = [];
+  const seenEvents = new Set<string>(); // Set to track seen events
 
   let curId = 0;
 
@@ -214,60 +271,81 @@ async function normalizeByLocationAndGroupByDate(originalEvents) {
         country: event.country,
       };
     }
-    events.push({
-      id: curId++,
-      date: event.date,
-      name: event.name,
-      link: event.link,
-      location: locKey,
-    });
+
+    // Create a unique key for the event based on date, name, link, and location
+    const eventKey = `${event.date}:::${event.name}:::${event.link}:::${locKey}`;
+
+    // Check if the event has already been seen
+    if (!seenEvents.has(eventKey)) {
+      seenEvents.add(eventKey); // Add the key to the set
+      events.push({
+        id: curId++,
+        date: event.date ?? "",
+        name: event.name ?? "",
+        link: event.link ?? "",
+        location: locKey,
+      });
+    } else {
+      warn(`Skipping duplicate event: ${eventKey}`);
+    }
   }
 
-  const groupedEvents = events.reduce((acc, event) => {
-    const { date: originalDateStr, ...rest } = event;
+  const groupedEvents: Record<string, ProtestEventJson[]> = events.reduce(
+    (acc, event) => {
+      const { date, ...rest } = event;
 
-    const normalizedDate = normalizeToYYYYMMDD(originalDateStr);
+      if (!acc[date]) {
+        acc[date] = [];
+      }
 
-    if (!normalizedDate) {
-      console.warn(
-        `Could not normalize date: "${originalDateStr}". Skipping event: ${JSON.stringify(rest)}`
-      );
+      acc[date].push(rest);
       return acc;
-    }
-
-    const finalDate = normalizeYearTo2025(normalizedDate);
-
-    if (!finalDate) {
-      console.warn(
-        `Could not normalize year in date: "${normalizedDate}". Skipping event: ${JSON.stringify(rest)}`
-      );
-      return acc;
-    }
-    if (!acc[finalDate]) {
-      acc[finalDate] = [];
-    }
-
-    acc[finalDate].push(rest);
-    return acc;
-  }, {});
+    },
+    {}
+  );
 
   console.log(
-    `${events.length} total events, ${Object.keys(groupedEvents).length} dates, ${Object.keys(locations).length} locations`
+    `${events.length} total events (after deduplication of ${originalEvents.length - events.length}), ${Object.keys(groupedEvents).length} dates, ${Object.keys(locations).length} locations`
   );
 
   return { groupedEvents, locations };
 }
 
-const { readFile, writeFile, access, copyFile } = await import("fs/promises"); // Add copyFile
+async function updatePrebuiltDataCaches() {
+  console.log("Copying cache files to prebuilt_data...");
+  const cacheFiles = ["bad_geocache.txt", "geocache.json", "wikicache.json"];
+  const cacheDir = "./cache/";
+  const prebuiltDataDir = "./prebuilt_data/";
+
+  for (const file of cacheFiles) {
+    const src = cacheDir + file;
+    const dest = prebuiltDataDir + file;
+    try {
+      await copyFile(src, dest);
+      console.log(`Copied ${src} to ${dest}`);
+    } catch (copyErr) {
+      warn(`Failed to copy ${src} to ${dest}: ${copyErr.message}`);
+      throw copyErr;
+    }
+  }
+  console.log("Finished copying cache files.");
+}
+
+const { readFile, writeFile, access, copyFile, appendFile } = await import(
+  "fs/promises"
+); // Add copyFile and appendFile
 const { constants } = await import("fs"); // Ensure constants is imported
 
 const run = async () => {
   const args = process.argv.slice(2);
   const tryUsingCache = args.includes("--use-cache");
-  const updatePrebuiltData = args.includes("--updatePrebuiltData"); // Check for the new flag
-  let rawEvents;
+  let rawEvents: RawEvent[] = [];
   let loadedFromCache = false;
   let cacheTimestamp;
+
+  // Ensure cache directory exists and clear the invalid events log file at the start
+  await mkdir("./cache", { recursive: true });
+  await writeFile(INVALID_EVENTS_LOG, "");
 
   try {
     if (tryUsingCache) {
@@ -319,10 +397,14 @@ const run = async () => {
       );
     }
 
-    const normalizedRawEvents = normalizeRawEvents(rawEvents);
+    if (rawEvents.length === 0) {
+      warn("Empty raw events!");
+    }
+
+    const normalizedRawEvents = await normalizeRawEvents(rawEvents);
 
     const normalizedEvents =
-      await normalizeByLocationAndGroupByDate(normalizedRawEvents);
+      await createEventsByDateAndLocations(normalizedRawEvents);
 
     const augmentedLocations = await augmentLocations(
       normalizedEvents.locations
@@ -337,7 +419,7 @@ const run = async () => {
       "displayName",
     ]);
 
-    const result = {
+    const result: ProtestEventDataJson = {
       updatedAt:
         loadedFromCache && cacheTimestamp
           ? cacheTimestamp
@@ -349,32 +431,7 @@ const run = async () => {
     await writeFile(OUTPUT, JSON.stringify(result, null, 2));
     console.log(`Saved to ${OUTPUT}`);
 
-    // Add logic to copy cache files to prebuilt_data if flag is present
-    if (updatePrebuiltData) {
-      console.log("Copying cache files to prebuilt_data...");
-      const cacheFiles = [
-        "bad_geocache.json",
-        "geocache.json",
-        "wikicache.json",
-      ];
-      const cacheDir = "./cache/";
-      const prebuiltDataDir = "./prebuilt_data/";
-
-      for (const file of cacheFiles) {
-        const src = cacheDir + file;
-        const dest = prebuiltDataDir + file;
-        try {
-          await copyFile(src, dest);
-          console.log(`Copied ${src} to ${dest}`);
-        } catch (copyErr) {
-          console.warn(
-            `⚠️ Failed to copy ${src} to ${dest}: ${copyErr.message}`
-          );
-          throw copyErr;
-        }
-      }
-      console.log("Finished copying cache files.");
-    }
+    await updatePrebuiltDataCaches();
   } catch (err) {
     console.error("Error:", err);
     throw err;

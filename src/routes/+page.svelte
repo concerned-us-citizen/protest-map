@@ -147,13 +147,22 @@
   function hasShownTourCookieExists() {
     return document.cookie.split('; ').some(row => row.startsWith('hasShownTour='));
   }
+
+  $effect(() => {
+    if (typeof document !== "undefined") {
+      const titleEl = document.querySelector('meta[property="og:title"]');
+      if (titleEl) titleEl.setAttribute('content', `A Map of Protests ${pageState.eventStore?.formattedDateRange ?? ""}`);
+      const descriptionEl = document.querySelector('meta[property="og:title"]');
+      if (descriptionEl) descriptionEl.setAttribute('content', `An interactive map of protests ${pageState.eventStore.formattedDateRange}`);
+    }
+  });
   
 </script>
 
 <svelte:head>
   <title>US Protests Map</title>
-  <meta property="og:title" content={`A Map of Protests ${pageState.eventStore.formattedDateRange}`} />
-  <meta property="og:description" content={`An interactive map of protests ${pageState.eventStore.formattedDateRange}`} />
+  <meta property="og:title" content={`A Map of Protests`} />
+  <meta property="og:description" content={`An interactive map of protests`} />
 </svelte:head>
 
 {#if pageState.eventStore.events.size > 0}

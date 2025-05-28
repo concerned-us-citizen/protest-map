@@ -363,7 +363,7 @@
   display: flex;
   flex-direction: column;
   border: 2px solid rgba(0,0,0,0.2);
-  border-radius: 6px;
+  border-radius: 4px;
   overflow: hidden;
   z-index: 800;
 }

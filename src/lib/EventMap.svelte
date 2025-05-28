@@ -115,7 +115,16 @@
       }
       L = window.L as LeafletModule;
 
-      const newMap = L.map(mapElement!, { zoomControl: false, keyboard: false, minZoom: 2 });
+      const newMap = L.map(
+        mapElement!, 
+        { 
+          zoomControl: false, 
+          keyboard: false, 
+          minZoom: 2, 
+          // worldCopyJump: false,  
+          // maxBoundsViscosity: 1.0,
+        }
+      );
       map = newMap;
 
       // Set map instance in pageState

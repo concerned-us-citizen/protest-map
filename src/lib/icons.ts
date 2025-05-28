@@ -33,6 +33,12 @@ export const markerSvg = `
 </svg>
 `;
 
+export const backArrowSvg = `
+<svg width="22" height="19" stroke="currentColor" viewBox="0 0 22 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M12.48 0.84C17.24 0.84 21.08 4.68 21.08 9.44C21.08 14.2 17.24 18.04 12.48 18.04C8.7 18.04 6.36 15.7 5.64 14.64L6.7 13.7C8.14 15.64 10.28 16.62 12.48 16.62C16.46 16.62 19.66 13.42 19.66 9.44C19.66 5.46 16.46 2.26 12.48 2.26C8.52 2.26 5.3 5.46 5.3 9.44V9.46C6.02 8.84 7.1 8.2 8.48 7.54V8.7C6.86 10.1 5.64 11.58 4.88 13.1H4.3C3.54 11.58 2.34 10.1 0.7 8.7V7.54C2.1 8.2 3.18 8.84 3.88 9.46V9.44C3.88 4.68 7.72 0.84 12.48 0.84Z" fill="black"/>
+</svg>
+`;
+
 export const circledMarkerSvg = `
 <svg version="1.1" viewBox="0 0 1200 1200"
   xmlns="http://www.w3.org/2000/svg" width="100%"

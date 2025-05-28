@@ -25,9 +25,6 @@
   let sveltePopupContainer: Nullable<HTMLElement> = null;
   let zoomControlInstance: Nullable<L.Control.Zoom> = $state(null);
 
-  let initialCenter: Nullable<L.LatLngExpression> = $state(null);
-  let initialZoom: Nullable<number> = $state(null);
-
   const pageState = getPageStateFromContext();
 
   const handleMapKeyDown = (event: KeyboardEvent): void => {
@@ -81,24 +78,6 @@
     });
   }
 
-  export function zoomIn() {
-    if (map) {
-      map.zoomIn();
-    }
-  }
-
-  export function zoomOut() {
-    if (map) {
-      map.zoomOut();
-    }
-  }
-
-  export function resetZoom() {
-    if (map && initialCenter && initialZoom !== null) {
-      map.setView(initialCenter, initialZoom);
-    }
-  }
-
   function closePopup() {
     if (!map) return;
 
@@ -139,6 +118,9 @@
       const newMap = L.map(mapElement!, { zoomControl: false, keyboard: false, minZoom: 2 });
       map = newMap;
 
+      // Set map instance in pageState
+      pageState.mapState.setMapInstance(map);
+
       const continentalUSBounds = L.latLngBounds(
         L.latLng(15, -170),
         L.latLng(47, -66)
@@ -147,9 +129,7 @@
       const zoom = deviceInfo.isTouchDevice ? 2 : 3;
       map.setView(center, zoom);
 
-      // Store initial view
-      initialCenter = center;
-      initialZoom = zoom;
+      pageState.mapState.setInitialMapView(center, zoom);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors',
@@ -167,6 +147,12 @@
       }).addTo(map);
 
       markerClusterGroup?.on('click', handleMarkerClick);
+
+      map.on('moveend', () => {
+        pageState.mapState.updateCurrentMapView(map!.getCenter(), map!.getZoom());
+        
+        console.log(`moveend ${pageState.mapState.isAtInitialMapView}`);
+      });
 
     } catch (error) {
       console.error('onMount: Failed to load Leaflet or initialize map:', error);
@@ -196,11 +182,15 @@
       if (mapElement) {
          mapElement.removeEventListener('keydown', handleMapKeyDown);
       }
+      map.off('moveend', () => {
+        pageState.mapState.updateCurrentMapView(map!.getCenter(), map!.getZoom());
+      }); // Clean up event listener
       map.remove();
       map = null;
       markerClusterGroup?.off('click', handleMarkerClick);
       L = undefined;
       markerClusterGroup = null;
+      pageState.mapState.setMapInstance(null); // Clear map instance in pageState
     }
   });
 </script>

@@ -10,7 +10,6 @@
    type Step = {
     title: string;
     description?: string;
-    // Not great to avoid type checking here, but doing it properly is ugly at this point. 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     component?: any;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

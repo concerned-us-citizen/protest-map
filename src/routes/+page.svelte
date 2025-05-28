@@ -3,20 +3,20 @@
   import ProtestMapTour from '$lib/ProtestMapTour.svelte';
   import EventInfoPanel from '$lib/EventInfoPanel.svelte';
   import FilterPanel from '$lib/FilterPanel.svelte';
-  import { playIconSvg, pauseIconSvg, infoIconSvg } from '$lib/icons';
+  import { playIconSvg, pauseIconSvg, infoIconSvg, backArrowSvg } from '$lib/icons';
   import { formatDateIndicatingFuture } from '$lib/util/date.js';
   import { createPageStateInContext } from '$lib/store/PageState.svelte';
   import { countAndLabel } from '$lib/util/string';
   import Timeline from '$lib/Timeline.svelte';
   import IconButton from '$lib/IconButton.svelte';
   import EventMap from '$lib/EventMap.svelte';
-  import type { Nullable } from '$lib/types.js';
+  import { cubicInOut } from 'svelte/easing';
+  import { fade } from 'svelte/transition';
 
   const { data } = $props();
 
   let pageState = createPageStateInContext();
 
-  let eventMap: Nullable<EventMap> = $state(null);
 
   $effect(() => {
 
@@ -106,20 +106,20 @@
 
     if (key === '+' || event.key === 'z') {
       event.preventDefault();
-      eventMap?.zoomIn();
+      pageState.mapState.zoomIn();
       return;
     }
 
     if (key === '-' || event.key == 'Z') {
       event.preventDefault();
-      eventMap?.zoomOut();
+      pageState.mapState.zoomOut();
       return;
     }
 
     // Unzoom to initial level (U or R)
     if (key === 'u' || key === 'r') {
       event.preventDefault();
-      eventMap?.resetZoom();
+      pageState.mapState.resetMapZoom();
       return;
     }
   }
@@ -158,7 +158,7 @@
 
 {#if pageState.eventStore.events.size > 0}
 
- <EventMap bind:this={eventMap} />
+ <EventMap />
 
 <div class="title-stats-and-filter-container hide-on-popup">
   <div class="title-and-stats-container">
@@ -207,19 +207,30 @@
   {/if}
     </div>
 
-    <div class="toolbar hide-on-popup">
+  <div class="toolbar-container hide-on-popup">
+    <div class="toolbar">
       <IconButton
         icon={pageState.autoplaying ? pauseIconSvg : playIconSvg}
         onClick={() => pageState.toggleAutoplay()} 
         label={pageState.autoplaying ? 'Pause Animation (Space)' : 'Play Animation (Space)'}
       />
-
       <IconButton
         icon={infoIconSvg}
         onClick={() => pageState.toggleHelpVisible()} 
-        label="Show Information Panel (I)"
+        label="Show Help (H)"
       />
     </div>
+
+    {#if !pageState.mapState.isAtInitialMapView}
+    <div class="toolbar" transition:fade={{ duration: 300, easing: cubicInOut }}>
+      <IconButton
+        icon={backArrowSvg}
+        onClick={() => pageState.mapState.resetMapZoom()}
+        label="Reset Map Zoom (R)"
+      />
+    </div>
+  {/if}
+  </div>
 
   <div class="timeline-and-eventinfo">
     {#if pageState.eventInfoVisible}
@@ -339,14 +350,21 @@
   text-decoration: underline;
 }
 
-.toolbar {
+.toolbar-container {
   display: flex;
   flex-direction: column;
   position: fixed;
+  gap: .3em;
   top: var(--toolbar-margin);
   right: var(--toolbar-margin);
+}
+
+.toolbar {
+  display: flex;
+  flex-direction: column;
   border: 2px solid rgba(0,0,0,0.2);
-  border-radius: 2px;
+  border-radius: 6px;
+  overflow: hidden;
   z-index: 800;
 }
 

@@ -1,6 +1,7 @@
 import { setContext, getContext } from "svelte";
 import { EventStore } from "./EventStore.svelte";
 import { EventFilter } from "./EventFilter.svelte";
+import { MapState } from "./MapState.svelte";
 import { deviceInfo } from "$lib/store/DeviceInfo.svelte";
 import type { SetTimeoutId } from "$lib/types";
 
@@ -14,6 +15,7 @@ const ZERO_EVENT_NAV_TIME = 50; // ms, for dates with no events
 export class PageState {
   readonly eventStore: EventStore;
   readonly filter: EventFilter;
+  readonly mapState: MapState;
 
   filterVisible = $state(false);
   helpVisible = $state(false);
@@ -98,6 +100,7 @@ export class PageState {
   constructor() {
     this.eventStore = new EventStore();
     this.filter = new EventFilter(this.eventStore);
+    this.mapState = new MapState();
   }
 }
 

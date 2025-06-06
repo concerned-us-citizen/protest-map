@@ -172,8 +172,12 @@ async function scrapeAllSheets() {
 
   for (const tab of tabs) {
     console.log(`Scraping tab: ${tab.name}`);
-    const rows = (await scrapeSheet(tab)) ?? [];
-    allRows.push(...rows);
+    try {
+      const rows = (await scrapeSheet(tab)) ?? [];
+      allRows.push(...rows);
+    } catch (err) {
+      console.log(`Error scraping tab ${tab.name}, skipping...`, err);
+    }
   }
   console.log(
     `Scraped ${allRows.length} total rows, augmenting with lat/long and wiki data...`

@@ -102,3 +102,11 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Upload scrape cache for manual download
+        uses: actions/upload-artifact@v4
+        with:
+          name: scrape-cache
+          path: |
+            cache/*.json
+            cache/bad_geocache.txt

@@ -7,6 +7,19 @@
   "eslint.lintTask.enable": true,
   "files.exclude": {
     "**/.svelte-kit": true,
-    "**/build": true
+    "**/build": false
+  },
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  "terminal.integrated.profiles.osx": {
+    "zsh": {
+      "path": "/bin/zsh",
+      "args": [
+        "-l" // This makes the terminal a login shell, which sources nvm
+      ]
+    },
+    "bash": {
+      "path": "/bin/bash",
+      "args": ["-l"]
+    }
   }
 }

@@ -1,42 +1,28 @@
-export interface ProtestEventDataJson {
-  events: Record<string, ProtestEventJson[]>;
-  locations: Record<string, Location>;
-  updatedAt: string;
-}
-
-export interface ProtestEventJson {
-  id: number;
-  date: string;
-  name: string;
-  link: string;
-  location: string;
-}
-
-export interface ProtestEvent {
-  id: number;
-  name: string;
-  link: string;
-  location: string;
-}
-
-export interface Location {
+export interface Coordinates {
   lat: number;
   lon: number;
-  title: string;
-  image: string;
-  pageUrl: string;
-  pct_dem_lead?: number;
+}
+
+// Add coordinates to events for simpler, main path queries
+export interface ProtestEvent extends Coordinates {
+  name: string;
+  date: string;
+  link: string;
+  locationInfoId: number;
+}
+
+export interface LocationInfo extends Coordinates {
+  name: string;
+  city: string;
+  state: string;
+  cityThumbnailUrl: string;
+  cityArticleUrl: string;
+  pctDemLead: Nullable<number>;
 }
 
 export interface ProtestEventAndLocation {
   event: ProtestEvent;
-  location: Location;
-}
-
-export interface ProtestEventData {
-  events: Map<Date, ProtestEvent[]>;
-  locations: Map<string, Location>;
-  updatedAt: Date | null;
+  location: LocationInfo;
 }
 
 export type DateRange = {

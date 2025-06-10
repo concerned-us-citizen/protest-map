@@ -53,3 +53,7 @@ export function isValidZipCode(
   // Test the string against the pattern
   return pattern.test(zipcodeString);
 }
+
+export function asNormalizedKey(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9\\-]/g, "");
+}

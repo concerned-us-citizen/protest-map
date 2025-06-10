@@ -19,7 +19,7 @@
       };
     }
 
-    const margin = location.pct_dem_lead;
+    const margin = location.pctDemLead;
     if (typeof margin === 'number') {
       const absMarginPercent = Math.round(Math.abs(margin) * 100);
       const candidateName = margin > 0 ? 'Harris' : 'Trump';

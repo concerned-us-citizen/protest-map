@@ -89,13 +89,16 @@ async function main() {
       const locationInfo = await locationInfoSource.getLocationInfo(sanitized);
       if (!locationInfo) continue;
 
-      const locationInfoId = eventSink.getOrCreateLocationInfo(locationInfo);
+      const cityInfoId = eventSink.getOrCreateCityInfo(locationInfo);
 
+      // We denormalize a bit here, moving some location info to the
+      // event directly to optimize map marker generation
       const locatedDissenterEvent = {
         ...sanitized,
-        locationInfoId,
         lat: locationInfo.lat,
         lon: locationInfo.lon,
+        pctDemLead: locationInfo.pctDemLead,
+        cityInfoId: cityInfoId,
       };
 
       // Skips duplicates

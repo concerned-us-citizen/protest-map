@@ -1,9 +1,9 @@
 <script lang="ts">
-  import type { Nullable, ProtestEventAndLocation } from '$lib/types'; 
+  import type { Nullable, ProtestEventAndCityInfo } from '$lib/types'; 
   import { attributions } from './attributions';
 
   interface Props {
-    protestEventAndLocation: Nullable<ProtestEventAndLocation>;
+    protestEventAndLocation: Nullable<ProtestEventAndCityInfo>;
   }
 
   const { protestEventAndLocation }: Props = $props();

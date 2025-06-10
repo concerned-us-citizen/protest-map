@@ -1,10 +1,10 @@
 import Database, { Statement } from "better-sqlite3";
-import { ProtestEvent, LocationInfo } from "../../src/lib/types";
+import { CityInfo, ProtestEvent } from "../../src/lib/types";
 
 export class EventDb {
   private db: Database.Database;
   private insertEventStatement: Statement<unknown[], unknown>;
-  private insertLocationInfoStatement: Statement<unknown[], unknown>;
+  private insertCityInfoStatement: Statement<unknown[], unknown>;
 
   private hasSeenEventStatement: Statement<
     [string],
@@ -12,25 +12,25 @@ export class EventDb {
   >;
   private addSeenEventStatement: Statement<[string], void>;
 
-  private hasSeenLocationInfoStatement: Statement<
+  private hasSeenCityInfoStatement: Statement<
     [string],
     { "1": number } | undefined
   >;
-  private getSeenLocationInfoStatement: Statement<
+  private getSeenCityInfoStatement: Statement<
     [string],
-    { location_info_id: number } | undefined
+    { city_info_id: number } | undefined
   >;
-  private addSeenLocationInfoStatement: Statement<[string, number], void>;
+  private addSeenCityInfoStatement: Statement<[string, number], void>;
 
   private constructor(db: Database.Database) {
     this.db = db;
 
     this.insertEventStatement = db.prepare(
-      "INSERT INTO events (lat, lon, date, name, link, location_info_id) VALUES (?, ?, ?, ?, ?, ?)"
+      "INSERT INTO events (lat, lon, pct_dem_lead, date, name, link, city_info_id) VALUES (?, ?, ?, ?, ?, ?, ?)"
     );
 
-    this.insertLocationInfoStatement = db.prepare(
-      "INSERT INTO location_infos (lat, lon, city_thumbnail_url, city_article_url, pct_dem_lead) VALUES (?, ?, ?, ?, ?)"
+    this.insertCityInfoStatement = db.prepare(
+      "INSERT INTO city_infos (city, state, city_thumbnail_url, city_article_url) VALUES (?, ?, ?, ?)"
     );
 
     this.hasSeenEventStatement = this.db.prepare(
@@ -40,14 +40,14 @@ export class EventDb {
       "INSERT OR IGNORE INTO seen_events (event_key) VALUES (?)"
     );
 
-    this.hasSeenLocationInfoStatement = this.db.prepare(
-      "SELECT 1 FROM seen_location_infos WHERE location_info_key = ?"
+    this.hasSeenCityInfoStatement = this.db.prepare(
+      "SELECT 1 FROM seen_city_infos WHERE city_info_key = ?"
     );
-    this.getSeenLocationInfoStatement = this.db.prepare(
-      "SELECT location_info_id FROM seen_location_infos WHERE location_info_key = ?"
+    this.getSeenCityInfoStatement = this.db.prepare(
+      "SELECT city_info_id FROM seen_city_infos WHERE city_info_key = ?"
     );
-    this.addSeenLocationInfoStatement = this.db.prepare(
-      "INSERT OR IGNORE INTO seen_location_infos (location_info_key, location_info_id) VALUES (?, ?)"
+    this.addSeenCityInfoStatement = this.db.prepare(
+      "INSERT OR IGNORE INTO seen_city_infos (city_info_key, city_info_id) VALUES (?, ?)"
     );
   }
 
@@ -59,24 +59,26 @@ export class EventDb {
       db.pragma("synchronous = FULL");
       db.pragma("journal_mode = DELETE", { simple: true });
 
-      db.exec(`CREATE TABLE location_infos (
+      db.exec(`CREATE TABLE city_infos (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
-              lat REAL NOT NULL,
-              lon REAL NOT NULL,
+              city TEXT,
+              state TEXT,
               city_thumbnail_url TEXT,
-              city_article_url TEXT,
-              pct_dem_lead REAL
-          );`);
+              city_article_url TEXT
+          );
+      `);
 
       db.exec(`CREATE TABLE events (
               lat REAL NOT NULL,
               lon REAL NOT NULL,
+              pct_dem_lead REAL,
               date TEXT NOT NULL,
               name TEXT NOT NULL,
               link TEXT,
-              location_info_id INTEGER,
-              FOREIGN KEY (location_info_id) REFERENCES location_infos(id)
-          );`);
+              city_info_id INTEGER,
+              FOREIGN KEY (city_info_id) REFERENCES city_infos(id)
+          );
+      `);
 
       db.exec(`CREATE INDEX idx_events_date ON events(date);`);
       db.exec(`CREATE INDEX idx_events_name ON events(name)`);
@@ -88,9 +90,9 @@ export class EventDb {
       `);
 
       db.exec(`
-        CREATE TEMPORARY TABLE seen_location_infos (
-          location_info_key TEXT PRIMARY KEY,
-          location_info_id INTEGER
+        CREATE TEMPORARY TABLE seen_city_infos (
+          city_info_key TEXT PRIMARY KEY,
+          city_info_id INTEGER
         );
       `);
 
@@ -116,10 +118,11 @@ export class EventDb {
     const result = this.insertEventStatement.run(
       event.lat,
       event.lon,
+      event.pctDemLead,
       event.date,
       event.name,
       event.link,
-      event.locationInfoId
+      event.cityInfoId
     );
     return Number(result.lastInsertRowid);
   }
@@ -134,38 +137,31 @@ export class EventDb {
     return Number(result.lastInsertRowid);
   }
 
-  hasSeenLocationInfoKey(locationInfoKey: string): boolean {
-    const row = this.hasSeenLocationInfoStatement.get(locationInfoKey);
+  hasSeenCityInfoKey(cityInfoKey: string): boolean {
+    const row = this.hasSeenCityInfoStatement.get(cityInfoKey);
     return !!row;
   }
 
-  getSeenLocationInfoIdForKey(locationInfoKey: string): number {
-    const result = this.getSeenLocationInfoStatement.get(locationInfoKey);
+  getSeenCityInfoIdForKey(cityInfoKey: string): number {
+    const result = this.getSeenCityInfoStatement.get(cityInfoKey);
 
     if (!result) {
-      throw new Error(`Location info key not found: ${locationInfoKey}`);
+      throw new Error(`City info key not found: ${cityInfoKey}`);
     }
-    return result.location_info_id as number;
+    return result.city_info_id as number;
   }
 
-  addSeenLocationInfoKeyAndId(
-    locationInfoKey: string,
-    locationId: number
-  ): number {
-    const result = this.addSeenLocationInfoStatement.run(
-      locationInfoKey,
-      locationId
-    );
+  addSeenCityInfoKeyAndId(cityInfoKey: string, id: number): number {
+    const result = this.addSeenCityInfoStatement.run(cityInfoKey, id);
     return Number(result.lastInsertRowid);
   }
 
-  insertLocationInfo(info: LocationInfo) {
-    const result = this.insertLocationInfoStatement.run(
-      info.lat,
-      info.lon,
+  insertCityInfo(info: CityInfo) {
+    const result = this.insertCityInfoStatement.run(
+      info.city,
+      info.state,
       info.cityThumbnailUrl,
-      info.cityArticleUrl,
-      info.pctDemLead
+      info.cityArticleUrl
     );
     return Number(result.lastInsertRowid);
   }

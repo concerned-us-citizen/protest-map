@@ -1,4 +1,10 @@
 import { z } from "zod";
+import {
+  CityInfo,
+  Coordinates,
+  MarkerInfo,
+  Nullable,
+} from "../../src/lib/types";
 
 export const DissenterEventSchema = z
   .object({
@@ -16,8 +22,13 @@ export const DissenterEventSchema = z
 
 export type DissenterEvent = z.infer<typeof DissenterEventSchema>;
 
-export type LocatedDissenterEvent = DissenterEvent & {
-  locationInfoId: number;
-  lat: number;
-  lon: number;
-};
+export type LocatedDissenterEvent = DissenterEvent &
+  MarkerInfo & {
+    cityInfoId: number;
+  };
+
+export type LocationInfo = Coordinates &
+  CityInfo & {
+    name: string;
+    pctDemLead: Nullable<number>;
+  };

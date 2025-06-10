@@ -1,11 +1,15 @@
 import fs from "fs/promises";
-import { LocationInfo, Nullable } from "../../src/lib/types";
+import { CityInfo, Nullable } from "../../src/lib/types";
 import {
   normalizeYearTo2025,
   normalizeToYYYYMMDD,
 } from "../../src/lib/util/date";
 import { fileExists } from "../../src/lib/util/file";
-import { toTitleCase, isValidZipCode } from "../../src/lib/util/string";
+import {
+  toTitleCase,
+  isValidZipCode,
+  asNormalizedKey,
+} from "../../src/lib/util/string";
 import { config } from "./config";
 import { EventDb } from "./EventDb";
 import { logInvalidEvent } from "./issueLog";
@@ -72,43 +76,33 @@ export class EventSink {
       ...rest,
     };
   }
-  private locationInfoKey(locationInfo: LocationInfo) {
-    const parts = ["address", "zip", "city", "state", "country"]
-      .map((prop) => (locationInfo[prop] || "").trim().toLowerCase())
-      .filter(Boolean);
-    return parts.join("_|_");
+
+  private cityInfoKey(cityInfo: CityInfo) {
+    return asNormalizedKey(`${cityInfo.city}-${cityInfo.state}`);
   }
 
-  getOrCreateLocationInfo(newLocationInfo: LocationInfo): number {
+  getOrCreateCityInfo(newCityInfo: CityInfo): number {
     const db = this.db;
-    const locationInfoKey = this.locationInfoKey(newLocationInfo);
-    let locationInfoId: number;
-    if (db.hasSeenLocationInfoKey(locationInfoKey)) {
-      locationInfoId = db.getSeenLocationInfoIdForKey(locationInfoKey);
+    const cityInfoKey = this.cityInfoKey(newCityInfo);
+    let cityInfoId: number;
+    if (db.hasSeenCityInfoKey(cityInfoKey)) {
+      cityInfoId = db.getSeenCityInfoIdForKey(cityInfoKey);
     } else {
-      locationInfoId = db.insertLocationInfo(newLocationInfo);
-      db.addSeenLocationInfoKeyAndId(locationInfoKey, locationInfoId);
+      cityInfoId = db.insertCityInfo(newCityInfo);
+      db.addSeenCityInfoKeyAndId(cityInfoKey, cityInfoId);
     }
-    return locationInfoId;
+    return cityInfoId;
   }
 
   private eventKey(event: LocatedDissenterEvent) {
-    return `${event.date}|${event.name}|${event.link}|${event.locationInfoId}`;
+    return `${event.date}|${event.name}|${event.link}|${event.lat}|${event.lon}`;
   }
 
   maybeCreateEvent(event: LocatedDissenterEvent): void {
     const db = this.db;
     const eventKey = this.eventKey(event);
     if (!db.hasSeenEventKey(eventKey)) {
-      db.insertEvent({
-        lat: event.lat,
-        lon: event.lon,
-        date: event.date,
-        name: event.name,
-        link: event.link,
-        locationInfoId: event.locationInfoId,
-      });
-
+      db.insertEvent(event);
       db.addSeenEventKey(eventKey);
     }
   }

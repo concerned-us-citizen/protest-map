@@ -1,8 +1,8 @@
 <script module lang="ts">
-  import type { ProtestEventAndLocation } from './types';
+  import type { ProtestEventAndCityInfo } from './types';
 
   export interface ProtestEventMarkerOptions extends L.MarkerOptions {
-    protestEventAndLocation: ProtestEventAndLocation;
+    protestEventAndLocation: ProtestEventAndCityInfo;
   }
 
   const iconSize = 30;
@@ -61,7 +61,7 @@
   interface EventMarkerProps {
       L: typeof import('leaflet');
       map: Map;
-      protestEventAndLocation: ProtestEventAndLocation;
+      protestEventAndLocation: ProtestEventAndCityInfo;
       markerClusterGroup: MarkerClusterGroup;
   }
   const { L, map, protestEventAndLocation, markerClusterGroup }: EventMarkerProps = $props();

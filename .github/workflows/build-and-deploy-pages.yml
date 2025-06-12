@@ -39,8 +39,13 @@ jobs:
           node-version: 20
           cache: npm
 
+        # Handle npm bug https://github.com/npm/cli/issues/4828
+      - name: Remove node_modules and package-lock.json (npm bug)
+        run: |
+          rm -rf node_modules package-lock.json
+
       - name: Install dependencies
-        run: npm ci
+        run: npm i
 
       - name: Download latest precincts spatial index from GitHub Release
         run: npm run download-precincts-spatial-index

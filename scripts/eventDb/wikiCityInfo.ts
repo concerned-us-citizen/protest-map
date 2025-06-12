@@ -3,7 +3,7 @@ import { urlForWikiThumbnailUrl } from "./util/wikimedia";
 import { runSparqlQuery } from "./sparql";
 import { getStateInfo } from "./usStateInfo";
 import { asNormalizedKey } from "../../src/lib/util/string";
-import { logIssue } from "./issueLog";
+import { logIssue } from "./IssueLog2";
 
 export interface WikiCityInfo {
   articleUrl: string;

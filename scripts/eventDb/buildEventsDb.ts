@@ -4,7 +4,7 @@ import { EventSink } from "./EventSink";
 import { LocationDataSource } from "./LocationDataSource";
 import { getSheetData } from "./getSheetData";
 import { DissenterEvent, DissenterEventSchema } from "./types";
-import { getLoggedIssueCount, initLog, logInfo, logIssue } from "./issueLog";
+import { getLoggedIssueCount, initLog, logInfo, logIssue } from "./IssueLog2";
 // import { scanForSimilarNames } from "./similarNames";
 import { loadVotingInfo } from "./votingInfo";
 

@@ -11,8 +11,8 @@ import {
   asNormalizedKey,
 } from "../../src/lib/util/string";
 import { config } from "./config";
-import { EventDb } from "./eventDb2";
-import { logInvalidEvent } from "./IssueLog2";
+import { EventDb } from "./EventDb";
+import { logInvalidEvent } from "./IssueLog";
 import { LocatedDissenterEvent, DissenterEvent } from "./types";
 
 export class EventSink {

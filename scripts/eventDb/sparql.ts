@@ -1,6 +1,6 @@
 import { delay } from "../../src/lib/util/misc";
 import { config } from "./config";
-import { logIssue } from "./IssueLog2";
+import { logIssue } from "./IssueLog";
 
 const WIKIDATA_SPARQL_URL = "https://query.wikidata.org/sparql";
 

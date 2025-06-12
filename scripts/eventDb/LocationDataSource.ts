@@ -1,7 +1,7 @@
 import { LocationInfo, Nullable } from "../../src/lib/types";
 import { fetchEventLinkLocationInfo } from "./eventLinkLocationInfo";
 import { geocodeFromService } from "./geocode";
-import { logInvalidEvent } from "./IssueLog2";
+import { logInvalidEvent } from "./IssueLog";
 import { CachedLocationDataDb } from "./CachedLocationDataDb";
 import { getStateInfo as getStateIdInfo } from "./usStateInfo";
 import { DissenterEvent } from "./types";

@@ -33,7 +33,6 @@ export class MapState {
 
   // Derived state to check if map is at initial view
   readonly isAtInitialMapView = $derived.by(() => {
-    console.log("Checking isAtInitialMapView");
     if (
       this.initialCenter == null ||
       this.initialZoom == null ||
@@ -47,8 +46,6 @@ export class MapState {
       this.initialCenter
     );
     const zoomMatches = Math.abs(this.currentMapZoom - this.initialZoom) < 0.01;
-
-    console.log(`zoomMatches ${zoomMatches} centerMatches ${centerMatches}`);
     return centerMatches && zoomMatches;
   });
 

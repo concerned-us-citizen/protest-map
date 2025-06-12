@@ -15,9 +15,9 @@
 
 <div class={`events-filter-component ${className}`} use:clickOutside={() => pageState.filterVisible=false} {...restProps}>
   {#if pageState.filter.selectedEventNames.length > 0}
-  <h4 class="filter-title">From {pageState.filter.selectedEventNames.length} of {countAndLabel(eventNamesWithLocationCounts, "event")}:</h4>
+  <h4 class="filter-title">From {pageState.filter.selectedEventNames.length} of {countAndLabel(eventNamesWithLocationCounts, "Event")}</h4>
   {:else}
-  <h4 class="filter-title">From {countAndLabel(eventNamesWithLocationCounts, "protest event")}:</h4>
+  <h4 class="filter-title">From {countAndLabel(eventNamesWithLocationCounts, "Protest Event")}</h4>
   {/if}
   {#if eventNamesWithLocationCounts.length > 0}
     <div class="events-section-description">
@@ -72,7 +72,7 @@
   .events-section-description {
     font-style: italic;
     font-size: 0.9em;
-    text-align: start;
+    text-align: center;
     margin-top: .3em;
     margin-bottom: .7em;
     margin-left: var(--highlight-border-h);
@@ -82,10 +82,10 @@
     font-size: 0.9em;
     font-weight: bold;
     margin-top: .5em;
-    margin-bottom: .1em;
+    margin-bottom: 0;
     margin-left: var(--highlight-border-h);
     margin-right: var(--highlight-border-h);
-    text-align: start;
+    text-align: center;
   }
   .event-list-scrollable-area {
     display: flex;

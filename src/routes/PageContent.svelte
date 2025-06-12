@@ -12,6 +12,7 @@
   import { cubicInOut } from 'svelte/easing';
   import { fade } from 'svelte/transition';
   import { getPageStateFromContext } from '$lib/store/PageState.svelte';
+  import PrecinctStatsPanel from '$lib/PrecinctStatsPanel.svelte';
 
   const pageState = getPageStateFromContext();
   
@@ -28,8 +29,6 @@
       pageState.cleanup();
     }
   });
-
-  let isFiltering = $derived(pageState.filter.selectedEventNames.length > 0);
 
   // EventInfoPanel becomes visible any time currentDate changes after loading.
   $effect(() => {
@@ -173,14 +172,14 @@
     </div>
   {/if}
 
-  <div class="current-date-stats panel">
+  <div class="current-date-stats highlight-adjusted-panel">
     <b>{formatDateIndicatingFuture(pageState.filter.currentDate)}</b>
     {#if deviceInfo.isShort}
       protests
     {/if}
     <div class="location-count">
-      <button class={`link-button ${isFiltering ? 'is-filtering-indicator' : ''}`} data-suppress-click-outside onclick={() => pageState.toggleFilterVisible()}>
-      {#if isFiltering}
+      <button class={`link-button ${pageState.filter.isFiltering ? 'is-filtering-indicator' : ''}`} data-suppress-click-outside onclick={() => pageState.toggleFilterVisible()}>
+      {#if pageState.filter.isFiltering}
           {pageState.filter.filteredEvents.length} of {countAndLabel(pageState.filter.currentDateEvents, 'location')} >
       {:else}
         {countAndLabel(pageState.filter.currentDateEvents, 'location')} >
@@ -190,10 +189,15 @@
   </div>
 </div>
 
-{#if !deviceInfo.isShort}
-    {#if pageState.filterVisible }
-        <FilterPanel className="filter panel" onClose={() => pageState.filterVisible = false} />
-    {/if}
+
+{#if !deviceInfo.isShort && pageState.filterVisible }
+  <div class="precinct-stats highlight-adjusted-panel">
+    <PrecinctStatsPanel />
+  </div>
+{/if}
+
+{#if !deviceInfo.isShort && pageState.filterVisible }
+    <FilterPanel className="filter panel" onClose={() => pageState.filterVisible = false} />
 {/if}
   </div>
 
@@ -257,6 +261,15 @@
 .panel {
   border-radius: var(--panel-border-radius);
   padding: var(--panel-padding-v) var(--panel-padding-h);
+  background-color: var(--panel-background-color);
+  overflow: hidden;
+}
+
+.highlight-adjusted-panel {
+  /* TODO make this more DRY - it needs to be kept in sync with FilterPanel */
+  --highlight-border-h: .3em;
+  border-radius: var(--panel-border-radius);
+  padding: var(--panel-padding-v) calc(var(--panel-padding-h) - var(--highlight-border-h));
   background-color: var(--panel-background-color);
   overflow: hidden;
 }

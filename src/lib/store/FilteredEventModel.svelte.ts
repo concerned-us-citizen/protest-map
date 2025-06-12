@@ -75,6 +75,8 @@ export class FilteredEventModel {
 
   readonly selectedEventNames = $state<string[]>([]);
 
+  isFiltering = $derived(this.selectedEventNames.length > 0);
+
   toggleSelectedEventName(eventName: string) {
     const index = this.selectedEventNames.indexOf(eventName);
 

@@ -161,8 +161,6 @@
 
       map.on('moveend', () => {
         pageState.mapState.updateCurrentMapView(map!.getCenter(), map!.getZoom());
-        
-        console.log(`moveend ${pageState.mapState.isAtInitialMapView}`);
       });
 
     } catch (error) {

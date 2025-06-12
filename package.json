@@ -45,7 +45,7 @@
     "geojson-rbush": "^3.2.0",
     "globals": "^16.2.0",
     "rbush": "2.0.2",
-    "simple-git": "^3.21.0",
+    "simple-git": "^2.40.0",
     "svelte": "^5.0.0",
     "svelte-check": "^4.0.0",
     "svelte-eslint-parser": "1.0.0-next.13",

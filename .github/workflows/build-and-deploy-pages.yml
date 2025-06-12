@@ -40,7 +40,7 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
+        run: npm ci
 
       - name: Download latest precincts spatial index from GitHub Release
         run: npm run download-precincts-spatial-index

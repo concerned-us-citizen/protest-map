@@ -47,7 +47,7 @@ jobs:
 
       - name: Download cache DB from GitHub Release
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
+          GH_RELEASE_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
         run: npx tsx scripts/eventDb/releaseManager.ts download-cache
 
       - name: Run events db builder – generates/updates cache sqlite db
@@ -58,7 +58,7 @@ jobs:
 
       - name: Upload log and updated cache DB to GitHub Release
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
+          GH_RELEASE_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
         run: |
           npx tsx scripts/eventDb/releaseManager.ts upload-log
           npx tsx scripts/eventDb/releaseManager.ts upload-cache

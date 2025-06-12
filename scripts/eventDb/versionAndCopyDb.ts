@@ -2,7 +2,7 @@ import { mkdirSync, copyFileSync, writeFileSync } from "fs";
 import { format } from "date-fns";
 import { resolve } from "path";
 import { config } from "./config";
-import { simpleGit } from "simple-git";
+import simpleGit from "simple-git";
 
 // Current UTC date
 const now = new Date();

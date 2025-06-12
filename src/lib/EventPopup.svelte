@@ -1,13 +1,14 @@
 <script lang="ts">
-  import type { Nullable, ProtestEventAndLocation } from '$lib/types'; 
+  import type { PopulatedEvent } from '$lib/types'; 
   import { attributions } from './attributions';
 
   interface Props {
-    protestEventAndLocation: Nullable<ProtestEventAndLocation>;
+    populatedEvent: PopulatedEvent;
   }
 
-  const { protestEventAndLocation }: Props = $props();
-  const { event, location } = protestEventAndLocation ?? { event: null, location: null };
+  const { populatedEvent }: Props = $props();
+
+  const locationTitle = `${populatedEvent.city}, ${populatedEvent.state}`;
 
   let marginDisplay = $derived.by(() => {
     if (!location) {
@@ -19,7 +20,7 @@
       };
     }
 
-    const margin = location.pct_dem_lead;
+    const margin = populatedEvent.pctDemLead;
     if (typeof margin === 'number') {
       const absMarginPercent = Math.round(Math.abs(margin) * 100);
       const candidateName = margin > 0 ? 'Harris' : 'Trump';
@@ -37,18 +38,18 @@
 </script>
 
 <div class="popup-layout">
-  {#if location}
+  {#if populatedEvent}
     <div class="popup-image-container">
-      <a href="{location.pageUrl}" target="_blank">
-        <img src="{location.image ? location.image : 'https://en.wikipedia.org/wiki/Springfield_(The_Simpsons)#/media/File:Springfield_(The_Simpsons).png'}" alt="{location.title}" />
+      <a href="{populatedEvent.cityArticleUrl}" target="_blank">
+        <img src="{populatedEvent.cityThumbnailUrl ? populatedEvent.cityThumbnailUrl : 'https://en.wikipedia.org/wiki/Springfield_(The_Simpsons)#/media/File:Springfield_(The_Simpsons).png'}" alt="{locationTitle}" />
       </a>
     </div>
     <div class="popup-text-container">
-      <a class="location-title" href="{location.pageUrl}" target="_blank"><strong>{location.title}</strong></a>
-      {#if event.link}
-        <a class="event-title-link" href="{event.link}" target="_blank"><div class="event-title">{event.name}</div></a>
+      <a class="location-title" href="{populatedEvent.cityArticleUrl}" target="_blank"><strong>{locationTitle}</strong></a>
+      {#if populatedEvent.link}
+        <a class="event-title-link" href="{populatedEvent.link}" target="_blank"><div class="event-title">{populatedEvent.name}</div></a>
       {:else}
-        <div class="event-title">{event.name}</div>
+        <div class="event-title">{populatedEvent.name}</div>
       {/if}
     </div>
     {#if marginDisplay.show}

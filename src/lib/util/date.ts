@@ -1,5 +1,3 @@
-import type { DateRange, Nullable, ProtestEvent } from "../types";
-
 /**
  * Parses a date string, prioritizing "M/D/YYYY" and "M/D/YY" (assumes 20YY),
  * and "M/D" (assumes 2025).
@@ -179,13 +177,22 @@ export const normalizeToYYYYMMDD = (
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 };
 
+export const normalizeToMMDDYYYY = (
+  dateStr?: string | undefined
+): string | undefined => {
+  if (!dateStr) return undefined;
+  const d = parseDateString(dateStr);
+  if (!d) return undefined;
+  return `${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}/${d.getFullYear()}`;
+};
+
 /**
  * Normalizes the year of a date string to 2025 based on specific conditions.
  * If the year is less than 2025, it's always changed to 2025.
  * If the year is greater than 2025, it's changed to 2025 only if the current date is before 2025-12-01.
  * Logs a warning to the console if the year is changed.
- * Assumes the input dateStr is already in YYYY-MM-DD format.
- * @param {string | null | undefined} dateStr The date string in YYYY-MM-DD format.
+ * Assumes the input dateStr is already in MM-DD-YYYY format.
+ * @param {string | null | undefined} dateStr The date string in MM-DD-YYYY format.
  * @returns {string | null} The date string with the potentially normalized year, or null if input is null/undefined.
  */
 export const normalizeYearTo2025 = (
@@ -193,23 +200,25 @@ export const normalizeYearTo2025 = (
 ): string | null => {
   if (!dateStr) return null;
 
-  const year = parseInt(dateStr.substring(0, 4), 10);
+  const [monthStr, dayStr, yearStr] = dateStr.split("/");
+
+  const year = parseInt(yearStr);
   let finalDate = dateStr;
   let yearChanged = false;
   let warningMessage = "";
 
   // Normalize years less than 2025 regardless of current date
   if (year < 2025) {
-    finalDate = `2025${dateStr.substring(4)}`;
+    finalDate = `${monthStr}/${dayStr}/2025`;
     yearChanged = true;
     warningMessage = `Date "${dateStr}" (original) normalized year to 2025: "${finalDate}" (year was less than 2025).`;
   }
 
   // Normalize years greater than 2025 only if current date is before 2025-12-01
   const currentDate = new Date();
-  const cutoffDate = new Date("2025-12-01");
+  const cutoffDate = new Date("12/01/2025");
   if (year > 2025 && currentDate < cutoffDate) {
-    finalDate = `2025${dateStr.substring(4)}`;
+    finalDate = `${monthStr}/${dayStr}/2025`;
     yearChanged = true;
     warningMessage = `Date "${dateStr}" (original) normalized year to 2025: "${finalDate}" (year was greater than 2025 and current date is before 2025-12-01).`;
   }
@@ -243,24 +252,16 @@ export const formatDateIndicatingFuture = (date: Date | null) => {
   return `${formatDate(date)}${isFutureDate(date) ? " (future)" : ""}`;
 };
 
-/**
- * Finds the first and last dates from an events object.
- * @param {Record<string, any[]> | null | undefined} events The events object.
- * @returns {{ first: string | null, last: string | null }} An object containing the first and last date strings, or null if no valid dates are found.
- */
-export const getFirstAndLastDate = (
-  events: Map<Date, ProtestEvent[]>
-): Nullable<DateRange> => {
-  if (!events) return null;
+export function dateToYYYYMMDDInt(date: Date): number {
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1; // getMonth() is 0-based
+  const day = date.getDate();
+  return year * 10000 + month * 100 + day;
+}
 
-  const sortedDates = [...events.keys()].sort(
-    (a, b) => a.getTime() - b.getTime()
-  );
-
-  if (sortedDates.length === 0) return null;
-
-  return {
-    start: sortedDates[0],
-    end: sortedDates.at(-1) ?? sortedDates[0], // shut the compiler up
-  };
-};
+export function yyyymmddIntToDate(yyyymmdd: number): Date {
+  const year = Math.floor(yyyymmdd / 10000);
+  const month = Math.floor((yyyymmdd % 10000) / 100) - 1; // JS months are 0-based
+  const day = yyyymmdd % 100;
+  return new Date(year, month, day);
+}

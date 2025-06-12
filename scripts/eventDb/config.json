@@ -1,0 +1,14 @@
+{
+  "scrapeEventLinks": false,
+  "userAgent": "ProtestMap/1.0 (hypo.30-buggy@icloud.com)",
+  "dirs": {
+    "build": "./build_db",
+    "release": "./static/data"
+  },
+  "files": {
+    "locationCache": "cached-location-data.sqlite",
+    "precinctsSpatialIndex": "precincts-with-results-spatial-index.json",
+    "events": "events.sqlite",
+    "log": "issues.log"
+  }
+}

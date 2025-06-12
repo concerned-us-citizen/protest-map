@@ -7,6 +7,9 @@
   import type { Nullable } from './types';
   import { browser } from '$app/environment';
   import { deviceInfo } from '$lib/store/DeviceInfo.svelte';
+  import 'leaflet/dist/leaflet.css';
+  import 'leaflet.markercluster/dist/MarkerCluster.css';
+  import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 
   type LeafletModule = typeof import('leaflet');
 
@@ -38,7 +41,9 @@
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const marker = e.layer as L.Marker<any>;
-    const clickedEventAndLocation = (marker.options as ProtestEventMarkerOptions).protestEventAndLocation;
+    const options = marker.options as ProtestEventMarkerOptions;
+    const markerInfo = options.eventMarkerInfo;
+    const populatedEvent = options.eventModel.getPopulatedEvent(markerInfo);
 
     // Destroy any existing Svelte popup instance before creating a new one
     if (sveltePopupInstance) {
@@ -53,7 +58,7 @@
     sveltePopupContainer = document.createElement('div');
     sveltePopupInstance = mount(EventPopup, {
       target: sveltePopupContainer,
-      props: { protestEventAndLocation: clickedEventAndLocation },
+      props: { populatedEvent },
     });
 
     // Use Leaflet's bindPopup and openPopup
@@ -105,9 +110,6 @@
       // These have to be done dynamically because of SSR.
       await import('leaflet');
       await import('leaflet.markercluster');
-      await import('leaflet/dist/leaflet.css');
-      await import('leaflet.markercluster/dist/MarkerCluster.css');
-      await import('leaflet.markercluster/dist/MarkerCluster.Default.css');
 
       // Deal with issue that markercluster module depends on a global L.
       if (!window.L || typeof window.L.map !== 'function' || typeof window.L.markerClusterGroup !== 'function') {
@@ -159,8 +161,6 @@
 
       map.on('moveend', () => {
         pageState.mapState.updateCurrentMapView(map!.getCenter(), map!.getZoom());
-        
-        console.log(`moveend ${pageState.mapState.isAtInitialMapView}`);
       });
 
     } catch (error) {
@@ -206,11 +206,8 @@
 
 <div class={`map-container ${className} ${deviceInfo.isTouchDevice ? 'touch-device' : ''}`} bind:this={mapElement} tabindex="-1">
   {#if map && L && markerClusterGroup && pageState.filter.filteredEvents}
-    {#each pageState.filter.filteredEvents as protestEvent (protestEvent.id)}
-      {@const loc = pageState.eventStore.locations.get(protestEvent.location)}
-      {#if loc && loc.lat != null && loc.lon != null}
-        <EventMarker {L} {map} protestEventAndLocation={{event: protestEvent, location: loc}} {markerClusterGroup} />
-      {/if}
+    {#each pageState.filter.filteredEvents as eventMarkerInfo (eventMarkerInfo.eventId)}
+      <EventMarker {L} {map} eventMarkerInfo={eventMarkerInfo} eventModel={pageState.eventModel} {markerClusterGroup} />
     {/each}
   {/if}
 </div>

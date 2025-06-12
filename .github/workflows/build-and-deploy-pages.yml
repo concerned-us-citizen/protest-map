@@ -43,53 +43,25 @@ jobs:
         run: npm install --legacy-peer-deps
 
       - name: Download latest precincts spatial index from GitHub Release
+        run: npm run download-precincts-spatial-index
+
+      - name: Download cache DB from GitHub Release
         env:
-          GH_REPO: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
+        run: npx tsx scripts/eventDb/releaseManager.ts download-cache
+
+      - name: Run events db builder – generates/updates cache sqlite db
+        run: npm run build-events-db
+
+      - name: Version and copy SQLite DB
+        run: npx tsx scripts/eventDb/versionAndCopyDb.ts
+
+      - name: Upload log and updated cache DB to GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
         run: |
-          mkdir -p prebuilt_data
-
-          # Download file
-          curl -L -o prebuilt_data/precincts-with-results-spatial-index.json \
-            https://github.com/concerned-us-citizen/voting-precincts-spatial-index/releases/download/v1/precincts-with-results-spatial-index.json
-
-          # Ensure file was downloaded and is not empty
-          test -s prebuilt_data/precincts-with-results-spatial-index.json || {
-            echo "❌ Failed to download or file is empty!"
-            exit 1
-          }
-
-      - name: Restore cached scrape data if available
-        uses: actions/cache@v4
-        with:
-          path: cache
-          key: ${{ runner.os }}-scrape-cache-${{ hashFiles('prebuilt_data/*.json') }}
-          restore-keys: ${{ runner.os }}-scrape-cache-
-
-      - name: Initialize cache with prebuilt data
-        run: |
-          mkdir -p cache
-          for f in geocache.json bad_geocache.txt wikicache.json; do
-            # Check if prebuilt_data file exists
-            if [ -e "prebuilt_data/$f" ]; then
-              # Check if cache file exists AND prebuilt_data file is NOT newer than cache file
-              if [ -e "cache/$f" ] && [ ! "prebuilt_data/$f" -nt "cache/$f" ]; then
-                echo "Cache file cache/$f is newer or same age as prebuilt_data/$f, keeping cache version."
-              else
-                # If cache file doesn't exist OR prebuilt_data file is newer than cache file
-                cp "prebuilt_data/$f" "cache/$f"
-                echo "Copied prebuilt_data/$f (newer or cache did not exist)."
-              fi
-            fi
-          done
-
-      - name: Run scraper – generates/updates cache/*.json
-        run: npm run scrape
-
-      - name: Save updated scrape cache
-        uses: actions/cache@v4
-        with:
-          path: cache
-          key: ${{ runner.os }}-scrape-cache-${{ hashFiles('prebuilt_data/*.json') }}
+          npx tsx scripts/eventDb/releaseManager.ts upload-log
+          npx tsx scripts/eventDb/releaseManager.ts upload-cache
 
       - name: Build static site
         run: npm run build

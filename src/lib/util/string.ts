@@ -23,7 +23,7 @@ export function countAndLabel(
 ) {
   const count =
     typeof countOrList === "number" ? countOrList : countOrList.length;
-  return `${count} ${pluralize(countOrList, name, pluralForm)}`;
+  return `${count.toLocaleString()} ${pluralize(countOrList, name, pluralForm)}`;
 }
 
 export function pluralize(
@@ -52,4 +52,8 @@ export function isValidZipCode(
 
   // Test the string against the pattern
   return pattern.test(zipcodeString);
+}
+
+export function asNormalizedKey(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9\\-]/g, "");
 }

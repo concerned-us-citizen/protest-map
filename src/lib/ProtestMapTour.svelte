@@ -23,10 +23,11 @@
     description: `
     <p>This map shows recent and planned US protest locations over time, from data collected by <a href="https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748" target="_blank">We (the People) Dissent</a>. It's synced daily.</p>
     <p>Locations are shown by date, which you can either animate or browse manually.</p>
+    <p><i>Important: locations are approximate. For addresses, follow the event name link that appears when clicking on a marker.</i></p>
     `,
   },
   {
-    title: "Colored Locations",
+    title: "Colored Voter Lean",
     description: `
     <p>Protests are colored <span style='color:${markerColor.red}'>red</span> or <span style='color:${markerColor.blue}'>blue</span> (<span style='color:${markerColor.purple}'>purple</span> when clustered together) to show voter preferences of the surrounding precinct for the 2024 presidential election.</p>
     <p>A precinct's color indicates the margin by which Trump or Harris won the election there, using data compiled by the New York Times.</p>

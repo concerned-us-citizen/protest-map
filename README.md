@@ -8,16 +8,16 @@ This project displays recent and planned US protest locations over time on an in
 
 The project creates and deploys a static web site to GitHub Pages. It has two main components:
 
-1.  **Data Scraper (`scripts/scrape/scrapeAllTabs.js`):**
-    *   This Node.js script fetches event data from a Google Sheet maintained by the volunteer organization [We (the People) Dissent](https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748).
+1.  **Data Scraper (`scripts/eventDb/buildEventsDb.ts`):**
+    *   This node script fetches event data from a Google Sheet maintained by the volunteer organization [We (the People) Dissent](https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748).
     *   It augments this event data with:
         *   Geocoding information from [Nominatim](https://nominatim.openstreetmap.org) for event locations.
         *   Location image and title information from [Wikipedia](https://wikipedia.org).
         *   Voting precinct margin data from a dataset published by [The New York Times (GitHub)](https://github.com/nytimes/presidential-precinct-map-2024).
-    *   The script outputs a consolidated `static/data/data.json` file (with an `updatedAt` timestamp), ensuring dates for events are normalized to `YYYY-MM-DD` format.
+    *   From this it generates a static sqlite database that is   downloaded and consumed by the app at runtime.
 
 2.  **SvelteKit Application (Static Site):**
-    *   A static SvelteKit application located in the `src` directory consumes the `static/data/data.json` file.
+    *   A static SvelteKit application located in the `src` directory consumes the .sqlite database.
     *   It provides an interactive map interface where users can:
         *   View protest events over a timeline.
         *   Play an animation of events occurring day by day.
@@ -30,20 +30,31 @@ The project creates and deploys a static web site to GitHub Pages. It has two ma
 
 1.  **Install Dependencies:**
     ```bash
-    npm run setup # Downloads prebuilt files
+    # npm libraries
     npm install
+
+    # Fetch preprocessed NY Times precinct database
+    npm run download-precincts-spatial-index
+
+    # Fetch cache of Nominatim and Wikidata data
+    npx tsx scripts/eventDb/releaseManager.ts download-cache
     ```
 
 2.  **Generate Data:**
-    *   Perform a live scrape and generate `static/data/data.json`:
+    *   Perform a live scrape and generate `build_db/events.sqlite`:
         ```bash
-        node scripts/scrape/scrapeAllTabs.js
+        npm run build-events-db
         ```
     
-    *   Once the first scrape has been performed, if you don't care about the latest event locations, you can suppress fetches using cached values instead, by adding --use-cache to scrapeAllTabs.js:
+        Running this generates multiple artifacts in the build_db directory:
+        * *events.sqlite* - the database used by the app
+        * *cached-location-data.sqlite* - an accumulating cache of data retrieved from Nominatim and Wikidata used during the build process. See **Managing Cached Lookup Data** below for details on how to manage this.
+        * *issues.log* - a log of errors and stats from the run.
+    
+    * Install `events.sqlite` to the static directory
         ```bash
-        node scripts/scrape/scrapeAllTabs.js --use-cache
-        ```
+        npx tsx scripts/eventDb/versionAndCopyDb.ts
+        ``` 
 
 3.  **Run SvelteKit Dev Server:**
     ```bash
@@ -56,7 +67,7 @@ The project creates and deploys a static web site to GitHub Pages. It has two ma
 
 ## Building for Production
 
-1.  **Ensure Data is Up-to-Date:** Run the scraper script (step 2 in Development) to generate the latest `static/data/data.json`.
+1.  **Ensure Data is Up-to-Date:** Run the scraper script (step 2 in Development) to generate the latest `static/data/events.sqlite`.
 2.  **Build the SvelteKit App:**
     ```bash
     npm run build
@@ -74,15 +85,19 @@ This project uses a GitHub Action to scrape the latest data, then build the site
 
 The action is triggered by repo pushes, so simply pushing changes to GitHub will update the page.
 
-It is also run daily using a cron trigger, and may be manually triggered as well.
+It is runs nightly using a cron trigger, and may be manually triggered as well.
 
-## Updating Cached Data
+## Managing Cached Lookup Data
+ Lookups for external services like Nominatim and Wikidata is slow - we intentionally throttle requests to 1 per second or longer, and events often take several requests to complete. It's also good form not to repeat requests where possible, so we maintain a cache of results.
 
-Scrapes make use of prebuilt cache files to improve fetching/processing time of geocoding and wiki info. The initial versions of these files are included in the repo to minimize cold start time. In GitHub actions, as scrapes occur, new versions of these are accumulated in a github cache, that now have newer data than the rep files. 
+For best results, this should be kept as current as possible. To facilitate this, we maintain a source of truth in a Releases build artifact in the project - it can be uploaded/downloaded using `releaseManager.ts` For example, use 
+```
+npx tsx scripts/eventDb/releaseManager.ts upload-cache
+```
+after doing scrapes to update it, and begin your session before doing scrapes with:        
+```
+npx tsx scripts/eventDb/releaseManager.ts download-cache
+```
+to get the latest from the previous night's build on Github.
 
-To update the repo versions, run the following:
-
-    ```bash
-    node scripts/scrape/scrapeAllTabs.js --updatePrebuiltData
-    ```
-Then commit changes and push to the repo.
+This way, whoever's doing a scrape (dev or the github action) benefits from work previously done.

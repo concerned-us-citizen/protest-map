@@ -1,42 +1,46 @@
-export interface ProtestEventDataJson {
-  events: Record<string, ProtestEventJson[]>;
-  locations: Record<string, Location>;
-  updatedAt: string;
-}
-
-export interface ProtestEventJson {
-  id: number;
-  date: string;
-  name: string;
-  link: string;
-  location: string;
-}
-
-export interface ProtestEvent {
-  id: number;
-  name: string;
-  link: string;
-  location: string;
-}
-
-export interface Location {
+export interface Coordinates {
   lat: number;
   lon: number;
-  title: string;
-  image: string;
-  pageUrl: string;
-  pct_dem_lead?: number;
 }
 
-export interface ProtestEventAndLocation {
-  event: ProtestEvent;
-  location: Location;
+export interface EventMarkerInfo extends Coordinates {
+  pctDemLead: Nullable<number>;
 }
 
-export interface ProtestEventData {
-  events: Map<Date, ProtestEvent[]>;
-  locations: Map<string, Location>;
-  updatedAt: Date | null;
+export interface EventMarkerInfoWithId extends EventMarkerInfo {
+  eventId: number;
+}
+
+export interface ProtestEvent extends EventMarkerInfo {
+  name: string;
+  date: string;
+  link: Nullable<string>;
+  cityInfoId: number;
+}
+
+export interface CityInfo {
+  city: string;
+  state: string;
+  cityThumbnailUrl: string;
+  cityArticleUrl: string;
+}
+
+export interface PopulatedEvent {
+  name: string;
+  date: Date;
+  link: Nullable<string>;
+  lat: number;
+  lon: number;
+  pctDemLead: Nullable<number>;
+  city: string;
+  state: string;
+  cityThumbnailUrl: string;
+  cityArticleUrl: string;
+}
+
+export interface EventFilter {
+  date: Date;
+  eventNames?: string[]; // empty or missing means match all events
 }
 
 export type DateRange = {

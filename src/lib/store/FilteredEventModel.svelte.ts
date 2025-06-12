@@ -1,17 +1,17 @@
-import { EventStore } from "./EventStore.svelte";
+import { EventModel } from "./EventModel.svelte";
 import type { Nullable, SetTimeoutId } from "$lib/types";
-import { formatDate, isFutureDate } from "$lib/util/date";
+import { formatDate } from "$lib/util/date";
 
 const INITIAL_REPEAT_DELAY = 400; // ms
 const REPEAT_INTERVAL = 80; // ms
 
-export class EventFilter {
-  readonly eventsStore: EventStore;
+export class FilteredEventModel {
+  readonly eventModel: EventModel;
 
   currentDateIndex = $state(-1);
 
   readonly currentDate = $derived.by(() => {
-    const dates = this.eventsStore.allDatesWithEventCounts;
+    const dates = this.eventModel.allDatesWithEventCounts;
     return dates[this.currentDateIndex]?.date ?? null;
   });
 
@@ -19,14 +19,14 @@ export class EventFilter {
     if (date === null) {
       this.currentDateIndex = -1;
     } else {
-      const index = this.eventsStore.allDatesWithEventCounts.findIndex(
+      const index = this.eventModel.allDatesWithEventCounts.findIndex(
         (d) => d.date.getTime() === date.getTime()
       );
       if (index !== -1) {
         this.currentDateIndex = index;
       } else {
         console.warn(
-          "Setting currentDate to value not found in eventsStore.allDatesWithEventCounts:",
+          "Setting currentDate to value not found in eventModel.allDatesWithEventCounts:",
           date
         );
         this.currentDateIndex = -1;
@@ -35,7 +35,7 @@ export class EventFilter {
   }
 
   #selectRelativeDateWrapping(increment: number) {
-    const dates = this.eventsStore.allDatesWithEventCounts;
+    const dates = this.eventModel.allDatesWithEventCounts;
     const count = dates.length;
     if (count === 0) return;
     const curIndex = Math.max(0, this.currentDateIndex);
@@ -54,23 +54,16 @@ export class EventFilter {
   readonly formattedCurrentDate = $derived(formatDate(this.currentDate));
 
   readonly currentDateEvents = $derived.by(() =>
-    this.currentDate && this.eventsStore
-      ? (this.eventsStore.events.get(this.currentDate) ?? [])
+    this.currentDate && this.eventModel
+      ? (this.eventModel.getMarkerInfos({ date: this.currentDate }) ?? [])
       : []
   );
 
-  readonly currentDateEventNamesWithLocationCounts = $derived.by(() => {
-    const eventCountsMap = this.currentDateEvents.reduce(
-      (acc, event) => {
-        acc[event.name] = (acc[event.name] || 0) + 1;
-        return acc;
-      },
-      {} as Record<string, number>
-    );
-    return Object.entries(eventCountsMap)
-      .map(([name, count]) => ({ name, count }))
-      .sort((a, b) => b.count - a.count);
-  });
+  readonly currentDateEventNamesWithLocationCounts = $derived.by(() =>
+    this.currentDate && this.eventModel
+      ? this.eventModel.getEventNamesAndCountsForDate(this.currentDate)
+      : []
+  );
 
   readonly currentDateHasEventNames = $derived(
     this.currentDateEventNamesWithLocationCounts.length > 0
@@ -81,6 +74,8 @@ export class EventFilter {
   );
 
   readonly selectedEventNames = $state<string[]>([]);
+
+  isFiltering = $derived(this.selectedEventNames.length > 0);
 
   toggleSelectedEventName(eventName: string) {
     const index = this.selectedEventNames.indexOf(eventName);
@@ -96,12 +91,13 @@ export class EventFilter {
     this.selectedEventNames.length = 0;
   }
 
-  readonly filteredEvents = $derived(
-    this.currentDateEvents.filter(
-      (evt) =>
-        this.selectedEventNames.length == 0 ||
-        this.selectedEventNames.includes(evt.name)
-    )
+  readonly filteredEvents = $derived.by(() =>
+    this.currentDate && this.eventModel
+      ? (this.eventModel.getMarkerInfos({
+          date: this.currentDate,
+          eventNames: this.selectedEventNames,
+        }) ?? [])
+      : []
   );
 
   #isRepeatingChange = false;
@@ -157,20 +153,7 @@ export class EventFilter {
     );
   }
 
-  constructor(eventsStore: EventStore) {
-    this.eventsStore = eventsStore;
-    // Initialize currentDateIndex to be the date at or after the current system date
-    // (or - 1 if no match) any time the eventsStore's items change
-    $effect(() => {
-      this.currentDateIndex = eventsStore.allDatesWithEventCounts.findIndex(
-        (dc) => isFutureDate(dc.date, true)
-      );
-    });
-
-    // Clear selectedEventNames any time currentDateIndex changes.
-    $effect(() => {
-      void this.currentDateIndex;
-      this.clearSelectedEventNames();
-    });
+  constructor(eventModel: EventModel) {
+    this.eventModel = eventModel;
   }
 }

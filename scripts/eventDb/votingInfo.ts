@@ -1,15 +1,13 @@
 import geojsonRbush from "geojson-rbush";
 import * as turf from "@turf/turf";
 import { readFile } from "fs/promises";
+import { config } from "./config";
 
 const tree = geojsonRbush();
 
 export async function loadVotingInfo() {
   try {
-    const raw = await readFile(
-      "./prebuilt_data/precincts-with-results-spatial-index.json",
-      "utf8"
-    );
+    const raw = await readFile(config.paths.buildPrecinctsSpatialIndex, "utf8");
     const spatialIndex = JSON.parse(raw); // Validate JSON format
     if (!spatialIndex.features) {
       throw new Error("Missing 'features' key in JSON.");
@@ -17,7 +15,7 @@ export async function loadVotingInfo() {
     tree.load(spatialIndex.features);
   } catch (err) {
     console.error(`Failed to load voting info: ${err.message}`);
-    throw err; // Re-throw to allow the caller to handle it
+    throw err;
   }
 }
 
@@ -48,9 +46,9 @@ export function findFeatureByLatLng({ lat, lon }) {
   return null;
 }
 
-export async function fetchVotingInfo({ lat, lon }) {
+export function fetchVotingInfo({ lat, lon }) {
   if (lat !== undefined && lon !== undefined) {
-    return await findFeatureByLatLng({ lat, lon });
+    return findFeatureByLatLng({ lat, lon });
   } else {
     return null;
   }

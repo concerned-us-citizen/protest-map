@@ -49,6 +49,7 @@ export class EventModel {
 
   private initialize() {
     this.allDatesWithEventCounts = this.db.getAllDatesWithEventCounts();
+    this.updatedAt = this.db.getCreatedAt();
   }
 
   static async create(): Promise<EventModel> {

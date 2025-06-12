@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import { CityInfo, Nullable } from "../../src/lib/types";
 import {
   normalizeYearTo2025,
-  normalizeToYYYYMMDD,
+  normalizeToMMDDYYYY,
 } from "../../src/lib/util/date";
 import { fileExists } from "../../src/lib/util/file";
 import {
@@ -43,9 +43,9 @@ export class EventSink {
     const unnamed = "Unnamed event";
     const badNames = new Set(["None", "No name"]);
 
-    const { name, zip, date, ...rest } = dissenterEvent;
+    const { name, zip, date, link, ...rest } = dissenterEvent;
 
-    // 1. Sanitize Name
+    // Sanitize Name
     let sanitizedName: string;
     if (!name || name === "" || badNames.has(name)) {
       sanitizedName = unnamed;
@@ -54,25 +54,32 @@ export class EventSink {
       sanitizedName = toTitleCase(name).trim();
     }
 
-    // 2. Sanitize and Validate Date (critical, skip event if invalid)
-    const sanitizedDate = normalizeYearTo2025(normalizeToYYYYMMDD(date));
+    // Sanitize and Validate Date (critical, skip event if invalid)
+    const sanitizedDate = normalizeYearTo2025(normalizeToMMDDYYYY(date));
     if (!sanitizedDate) {
       logInvalidEvent(dissenterEvent, `Bad date '${date}'`);
       return null; // Skip event if date is invalid
     }
 
-    // 3. Sanitize and Validate Zip (warn only)
+    // Sanitize and Validate Zip (warn only)
     let sanitizedZip = zip?.trim();
     if (!isValidZipCode(sanitizedZip)) {
       logInvalidEvent(dissenterEvent, `Bad zipcode '${sanitizedZip}'`);
       sanitizedZip = "";
     }
 
+    // Strip out bad links
+    let sanitizedLink = link?.trim();
+    if (!sanitizedLink.startsWith("http")) {
+      sanitizedLink = "";
+    }
+
     // Return the sanitized raw event
     return {
       name: sanitizedName,
-      zip: sanitizedZip,
       date: sanitizedDate,
+      zip: sanitizedZip,
+      link: sanitizedLink,
       ...rest,
     };
   }
@@ -98,12 +105,15 @@ export class EventSink {
     return `${event.date}|${event.name}|${event.link}|${event.lat}|${event.lon}`;
   }
 
-  maybeCreateEvent(event: LocatedDissenterEvent): void {
+  maybeCreateEvent(event: LocatedDissenterEvent): boolean {
     const db = this.db;
     const eventKey = this.eventKey(event);
     if (!db.hasSeenEventKey(eventKey)) {
       db.insertEvent(event);
       db.addSeenEventKey(eventKey);
+      return true;
+    } else {
+      return false;
     }
   }
 }

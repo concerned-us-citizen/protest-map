@@ -1,9 +1,9 @@
 import { setContext, getContext } from "svelte";
-import { EventStore } from "./EventStore.svelte";
-import { EventFilter } from "./EventFilter.svelte";
+import { EventModel } from "./EventModel.svelte";
+import { FilteredEventModel } from "./FilteredEventModel.svelte";
 import { MapState } from "./MapState.svelte";
 import { deviceInfo } from "$lib/store/DeviceInfo.svelte";
-import type { SetTimeoutId } from "$lib/types";
+import type { Nullable, SetTimeoutId } from "$lib/types";
 
 const EVENTINFO_VISIBILITY_DURATION = 1000; // 1s
 
@@ -13,8 +13,8 @@ const STANDARD_NAV_TIME = 1000; // ms, for >= 20 events
 const ZERO_EVENT_NAV_TIME = 50; // ms, for dates with no events
 
 export class PageState {
-  readonly eventStore: EventStore;
-  readonly filter: EventFilter;
+  readonly eventModel: EventModel;
+  readonly filter: FilteredEventModel;
   readonly mapState: MapState;
 
   filterVisible = $state(false);
@@ -52,7 +52,7 @@ export class PageState {
     const numEvents = this.filter.currentDateEvents.length;
     let lingerTime;
 
-    if (numEvents === 0 && this.eventStore.allDatesWithEventCounts.length > 1) {
+    if (numEvents === 0 && this.eventModel.allDatesWithEventCounts.length > 1) {
       lingerTime = ZERO_EVENT_NAV_TIME;
     } else if (numEvents < 20) {
       lingerTime = QUICK_NAV_TIME;
@@ -64,7 +64,7 @@ export class PageState {
       if (this.autoplaying) {
         this.filter.currentDateIndex =
           (this.filter.currentDateIndex + 1) %
-          this.eventStore.allDatesWithEventCounts.length;
+          this.eventModel.allDatesWithEventCounts.length;
         // Schedule the next date advance
         this.scheduleNextDateAdvance();
       }
@@ -97,20 +97,38 @@ export class PageState {
     this.#autoplayTimer = undefined;
   }
 
-  constructor() {
-    this.eventStore = new EventStore();
-    this.filter = new EventFilter(this.eventStore);
-    this.mapState = new MapState();
+  private constructor(
+    eventModel: EventModel,
+    filter: FilteredEventModel,
+    mapState: MapState
+  ) {
+    this.eventModel = eventModel;
+    this.filter = filter;
+    this.mapState = mapState;
+  }
+
+  static async create() {
+    const eventModel = await EventModel.create();
+    const filter = new FilteredEventModel(eventModel);
+    const mapState = new MapState();
+    const pageState = new PageState(eventModel, filter, mapState);
+    return pageState;
   }
 }
 
 const PAGE_STATE_KEY = Symbol("PAGE_STATE");
 
-export function createPageStateInContext() {
-  return setContext(PAGE_STATE_KEY, new PageState());
+export function createPageStateInContext(pageStateHolder: {
+  value: Nullable<PageState>;
+}) {
+  return setContext(PAGE_STATE_KEY, pageStateHolder);
 }
+
 export function getPageStateFromContext() {
-  return getContext<ReturnType<typeof createPageStateInContext>>(
-    PAGE_STATE_KEY
-  );
+  const pageStateHolder =
+    getContext<ReturnType<typeof createPageStateInContext>>(PAGE_STATE_KEY);
+  if (!pageStateHolder.value) {
+    throw new Error("Missing Page State");
+  }
+  return pageStateHolder.value;
 }

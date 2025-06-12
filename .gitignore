@@ -7,8 +7,9 @@ node_modules
 .wrangler
 /.svelte-kit
 /build
+/build_db
 /cache
-static/data/data.json
+static/data
 prebuilt_data/precincts-with-results-spatial-index.json
 
 # OS

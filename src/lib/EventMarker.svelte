@@ -1,8 +1,9 @@
 <script module lang="ts">
-  import type { ProtestEventAndCityInfo } from './types';
+  import type { EventMarkerInfoWithId } from './types';
 
   export interface ProtestEventMarkerOptions extends L.MarkerOptions {
-    protestEventAndLocation: ProtestEventAndCityInfo;
+    eventMarkerInfo: EventMarkerInfoWithId;
+    eventModel: EventModel;
   }
 
   const iconSize = 30;
@@ -13,7 +14,7 @@
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const counts = childMarkers.reduce((acc, marker: Marker<any>) => {
       const options = marker.options as ProtestEventMarkerOptions;
-      const pct = options.protestEventAndLocation.location.pct_dem_lead;
+      const pct = options.eventMarkerInfo.pctDemLead;
       if (!pct || pct === 0) {
         acc.unavailable++; 
       } else if (pct < 0) { 
@@ -37,10 +38,9 @@
     return `<div style="color: ${color}; --background-opacity: ${opacity}; width: ${iconSize}px; height: ${iconSize}px;">${circledMarkerSvg}</div>`;
   }
 
-  const htmlForMarkerWithMarginPercentage = (pct?: number | string) => {
+  const htmlForMarkerWithMarginPercentage = (percentage: Nullable<number>) => {
 
-    const percentage = typeof pct === 'string' ? parseFloat(pct) : pct ?? 0;
-    let color = pct === undefined || pct === null || isNaN(Number(pct)) 
+    let color = percentage === null || isNaN(Number(percentage)) 
       ? markerColor.unavailable
       : (percentage > 0)
         ? markerColor.blue
@@ -57,26 +57,26 @@
   import type { Nullable } from './types';
   import { browser } from '$app/environment';
   import { markerColor } from './colors';
+  import type { EventModel } from './store/EventModel.svelte';
   
   interface EventMarkerProps {
       L: typeof import('leaflet');
       map: Map;
-      protestEventAndLocation: ProtestEventAndCityInfo;
+      eventMarkerInfo: EventMarkerInfoWithId;
+      eventModel: EventModel;
       markerClusterGroup: MarkerClusterGroup;
   }
-  const { L, map, protestEventAndLocation, markerClusterGroup }: EventMarkerProps = $props();
+  const { L, map, eventMarkerInfo, eventModel, markerClusterGroup }: EventMarkerProps = $props();
 
   let markerInstance: Nullable<Marker> = null;
   
   onMount(() => {
-    const protestEvent = protestEventAndLocation.event;
-    const loc = protestEventAndLocation.location;
     
-    if (!browser || !L || !map || !markerClusterGroup || loc?.lat == null || loc?.lon == null) {
+    if (!browser || !L || !map || !markerClusterGroup) {
       return;
     }
     
-    const markerHtml = htmlForMarkerWithMarginPercentage(loc.pct_dem_lead);
+    const markerHtml = htmlForMarkerWithMarginPercentage(eventMarkerInfo.pctDemLead);
 
     const icon: DivIcon = L.divIcon({
       html: markerHtml,
@@ -87,9 +87,10 @@
     });
 
     markerInstance = L.marker(
-      [loc.lat, loc.lon], 
+      [eventMarkerInfo.lat, eventMarkerInfo.lon], 
       { 
-        protestEventAndLocation: protestEventAndLocation, 
+        eventMarkerInfo, 
+        eventModel,
         icon 
       } as ProtestEventMarkerOptions
     );
@@ -98,10 +99,10 @@
         if (!markerClusterGroup.hasLayer(markerInstance)) { // Prevent adding duplicate if somehow already there
             markerInstance.addTo(markerClusterGroup);
         } else {
-            console.warn(`[EventMarker onMount] Marker for event ${protestEvent.id} already exists in cluster group on mount. Skipping add.`);
+            console.warn(`[EventMarker onMount] Marker for event ${eventMarkerInfo.eventId} already exists in cluster group on mount. Skipping add.`);
         }
     } catch (e) {
-        console.error(`[EventMarker onMount] ERROR adding marker ${protestEvent.id} to cluster group:`, e);
+        console.error(`[EventMarker onMount] ERROR adding marker ${eventMarkerInfo.eventId} to cluster group:`, e);
     }
   });
 

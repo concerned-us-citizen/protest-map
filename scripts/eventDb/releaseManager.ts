@@ -1,6 +1,7 @@
 import fs from "fs";
 import { Octokit } from "@octokit/rest";
 import dotenv from "dotenv";
+import { config } from "./config";
 
 dotenv.config();
 
@@ -117,18 +118,18 @@ const [, , cmd] = process.argv;
   switch (cmd) {
     case "upload-cache":
       await uploadFile(
-        "build/cached-location-data.sqlite",
+        config.paths.buildLocationCache,
         "cached-location-data.sqlite"
       );
       break;
     case "download-cache":
       await downloadFile(
         "cached-location-data.sqlite",
-        "build/cached-location-data.sqlite"
+        config.paths.buildLocationCache
       );
       break;
     case "upload-log":
-      await uploadFile("build/issues.log", `issues-${Date.now()}.log`);
+      await uploadFile(config.paths.buildLog, `issues-${Date.now()}.log`);
       break;
     default:
       console.error(`Unknown command: ${cmd}`);

@@ -19,7 +19,7 @@
     {/each}
   </div>
   <p class="last-updated">
-    {pageState.eventStore.formattedUpdatedAt}
+    {pageState.eventModel.formattedUpdatedAt}
   </p>
 </div>
 

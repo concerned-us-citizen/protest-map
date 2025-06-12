@@ -5,7 +5,7 @@ import { LocationDataSource } from "./LocationDataSource";
 import { getSheetData } from "./getSheetData";
 import { DissenterEvent, DissenterEventSchema } from "./types";
 import { getLoggedIssueCount, initLog, logInfo, logIssue } from "./issueLog";
-import { scanForSimilarNames } from "./similarNames";
+// import { scanForSimilarNames } from "./similarNames";
 import { loadVotingInfo } from "./votingInfo";
 
 async function main() {
@@ -35,12 +35,14 @@ async function main() {
     return firstWord;
   });
 
-  const totalEvents = sheets.reduce((acc, sheet) => acc + sheet.rows.length, 0);
+  let totalEvents = sheets.reduce((acc, sheet) => acc + sheet.rows.length, 0);
   console.log(`Retrieved ${totalEvents} total events`);
 
   const eventNames: string[] = [];
 
   let totalEventsProcessed = 0;
+  let duplicates = 0;
+  let rejects = 0;
   let sheetsProcessed = 0;
   const totalSheets = sheets.length;
   for (const sheet of sheets) {
@@ -60,6 +62,7 @@ async function main() {
           `'${sheet.title}': differently shaped, skipping`,
           firstRowSampleResult.error.errors
         );
+        totalEvents -= sheet.rows.length;
         continue;
       }
     }
@@ -80,14 +83,21 @@ async function main() {
         dissenterEvent = DissenterEventSchema.parse(namedRow);
       } catch (err) {
         logIssue(`'${sheet.title}': Zod failed to parse:`, err);
+        rejects++;
         continue;
       }
 
       const sanitized = await eventSink.sanitize(dissenterEvent);
-      if (!sanitized) continue;
+      if (!sanitized) {
+        rejects++;
+        continue;
+      }
 
       const locationInfo = await locationInfoSource.getLocationInfo(sanitized);
-      if (!locationInfo) continue;
+      if (!locationInfo) {
+        rejects++;
+        continue;
+      }
 
       const cityInfoId = eventSink.getOrCreateCityInfo(locationInfo);
 
@@ -102,18 +112,23 @@ async function main() {
       };
 
       // Skips duplicates
-      eventSink.maybeCreateEvent(locatedDissenterEvent);
+      if (!eventSink.maybeCreateEvent(locatedDissenterEvent)) {
+        duplicates++;
+      }
 
       eventNames.push(locatedDissenterEvent.name);
     }
   }
 
-  console.log("Looking for similar event names...");
-  scanForSimilarNames(eventNames);
+  // console.log("Looking for similar event names...");
+  // scanForSimilarNames(eventNames);
 
   const elapsedTime = `${(Date.now() - startTime) / 1000}s`;
   logInfo(`\nProcessing complete: `, {
-    totalEvents,
+    processed: totalEvents,
+    rejects,
+    duplicates,
+    added: totalEvents - rejects - duplicates,
     elapsedTime,
     loggedIssues: getLoggedIssueCount(),
     wikiFetches: locationInfoSource.cityInfoFetchCount,

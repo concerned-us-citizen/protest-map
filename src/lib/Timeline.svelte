@@ -4,7 +4,7 @@
 
   const pageState = getPageStateFromContext();
 
-  let selectedDateWithEventCount = $derived(pageState.eventStore.allDatesWithEventCounts.find(dc => dc.date === pageState.filter.currentDate) ?? null);
+  let selectedDateWithEventCount = $derived(pageState.eventModel.allDatesWithEventCounts.find(dc => dc.date === pageState.filter.currentDate) ?? null);
 
   let isRepeatingChange = false;
   let currentRepeatDirection: 'next' | 'prev' | null = null;
@@ -69,7 +69,7 @@
   >‹</button>
   <HistogramSlider
     className="slider"
-    items={pageState.eventStore.allDatesWithEventCounts}
+    items={pageState.eventModel.allDatesWithEventCounts}
     selectedItem={selectedDateWithEventCount}
     onSelect={dc => pageState.filter.setCurrentDate(dc.date)}
     magnitudeFor={item => item.eventCount}

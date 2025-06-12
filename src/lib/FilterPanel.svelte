@@ -5,6 +5,7 @@
   import { getPageStateFromContext } from "./store/PageState.svelte";
   import { countAndLabel } from "./util/string";
 
+  // svelte-ignore custom_element_props_identifier
   let { className = '', ...restProps } = $props();
 
   const pageState = getPageStateFromContext();

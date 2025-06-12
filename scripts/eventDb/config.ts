@@ -1,7 +1,7 @@
 import configJson from "./config.json" with { type: "json" };
 import path from "path";
 import { Command } from "commander";
-import { AppConfig, Paths } from "./configTypes";
+import { type AppConfig, type Paths } from "./configTypes";
 
 function camelCaseKey(dirKey: string, fileKey: string) {
   return dirKey + fileKey[0].toUpperCase() + fileKey.slice(1);

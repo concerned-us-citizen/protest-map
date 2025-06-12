@@ -3,14 +3,18 @@ export interface Coordinates {
   lon: number;
 }
 
-export interface MarkerInfo extends Coordinates {
+export interface EventMarkerInfo extends Coordinates {
   pctDemLead: Nullable<number>;
 }
 
-export interface ProtestEvent extends MarkerInfo {
+export interface EventMarkerInfoWithId extends EventMarkerInfo {
+  eventId: number;
+}
+
+export interface ProtestEvent extends EventMarkerInfo {
   name: string;
   date: string;
-  link: string;
+  link: Nullable<string>;
   cityInfoId: number;
 }
 
@@ -21,12 +25,22 @@ export interface CityInfo {
   cityArticleUrl: string;
 }
 
-export type ProtestEventWithCityInfo = ProtestEvent & CityInfo;
+export interface PopulatedEvent {
+  name: string;
+  date: Date;
+  link: Nullable<string>;
+  lat: number;
+  lon: number;
+  pctDemLead: Nullable<number>;
+  city: string;
+  state: string;
+  cityThumbnailUrl: string;
+  cityArticleUrl: string;
+}
 
-// TODO DELETE - use above to combine into a single object with & interfaces
-export interface ProtestEventAndCityInfo {
-  event: ProtestEvent;
-  cityInfo: CityInfo;
+export interface EventFilter {
+  date: Date;
+  eventNames?: string[]; // empty or missing means match all events
 }
 
 export type DateRange = {

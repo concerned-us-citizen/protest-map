@@ -1,5 +1,6 @@
 import Database, { Statement } from "better-sqlite3";
 import { CityInfo, ProtestEvent } from "../../src/lib/types";
+import { dateToYYYYMMDDInt } from "../../src/lib/util/date";
 
 export class EventDb {
   private db: Database.Database;
@@ -69,10 +70,11 @@ export class EventDb {
       `);
 
       db.exec(`CREATE TABLE events (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
               lat REAL NOT NULL,
               lon REAL NOT NULL,
               pct_dem_lead REAL,
-              date TEXT NOT NULL,
+              date INTEGER NOT NULL,
               name TEXT NOT NULL,
               link TEXT,
               city_info_id INTEGER,
@@ -119,7 +121,7 @@ export class EventDb {
       event.lat,
       event.lon,
       event.pctDemLead,
-      event.date,
+      dateToYYYYMMDDInt(new Date(event.date)),
       event.name,
       event.link,
       event.cityInfoId

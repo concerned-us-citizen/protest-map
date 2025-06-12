@@ -7,7 +7,8 @@
   "eslint.lintTask.enable": true,
   "files.exclude": {
     "**/.svelte-kit": true,
-    "**/build": false
+    "**/build": false,
+    "**/build_db": false
   },
   "terminal.integrated.defaultProfile.osx": "zsh",
   "terminal.integrated.profiles.osx": {

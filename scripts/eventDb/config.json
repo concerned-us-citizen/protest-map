@@ -2,7 +2,7 @@
   "scrapeEventLinks": false,
   "userAgent": "ProtestMap/1.0 (hypo.30-buggy@icloud.com)",
   "dirs": {
-    "build": "./build",
+    "build": "./build_db",
     "release": "./static/data"
   },
   "files": {

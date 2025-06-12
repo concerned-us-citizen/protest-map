@@ -1,6 +1,6 @@
 import { formatDateTime } from "../../src/lib/util/date";
 import fs from "fs/promises";
-import { DissenterEvent } from "./types";
+import { type DissenterEvent } from "./types";
 import { fileExists } from "../../src/lib/util/file";
 import { config } from "./config";
 
@@ -34,7 +34,7 @@ export async function logDiscardedDuplicate(
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function logInfo(message, arg?: any) {
+export async function logInfo(message: string, arg?: any) {
   await logIssue(message, arg, false);
 }
 

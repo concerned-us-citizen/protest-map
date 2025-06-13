@@ -4,7 +4,7 @@
 
 <div class="loader-wrapper">
   <div class="spinner" style="width: {size}px; height: {size}px;"></div>
-  <div class="loading-text">Loading Events...</div>
+  <div class="loading-text">Loading Protests...</div>
 </div>
 
 <style>

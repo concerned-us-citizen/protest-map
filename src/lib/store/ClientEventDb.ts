@@ -15,9 +15,11 @@ interface LatestDbManifest {
 
 export class ClientEventDb {
   private db: Database;
+  private manifest: LatestDbManifest;
 
-  constructor(db: Database) {
+  constructor(db: Database, manifest: LatestDbManifest) {
     this.db = db;
+    this.manifest = manifest;
   }
 
   getEventMarkerInfos(filter: EventFilter): EventMarkerInfoWithId[] {
@@ -180,10 +182,22 @@ export class ClientEventDb {
     return new Date(createdAt as string);
   }
 
-  static async create(): Promise<ClientEventDb> {
+  async checkIsUpdateAvailable() {
+    const newManifest = await ClientEventDb.#fetchManifest();
+    return (
+      newManifest.dbFilename !== this.manifest.dbFilename ||
+      newManifest.sha !== this.manifest.sha
+    );
+  }
+
+  static async #fetchManifest(): Promise<LatestDbManifest> {
     const manifestRes = await fetch("data/latest.json", { cache: "no-cache" });
     if (!manifestRes.ok) throw new Error(`Failed to load latest.json`);
-    const manifest: LatestDbManifest = await manifestRes.json();
+    return (await manifestRes.json()) as LatestDbManifest;
+  }
+
+  static async create(): Promise<ClientEventDb> {
+    const manifest = await ClientEventDb.#fetchManifest();
 
     const dbRes = await fetch(`/data/${manifest.dbFilename}`);
     if (!dbRes.ok)
@@ -195,6 +209,6 @@ export class ClientEventDb {
     });
     const db = new SQL.Database(new Uint8Array(dbBuffer));
 
-    return new ClientEventDb(db);
+    return new ClientEventDb(db, manifest);
   }
 }

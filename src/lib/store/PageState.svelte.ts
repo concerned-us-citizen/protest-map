@@ -19,6 +19,7 @@ export class PageState {
 
   filterVisible = $state(false);
   helpVisible = $state(false);
+  updateAvailable = $state(false);
 
   private _eventInfoVisible = $state(false);
   #hideEventInfoTimer: SetTimeoutId = undefined;
@@ -97,6 +98,25 @@ export class PageState {
     this.#autoplayTimer = undefined;
   }
 
+  pollForUpdates() {
+    setTimeout(
+      async () => {
+        try {
+          this.updateAvailable = await this.eventModel.checkIsUpdateAvailable();
+          console.log("Checking for update...");
+          if (this.updateAvailable) {
+            console.log("Update now available!");
+          }
+        } catch (err) {
+          console.log("Polling failed", err);
+        }
+
+        this.pollForUpdates();
+      },
+      1000 * 60 * 60
+    );
+  }
+
   private constructor(
     eventModel: EventModel,
     filter: FilteredEventModel,
@@ -112,6 +132,7 @@ export class PageState {
     const filter = new FilteredEventModel(eventModel);
     const mapState = new MapState();
     const pageState = new PageState(eventModel, filter, mapState);
+    pageState.pollForUpdates();
     return pageState;
   }
 }

@@ -13,6 +13,7 @@
   import { fade } from 'svelte/transition';
   import { getPageStateFromContext } from '$lib/store/PageState.svelte';
   import PrecinctStatsPanel from '$lib/PrecinctStatsPanel.svelte';
+  import UpgradeBanner from '$lib/UpgradeBanner.svelte';
 
   const pageState = getPageStateFromContext();
   
@@ -239,6 +240,8 @@
     saveShownTourToCookie();
   }} />
 {/if}
+
+<UpgradeBanner/>
 
 <style>
 .title-stats-and-filter-container {  

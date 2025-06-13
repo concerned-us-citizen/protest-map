@@ -43,6 +43,10 @@ export class EventModel {
     return this.db.getPopulatedEvent(eventMarkerInfo);
   }
 
+  async checkIsUpdateAvailable() {
+    return await this.db.checkIsUpdateAvailable();
+  }
+
   private constructor(db: ClientEventDb) {
     this.db = db;
   }

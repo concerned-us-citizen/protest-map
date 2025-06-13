@@ -20,7 +20,13 @@
       type="image/x-icon"
       href="%sveltekit.assets%/favicon.ico"
     />
-    <link rel="preload" href="%sveltekit.assets%/data/latest.json" />
+    <link
+      rel="preload"
+      href="%sveltekit.assets%/data/latest.json"
+      as="fetch"
+      type="application/json"
+      crossorigin="anonymous"
+    />
     %sveltekit.head%
   </head>
   <body data-sveltekit-preload-data="hover">

@@ -21,6 +21,14 @@ export class EventModel {
     return { start: dates[0].date, end: dates[dates.length - 1].date };
   });
 
+  isValidDate(date: Date) {
+    return (
+      this.dateRange &&
+      date >= this.dateRange.start &&
+      date <= this.dateRange?.end
+    );
+  }
+
   readonly formattedDateRange = $derived.by(() =>
     this.dateRange != null ? formatDateRange(this.dateRange) : ""
   );

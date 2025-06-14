@@ -15,14 +15,20 @@
 
 
 
-  // Initialize currentDateIndex to be the date at or after the current system date
-  // (or - 1 if no match) any time the eventModel's items change
+
   $effect(() => {
     const pageState = pageStateHolder.value;
     if (pageState) {
-        pageState.filter.currentDateIndex = pageState.eventModel.allDatesWithEventCounts.findIndex(
-        (dc) => isFutureDate(dc.date, true)
-      );
+        const specifiedDateStr = new URLSearchParams(window.location.search).get('date');
+        const specifiedDate = specifiedDateStr ? new Date(specifiedDateStr) : undefined;
+        if (specifiedDate && pageState.eventModel.isValidDate(specifiedDate)) {
+          pageState.filter.setCurrentDate(new Date(specifiedDate));
+        } else {
+            // If not specified, initialize currentDateIndex to be the date at or after the current system date
+            // (or - 1 if no match) any time the eventModel's items change
+          pageState.filter.currentDateIndex = pageState.eventModel
+            .allDatesWithEventCounts.findIndex((dc) => isFutureDate(dc.date, true));
+        }
     }
   });
 

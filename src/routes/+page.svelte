@@ -38,9 +38,9 @@
 </script>
 
 <svelte:head>
-  <title>US Protests Map</title>
-  <meta property="og:title" content={`A Map of Protests`} />
-  <meta property="og:description" content={`An interactive map of protests`} />
+  <title>Map of US Protests</title>
+  <meta property="og:title" content={`An Interactive Map of US Protests by Date`} />
+  <meta property="og:description" content={`An interactive map of US protests, browsable by date.`} />
 </svelte:head>
 
 {#if pageStateHolder.value}

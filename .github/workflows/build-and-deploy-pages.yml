@@ -64,6 +64,8 @@ jobs:
           npx tsx scripts/eventDb/releaseManager.ts upload-cache
 
       - name: Build static site
+        env:
+          VITE_MAPTILER_API_KEY: ${{ VITE_MAPTILER_API_KEY }}
         run: npm run build
 
       - name: Upload Pages artifact

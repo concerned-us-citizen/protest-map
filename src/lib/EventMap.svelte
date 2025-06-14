@@ -30,6 +30,8 @@
 
   const pageState = getPageStateFromContext();
 
+  const MAPTILER_API_KEY = import.meta.env.VITE_MAPTILER_API_KEY;
+
   const handleMapKeyDown = (event: KeyboardEvent): void => {
     if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
       event.preventDefault();
@@ -142,8 +144,11 @@
 
       pageState.mapState.setInitialMapView(center, zoom);
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors',
+      L.tileLayer(`https://api.maptiler.com/maps/basic/{z}/{x}/{y}.png?key=${MAPTILER_API_KEY}`, {
+        tileSize: 512,
+        zoomOffset: -1,
+        detectRetina: true,
+        attribution: "\u003ca href=\"https://www.maptiler.com/copyright/\" target=\"_blank\"\u003e\u0026copy; MapTiler\u003c/a\u003e \u003ca href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\"\u003e\u0026copy; OpenStreetMap contributors\u003c/a\u003e",
       }).addTo(map);
 
       if (mapElement) {

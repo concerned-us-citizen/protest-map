@@ -53,17 +53,22 @@ export class FilteredEventModel {
 
   readonly formattedCurrentDate = $derived(formatDate(this.currentDate));
 
-  readonly currentDateEvents = $derived.by(() =>
-    this.currentDate && this.eventModel
-      ? (this.eventModel.getMarkerInfos({ date: this.currentDate }) ?? [])
-      : []
-  );
+  readonly currentDateEvents = $derived.by(() => {
+    const date = this.currentDate;
+    if (!date) return [];
 
-  readonly currentDateEventNamesWithLocationCounts = $derived.by(() =>
-    this.currentDate && this.eventModel
-      ? this.eventModel.getEventNamesAndCountsForDate(this.currentDate)
-      : []
-  );
+    return this.eventModel
+      ? (this.eventModel.getMarkerInfos({ date }) ?? [])
+      : [];
+  });
+
+  readonly currentDateEventNamesWithLocationCounts = $derived.by(() => {
+    const date = this.currentDate;
+    if (!date) return [];
+    return this.eventModel
+      ? this.eventModel.getEventNamesAndCountsForDate(date)
+      : [];
+  });
 
   readonly currentDateHasEventNames = $derived(
     this.currentDateEventNamesWithLocationCounts.length > 0
@@ -73,32 +78,31 @@ export class FilteredEventModel {
     this.currentDateEventNamesWithLocationCounts.length > 1
   );
 
-  readonly selectedEventNames = $state<string[]>([]);
+  selectedEventNames = $state<string[]>([]);
 
   isFiltering = $derived(this.selectedEventNames.length > 0);
 
-  toggleSelectedEventName(eventName: string) {
-    const index = this.selectedEventNames.indexOf(eventName);
-
-    if (index !== -1) {
-      this.selectedEventNames.splice(index, 1);
-    } else {
-      this.selectedEventNames.push(eventName);
-    }
+  toggleSelectedEventName(name: string) {
+    const cur = this.selectedEventNames;
+    this.selectedEventNames = cur.includes(name)
+      ? cur.filter((n) => n !== name)
+      : [...cur, name];
   }
 
   clearSelectedEventNames() {
-    this.selectedEventNames.length = 0;
+    this.selectedEventNames = [];
   }
 
-  readonly filteredEvents = $derived.by(() =>
-    this.currentDate && this.eventModel
-      ? (this.eventModel.getMarkerInfos({
-          date: this.currentDate,
-          eventNames: this.selectedEventNames,
-        }) ?? [])
-      : []
-  );
+  readonly filteredEvents = $derived.by(() => {
+    const date = this.currentDate;
+    const eventNames = this.selectedEventNames;
+
+    if (!date) return [];
+
+    return this.eventModel
+      ? (this.eventModel.getMarkerInfos({ date, eventNames }) ?? [])
+      : [];
+  });
 
   #isRepeatingChange = false;
   #currentRepeatDirection: "next" | "prev" | null = null;

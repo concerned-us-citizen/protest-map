@@ -72,9 +72,11 @@ export class PageState {
     }, lingerTime);
   }
 
-  readonly eventInfoVisible = $derived(
-    deviceInfo.isTall || this._eventInfoVisible
-  );
+  readonly eventInfoVisible = $derived.by(() => {
+    const isTall = deviceInfo.isTall;
+    const eventInfoVisible = this._eventInfoVisible;
+    return isTall || eventInfoVisible;
+  });
 
   showEventInfo() {
     if (!deviceInfo.isTall) {

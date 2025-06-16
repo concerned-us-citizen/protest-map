@@ -1,283 +1,417 @@
 <script lang="ts">
-  import { type MarkerClusterGroup, type Map as LeafletMap } from 'leaflet';
-  import { onMount, onDestroy, mount } from 'svelte';
-  import EventPopup from '$lib/EventPopup.svelte';
-  import { getPageStateFromContext } from '$lib/store/PageState.svelte';
-  import EventMarker, { htmlForClusterMarker, type ProtestEventMarkerOptions } from './EventMarker.svelte';
-  import type { Nullable } from './types';
-  import { browser } from '$app/environment';
-  import { deviceInfo } from '$lib/store/DeviceInfo.svelte';
-  import 'leaflet/dist/leaflet.css';
-  import 'leaflet.markercluster/dist/MarkerCluster.css';
-  import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
+  import { onMount, onDestroy, mount } from "svelte";
+  import maplibregl from "maplibre-gl";
+  import EventPopup from "$lib/EventPopup.svelte";
+  import { getPageStateFromContext } from "$lib/store/PageState.svelte";
+  import type { EventMarkerInfoWithId, Nullable } from "./types";
+  import { deviceInfo } from "./store/DeviceInfo.svelte";
 
-  type LeafletModule = typeof import('leaflet');
+  const iconForPct = (pct: number | null) =>
+    pct === null
+      ? "marker-unavailable"
+      : pct > 0
+        ? "marker-blue"
+        : pct < 0
+          ? "marker-red"
+          : "marker-purple";
 
-  interface Props {
-    className?: string;
+  function eventsToGeoJSON(events: EventMarkerInfoWithId[]): GeoJSON.GeoJSON {
+    return {
+      type: "FeatureCollection",
+      features: events.map((e) => {
+        const icon = iconForPct(e.pctDemLead ?? null);
+        return {
+          type: "Feature",
+          geometry: { type: "Point", coordinates: [e.lon, e.lat] },
+          properties: {
+            eventId: e.eventId,
+            pct: e.pctDemLead,
+            icon,
+          },
+        };
+      }),
+    };
   }
-
-  const { className = '' }: Props = $props();
-
-  let mapElement: HTMLElement | undefined;
-  let L: LeafletModule | undefined = $state(undefined);
-  let map: Nullable<LeafletMap> = $state(null);
-  let markerClusterGroup: Nullable<MarkerClusterGroup> = $state(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let sveltePopupInstance: Nullable<any> = null;
-  let sveltePopupContainer: Nullable<HTMLElement> = null;
-  let zoomControlInstance: Nullable<L.Control.Zoom> = $state(null);
 
   const pageState = getPageStateFromContext();
 
-  const MAPTILER_API_KEY = import.meta.env.VITE_MAPTILER_API_KEY;
+  let mapDiv: HTMLElement | undefined;
+  let map: maplibregl.Map | undefined;
 
-  const handleMapKeyDown = (event: KeyboardEvent): void => {
-    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
-      event.preventDefault();
+  let popup: Nullable<maplibregl.Popup> = null;
+  let sveltePopupInstance: Nullable<ReturnType<typeof mount>> = null;
+  let sveltePopupContainer: Nullable<Element>;
+
+  let navigationControl: Nullable<maplibregl.NavigationControl> = $state(null);
+  let zoomControlVisible = $state(false);
+
+  const spriteIcons = [
+    ["marker-red", "/sprites/marker-red.png"],
+    ["marker-blue", "/sprites/marker-blue.png"],
+    ["marker-purple", "/sprites/marker-purple.png"],
+    ["marker-unavailable", "/sprites/marker-unavailable.png"],
+  ];
+
+  // Update the markers when filtered events change
+  $effect(() => {
+    const { filteredEvents } = pageState.filter;
+    if (!map || !filteredEvents) return;
+
+    const source = map.getSource("events") as maplibregl.GeoJSONSource;
+    if (source) source.setData(eventsToGeoJSON(filteredEvents));
+  });
+
+  // Update the viewport when a new region is specified
+  $effect(() => {
+    const region = pageState.mapState.visibleMapRegion;
+    if (map && region) {
+      map.fitBounds(region.bounds, {
+        padding: 40,
+        maxZoom: 16,
+        ...region.options,
+      });
+      pageState.mapState.visibleMapRegion = null;
     }
-  };
+  });
 
-  function handleMarkerClick(e: L.LayerEvent) {
-    if (!browser || !L || !map) return;
+  $effect(() => {
+    const isTouchDevice = deviceInfo.isTouchDevice;
+    const isWide = deviceInfo.isWide;
+    zoomControlVisible = !isTouchDevice && isWide;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const marker = e.layer as L.Marker<any>;
-    const options = marker.options as ProtestEventMarkerOptions;
-    const markerInfo = options.eventMarkerInfo;
-    const populatedEvent = options.eventModel.getPopulatedEvent(markerInfo);
-
-    // Destroy any existing Svelte popup instance before creating a new one
-    if (sveltePopupInstance) {
-      sveltePopupInstance.destroy?.();
-      sveltePopupInstance = null;
-    }
-    if (sveltePopupContainer) {
-      sveltePopupContainer.remove();
-      sveltePopupContainer = null;
-    }
-
-    sveltePopupContainer = document.createElement('div');
-    sveltePopupInstance = mount(EventPopup, {
-      target: sveltePopupContainer,
-      props: { populatedEvent },
-    });
-
-    // Use Leaflet's bindPopup and openPopup
-    marker.bindPopup(sveltePopupContainer!, {
-      maxWidth: 300,
-      minWidth: 150,
-      closeButton: false,
-      autoClose: true,
-      autoPan: true,
-    }).openPopup();
-
-    // Listen for popup close event to destroy the Svelte component
-    marker.getPopup()?.on('remove', () => {
-      if (sveltePopupInstance) {
-        sveltePopupInstance.destroy?.();
-        sveltePopupInstance = null;
-      }
-      if (sveltePopupContainer) {
-        sveltePopupContainer.remove();
-        sveltePopupContainer = null;
-      }
-    });
-  }
-
-  function closePopup() {
     if (!map) return;
 
-    map.closePopup();
-    // Leaflet handles destroying the DOM element when the popup is closed.
-    // The Svelte component destruction is handled by the 'remove' event listener on the popup.
+    if (!navigationControl && zoomControlVisible) {
+      navigationControl = new maplibregl.NavigationControl({
+        showZoom: true,
+        showCompass: false,
+      });
+      map.addControl(navigationControl, "top-left");
+    } else if (navigationControl && !zoomControlVisible) {
+      map.removeControl(navigationControl);
+      navigationControl = null;
+    }
+  });
+
+  // Helper function to load an individual image and add it to the map
+  async function loadImageToMap(
+    mapInstance: maplibregl.Map,
+    name: string,
+    url: string
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.src = url;
+      img.onload = () => {
+        if (!mapInstance.hasImage(name)) {
+          mapInstance.addImage(name, img);
+        }
+        resolve();
+      };
+      img.onerror = () => {
+        console.error(`Failed to load image: ${url}`);
+        reject(`Failed to load image: ${url}`);
+      };
+    });
   }
 
-  // Close the popup when visible events change
-  $effect(() => {
-    if (pageState.filter.filteredEvents) {
-      closePopup();
-    }
-  });
-
   onMount(async () => {
-    if (!browser) return;
+    if (!mapDiv) return;
 
-    if (!mapElement) {
-      console.error("onMount: mapElement is not available. Cannot initialize map.");
-      return;
+    // Define the southwestern and northeastern corners of the bounds
+
+    // Create a LngLatBounds object
+    const southWest: [number, number] = [-170, 15];
+    const northEast: [number, number] = [-66, 70];
+    const initialZoomBoundingBox = new maplibregl.LngLatBounds(
+      southWest,
+      northEast
+    );
+
+    // Get the center of the bounds
+    const center = initialZoomBoundingBox.getCenter();
+    const initialZoom = deviceInfo.isWide ? 2 : 1;
+    pageState.mapState.setInitialMapView(center, initialZoom);
+
+    map = new maplibregl.Map({
+      container: mapDiv,
+      style: "https://tiles.openfreemap.org/styles/bright",
+      center: center,
+      zoom: initialZoom,
+      minZoom: 1,
+      maxZoom: 15,
+      attributionControl: false,
+      renderWorldCopies: true,
+    });
+
+    if (map === undefined) {
+      throw new Error("Map is undefined");
     }
+    const safeMap = map;
+    pageState.mapState.setMapInstance(safeMap);
 
     try {
-      // These have to be done dynamically because of SSR.
-      await import('leaflet');
-      await import('leaflet.markercluster');
-
-      // Deal with issue that markercluster module depends on a global L.
-      if (!window.L || typeof window.L.map !== 'function' || typeof window.L.markerClusterGroup !== 'function') {
-        throw new Error("Leaflet or MarkerCluster plugin not loaded correctly on window.L");
-      }
-      L = window.L as LeafletModule;
-
-      const newMap = L.map(
-        mapElement!, 
-        { 
-          zoomControl: false, 
-          keyboard: false, 
-          minZoom: 2, 
-          // worldCopyJump: false,  
-          // maxBoundsViscosity: 1.0,
-        }
+      // Await all image loading promises concurrently
+      const imageLoadPromises = spriteIcons.map(([name, url]) =>
+        loadImageToMap(safeMap, name, url)
       );
-      map = newMap;
+      await Promise.all(imageLoadPromises);
 
-      // Set map instance in pageState
-      pageState.mapState.setMapInstance(map);
-
-      const continentalUSBounds = L.latLngBounds(
-        L.latLng(15, -170),
-        L.latLng(47, -66)
-      );
-      const center = continentalUSBounds.getCenter();
-      const zoom = deviceInfo.isTouchDevice ? 2 : 3;
-      map.setView(center, zoom);
-
-      pageState.mapState.setInitialMapView(center, zoom);
-
-      L.tileLayer(`https://api.maptiler.com/maps/basic/{z}/{x}/{y}.png?key=${MAPTILER_API_KEY}`, {
-        tileSize: 512,
-        zoomOffset: -1,
-        detectRetina: true,
-        attribution: "\u003ca href=\"https://www.maptiler.com/copyright/\" target=\"_blank\"\u003e\u0026copy; MapTiler\u003c/a\u003e \u003ca href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\"\u003e\u0026copy; OpenStreetMap contributors\u003c/a\u003e",
-      }).addTo(map);
-
-      if (mapElement) {
-        mapElement.addEventListener('keydown', handleMapKeyDown);
-      }
-
-      markerClusterGroup = L.markerClusterGroup({
-        maxClusterRadius: 15,
-        iconCreateFunction: function(cluster) {
-          return L!.divIcon({ html: htmlForClusterMarker(cluster) });
+      // Await for the map to fully load its style and resources
+      await new Promise<void>((resolve) => {
+        if (safeMap.isStyleLoaded()) {
+          // Check if style is already loaded
+          resolve();
+        } else {
+          safeMap.on("load", () => {
+            resolve();
+          });
         }
-      }).addTo(map);
-
-      markerClusterGroup?.on('click', handleMarkerClick);
-
-      map.on('moveend', () => {
-        pageState.mapState.updateCurrentMapView(map!.getCenter(), map!.getZoom());
       });
 
+      // Now that images are loaded and map style is loaded, add source and layers
+      safeMap.addSource("events", {
+        type: "geojson",
+        data: eventsToGeoJSON(pageState.filter.filteredEvents ?? []),
+        cluster: true,
+        clusterRadius: 20,
+        clusterMaxZoom: 15,
+        clusterProperties: {
+          red: ["+", ["case", ["<", ["coalesce", ["get", "pct"], 0], 0], 1, 0]],
+          blue: [
+            "+",
+            ["case", [">", ["coalesce", ["get", "pct"], 0], 0], 1, 0],
+          ],
+          unavail: ["+", ["case", ["!", ["has", "pct"]], 1, 0]],
+        },
+      });
+
+      const DEBUG_SHOW_INITIAL_BBOX = false;
+      if (DEBUG_SHOW_INITIAL_BBOX) {
+        // Get the corners from the bounds object
+        const sw = initialZoomBoundingBox.getSouthWest();
+        const ne = initialZoomBoundingBox.getNorthEast();
+        const nw = initialZoomBoundingBox.getNorthWest();
+        const se = initialZoomBoundingBox.getSouthEast();
+
+        // Create a GeoJSON Polygon from the bounds
+        const bboxPolygon = {
+          type: "Feature" as const,
+          geometry: {
+            type: "Polygon" as const,
+            coordinates: [
+              [
+                [sw.lng, sw.lat],
+                [se.lng, se.lat],
+                [ne.lng, ne.lat],
+                [nw.lng, nw.lat],
+                [sw.lng, sw.lat], // Close the polygon
+              ],
+            ],
+          },
+          properties: {}, // Can add any properties here if needed
+        };
+        map.addSource("bbox-source", {
+          type: "geojson",
+          data: bboxPolygon,
+        });
+        map.addLayer({
+          id: "bbox-outline",
+          type: "line", // Use 'line' for just the outline
+          source: "bbox-source",
+          paint: {
+            "line-color": "#FF0000", // Red outline
+            "line-width": 2,
+          },
+        });
+      }
+
+      // cluster background marker
+      map.addLayer({
+        id: "cluster-icon",
+        type: "symbol",
+        source: "events",
+        filter: ["has", "point_count"],
+        layout: {
+          "icon-image": [
+            "case",
+            [
+              "all",
+              [">", ["coalesce", ["get", "red"], 0], 0],
+              [">", ["coalesce", ["get", "blue"], 0], 0],
+            ],
+            "marker-purple",
+            [
+              "all",
+              [">", ["coalesce", ["get", "blue"], 0], 0],
+              ["==", ["coalesce", ["get", "red"], 0], 0],
+            ],
+            "marker-blue",
+            [
+              "all",
+              [">", ["coalesce", ["get", "red"], 0], 0],
+              ["==", ["coalesce", ["get", "blue"], 0], 0],
+            ],
+            "marker-red",
+            "marker-unavailable",
+          ],
+          "icon-size": 0.5,
+          "icon-allow-overlap": true,
+        },
+      });
+
+      // white badge background
+      map.addLayer({
+        id: "cluster-badge",
+        type: "circle",
+        source: "events",
+        filter: ["has", "point_count"],
+        paint: {
+          "circle-color": "#fff",
+          "circle-stroke-color": "#000",
+          "circle-stroke-width": 1,
+
+          // 0–9 → 8 px, 10–99 → 10 px, 100-up → 12 px
+          "circle-radius": ["step", ["get", "point_count"], 8, 10, 10, 100, 12],
+
+          // push it down & right ~12 px (tweak to taste)
+          "circle-translate": [12, 12],
+          "circle-translate-anchor": "viewport",
+        },
+      });
+
+      // count label
+      map.addLayer({
+        id: "cluster-count",
+        type: "symbol",
+        source: "events",
+        filter: ["has", "point_count"],
+        layout: {
+          "text-field": ["get", "point_count_abbreviated"],
+          "text-font": ["Noto Sans Bold"],
+          "text-size": 10,
+          "text-anchor": "center",
+          "text-allow-overlap": true,
+        },
+        paint: {
+          "text-color": "#000",
+          "text-halo-color": "#fff",
+          "text-halo-width": 1,
+          "text-translate": [12, 12], // same offset as circle
+          "text-translate-anchor": "viewport",
+        },
+      });
+
+      safeMap.addLayer({
+        id: "unclustered-point",
+        type: "symbol",
+        source: "events",
+        filter: ["!", ["has", "point_count"]],
+        layout: {
+          "icon-image": ["get", "icon"],
+          "icon-size": 0.5,
+          "icon-allow-overlap": true,
+        },
+      });
+
+      const hoverLayers = [
+        "cluster-count",
+        "cluster-badge",
+        "cluster-icon",
+        "unclustered-point",
+      ];
+      safeMap.on("mousemove", (e) => {
+        const features = safeMap.queryRenderedFeatures(e.point, {
+          layers: hoverLayers,
+        });
+
+        if (features.length > 0) {
+          // You can check feature.layer.id if you want different cursors
+          safeMap.getCanvas().style.cursor = "pointer";
+        } else {
+          safeMap.getCanvas().style.cursor = "";
+        }
+      });
+
+      const clusterLayers = ["cluster-count", "cluster-badge", "cluster-icon"];
+      clusterLayers.forEach(async (layerId) => {
+        safeMap.on("click", layerId, async (e) => {
+          const clusterId = e.features?.[0]?.properties?.cluster_id;
+          if (clusterId === undefined) return;
+
+          const source = map?.getSource("events") as maplibregl.GeoJSONSource;
+          if (source && "getClusterExpansionZoom" in source) {
+            const zoom = await source.getClusterExpansionZoom(clusterId);
+            safeMap.easeTo({ center: e.lngLat, zoom });
+          }
+        });
+      });
+
+      safeMap.on("click", "unclustered-point", (e) => {
+        const f = e.features?.[0];
+        if (!f) return;
+
+        const populated = pageState.eventModel.getPopulatedEvent(
+          f.properties?.eventId
+        );
+        if (!populated) return;
+
+        if (popup) popup.remove();
+
+        sveltePopupContainer = document.createElement("div");
+        sveltePopupInstance = mount(EventPopup, {
+          target: sveltePopupContainer,
+          props: { populatedEvent: populated },
+        });
+        const vOffset = 14;
+        const hOffset = 14;
+        popup = new maplibregl.Popup({
+          closeButton: false,
+          maxWidth: "300px",
+          offset: {
+            top: [0, vOffset],
+            bottom: [0, -vOffset],
+            left: [hOffset, 0],
+            right: [-hOffset, 0],
+          } as maplibregl.Offset,
+        })
+          .setLngLat(e.lngLat)
+          .setDOMContent(sveltePopupContainer)
+          .addTo(safeMap);
+      });
     } catch (error) {
-      console.error('onMount: Failed to load Leaflet or initialize map:', error);
+      console.error("Error during map initialization:", error);
     }
-  });
 
-  // Reactively add/remove zoom control based on device info
-  $effect(() => {
-    if (!map || !L) return;
-
-    const shouldShowZoom = !deviceInfo.isTouchDevice && deviceInfo.isWide;
-
-    if (shouldShowZoom && !zoomControlInstance) {
-      // Add zoom control if it should be shown and isn't already
-      zoomControlInstance = L.control.zoom({ position: 'topleft' }).addTo(map);
-    } else if (!shouldShowZoom && zoomControlInstance) {
-      // Remove zoom control if it shouldn't be shown and is present
-      zoomControlInstance.remove();
-      zoomControlInstance = null;
-    }
+    safeMap.on("moveend", () => {
+      pageState.mapState.updateCurrentMapView(
+        safeMap.getCenter(),
+        safeMap.getZoom()
+      );
+    });
   });
 
   onDestroy(() => {
-    if (!browser) return;
-
-    if (map) {
-      if (mapElement) {
-         mapElement.removeEventListener('keydown', handleMapKeyDown);
-      }
-      map.off('moveend', () => {
-        pageState.mapState.updateCurrentMapView(map!.getCenter(), map!.getZoom());
-      }); // Clean up event listener
-      map.remove();
-      map = null;
-      markerClusterGroup?.off('click', handleMarkerClick);
-      L = undefined;
-      markerClusterGroup = null;
-      pageState.mapState.setMapInstance(null); // Clear map instance in pageState
-    }
+    destroyPopup();
+    map?.remove();
   });
+
+  function destroyPopup() {
+    popup?.remove();
+    popup = null;
+    sveltePopupInstance?.destroy();
+    sveltePopupInstance = null;
+
+    sveltePopupContainer?.remove();
+    sveltePopupContainer = null;
+  }
 </script>
 
-<div class={`map-container ${className} ${deviceInfo.isTouchDevice ? 'touch-device' : ''}`} bind:this={mapElement} tabindex="-1">
-  {#if map && L && markerClusterGroup && pageState.filter.filteredEvents}
-    {#each pageState.filter.filteredEvents as eventMarkerInfo (eventMarkerInfo.eventId)}
-      <EventMarker {L} {map} eventMarkerInfo={eventMarkerInfo} eventModel={pageState.eventModel} {markerClusterGroup} />
-    {/each}
-  {/if}
-</div>
+<div bind:this={mapDiv} class="map-container"></div>
 
 <style>
   .map-container {
-    height: 100vh;
-    width: 100vw;
     position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 0;
-    overflow: hidden;
+    inset: 0;
   }
-
-  .loading-message {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 1.2em;
-    color: #666;
-    text-align: center;
-    z-index: 10;
-  }
-
-  /* These move the leaflet attribution to the bottom center */
-  :global(.leaflet-control-container .leaflet-bottom),
-  :global(.leaflet-control-container .leaflet-bottom .leaflet-right) {
-    all: revert !important; 
-  }
-
-  :global(.leaflet-control-container .leaflet-control-attribution), /* General Leaflet attribution */
-  :global(.leaflet-control-container .leaflet-bottom .leaflet-right .leaflet-control-attribution) /* More specific if needed */ {
-    position: absolute !important;
-    bottom: 0 !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    float: none !important;
-    width: auto !important;
-    min-width: 150px !important; /* Prevent collapsing */
-    display: block !important;
-    margin: 0 !important;
-    clear: both !important;
-  }
-
-  :global(.svg-marker) {
-    animation: fadein 0.2s ease-in forwards;
-  }
-
-  @keyframes fadein {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-  @keyframes fadeout {
-    from {
-      opacity: 1;
-    }
-    to {
-      opacity: 0;
-    }
-}
-
 </style>

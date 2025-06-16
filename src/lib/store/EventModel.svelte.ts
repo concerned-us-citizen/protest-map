@@ -47,8 +47,8 @@ export class EventModel {
     return this.db.getEventNamesAndCountsForDate(date);
   }
 
-  getPopulatedEvent(eventMarkerInfo: EventMarkerInfoWithId) {
-    return this.db.getPopulatedEvent(eventMarkerInfo);
+  getPopulatedEvent(eventId: number) {
+    return this.db.getPopulatedEvent(eventId);
   }
 
   async checkIsUpdateAvailable() {

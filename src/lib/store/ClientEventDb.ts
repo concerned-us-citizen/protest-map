@@ -1,6 +1,7 @@
 import type {
   EventFilter,
   EventMarkerInfoWithId,
+  Nullable,
   PopulatedEvent,
 } from "$lib/types";
 import { type BindParams, type Database } from "sql.js";
@@ -81,7 +82,11 @@ export class ClientEventDb {
     return results;
   }
 
-  getPopulatedEvent(eventMarker: EventMarkerInfoWithId): PopulatedEvent {
+  getPopulatedEvent(eventId: number): Nullable<PopulatedEvent> {
+    if (!eventId) {
+      return null;
+    }
+
     const eventStmt = this.db.prepare(`
       SELECT 
         lat, lon, pct_dem_lead, date, name, link, city_info_id
@@ -89,11 +94,11 @@ export class ClientEventDb {
       WHERE id = ?
     `);
 
-    eventStmt.bind([eventMarker.eventId]);
+    eventStmt.bind([eventId]);
 
     if (!eventStmt.step()) {
       eventStmt.free();
-      throw new Error(`Event not found for id: ${eventMarker.eventId}`);
+      throw new Error(`Event not found for id: ${eventId}`);
     }
 
     const eventRow = eventStmt.get();

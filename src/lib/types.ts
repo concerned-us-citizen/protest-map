@@ -48,5 +48,15 @@ export type DateRange = {
   end: Date;
 };
 
+export type ZipcodeBounds = {
+  zip: string;
+  xmin: number;
+  ymin: number;
+  xmax: number;
+  ymax: number;
+  cx: number;
+  cy: number;
+};
+
 export type Nullable<T> = T | null;
 export type SetTimeoutId = ReturnType<typeof setTimeout> | undefined;

@@ -1,55 +1,66 @@
 import type { Nullable } from "$lib/types";
-import { latLngsMatch } from "$lib/util/map";
-import type { LatLngExpression, Map as LeafletMap } from "leaflet";
+import type maplibregl from "maplibre-gl";
+
+export interface VisibleMapRegion {
+  bounds: maplibregl.LngLatBounds;
+  options?: maplibregl.FitBoundsOptions;
+}
+
+function lngLatsMatch(
+  a: maplibregl.LngLat,
+  b: maplibregl.LngLat,
+  epsilon = 1e-5
+): boolean {
+  return Math.abs(a.lng - b.lng) < epsilon && Math.abs(a.lat - b.lat) < epsilon;
+}
 
 export class MapState {
-  // Reference to the Leaflet map instance
-  #mapInstance: Nullable<LeafletMap> = $state(null);
+  // Reference to the MapLibre map instance
+  #mapInstance: Nullable<maplibregl.Map> = $state(null);
 
-  // Map state
-  initialCenter: Nullable<LatLngExpression> = $state(null);
+  // Initial and current state
+  initialCenter: Nullable<maplibregl.LngLat> = $state(null);
   initialZoom: Nullable<number> = $state(null);
-  currentMapCenter: Nullable<LatLngExpression> = $state(null);
+  currentMapCenter: Nullable<maplibregl.LngLat> = $state(null);
   currentMapZoom: Nullable<number> = $state(null);
 
-  // Method to set the Leaflet map instance
-  setMapInstance(map: Nullable<LeafletMap>) {
+  // Region to zoom to
+  visibleMapRegion: Nullable<VisibleMapRegion> = $state(null);
+
+  setMapInstance(map: Nullable<maplibregl.Map>) {
     this.#mapInstance = map;
   }
 
-  // Method to set initial map view
-  setInitialMapView(center: LatLngExpression, zoom: number) {
+  setInitialMapView(center: maplibregl.LngLat, zoom: number) {
     this.initialCenter = center;
     this.initialZoom = zoom;
     this.currentMapCenter = center;
     this.currentMapZoom = zoom;
   }
 
-  // Method to update current map view
-  updateCurrentMapView(center: LatLngExpression, zoom: number) {
+  updateCurrentMapView(center: maplibregl.LngLat, zoom: number) {
     this.currentMapCenter = center;
     this.currentMapZoom = zoom;
   }
 
-  // Derived state to check if map is at initial view
   readonly isAtInitialMapView = $derived.by(() => {
+    const initialCenter = this.initialCenter;
+    const initialZoom = this.initialZoom;
+    const currentMapCenter = this.currentMapCenter;
+    const currentMapZoom = this.currentMapZoom;
     if (
-      this.initialCenter == null ||
-      this.initialZoom == null ||
-      this.currentMapCenter == null ||
-      this.currentMapZoom == null
+      initialCenter == null ||
+      initialZoom == null ||
+      currentMapCenter == null ||
+      currentMapZoom == null
     )
       return false;
 
-    const centerMatches = latLngsMatch(
-      this.currentMapCenter,
-      this.initialCenter
-    );
-    const zoomMatches = Math.abs(this.currentMapZoom - this.initialZoom) < 0.01;
+    const centerMatches = lngLatsMatch(currentMapCenter, initialCenter);
+    const zoomMatches = Math.abs(currentMapZoom - initialZoom) < 0.01;
     return centerMatches && zoomMatches;
   });
 
-  // Map control methods
   zoomIn() {
     this.#mapInstance?.zoomIn();
   }
@@ -60,7 +71,10 @@ export class MapState {
 
   resetMapZoom() {
     if (this.#mapInstance && this.initialCenter && this.initialZoom !== null) {
-      this.#mapInstance.setView(this.initialCenter, this.initialZoom);
+      this.#mapInstance.easeTo({
+        center: this.initialCenter,
+        zoom: this.initialZoom,
+      });
     }
   }
 }

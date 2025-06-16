@@ -4,15 +4,22 @@
 
   const pageState = getPageStateFromContext();
 
-  let selectedDateWithEventCount = $derived(pageState.eventModel.allDatesWithEventCounts.find(dc => dc.date === pageState.filter.currentDate) ?? null);
+  let selectedDateWithEventCount = $derived.by(() => {
+    const allDatesWithEventCounts =
+      pageState.eventModel.allDatesWithEventCounts;
+    const currentDate = pageState.filter.currentDate;
+    return (
+      allDatesWithEventCounts.find((dc) => dc.date === currentDate) ?? null
+    );
+  });
 
   let isRepeatingChange = false;
-  let currentRepeatDirection: 'next' | 'prev' | null = null;
+  let currentRepeatDirection: "next" | "prev" | null = null;
   const INITIAL_REPEAT_DELAY = 400; // ms
-  const REPEAT_INTERVAL = 80;    // ms
+  const REPEAT_INTERVAL = 80; // ms
   let repeatTimer: ReturnType<typeof setTimeout> | null = null;
 
-  function startDateRepeat(direction: 'next' | 'prev') {
+  function startDateRepeat(direction: "next" | "prev") {
     // If already repeating in the same direction, do nothing.
     if (isRepeatingChange && currentRepeatDirection === direction) return;
 
@@ -46,9 +53,9 @@
       stopDateRepeat();
       return;
     }
-    if (currentRepeatDirection === 'next') {
+    if (currentRepeatDirection === "next") {
       pageState.filter.selectNextDate();
-    } else if (currentRepeatDirection === 'prev') {
+    } else if (currentRepeatDirection === "prev") {
       pageState.filter.selectPreviousDate();
     }
     repeatTimer = setTimeout(continuousDateChange, REPEAT_INTERVAL);
@@ -59,33 +66,34 @@
   <button
     class="nav-button prev"
     onclick={() => pageState.filter.selectPreviousDate()}
-    onmousedown={() => startDateRepeat('prev')}
+    onmousedown={() => startDateRepeat("prev")}
     onmouseup={stopDateRepeat}
     onmouseleave={stopDateRepeat}
-    ontouchstart={() => startDateRepeat('prev')}
+    ontouchstart={() => startDateRepeat("prev")}
     ontouchend={stopDateRepeat}
     ontouchcancel={stopDateRepeat}
-    aria-label="Previous Date"
-  >‹</button>
+    aria-label="Previous Date">‹</button
+  >
   <HistogramSlider
     className="slider"
     items={pageState.eventModel.allDatesWithEventCounts}
     selectedItem={selectedDateWithEventCount}
-    onSelect={dc => pageState.filter.setCurrentDate(dc.date)}
-    magnitudeFor={item => item.eventCount}
-    firstShadedItemIndex={items => items.findIndex(item => item.date >= new Date())}
-    />
-    <button
-      class="nav-button next"
-      onclick={() => pageState.filter.selectNextDate()}
-      onmousedown={() => startDateRepeat('next')}
-      onmouseup={stopDateRepeat}
-      onmouseleave={stopDateRepeat}
-      ontouchstart={() => startDateRepeat('next')}
-      ontouchend={stopDateRepeat}
-      ontouchcancel={stopDateRepeat}
-      aria-label="Next Date"
-    >›</button>
+    onSelect={(dc) => pageState.filter.setCurrentDate(dc.date)}
+    magnitudeFor={(item) => item.eventCount}
+    firstShadedItemIndex={(items) =>
+      items.findIndex((item) => item.date >= new Date())}
+  />
+  <button
+    class="nav-button next"
+    onclick={() => pageState.filter.selectNextDate()}
+    onmousedown={() => startDateRepeat("next")}
+    onmouseup={stopDateRepeat}
+    onmouseleave={stopDateRepeat}
+    ontouchstart={() => startDateRepeat("next")}
+    ontouchend={stopDateRepeat}
+    ontouchcancel={stopDateRepeat}
+    aria-label="Next Date">›</button
+  >
 </div>
 
 <style>
@@ -94,8 +102,8 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: stretch;
-    gap: .3em;
-    padding: .3em 0;
+    gap: 0.3em;
+    padding: 0.3em 0;
     position: static;
     height: 3rem;
     transform: none;
@@ -110,7 +118,6 @@
   .timeline > :global(:nth-child(2)) {
     flex: 1;
   }
-
 
   .timeline button {
     display: flex;
@@ -131,15 +138,14 @@
     touch-action: manipulation;
   }
   /* Compact view on phones in landscape (same is isShort above)*/
-/* 
+  /* 
  * Note we have to hardwire the max-width here, can't use css variables,
  * and can't dynamically set the width from a TS variable unless
  * we want to use svelte:head. Keep this BREAKPOINT in sync with DeviceInfo.svelte.
  */
-@media (max-height: 400px) {
-  .timeline {
-    height: 2em;
+  @media (max-height: 400px) {
+    .timeline {
+      height: 2em;
+    }
   }
-}
-
 </style>

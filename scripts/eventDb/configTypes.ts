@@ -7,6 +7,7 @@ export type Files = {
   locationCache: string;
   events: string;
   log: string;
+  summary: string;
 };
 
 // Only expose the paths that make sense
@@ -15,6 +16,7 @@ export type PathKeys =
   | "buildPrecinctsSpatialIndex"
   | "buildEvents"
   | "buildLog"
+  | "buildSummary"
   | "releaseEvents";
 
 export type Paths = Record<PathKeys, string>;

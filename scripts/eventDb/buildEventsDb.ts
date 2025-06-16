@@ -4,7 +4,13 @@ import { EventSink } from "./EventSink";
 import { LocationDataSource } from "./LocationDataSource";
 import { getSheetData } from "./getSheetData";
 import { DissenterEvent, DissenterEventSchema } from "./types";
-import { getLoggedIssueCount, initLog, logInfo, logIssue } from "./IssueLog";
+import {
+  getLoggedIssueCount,
+  initLog,
+  logInfo,
+  logIssue,
+  saveSummary,
+} from "./IssueLog";
 // import { scanForSimilarNames } from "./similarNames";
 import { loadVotingInfo } from "./votingInfo";
 
@@ -44,6 +50,7 @@ async function main() {
   let duplicates = 0;
   let rejects = 0;
   let sheetsProcessed = 0;
+  const skippedSheets: { title: string; rows: number }[] = [];
   const totalSheets = sheets.length;
   for (const sheet of sheets) {
     sheetsProcessed++;
@@ -62,6 +69,7 @@ async function main() {
           `'${sheet.title}': differently shaped, skipping`,
           firstRowSampleResult.error.errors
         );
+        skippedSheets.push({ title: sheet.title, rows: sheet.rows.length });
         totalEvents -= sheet.rows.length;
         continue;
       }
@@ -124,16 +132,19 @@ async function main() {
   // scanForSimilarNames(eventNames);
 
   const elapsedTime = `${(Date.now() - startTime) / 1000}s`;
-  logInfo(`\nProcessing complete: `, {
+  const summaryInfo = {
     processed: totalEvents,
     rejects,
     duplicates,
     added: totalEvents - rejects - duplicates,
+    skippedSheets,
     elapsedTime,
     loggedIssues: getLoggedIssueCount(),
     wikiFetches: locationInfoSource.cityInfoFetchCount,
     geocodings: locationInfoSource.geocodeFetchCount,
-  });
+  };
+  logInfo(`\nProcessing complete: `, summaryInfo);
+  saveSummary(summaryInfo);
 
   locationInfoSource.close();
   eventSink.close();

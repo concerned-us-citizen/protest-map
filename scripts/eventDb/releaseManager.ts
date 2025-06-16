@@ -129,7 +129,8 @@ const [, , cmd] = process.argv;
       );
       break;
     case "upload-log":
-      await uploadFile(config.paths.buildLog, `issues-last.log`);
+      await uploadFile(config.paths.buildLog, "issues-last.log");
+      await uploadFile(config.paths.buildSummary, "summary-last.txt");
       break;
     default:
       console.error(`Unknown command: ${cmd}`);

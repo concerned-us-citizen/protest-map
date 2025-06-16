@@ -63,3 +63,16 @@ function warnToConsole(str: string, arg?: any) {
 export function getLoggedIssueCount() {
   return loggedIssueCount;
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function saveSummary(summary: Record<string, any>) {
+  const summaryPath = config.paths.buildSummary;
+  if (await fileExists(summaryPath)) {
+    await fs.unlink(summaryPath);
+  }
+  await fs.writeFile(
+    summaryPath,
+    `--- Run Summary ${formatDateTime(new Date())} ---\n\n${summary ? JSON.stringify(summary, null, 2) : ""}`,
+    "utf8"
+  );
+}

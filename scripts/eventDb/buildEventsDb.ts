@@ -27,7 +27,7 @@ async function main() {
     let firstWord = header.trim().split(/\s+/)[0].toLowerCase();
     if (firstWord === "linke") {
       firstWord = "name";
-    } else if (firstWord === "submit") {
+    } else if (firstWord === "submit" || firstWord === "dill") {
       firstWord = "date";
     } else if (firstWord === "org.") {
       firstWord = "link";

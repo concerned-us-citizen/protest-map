@@ -68,7 +68,7 @@
     if (map && region) {
       map.fitBounds(region.bounds, {
         padding: 40,
-        maxZoom: 16,
+        maxZoom: 15,
         ...region.options,
       });
       pageState.mapState.visibleMapRegion = null;

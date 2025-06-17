@@ -19,6 +19,6 @@ export default defineConfig({
     host: true, // Listen on all addresses, including LAN
   },
   build: {
-    sourcemap: true,
+    sourcemap: false,
   },
 });

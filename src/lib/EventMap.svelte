@@ -5,6 +5,7 @@
   import { getPageStateFromContext } from "$lib/store/PageState.svelte";
   import type { EventMarkerInfoWithId, Nullable } from "./types";
   import { deviceInfo } from "./store/DeviceInfo.svelte";
+  import "maplibre-gl/dist/maplibre-gl.css";
 
   const iconForPct = (pct: number | null) =>
     pct === null

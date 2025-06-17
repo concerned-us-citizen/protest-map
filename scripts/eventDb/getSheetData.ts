@@ -65,12 +65,11 @@ function getCsvHash(csvContent: string): number {
 
 export function getCsvRows(
   csvContent: string,
-  mapHeader?: (_header: string) => string,
+  mapHeaders: (_headers: string[]) => string[] = (headers) => headers,
   mapCell?: (_cell: string) => string
 ): Record<string, string>[] {
   const records = parse(csvContent, {
-    columns: (headers: string[]) =>
-      mapHeader ? headers.map((h) => mapHeader(h)) : headers,
+    columns: mapHeaders,
     skip_empty_lines: true,
     trim: true,
   });
@@ -90,7 +89,7 @@ export function getCsvRows(
 
 export async function getSheetData(
   sheetId: string,
-  mapHeader?: (_header: string) => string
+  mapHeaders?: (_headers: string[]) => string[]
 ): Promise<SheetTabData[]> {
   const tabs = await getTabNames(sheetId);
 
@@ -99,7 +98,7 @@ export async function getSheetData(
   for (const tab of tabs) {
     const csv = await getCsvForTab(sheetId, tab.gid);
     const hash = getCsvHash(csv);
-    const rows = getCsvRows(csv, mapHeader);
+    const rows = getCsvRows(csv, mapHeaders);
     results.push({
       title: tab.title,
       gid: tab.gid,

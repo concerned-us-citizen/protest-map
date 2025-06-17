@@ -1,3 +1,4 @@
+import { browser } from "$app/environment";
 import type {
   EventFilter,
   EventMarkerInfoWithId,
@@ -79,7 +80,9 @@ export class EventModel {
   static create(): EventModel {
     const model = new EventModel();
     // Start async initialization in the background
-    model.initialize();
+    if (browser) {
+      model.initialize();
+    }
     return model;
   }
 }

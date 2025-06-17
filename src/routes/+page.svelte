@@ -219,7 +219,7 @@
     <div class="title-and-stats-container">
       {#if !deviceInfo.isShort}
         <div class="title-container panel">
-          <h1 class="title">Map of Protests</h1>
+          <h1 class="title">Map of US Protests</h1>
           <div class="date-range">
             {pageState.eventModel.formattedDateRange}
           </div>

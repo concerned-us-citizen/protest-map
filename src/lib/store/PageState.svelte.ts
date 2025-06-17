@@ -3,7 +3,7 @@ import { EventModel } from "./EventModel.svelte";
 import { FilteredEventModel } from "./FilteredEventModel.svelte";
 import { MapState } from "./MapState.svelte";
 import { deviceInfo } from "$lib/store/DeviceInfo.svelte";
-import type { Nullable, SetTimeoutId } from "$lib/types";
+import type { SetTimeoutId } from "$lib/types";
 
 const EVENTINFO_VISIBILITY_DURATION = 1000; // 1s
 
@@ -113,45 +113,34 @@ export class PageState {
           console.log("Polling failed", err);
         }
 
-        this.pollForUpdates();
+        this.pollForUpdates(); // repeat indefinitely
       },
       1000 * 60 * 60
     );
   }
 
-  private constructor(
-    eventModel: EventModel,
-    filter: FilteredEventModel,
-    mapState: MapState
-  ) {
-    this.eventModel = eventModel;
-    this.filter = filter;
-    this.mapState = mapState;
+  private constructor() {
+    this.eventModel = EventModel.create(); // Create EventModel immediately, it loads db in background
+    this.filter = new FilteredEventModel(this.eventModel);
+    this.mapState = new MapState();
+    this.pollForUpdates();
   }
 
-  static async create() {
-    const eventModel = await EventModel.create();
-    const filter = new FilteredEventModel(eventModel);
-    const mapState = new MapState();
-    const pageState = new PageState(eventModel, filter, mapState);
-    pageState.pollForUpdates();
-    return pageState;
+  static create(): PageState {
+    return new PageState();
   }
 }
 
 const PAGE_STATE_KEY = Symbol("PAGE_STATE");
 
-export function createPageStateInContext(pageStateHolder: {
-  value: Nullable<PageState>;
-}) {
-  return setContext(PAGE_STATE_KEY, pageStateHolder);
+export function createPageStateInContext(pageState: PageState) {
+  return setContext(PAGE_STATE_KEY, pageState);
 }
 
-export function getPageStateFromContext() {
-  const pageStateHolder =
-    getContext<ReturnType<typeof createPageStateInContext>>(PAGE_STATE_KEY);
-  if (!pageStateHolder.value) {
+export function getPageStateFromContext(): PageState {
+  const pageState = getContext<PageState>(PAGE_STATE_KEY);
+  if (!pageState) {
     throw new Error("Missing Page State");
   }
-  return pageStateHolder.value;
+  return pageState;
 }

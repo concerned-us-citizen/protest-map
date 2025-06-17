@@ -32,3 +32,15 @@ export type LocationInfo = Coordinates &
     name: string;
     pctDemLead: Nullable<number>;
   };
+
+export interface SummaryInfo {
+  processed: number;
+  rejects: number;
+  duplicates: number;
+  added: number;
+  skippedSheets: { title: string; rows: number }[];
+  elapsedSeconds: number;
+  loggedIssues: number;
+  wikiFetches: number;
+  geocodings: number;
+}

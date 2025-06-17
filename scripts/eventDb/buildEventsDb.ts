@@ -3,7 +3,7 @@ import { config } from "./config";
 import { EventSink } from "./EventSink";
 import { LocationDataSource } from "./LocationDataSource";
 import { getSheetData } from "./getSheetData";
-import { DissenterEvent, DissenterEventSchema } from "./types";
+import { DissenterEvent, DissenterEventSchema, SummaryInfo } from "./types";
 import {
   getLoggedIssueCount,
   initLog,
@@ -13,6 +13,7 @@ import {
 } from "./IssueLog";
 // import { scanForSimilarNames } from "./similarNames";
 import { loadVotingInfo } from "./votingInfo";
+import { maybeCreateGithubIssue } from "./createGithubSummaryIssue";
 
 async function main() {
   const startTime = Date.now();
@@ -131,20 +132,21 @@ async function main() {
   // console.log("Looking for similar event names...");
   // scanForSimilarNames(eventNames);
 
-  const elapsedTime = `${(Date.now() - startTime) / 1000}s`;
-  const summaryInfo = {
+  const summaryInfo: SummaryInfo = {
     processed: totalEvents,
     rejects,
     duplicates,
     added: totalEvents - rejects - duplicates,
     skippedSheets,
-    elapsedTime,
+    elapsedSeconds: (Date.now() - startTime) / 1000,
     loggedIssues: getLoggedIssueCount(),
     wikiFetches: locationInfoSource.cityInfoFetchCount,
     geocodings: locationInfoSource.geocodeFetchCount,
   };
   logInfo(`\nProcessing complete: `, summaryInfo);
   saveSummary(summaryInfo);
+
+  await maybeCreateGithubIssue(summaryInfo);
 
   locationInfoSource.close();
   eventSink.close();

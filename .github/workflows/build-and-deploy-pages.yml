@@ -59,6 +59,9 @@ jobs:
       - name: Upload log and updated cache DB to GitHub Release
         env:
           GH_RELEASE_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
           npx tsx scripts/eventDb/releaseManager.ts upload-log
           npx tsx scripts/eventDb/releaseManager.ts upload-cache

@@ -6,6 +6,8 @@
   import type { EventMarkerInfoWithId, Nullable } from "./types";
   import { deviceInfo } from "./store/DeviceInfo.svelte";
   import "maplibre-gl/dist/maplibre-gl.css";
+  import bbox from "@turf/bbox";
+  import { featureCollection, point } from "@turf/helpers";
 
   const iconForPct = (pct: number | null) =>
     pct === null
@@ -334,6 +336,20 @@
         }
       });
 
+      // const clusterLayers = ["cluster-count", "cluster-badge", "cluster-icon"];
+      // clusterLayers.forEach(async (layerId) => {
+      //   safeMap.on("click", layerId, async (e) => {
+      //     const clusterId = e.features?.[0]?.properties?.cluster_id;
+      //     if (clusterId === undefined) return;
+
+      //     const source = map?.getSource("events") as maplibregl.GeoJSONSource;
+      //     if (source && "getClusterExpansionZoom" in source) {
+      //       const zoom = await source.getClusterExpansionZoom(clusterId);
+      //       safeMap.easeTo({ center: e.lngLat, zoom });
+      //     }
+      //   });
+      // });
+
       const clusterLayers = ["cluster-count", "cluster-badge", "cluster-icon"];
       clusterLayers.forEach(async (layerId) => {
         safeMap.on("click", layerId, async (e) => {
@@ -341,9 +357,34 @@
           if (clusterId === undefined) return;
 
           const source = map?.getSource("events") as maplibregl.GeoJSONSource;
-          if (source && "getClusterExpansionZoom" in source) {
-            const zoom = await source.getClusterExpansionZoom(clusterId);
-            safeMap.easeTo({ center: e.lngLat, zoom });
+          try {
+            const features = await source.getClusterLeaves(
+              clusterId,
+              Infinity,
+              0
+            );
+
+            const fc = featureCollection(
+              features.map((f) =>
+                point((f.geometry as GeoJSON.Point).coordinates)
+              )
+            );
+
+            const bounds = bbox(fc); // [minX, minY, maxX, maxY]
+            console.log(`clusterId: ${clusterId} bbox: ${bounds}`);
+
+            safeMap.fitBounds(
+              [
+                [bounds[0], bounds[1]],
+                [bounds[2], bounds[3]],
+              ],
+              {
+                padding: 50,
+                duration: 500,
+              }
+            );
+          } catch (error) {
+            console.error("Error getting cluster leaves:", error);
           }
         });
       });

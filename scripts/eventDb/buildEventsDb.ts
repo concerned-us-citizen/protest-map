@@ -81,6 +81,7 @@ async function main() {
   let sheetsProcessed = 0;
   const skippedSheets: { title: string; rows: number }[] = [];
   const totalSheets = sheets.length;
+  const knownBadSheetNames = ["June 14 State Counts"];
   for (const sheet of sheets) {
     sheetsProcessed++;
     let sheetEventsProcessed = 0;
@@ -89,6 +90,10 @@ async function main() {
     // Skip sheets that aren't tables of events
     // (sample second row to avoid potentially bad first data)
     if (sheet.rows.length > 1) {
+      // Skip sheets we know to ignore
+      if (knownBadSheetNames.includes(sheet.title)) {
+        continue;
+      }
       const firstRowSampleResult = DissenterEventSchema.safeParse({
         ...sheet.rows[1],
         sheetName: sheet.title,

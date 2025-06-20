@@ -1,12 +1,21 @@
 import { EventModel } from "./EventModel.svelte";
-import type { Nullable, SetTimeoutId } from "$lib/types";
+import type { Nullable, SetTimeoutId, VoterLean } from "$lib/types";
 import { formatDate } from "$lib/util/date";
+import { quote } from "$lib/util/string";
+import { titleCase } from "title-case";
+import type { MapModel } from "./MapModel.svelte";
+import type { RegionLabeler } from "./RegionLabeler.svelte";
 
 const INITIAL_REPEAT_DELAY = 400; // ms
 const REPEAT_INTERVAL = 80; // ms
 
 export class FilteredEventModel {
   readonly eventModel: EventModel;
+  readonly mapModel: MapModel;
+  readonly regionLabeler: RegionLabeler;
+
+  visibleBoundsOnly = $state<boolean>(false);
+  selectedVoterLeans = $state<VoterLean[]>([]);
 
   currentDateIndex = $state(-1);
 
@@ -62,25 +71,69 @@ export class FilteredEventModel {
       : [];
   });
 
-  readonly currentDateEventNamesWithLocationCounts = $derived.by(() => {
+  readonly filteredEventNamesWithLocationCounts = $derived.by(() => {
     const date = this.currentDate;
+    const visibleBounds = this.mapModel.visibleBounds;
     if (!date) return [];
+
     return this.eventModel
-      ? this.eventModel.getEventNamesAndCountsForDate(date)
+      ? this.eventModel.getEventNamesAndCountsForFilter({ date, visibleBounds })
       : [];
   });
 
   readonly currentDateHasEventNames = $derived(
-    this.currentDateEventNamesWithLocationCounts.length > 0
+    this.filteredEventNamesWithLocationCounts.length > 0
   );
 
   readonly currentDateHasMultipleEventNames = $derived(
-    this.currentDateEventNamesWithLocationCounts.length > 1
+    this.filteredEventNamesWithLocationCounts.length > 1
   );
 
   selectedEventNames = $state<string[]>([]);
 
-  isFiltering = $derived(this.selectedEventNames.length > 0);
+  isFiltering = $derived(
+    this.selectedEventNames.length > 0 ||
+      this.visibleBoundsOnly ||
+      this.selectedVoterLeans.length > 0
+  );
+
+  filterDescriptions = $derived.by(() => {
+    const descriptions: { title: string; clearFunc: () => void }[] = [];
+    if (this.mapModel.visibleBounds && this.visibleBoundsOnly) {
+      descriptions.push({
+        title: `In ${this.regionLabeler.visibleRegionName}`,
+        clearFunc: () => this.clearVisibleBoundsOnly(),
+      });
+    }
+
+    const eventCount = this.selectedEventNames.length;
+    if (eventCount > 0) {
+      const title =
+        eventCount === 1
+          ? `From event "${this.selectedEventNames[0]}"`
+          : `Associated with ${eventCount} events`;
+      descriptions.push({
+        title,
+        clearFunc: () => this.clearSelectedNames(),
+      });
+    }
+
+    if (this.selectedVoterLeans.length > 0) {
+      const voterLeanNames = this.selectedVoterLeans
+        .map((n) => quote(titleCase(n)))
+        .join(" or ");
+      descriptions.push({
+        title: `In precincts with voter lean ${voterLeanNames}`,
+        clearFunc: () => this.clearVoterLeans(),
+      });
+    }
+
+    return descriptions;
+  });
+
+  toggleVisibleBoundsOnly() {
+    this.visibleBoundsOnly = !this.visibleBoundsOnly;
+  }
 
   toggleSelectedEventName(name: string) {
     const cur = this.selectedEventNames;
@@ -89,18 +142,47 @@ export class FilteredEventModel {
       : [...cur, name];
   }
 
-  clearSelectedEventNames() {
+  toggleVoterLean(voterLean: VoterLean) {
+    const cur = this.selectedVoterLeans;
+    this.selectedVoterLeans = cur.includes(voterLean)
+      ? cur.filter((n) => n !== voterLean)
+      : [...cur, voterLean];
+    if (this.selectedVoterLeans.length === 3) {
+      this.selectedVoterLeans = [];
+    }
+  }
+
+  clearSelectedNames() {
     this.selectedEventNames = [];
+  }
+
+  clearVisibleBoundsOnly() {
+    this.visibleBoundsOnly = false;
+  }
+
+  clearVoterLeans() {
+    this.selectedVoterLeans = [];
   }
 
   readonly filteredEvents = $derived.by(() => {
     const date = this.currentDate;
     const eventNames = this.selectedEventNames;
+    const visibleBoundsOnly = this.visibleBoundsOnly;
+    const visibleBounds = visibleBoundsOnly
+      ? this.mapModel.visibleBounds
+      : undefined;
+    const voterLeans = this.selectedVoterLeans;
 
     if (!date) return [];
 
     return this.eventModel
-      ? (this.eventModel.getMarkerInfos({ date, eventNames }) ?? [])
+      ? (this.eventModel.getMarkerInfos({
+          date,
+          eventNames,
+          visibleBounds,
+          voterLeans,
+          visibleBoundsOnly,
+        }) ?? [])
       : [];
   });
 
@@ -157,7 +239,13 @@ export class FilteredEventModel {
     );
   }
 
-  constructor(eventModel: EventModel) {
+  constructor(
+    eventModel: EventModel,
+    mapModel: MapModel,
+    regionLabeler: RegionLabeler
+  ) {
     this.eventModel = eventModel;
+    this.mapModel = mapModel;
+    this.regionLabeler = regionLabeler;
   }
 }

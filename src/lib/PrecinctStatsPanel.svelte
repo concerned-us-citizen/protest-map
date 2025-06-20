@@ -2,23 +2,22 @@
   import { markerColor } from "$lib/colors";
   import { getPageStateFromContext } from "./store/PageState.svelte";
   import { circledMarkerSvg } from "$lib/icons";
-  import type { EventMarkerInfoWithId } from "./types";
-
-  type StatType = "red" | "blue" | "unavailable";
+  import type { EventMarkerInfoWithId, VoterLean } from "./types";
 
   interface Counts {
-    red: number;
-    blue: number;
+    trump: number;
+    harris: number;
     unavailable: number;
   }
 
   interface StatView {
-    type: StatType;
+    voterLean: VoterLean;
     label: string;
   }
+
   function getCounts(events: EventMarkerInfoWithId[]): Counts {
-    let red = 0,
-      blue = 0,
+    let trump = 0,
+      harris = 0,
       unavailable = 0;
 
     for (const event of events) {
@@ -26,21 +25,30 @@
       if (typeof lead !== "number" || lead === 0) {
         unavailable++;
       } else if (lead < 0) {
-        red++;
+        trump++;
       } else if (lead > 0) {
-        blue++;
+        harris++;
       }
     }
 
-    return { red, blue, unavailable };
+    return { trump, harris, unavailable };
   }
 
-  function formatLabel(type: StatType) {
-    const x = filteredCounts[type];
-    const y = totalCounts[type];
-    return pageState.filter.isFiltering
-      ? `${x.toLocaleString()}/${y.toLocaleString()}`
-      : `${y.toLocaleString()}`;
+  function formatLabel(voterLean: VoterLean) {
+    return `${filteredCounts[voterLean].toLocaleString()}`;
+  }
+
+  function colorForVoterLean(voterLean: VoterLean) {
+    switch (voterLean) {
+      case "harris":
+        return markerColor["blue"];
+      case "trump":
+        return markerColor["red"];
+      case "unavailable":
+        return markerColor["unavailable"];
+      default:
+        throw new Error(`Unexpected voterLean ${voterLean}`);
+    }
   }
 
   const pageState = getPageStateFromContext();
@@ -54,32 +62,36 @@
 
   const statViews: StatView[] = [
     {
-      type: "red",
+      voterLean: "trump",
       label: "Locations in precincts favoring Trump",
     },
     {
-      type: "blue",
+      voterLean: "harris",
       label: "Locations in precincts favoring Harris",
     },
     {
-      type: "unavailable",
+      voterLean: "unavailable",
       label: "Locations in precincts where no voting data is available",
     },
   ];
 </script>
 
 <div class="stat-container">
-  {#if !pageState.filter.isFiltering}
-    <div class="heading">2024 Lean</div>
-  {/if}
-  {#each statViews as { type, label }}
-    <div class="stat" title={label}>
-      <span class="icon" style="color: {markerColor[type]}">
-        <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-        {@html circledMarkerSvg}
-      </span>
-      <span class="stat-label">{formatLabel(type)}</span>
-    </div>
+  <div class="heading">2024 Lean</div>
+  {#each statViews as { voterLean, label }}
+    <button
+      class="link-button"
+      disabled={filteredCounts[voterLean] === 0}
+      onclick={() => pageState.filter.toggleVoterLean(voterLean)}
+    >
+      <div class="stat" title={label}>
+        <span class="icon" style="color: {colorForVoterLean(voterLean)}">
+          <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+          {@html circledMarkerSvg}
+        </span>
+        <span class="stat-label">{formatLabel(voterLean)}</span>
+      </div>
+    </button>
   {/each}
 </div>
 
@@ -90,6 +102,14 @@
     align-items: center;
     width: 100%;
     font-size: 0.85rem;
+  }
+
+  .stat-container button {
+    text-decoration: none;
+  }
+
+  .stat-container button:hover {
+    text-decoration: underline;
   }
 
   .heading {

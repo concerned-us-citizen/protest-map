@@ -57,3 +57,7 @@ export function isValidZipCode(
 export function asNormalizedKey(s: string): string {
   return s.toLowerCase().replace(/[^a-z0-9\\-]/g, "");
 }
+
+export function quote(s: string): string {
+  return `"${s}"`;
+}

@@ -51,6 +51,7 @@
     "tsx": "^4.19.4",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.34.0",
+    "unzipper": "^0.12.3",
     "vite": "^6.2.6",
     "vitest": "^3.2.3",
     "vm": "^0.1.0",
@@ -60,6 +61,8 @@
     "@eslint/compat": "^1.2.9",
     "@turf/bbox": "^7.2.0",
     "@turf/helpers": "^7.2.0",
+    "fflate": "^0.8.2",
+    "fuse.js": "^7.1.0",
     "maplibre-gl": "^4.7.1",
     "sql.js": "^1.13.0",
     "title-case": "^4.3.2"

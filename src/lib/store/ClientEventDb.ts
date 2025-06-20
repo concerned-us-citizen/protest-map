@@ -1,17 +1,25 @@
 import type {
-  EventFilter,
+  EventFilterOptions,
   EventMarkerInfoWithId,
   Nullable,
   PopulatedEvent,
+  VoterLean,
 } from "$lib/types";
-import { type BindParams, type Database } from "sql.js";
-import initSqlJs from "sql.js";
+import { type Database } from "sql.js";
 import { dateToYYYYMMDDInt, yyyymmddIntToDate } from "$lib/util/date";
+import { getSqlJs } from "./sqlJsInstance";
+import type { Bounds } from "./RegionModel";
 
 interface LatestDbManifest {
   dbFilename: string;
   lastUpdated: string;
   sha?: string;
+}
+
+interface QueryBuilder {
+  query: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  params: any[];
 }
 
 export class ClientEventDb {
@@ -23,23 +31,80 @@ export class ClientEventDb {
     this.manifest = manifest;
   }
 
-  getEventMarkerInfos(filter: EventFilter): EventMarkerInfoWithId[] {
-    const { date, eventNames } = filter;
+  private addDateSubquery(date: Date, qb: QueryBuilder) {
+    qb.query += `
+    date = ?`;
+    qb.params.push(dateToYYYYMMDDInt(date));
+  }
 
-    let query = `
+  private addVoterLeanSubquery(
+    voterLeans: VoterLean[] | undefined,
+    qb: QueryBuilder
+  ) {
+    if (voterLeans && voterLeans.length > 0) {
+      const subquery: string[] = [];
+      for (const voterLean of voterLeans) {
+        switch (voterLean) {
+          case "trump":
+            subquery.push("pct_dem_lead < 0");
+            break;
+          case "harris":
+            subquery.push("pct_dem_lead > 0");
+            break;
+          case "unavailable":
+            subquery.push("pct_dem_lead IS NULL");
+            break;
+        }
+      }
+      qb.query += `
+        AND (${subquery.join(" OR ")})`;
+    }
+  }
+
+  private addVisibleBoundsOnlySubquery(
+    visibleBoundsOnly: boolean | undefined,
+    bounds: Bounds | undefined,
+    qb: QueryBuilder
+  ) {
+    if (visibleBoundsOnly && bounds) {
+      qb.query += `
+        AND lon BETWEEN ? AND ?
+        AND lat BETWEEN ? AND ?`;
+      qb.params.push(bounds.xmin, bounds.xmax, bounds.ymin, bounds.ymax);
+    }
+  }
+
+  private addSelectedEventNamesSubquery(
+    selectedEventNames: string[] | undefined,
+    qb: QueryBuilder
+  ) {
+    if (selectedEventNames && selectedEventNames.length > 0) {
+      const placeholders = selectedEventNames.map(() => "?").join(", ");
+      qb.query += `
+        AND name IN (${placeholders})`;
+      qb.params.push(...selectedEventNames);
+    }
+  }
+
+  getEventMarkerInfos(filter: EventFilterOptions): EventMarkerInfoWithId[] {
+    const { date, eventNames, visibleBounds, visibleBoundsOnly, voterLeans } =
+      filter;
+
+    const qb: QueryBuilder = {
+      query: `
       SELECT id, lat, lon, pct_dem_lead
       FROM events
-      WHERE date = ?`;
-    const params: BindParams = [dateToYYYYMMDDInt(date)];
+      WHERE`,
+      params: [],
+    };
 
-    if (eventNames && eventNames.length > 0) {
-      const placeholders = eventNames.map(() => "?").join(", ");
-      query += ` AND name IN (${placeholders})`;
-      params.push(...eventNames);
-    }
+    this.addDateSubquery(date, qb);
+    this.addVisibleBoundsOnlySubquery(visibleBoundsOnly, visibleBounds, qb);
+    this.addSelectedEventNamesSubquery(eventNames, qb);
+    this.addVoterLeanSubquery(voterLeans, qb);
 
-    const stmt = this.db.prepare(query);
-    stmt.bind(params);
+    const stmt = this.db.prepare(qb.query);
+    stmt.bind(qb.params);
 
     const results: EventMarkerInfoWithId[] = [];
     while (stmt.step()) {
@@ -151,16 +216,33 @@ export class ClientEventDb {
     };
   }
 
-  getEventNamesAndCountsForDate(date: Date): { name: string; count: number }[] {
-    const stmt = this.db.prepare(`
-      SELECT name, COUNT(*) as count
-      FROM events
-      WHERE date = ?
+  getEventNamesAndCountsForFilter(
+    filter: EventFilterOptions
+  ): { name: string; count: number }[] {
+    const { date, visibleBounds, visibleBoundsOnly, voterLeans } = filter;
+
+    const qb: QueryBuilder = {
+      query: `
+        SELECT name, COUNT(*) as count
+        FROM events
+        WHERE
+      `,
+      params: [],
+    };
+
+    this.addDateSubquery(date, qb);
+    // Note this does NOT include the selectedNames, since that's what this a source for.
+    this.addVisibleBoundsOnlySubquery(visibleBoundsOnly, visibleBounds, qb);
+    this.addVoterLeanSubquery(voterLeans, qb);
+
+    qb.query += `
       GROUP BY name
       ORDER BY count DESC
-    `);
+    `;
 
-    stmt.bind([dateToYYYYMMDDInt(date)]);
+    const stmt = this.db.prepare(qb.query);
+
+    stmt.bind(qb.params);
 
     const results: { name: string; count: number }[] = [];
     while (stmt.step()) {
@@ -209,9 +291,7 @@ export class ClientEventDb {
       throw new Error(`Failed to fetch database file: ${manifest.dbFilename}`);
     const dbBuffer = await dbRes.arrayBuffer();
 
-    const SQL = await initSqlJs({
-      locateFile: (file) => `/lib/sqljs/${file}`,
-    });
+    const SQL = await getSqlJs();
     const db = new SQL.Database(new Uint8Array(dbBuffer));
 
     return new ClientEventDb(db, manifest);

@@ -36,6 +36,9 @@ The project creates and deploys a static web site to GitHub Pages. It has two ma
     # Fetch preprocessed NY Times precinct database
     npm run download-precincts-spatial-index
 
+    # Fetch preprocessed region (zip/city/state) data
+    npx tsx scripts/downloadRegionData.ts
+
     # Fetch cache of Nominatim and Wikidata data
     npx tsx scripts/eventDb/releaseManager.ts download-cache
     ```

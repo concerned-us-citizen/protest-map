@@ -1,3 +1,5 @@
+import type { Bounds } from "./store/RegionModel";
+
 export interface Coordinates {
   lat: number;
   lon: number;
@@ -38,9 +40,12 @@ export interface PopulatedEvent {
   cityArticleUrl: string;
 }
 
-export interface EventFilter {
+export interface EventFilterOptions {
   date: Date;
   eventNames?: string[]; // empty or missing means match all events
+  visibleBounds?: Bounds;
+  visibleBoundsOnly?: boolean;
+  voterLeans?: VoterLean[]; // empty or missing means match all voter leans
 }
 
 export type DateRange = {
@@ -48,15 +53,7 @@ export type DateRange = {
   end: Date;
 };
 
-export type ZipcodeBounds = {
-  zip: string;
-  xmin: number;
-  ymin: number;
-  xmax: number;
-  ymax: number;
-  cx: number;
-  cy: number;
-};
-
 export type Nullable<T> = T | null;
 export type SetTimeoutId = ReturnType<typeof setTimeout> | undefined;
+
+export type VoterLean = "trump" | "harris" | "unavailable";

@@ -1,9 +1,12 @@
 import { setContext, getContext } from "svelte";
 import { EventModel } from "./EventModel.svelte";
 import { FilteredEventModel } from "./FilteredEventModel.svelte";
-import { MapState } from "./MapState.svelte";
 import { deviceInfo } from "$lib/store/DeviceInfo.svelte";
 import type { SetTimeoutId } from "$lib/types";
+import { RegionModel, type RegionBounds } from "./RegionModel";
+import { isFutureDate } from "$lib/util/date";
+import { RegionLabeler } from "./RegionLabeler.svelte";
+import { MapModel } from "./MapModel.svelte";
 
 const EVENTINFO_VISIBILITY_DURATION = 1000; // 1s
 
@@ -15,7 +18,9 @@ const ZERO_EVENT_NAV_TIME = 50; // ms, for dates with no events
 export class PageState {
   readonly eventModel: EventModel;
   readonly filter: FilteredEventModel;
-  readonly mapState: MapState;
+  readonly mapModel: MapModel;
+  readonly regionModel: RegionModel;
+  readonly regionLabeler: RegionLabeler;
 
   filterVisible = $state(false);
   helpVisible = $state(false);
@@ -85,6 +90,49 @@ export class PageState {
     }
   }
 
+  async updateFromUrlParams(params: URLSearchParams) {
+    if (this.eventModel.hasDates) {
+      // Only initialize date if eventModel has loaded dates
+      const specifiedDateStr = params.get("date");
+      const specifiedDate = specifiedDateStr
+        ? new Date(specifiedDateStr)
+        : undefined;
+      if (specifiedDate && this.eventModel.isValidDate(specifiedDate)) {
+        this.filter.setCurrentDate(new Date(specifiedDate));
+      } else {
+        // If not specified, initialize currentDateIndex to be the date at or after the current system date
+        // (or - 1 if no match) any time the eventModel's items change
+        this.filter.currentDateIndex =
+          this.eventModel.allDatesWithEventCounts.findIndex((dc) =>
+            isFutureDate(dc.date, true)
+          );
+      }
+    }
+
+    const zoomParams: [
+      string,
+      (_val: string) => Promise<RegionBounds | undefined>,
+    ][] = [
+      ["zip", this.regionModel.getBoundsForZip],
+      ["state", this.regionModel.getBoundsForState],
+      ["city", this.regionModel.getBoundsForCity],
+      ["zoomto", this.regionModel.getBoundsForName],
+    ];
+    for (const [key, lookupFn] of zoomParams) {
+      const value = params.get(key);
+      if (!value) continue;
+
+      const bounds = await lookupFn.call(this.regionModel, value);
+      if (bounds) {
+        this.filter.visibleBoundsOnly = true;
+        this.mapModel.navigateTo(bounds, true);
+        break;
+      } else {
+        console.log(`Could not find region bounds for ${key} = ${value}`);
+      }
+    }
+  }
+
   #debouncedHideEventInfo() {
     clearTimeout(this.#hideEventInfoTimer);
 
@@ -121,8 +169,14 @@ export class PageState {
 
   private constructor() {
     this.eventModel = EventModel.create(); // Create EventModel immediately, it loads db in background
-    this.filter = new FilteredEventModel(this.eventModel);
-    this.mapState = new MapState();
+    this.mapModel = new MapModel();
+    this.regionModel = RegionModel.getInstance();
+    this.regionLabeler = new RegionLabeler(this.regionModel);
+    this.filter = new FilteredEventModel(
+      this.eventModel,
+      this.mapModel,
+      this.regionLabeler
+    );
     this.pollForUpdates();
   }
 

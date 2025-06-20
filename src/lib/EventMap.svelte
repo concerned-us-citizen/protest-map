@@ -8,6 +8,7 @@
   import "maplibre-gl/dist/maplibre-gl.css";
   import bbox from "@turf/bbox";
   import { featureCollection, point } from "@turf/helpers";
+  import { bboxToBounds, type BBox2D } from "./util/bounds";
 
   const iconForPct = (pct: number | null) =>
     pct === null
@@ -64,19 +65,6 @@
     if (source) source.setData(eventsToGeoJSON(filteredEvents));
   });
 
-  // Update the viewport when a new region is specified
-  $effect(() => {
-    const region = pageState.mapState.visibleMapRegion;
-    if (map && region) {
-      map.fitBounds(region.bounds, {
-        padding: 40,
-        maxZoom: 15,
-        ...region.options,
-      });
-      pageState.mapState.visibleMapRegion = null;
-    }
-  });
-
   $effect(() => {
     const isTouchDevice = deviceInfo.isTouchDevice;
     const isWide = deviceInfo.isWide;
@@ -121,26 +109,9 @@
   onMount(async () => {
     if (!mapDiv) return;
 
-    // Define the southwestern and northeastern corners of the bounds
-
-    // Create a LngLatBounds object
-    const southWest: [number, number] = [-170, 15];
-    const northEast: [number, number] = [-66, 70];
-    const initialZoomBoundingBox = new maplibregl.LngLatBounds(
-      southWest,
-      northEast
-    );
-
-    // Get the center of the bounds
-    const center = initialZoomBoundingBox.getCenter();
-    const initialZoom = deviceInfo.isWide ? 2 : 1;
-    pageState.mapState.setInitialMapView(center, initialZoom);
-
     map = new maplibregl.Map({
       container: mapDiv,
       style: "https://tiles.openfreemap.org/styles/bright",
-      center: center,
-      zoom: initialZoom,
       minZoom: 1,
       maxZoom: 15,
       attributionControl: false,
@@ -151,7 +122,8 @@
       throw new Error("Map is undefined");
     }
     const safeMap = map;
-    pageState.mapState.setMapInstance(safeMap);
+    pageState.mapModel.setMapInstance(safeMap);
+    pageState.regionLabeler.setMapInstance(safeMap);
 
     try {
       // Await all image loading promises concurrently
@@ -188,46 +160,6 @@
           unavail: ["+", ["case", ["!", ["has", "pct"]], 1, 0]],
         },
       });
-
-      const DEBUG_SHOW_INITIAL_BBOX = false;
-      if (DEBUG_SHOW_INITIAL_BBOX) {
-        // Get the corners from the bounds object
-        const sw = initialZoomBoundingBox.getSouthWest();
-        const ne = initialZoomBoundingBox.getNorthEast();
-        const nw = initialZoomBoundingBox.getNorthWest();
-        const se = initialZoomBoundingBox.getSouthEast();
-
-        // Create a GeoJSON Polygon from the bounds
-        const bboxPolygon = {
-          type: "Feature" as const,
-          geometry: {
-            type: "Polygon" as const,
-            coordinates: [
-              [
-                [sw.lng, sw.lat],
-                [se.lng, se.lat],
-                [ne.lng, ne.lat],
-                [nw.lng, nw.lat],
-                [sw.lng, sw.lat], // Close the polygon
-              ],
-            ],
-          },
-          properties: {}, // Can add any properties here if needed
-        };
-        map.addSource("bbox-source", {
-          type: "geojson",
-          data: bboxPolygon,
-        });
-        map.addLayer({
-          id: "bbox-outline",
-          type: "line", // Use 'line' for just the outline
-          source: "bbox-source",
-          paint: {
-            "line-color": "#FF0000", // Red outline
-            "line-width": 2,
-          },
-        });
-      }
 
       // cluster background marker
       map.addLayer({
@@ -336,20 +268,6 @@
         }
       });
 
-      // const clusterLayers = ["cluster-count", "cluster-badge", "cluster-icon"];
-      // clusterLayers.forEach(async (layerId) => {
-      //   safeMap.on("click", layerId, async (e) => {
-      //     const clusterId = e.features?.[0]?.properties?.cluster_id;
-      //     if (clusterId === undefined) return;
-
-      //     const source = map?.getSource("events") as maplibregl.GeoJSONSource;
-      //     if (source && "getClusterExpansionZoom" in source) {
-      //       const zoom = await source.getClusterExpansionZoom(clusterId);
-      //       safeMap.easeTo({ center: e.lngLat, zoom });
-      //     }
-      //   });
-      // });
-
       const clusterLayers = ["cluster-count", "cluster-badge", "cluster-icon"];
       clusterLayers.forEach(async (layerId) => {
         safeMap.on("click", layerId, async (e) => {
@@ -370,19 +288,8 @@
               )
             );
 
-            const bounds = bbox(fc); // [minX, minY, maxX, maxY]
-            console.log(`clusterId: ${clusterId} bbox: ${bounds}`);
-
-            safeMap.fitBounds(
-              [
-                [bounds[0], bounds[1]],
-                [bounds[2], bounds[3]],
-              ],
-              {
-                padding: 50,
-                duration: 500,
-              }
-            );
+            const bboxValue = bbox(fc) as BBox2D; // [minX, minY, maxX, maxY]
+            pageState.mapModel.navigateTo(bboxToBounds(bboxValue));
           } catch (error) {
             console.error("Error getting cluster leaves:", error);
           }
@@ -394,7 +301,7 @@
         if (!f) return;
 
         const populated = pageState.eventModel.getPopulatedEvent(
-          f.properties?.eventId
+          f.properties.eventId
         );
         if (!populated) return;
 
@@ -406,7 +313,7 @@
           props: { populatedEvent: populated },
         });
         const vOffset = 14;
-        const hOffset = 14;
+        const hOffset = 16;
         popup = new maplibregl.Popup({
           closeButton: false,
           maxWidth: "300px",
@@ -415,6 +322,10 @@
             bottom: [0, -vOffset],
             left: [hOffset, 0],
             right: [-hOffset, 0],
+            // "top-left": [hOffset, vOffset],
+            // "top-right": [-hOffset, vOffset],
+            // "bottom-left": [hOffset, -vOffset],
+            // "bottom-right": [-hOffset, -vOffset],
           } as maplibregl.Offset,
         })
           .setLngLat(e.lngLat)
@@ -424,13 +335,6 @@
     } catch (error) {
       console.error("Error during map initialization:", error);
     }
-
-    safeMap.on("moveend", () => {
-      pageState.mapState.updateCurrentMapView(
-        safeMap.getCenter(),
-        safeMap.getZoom()
-      );
-    });
   });
 
   onDestroy(() => {
@@ -441,7 +345,11 @@
   function destroyPopup() {
     popup?.remove();
     popup = null;
-    sveltePopupInstance?.destroy();
+    // TODO get clear on why there is a $destroy and not a destroy, and
+    // why $destroy can't be invoked either. Defensive hack for now.
+    if (sveltePopupInstance?.destroy) {
+      sveltePopupInstance?.destroy();
+    }
     sveltePopupInstance = null;
 
     sveltePopupContainer?.remove();

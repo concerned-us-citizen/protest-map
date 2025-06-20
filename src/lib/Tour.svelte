@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
-  import { quintOut } from 'svelte/easing';
-  import { crossfade } from 'svelte/transition';
-  import { markerSvg } from './icons';
-  import InlineSvg from './InlineSvg.svelte';
+  import { createEventDispatcher } from "svelte";
+  import { quintOut } from "svelte/easing";
+  import { crossfade } from "svelte/transition";
+  import { markerSvg } from "./icons";
+  import InlineSvg from "./InlineSvg.svelte";
 
   const dispatch = createEventDispatcher();
 
-   type Step = {
+  type Step = {
     title: string;
     description?: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -21,10 +21,7 @@
     className?: string;
   }
 
-  const {
-    steps,
-    className = ''
-  }: Props = $props();
+  const { steps, className = "" }: Props = $props();
 
   let currentStepIndex = $state(0);
   let currentStep = $derived(steps[currentStepIndex]);
@@ -32,9 +29,8 @@
   let showPrevious = $derived(currentStepIndex > 0);
   let showNext = $derived(currentStepIndex < steps.length - 1);
 
-
   function dismiss() {
-    dispatch('dismiss');
+    dispatch("dismiss");
   }
 
   function nextStep() {
@@ -53,14 +49,14 @@
   const swipeThreshold = 50; // Minimum distance for a swipe
 
   const handleTouchStart = (event: Event | TouchEvent) => {
-    if ('touches' in event) {
+    if ("touches" in event) {
       touchStartX = event.touches[0].clientX;
       event.preventDefault();
     }
   };
 
   const handleTouchEnd = (event: Event | TouchEvent) => {
-    if ('changedTouches' in event) {
+    if ("changedTouches" in event) {
       const touchEndX = event.changedTouches[0].clientX;
       const diff = touchEndX - touchStartX;
 
@@ -80,26 +76,34 @@
     // Dismiss only if the click is directly on the dimmed background, not on the content panel
     if (event.target === event.currentTarget) {
       // TODO seems wrong - should just have a handler
-      dispatch('dismiss');
+      dispatch("dismiss");
     }
   }
 
   // Crossfade transition for step content
   const [send, receive] = crossfade({
-    duration: 300,         
+    duration: 300,
     easing: quintOut,
   });
 </script>
 
 {#if currentStep}
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<!-- svelte-ignore a11y_no_static_element_interactions -->
+  <!-- svelte-ignore a11y_click_events_have_key_events -->
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div class={`dimmed-background ${className}`} onclick={handleBackgroundClick}>
-    <div class="tour-panel" in:receive={{ key: currentStepIndex }} out:send={{ key: currentStepIndex }}>
-      <div class="swipe-panel" ontouchstart={handleTouchStart} ontouchend={handleTouchEnd} >
+    <div
+      class="tour-panel"
+      in:receive={{ key: currentStepIndex }}
+      out:send={{ key: currentStepIndex }}
+    >
+      <div
+        class="swipe-panel"
+        ontouchstart={handleTouchStart}
+        ontouchend={handleTouchEnd}
+      >
         <div class="header">
           <div class="icon-container">
-            <InlineSvg content={markerSvg}/>
+            <InlineSvg content={markerSvg} />
           </div>
           <div class="title-container">
             <h1>{currentStep.title}</h1>
@@ -107,7 +111,7 @@
         </div>
         <div class="vertical-scroll">
           {#if currentStep?.component}
-            <Component {...(currentStep.props || {})} />
+            <Component {...currentStep.props || {}} />
           {:else}
             <!-- eslint-disable-next-line svelte/no-at-html-tags -->
             {@html currentStep.description}
@@ -118,12 +122,23 @@
         <button class="link-button" onclick={dismiss}>Dismiss</button>
         <div class="progress-indicator">
           {#each steps as _, i}
-            <div class="step-circle" class:active={i === currentStepIndex}></div>
+            <div
+              class="step-circle"
+              class:active={i === currentStepIndex}
+            ></div>
           {/each}
         </div>
         <div class="navigation-buttons">
-          <button class="link-button" onclick={previousStep} class:hidden={!showPrevious}>Prev</button>
-          <button class="link-button" onclick={nextStep} class:disabled={!showNext}>Next</button>
+          <button
+            class="link-button"
+            onclick={previousStep}
+            class:hidden={!showPrevious}>Prev</button
+          >
+          <button
+            class="link-button"
+            onclick={nextStep}
+            class:disabled={!showNext}>Next</button
+          >
         </div>
       </div>
     </div>
@@ -142,7 +157,7 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    padding: var(--toolbar-margin); 
+    padding: var(--toolbar-margin);
     box-sizing: border-box;
     z-index: 1000;
   }
@@ -177,20 +192,20 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: .5em;
+    gap: 0.5em;
   }
 
   .icon-container {
     height: 4em;
     width: 4em;
     /* Adjust for svg internal whitespace TODO fix in svg */
-    margin: -.7em;
+    margin: -0.7em;
   }
 
   .icon-container :global(svg) {
-      width: 100%;
-      height: 100%;
-      color: rgb(23, 78, 154);
+    width: 100%;
+    height: 100%;
+    color: rgb(23, 78, 154);
   }
 
   .title-container h1 {
@@ -209,8 +224,8 @@
     (not visible to svelte) */
 
   .vertical-scroll :global(p),
-  .vertical-scroll :global(img) { 
-    margin: 15px 0 0 0 !important; 
+  .vertical-scroll :global(img) {
+    margin: 15px 0 0 0 !important;
     text-align: left;
   }
 
@@ -271,15 +286,11 @@
   .link-button {
     background: none;
     border: none;
-    color: #007bff; 
+    color: #007bff;
     cursor: pointer;
     padding: 0;
     font-size: 1em;
     text-decoration: none;
-  }
-
-  .link-button:hover {
-    text-decoration: underline;
   }
 
   :global(.tour-image) {

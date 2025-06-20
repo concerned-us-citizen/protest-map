@@ -9,35 +9,20 @@
 
   const pageState = getPageStateFromContext();
   const eventNamesWithLocationCounts = $derived(
-    pageState.filter.currentDateEventNamesWithLocationCounts
+    pageState.filter.filteredEventNamesWithLocationCounts
   );
 </script>
 
 <div class={`events-filter-component ${className}`} {...restProps}>
-  {#if pageState.filter.selectedEventNames.length > 0}
-    <h4 class="filter-title">
-      From {pageState.filter.selectedEventNames.length} of {countAndLabel(
-        eventNamesWithLocationCounts,
-        "Event"
-      )}
-    </h4>
-  {:else}
-    <h4 class="filter-title">
-      From {countAndLabel(eventNamesWithLocationCounts, "Protest Event")}
-    </h4>
-  {/if}
+  <h4 class="filter-title">
+    From {countAndLabel(
+      pageState.filter.filteredEventNamesWithLocationCounts,
+      "Protest Event"
+    )}
+  </h4>
   {#if eventNamesWithLocationCounts.length > 0}
     <div class="events-section-description">
-      {#if pageState.filter.selectedEventNames.length > 0}
-        <button
-          class="link-button"
-          onclick={() => pageState.filter.clearSelectedEventNames()}
-        >
-          Clear Filter
-        </button>
-      {:else}
-        ({titleCase(deviceInfo.tapOrClick)} to filter by one or more)
-      {/if}
+      ({titleCase(deviceInfo.tapOrClick)} to filter by one or more)
     </div>
   {/if}
   <div class="event-list-scrollable-area">

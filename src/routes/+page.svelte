@@ -3,7 +3,6 @@
     createPageStateInContext,
     PageState,
   } from "$lib/store/PageState.svelte";
-  import { isFutureDate } from "$lib/util/date";
   import { deviceInfo } from "$lib/store/DeviceInfo.svelte.js";
   import ProtestMapTour from "$lib/ProtestMapTour.svelte";
   import EventInfoPanel from "$lib/EventInfoPanel.svelte";
@@ -20,40 +19,21 @@
   import IconButton from "$lib/IconButton.svelte";
   import EventMap from "$lib/EventMap.svelte";
   import { cubicInOut } from "svelte/easing";
-  import { fade } from "svelte/transition";
+  import { fade, slide } from "svelte/transition";
   import PrecinctStatsPanel from "$lib/PrecinctStatsPanel.svelte";
   import UpgradeBanner from "$lib/UpgradeBanner.svelte";
   import LoadingSpinner from "$lib/LoadingSpinner.svelte";
+  import { page } from "$app/stores";
+  import FilterIndicator from "$lib/FilterIndicator.svelte";
 
   const pageState = PageState.create();
   createPageStateInContext(pageState);
 
   $effect(() => {
-    if (pageState.eventModel.hasDates) {
-      // Only initialize date if eventModel has loaded dates
-      const specifiedDateStr = new URLSearchParams(window.location.search).get(
-        "date"
-      );
-      const specifiedDate = specifiedDateStr
-        ? new Date(specifiedDateStr)
-        : undefined;
-      if (specifiedDate && pageState.eventModel.isValidDate(specifiedDate)) {
-        pageState.filter.setCurrentDate(new Date(specifiedDate));
-      } else {
-        // If not specified, initialize currentDateIndex to be the date at or after the current system date
-        // (or - 1 if no match) any time the eventModel's items change
-        pageState.filter.currentDateIndex =
-          pageState.eventModel.allDatesWithEventCounts.findIndex((dc) =>
-            isFutureDate(dc.date, true)
-          );
-      }
-    }
-  });
-
-  // Clear selectedEventNames any time currentDateIndex changes.
-  $effect(() => {
-    void pageState.filter.currentDateIndex;
-    pageState.filter.clearSelectedEventNames();
+    const searchParams = $page.url.searchParams;
+    (async () => {
+      await pageState.updateFromUrlParams(searchParams);
+    })();
   });
 
   $effect(() => {
@@ -132,20 +112,22 @@
 
     if (key === "+" || event.key === "z") {
       event.preventDefault();
-      pageState.mapState.zoomIn();
+      pageState.mapModel.zoomIn();
       return;
     }
 
     if (key === "-" || event.key == "Z") {
       event.preventDefault();
-      pageState.mapState.zoomOut();
+      pageState.mapModel.zoomOut();
       return;
     }
 
-    // Unzoom to initial level (U or R)
-    if (key === "u" || key === "r") {
+    // Unzoom to initial level (U, R, B)
+    if (key === "u" || key === "r" || key === "b") {
       event.preventDefault();
-      pageState.mapState.resetMapZoom();
+      if (pageState.mapModel.canPopBounds) {
+        pageState.mapModel.popBounds();
+      }
       return;
     }
   }
@@ -177,23 +159,6 @@
       .split("; ")
       .some((row) => row.startsWith("hasShownTour="));
   }
-
-  $effect(() => {
-    if (typeof document !== "undefined") {
-      const titleEl = document.querySelector('meta[property="og:title"]');
-      if (titleEl)
-        titleEl.setAttribute(
-          "content",
-          `A Map of Protests ${pageState.eventModel?.formattedDateRange ?? ""}`
-        );
-      const descriptionEl = document.querySelector('meta[property="og:title"]');
-      if (descriptionEl)
-        descriptionEl.setAttribute(
-          "content",
-          `An interactive map of protests ${pageState.eventModel.formattedDateRange}`
-        );
-    }
-  });
 </script>
 
 <svelte:head>
@@ -215,26 +180,11 @@
 </div>
 
 {#if !pageState.eventModel.isLoading}
-  <div class="title-stats-and-filter-container hide-on-popup">
+  <div class="title-stats-and-filter-container hide-on-popup" transition:fade>
     <div class="title-and-stats-container">
       {#if !deviceInfo.isShort}
         <div class="title-container panel">
           <h1 class="title">Map of US Protests</h1>
-          <div class="date-range">
-            {pageState.eventModel.formattedDateRange}
-          </div>
-          {#if deviceInfo.isTall}
-            <div class="attribution-link">
-              <i
-                >Provided by <a
-                  href="https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748"
-                  target="_blank"
-                  title={pageState.eventModel.formattedUpdatedAt}
-                  >We (the People) Dissent</a
-                ></i
-              >
-            </div>
-          {/if}
         </div>
       {/if}
 
@@ -245,34 +195,44 @@
         {/if}
         <div class="location-count">
           <button
-            class={`link-button ${pageState.filter.isFiltering ? "is-filtering-indicator" : ""}`}
+            class={`link-button`}
             data-suppress-click-outside
             onclick={() => pageState.toggleFilterVisible()}
           >
-            {#if pageState.filter.isFiltering}
-              {pageState.filter.filteredEvents.length} of {countAndLabel(
-                pageState.filter.currentDateEvents,
-                "location"
-              )} >
-            {:else}
-              {countAndLabel(pageState.filter.currentDateEvents, "location")} >
-            {/if}
+            {countAndLabel(pageState.filter.filteredEvents, "location")} >
           </button>
         </div>
       </div>
     </div>
 
-    {#if !deviceInfo.isShort && pageState.filterVisible}
-      <div class="precinct-stats highlight-adjusted-panel">
-        <PrecinctStatsPanel />
+    {#if pageState.filter.isFiltering}
+      <div transition:slide>
+        <FilterIndicator />
       </div>
     {/if}
 
     {#if !deviceInfo.isShort && pageState.filterVisible}
-      <FilterPanel
-        className="filter panel"
-        onClose={() => (pageState.filterVisible = false)}
-      />
+      <div class="precinct-stats highlight-adjusted-panel" transition:slide>
+        <PrecinctStatsPanel />
+      </div>
+
+      <div transition:slide>
+        <FilterPanel
+          className="filter panel"
+          onClose={() => (pageState.filterVisible = false)}
+        />
+      </div>
+
+      <div class="restrict-to-visible-panel highlight-adjusted-panel">
+        <button
+          class="link-button"
+          onclick={() => pageState.filter.toggleVisibleBoundsOnly()}
+        >
+          {pageState.filter.visibleRegionOnly
+            ? "Show all protests"
+            : "Hide offscreen protests"}
+        </button>
+      </div>
     {/if}
   </div>
 
@@ -292,15 +252,15 @@
       />
     </div>
 
-    {#if !pageState.mapState.isAtInitialMapView}
+    {#if pageState.mapModel.canPopBounds}
       <div
         class="toolbar"
         transition:fade={{ duration: 300, easing: cubicInOut }}
       >
         <IconButton
           icon={backArrowSvg}
-          onClick={() => pageState.mapState.resetMapZoom()}
-          label="Reset Map Zoom (R)"
+          onClick={() => pageState.mapModel.popBounds()}
+          label="Zoom Back Out (R, U, or B)"
         />
       </div>
     {/if}
@@ -311,6 +271,20 @@
       <EventInfoPanel />
     {/if}
     <Timeline />
+    <div class="date-range">
+      <div>{pageState.eventModel.formattedDateRangeStart}</div>
+      <div class="attribution-link">
+        <i
+          >Data provided by <a
+            href="https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748"
+            target="_blank"
+            title={pageState.eventModel.formattedUpdatedAt}
+            >We (the People) Dissent</a
+          ></i
+        >
+      </div>
+      <div>{pageState.eventModel.formattedDateRangeEnd}</div>
+    </div>
   </div>
 {:else}
   <LoadingSpinner size={32} />
@@ -331,8 +305,7 @@
   .title-stats-and-filter-container {
     position: fixed;
     top: var(--toolbar-margin);
-    left: 50%;
-    transform: translateX(-50%);
+    left: var(--toolbar-margin);
     width: var(--title-panel-width);
     background: transparent;
     display: flex;
@@ -353,7 +326,7 @@
   }
 
   .highlight-adjusted-panel {
-    /* TODO make this more DRY - it needs to be kept in sync with FilterPanel */
+    /* TODO make this more DRY - it needs to be kept in sync with FilterPanel and FilterIndicator */
     --highlight-border-h: 0.3em;
     border-radius: var(--panel-border-radius);
     padding: var(--panel-padding-v)
@@ -367,10 +340,6 @@
     flex-direction: column;
     align-items: center;
     gap: 0.2em;
-  }
-
-  .title-container .attribution-link {
-    font-size: 0.6em;
   }
 
   .title-and-stats-container {
@@ -426,13 +395,17 @@
   }
 
   .date-range {
+    display: flex;
+    justify-content: space-between;
     font-size: 0.8em;
     text-align: center;
     color: #555;
+    margin-bottom: 0.4em;
+    margin-left: 1em;
+    margin-right: 1em;
   }
   .attribution-link {
-    margin-top: 0.7em;
-    font-size: 0.7em;
+    font-size: 0.8em;
     color: #555;
   }
   .attribution-link a:hover {
@@ -467,7 +440,7 @@
 
   .timeline-and-eventinfo {
     position: fixed;
-    bottom: var(--toolbar-margin);
+    bottom: 0;
     left: 50%;
     transform: translateX(-50%);
     width: calc(100vw - 2 * var(--toolbar-margin));

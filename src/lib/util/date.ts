@@ -131,37 +131,6 @@ export const formatDateTime = (date: Date): string => {
 };
 
 /**
- * Formats a date range string from start and end dates.
- * Format is "Month Day to Month Day" or "Month Day, Year to Month Day, Year" if year is not current.
- */
-export const formatDateRange = (
-  dateRange: {
-    start: Date;
-    end: Date;
-  } | null
-): string => {
-  if (!dateRange) {
-    return "Unspecified date range";
-  }
-  const { start, end } = dateRange;
-  const currentYear = new Date().getFullYear();
-
-  const formattedStartDate = start.toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: start.getFullYear() !== currentYear ? "numeric" : undefined,
-  });
-
-  const formattedEndDate = end.toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: end.getFullYear() !== currentYear ? "numeric" : undefined,
-  });
-
-  return `${formattedStartDate} to ${formattedEndDate}`;
-};
-
-/**
  * Normalizes a date string to YYYY-MM-DD format.
  * Handles M/D/YYYY, M/D/YY (assumes 20YY), and M/D (assumes 2025).
  * Returns null if the date string cannot be reliably parsed.

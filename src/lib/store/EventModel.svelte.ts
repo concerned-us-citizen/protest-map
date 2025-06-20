@@ -1,11 +1,11 @@
 import { browser } from "$app/environment";
 import type {
-  EventFilter,
+  EventFilterOptions,
   EventMarkerInfoWithId,
   Nullable,
   PopulatedEvent,
 } from "$lib/types";
-import { formatDateRange, formatDateTime } from "$lib/util/date";
+import { formatDate, formatDateTime } from "$lib/util/date";
 import { ClientEventDb } from "./ClientEventDb";
 
 export class EventModel {
@@ -39,9 +39,15 @@ export class EventModel {
     );
   }
 
-  readonly formattedDateRange = $derived.by(() =>
-    this.dateRange != null ? formatDateRange(this.dateRange) : ""
-  );
+  readonly formattedDateRangeStart = $derived.by(() => {
+    if (!this.dateRange) return "";
+    return formatDate(this.dateRange.start);
+  });
+
+  readonly formattedDateRangeEnd = $derived.by(() => {
+    if (!this.dateRange) return "";
+    return formatDate(this.dateRange.end);
+  });
 
   readonly formattedUpdatedAt = $derived(
     this.updatedAt
@@ -49,12 +55,14 @@ export class EventModel {
       : "Not yet updated"
   );
 
-  getMarkerInfos(filter: EventFilter): EventMarkerInfoWithId[] {
+  getMarkerInfos(filter: EventFilterOptions): EventMarkerInfoWithId[] {
     return this.db ? this.db.getEventMarkerInfos(filter) : [];
   }
 
-  getEventNamesAndCountsForDate(date: Date): { name: string; count: number }[] {
-    return this.db ? this.db.getEventNamesAndCountsForDate(date) : [];
+  getEventNamesAndCountsForFilter(
+    filter: EventFilterOptions
+  ): { name: string; count: number }[] {
+    return this.db ? this.db.getEventNamesAndCountsForFilter(filter) : [];
   }
 
   getPopulatedEvent(eventId: number): Nullable<PopulatedEvent> {

@@ -53,6 +53,10 @@ body.touch-device {
   border: none;
   padding: 0;
   cursor: pointer;
+  text-decoration: none;
+}
+
+.link-button:hover {
   text-decoration: underline;
   text-decoration-color: currentColor;
 }

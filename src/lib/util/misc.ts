@@ -41,3 +41,11 @@ export function stripPropsFromValues<
 
 export const delay = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
+
+export function debounce(fn: () => void, delay: number): () => void {
+  let timeout: ReturnType<typeof setTimeout>;
+  return () => {
+    clearTimeout(timeout);
+    timeout = setTimeout(fn, delay);
+  };
+}

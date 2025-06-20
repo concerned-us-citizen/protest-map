@@ -68,6 +68,9 @@ jobs:
           npx tsx scripts/eventDb/releaseManager.ts upload-log
           npx tsx scripts/eventDb/releaseManager.ts upload-cache
 
+      - name: Download region sqlite and json files from Release
+        run: npx tsx scripts/downloadRegionData.ts
+
       - name: Build static site
         env:
           VITE_MAPTILER_API_KEY: ${{ secrets.VITE_MAPTILER_API_KEY }}

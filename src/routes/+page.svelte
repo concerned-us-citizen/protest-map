@@ -7,12 +7,6 @@
   import ProtestMapTour from "$lib/ProtestMapTour.svelte";
   import EventInfoPanel from "$lib/EventInfoPanel.svelte";
   import FilterPanel from "$lib/FilterPanel.svelte";
-  import {
-    playIconSvg,
-    pauseIconSvg,
-    infoIconSvg,
-    backArrowSvg,
-  } from "$lib/icons";
   import { formatDateIndicatingFuture } from "$lib/util/date.js";
   import { countAndLabel } from "$lib/util/string";
   import Timeline from "$lib/Timeline.svelte";
@@ -26,6 +20,7 @@
   import { page } from "$app/stores";
   import FilterIndicator from "$lib/FilterIndicator.svelte";
   import { prettifyNamedRegion } from "$lib/store/RegionModel";
+  import { CirclePlay, CirclePause, Info, Undo2 } from "@lucide/svelte";
 
   const pageState = PageState.create();
   createPageStateInContext(pageState);
@@ -237,17 +232,23 @@
   <div class="toolbar-container hide-on-popup">
     <div class="toolbar">
       <IconButton
-        icon={pageState.autoplaying ? pauseIconSvg : playIconSvg}
         onClick={() => pageState.toggleAutoplay()}
         label={pageState.autoplaying
           ? "Pause Animation (Space)"
           : "Play Animation (Space)"}
-      />
+      >
+        {#if pageState.autoplaying}
+          <CirclePause />
+        {:else}
+          <CirclePlay />
+        {/if}
+      </IconButton>
       <IconButton
-        icon={infoIconSvg}
         onClick={() => pageState.toggleHelpVisible()}
         label="Show Help (H)"
-      />
+      >
+        <Info />
+      </IconButton>
     </div>
 
     {#if pageState.mapModel.canPopBounds}
@@ -256,10 +257,11 @@
         transition:fade={{ duration: 300, easing: cubicInOut }}
       >
         <IconButton
-          icon={backArrowSvg}
           onClick={() => pageState.mapModel.popBounds()}
           label="Zoom Back Out (R, U, or B)"
-        />
+        >
+          <Undo2 />
+        </IconButton>
       </div>
     {/if}
   </div>

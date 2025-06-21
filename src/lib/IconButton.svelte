@@ -1,18 +1,32 @@
 <script lang="ts">
-  import InlineSvg from './InlineSvg.svelte';
+  import type { Snippet } from "svelte";
 
-  let { onClick, icon, className = '', disabled = false, label } = $props();
+  interface Props {
+    children: Snippet;
+    onClick?: () => void;
+    className?: string;
+    disabled?: boolean;
+    label?: string;
+  }
+
+  let {
+    children,
+    onClick,
+    className = "",
+    disabled = false,
+    label,
+  }: Props = $props();
 </script>
 
 <button
   class={`icon-button ${className}`}
-  class:disabled={disabled}
-  onclick={() => !disabled && onClick()}
+  class:disabled
+  onclick={() => !disabled && onClick && onClick()}
   title={label}
   aria-label={label}
   {disabled}
 >
-  <InlineSvg content={icon} />
+  {@render children()}
 </button>
 
 <style>
@@ -22,7 +36,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0;  
+    margin: 0;
     border: none;
     border-radius: 0;
     background-color: var(--panel-background-color);
@@ -33,7 +47,6 @@
   /* :global here to avoid css-unused-selector warning, since the svg tag is embedded in the icon string */
   .icon-button :global(svg) {
     width: var(--icon-size);
-    height:  var(--icon-size);
+    height: var(--icon-size);
   }
-
 </style>

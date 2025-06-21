@@ -58,6 +58,9 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: npm run build-events-db
 
+      - name: Show contents of build/summary.txt
+        run: cat build/summary.txt
+
       - name: Version and copy SQLite DB
         run: npx tsx scripts/eventDb/versionAndCopyDb.ts
 

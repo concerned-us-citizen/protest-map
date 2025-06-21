@@ -3,7 +3,12 @@ import type { LngLatBoundsLike, LngLatBounds } from "maplibre-gl";
 
 export type BBox2D = [number, number, number, number];
 
-export function boundsEqual(a: Bounds, b: Bounds, epsilon = 1e-6): boolean {
+export function boundsEqual(
+  a: Bounds | undefined,
+  b: Bounds | undefined,
+  epsilon = 1e-6
+): boolean {
+  if (!a || !b) return false;
   return (
     Math.abs(a.xmin - b.xmin) < epsilon &&
     Math.abs(a.ymin - b.ymin) < epsilon &&

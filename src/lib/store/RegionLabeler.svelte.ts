@@ -65,8 +65,5 @@ export class RegionLabeler {
 
     this.#namedRegion =
       await this.#regionModel.getMatchingNamedRegion(visibleBounds);
-    console.log(
-      `Viewport matches ${this.#namedRegion?.name}, ${this.#namedRegion?.type}`
-    );
   };
 }

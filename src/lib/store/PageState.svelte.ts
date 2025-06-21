@@ -128,7 +128,7 @@ export class PageState {
         this.mapModel.navigateTo(namedRegion, true);
         break;
       } else {
-        console.log(`Could not find region bounds for ${key} = ${value}`);
+        console.warn(`Could not find region bounds for ${key} = ${value}`);
       }
     }
   }
@@ -158,7 +158,7 @@ export class PageState {
             console.log("Update now available!");
           }
         } catch (err) {
-          console.log("Polling failed", err);
+          console.warn("Polling failed", err);
         }
 
         this.pollForUpdates(); // repeat indefinitely

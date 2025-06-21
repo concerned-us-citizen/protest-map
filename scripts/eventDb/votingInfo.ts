@@ -38,7 +38,6 @@ export function findFeatureByLatLng({ lat, lon }) {
       // Pass the geometry directly, as its type is now confirmed
       turf.booleanPointInPolygon(pt, feature.geometry)
     ) {
-      // console.log(`Feature hit for ${lat}, ${lon}`);
       return feature.properties;
     }
   }

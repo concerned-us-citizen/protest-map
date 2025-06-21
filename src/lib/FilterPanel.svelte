@@ -14,13 +14,13 @@
 </script>
 
 <div class={`events-filter-component ${className}`} {...restProps}>
-  <h4 class="filter-title">
-    From {countAndLabel(
-      pageState.filter.filteredEventNamesWithLocationCounts,
-      "Protest Event"
-    )}
-  </h4>
   {#if eventNamesWithLocationCounts.length > 0}
+    <h4 class="filter-title">
+      From {countAndLabel(
+        pageState.filter.filteredEventNamesWithLocationCounts,
+        "Protest Event"
+      )}
+    </h4>
     <div class="events-section-description">
       ({titleCase(deviceInfo.tapOrClick)} to filter by one or more)
     </div>

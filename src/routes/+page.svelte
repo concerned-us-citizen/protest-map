@@ -20,7 +20,15 @@
   import { page } from "$app/stores";
   import FilterIndicator from "$lib/FilterIndicator.svelte";
   import { prettifyNamedRegion } from "$lib/store/RegionModel";
-  import { CirclePlay, CirclePause, Info, Undo2 } from "@lucide/svelte";
+  import {
+    CirclePlay,
+    CirclePause,
+    Info,
+    Undo2,
+    Search,
+    Share,
+  } from "@lucide/svelte";
+  import RegionNavigationPanel from "$lib/RegionNavigationPanel.svelte";
 
   const pageState = PageState.create();
   createPageStateInContext(pageState);
@@ -78,6 +86,13 @@
     // Help (I/H)
     if (key === "i" || key === "h") {
       pageState.toggleHelpVisible();
+      event.preventDefault();
+      return;
+    }
+
+    // Jump to Region (J)
+    if (key === "j") {
+      pageState.navigationVisible = true;
       event.preventDefault();
       return;
     }
@@ -249,6 +264,14 @@
       >
         <Info />
       </IconButton>
+
+      <IconButton
+        onClick={() => pageState.toggleNavigationVisible()}
+        label="Find a city, state, or ZIP code (F)"
+      >
+        <Search />
+      </IconButton>
+
     </div>
 
     {#if pageState.mapModel.canPopBounds}
@@ -297,6 +320,10 @@
       saveShownTourToCookie();
     }}
   />
+{/if}
+
+{#if pageState.navigationVisible}
+  <RegionNavigationPanel />
 {/if}
 
 <UpgradeBanner />

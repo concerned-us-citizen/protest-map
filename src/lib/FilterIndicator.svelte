@@ -83,12 +83,6 @@
     margin-bottom: 0.3em;
   }
 
-  .content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
   .filter button {
     font-size: 0.9em;
     text-decoration: none;

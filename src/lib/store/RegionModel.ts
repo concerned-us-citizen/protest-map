@@ -112,7 +112,11 @@ export function prettifyNamedRegion(
     case "zip":
       return `ZIP Code ${region.name}`;
     case "state":
-      return stateNameForAbbreviation[region.name.toUpperCase()];
+      if (region.name.length > 2) {
+        return toTitleCase(region.name);
+      } else {
+        return stateNameForAbbreviation[region.name.toUpperCase()];
+      }
     case "unnamed":
       return region.name;
   }
@@ -386,11 +390,24 @@ export class RegionModel {
   ): Promise<{ name: string; id: number; type: string }[]> {
     await this.waitUntilReady();
     const results = this.fuse!.search(query, { limit });
-    return results.map((r) => ({
-      id: r.item.id,
-      type: r.item.type,
-      name: prettifyNamedRegion(r.item as NameAndRegionType),
-    }));
+    const seen = new Set<number>();
+    return results
+      .filter((r) => {
+        if (!r.item.name) return false;
+        if (seen.has(r.item.id)) return false;
+        seen.add(r.item.id);
+        return true;
+      })
+      .map((r) => ({
+        id: r.item.id,
+        type: r.item.type,
+        name: prettifyNamedRegion(r.item as NameAndRegionType),
+      }));
+  }
+
+  async getNamedRegionForId(id: number) {
+    await this.waitUntilReady();
+    return this.db!.getNamedRegionById(id);
   }
 
   async getNamedRegionForName(name: string): Promise<NamedRegion | undefined> {

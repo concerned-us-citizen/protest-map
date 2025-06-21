@@ -24,6 +24,7 @@ export class PageState {
 
   filterVisible = $state(false);
   helpVisible = $state(false);
+  navigationVisible = $state(false);
   updateAvailable = $state(false);
 
   private _eventInfoVisible = $state(false);
@@ -39,7 +40,10 @@ export class PageState {
 
   toggleHelpVisible() {
     this.helpVisible = !this.helpVisible;
-    this.filterVisible = false;
+  toggleNavigationVisible() {
+    this.navigationVisible = !this.navigationVisible;
+  }
+
   }
 
   toggleAutoplay() {

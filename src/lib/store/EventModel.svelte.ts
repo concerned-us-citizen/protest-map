@@ -1,15 +1,18 @@
 import { browser } from "$app/environment";
 import type {
-  EventFilterOptions,
   EventMarkerInfoWithId,
   Nullable,
   PopulatedEvent,
 } from "$lib/types";
 import { formatDate, formatDateTime } from "$lib/util/date";
 import { ClientEventDb } from "./ClientEventDb";
+import { booleanPointInPolygon, point } from "@turf/turf";
+import type { RegionModel } from "./RegionModel";
+import type { EventFilterOptions } from "./FilteredEventModel.svelte";
 
 export class EventModel {
   private db: Nullable<ClientEventDb> = $state(null);
+  private regionModel: RegionModel;
 
   visibleMarkerInfos = $state<EventMarkerInfoWithId[]>([]);
   allDatesWithEventCounts = $state<{ date: Date; eventCount: number }[]>([]);
@@ -55,8 +58,20 @@ export class EventModel {
       : "Not yet updated"
   );
 
-  getMarkerInfos(filter: EventFilterOptions): EventMarkerInfoWithId[] {
-    return this.db ? this.db.getEventMarkerInfos(filter) : [];
+  async getMarkerInfos(
+    filter: EventFilterOptions
+  ): Promise<EventMarkerInfoWithId[]> {
+    let result = this.db ? this.db.getEventMarkerInfos(filter) : [];
+    if (filter.namedRegion) {
+      const polygon = await this.regionModel.getPolygonForNamedRegion(
+        filter.namedRegion
+      );
+      if (!polygon) return [];
+      result = result.filter((marker) =>
+        booleanPointInPolygon(point([marker.lon, marker.lat]), polygon)
+      );
+    }
+    return result;
   }
 
   getEventNamesAndCountsForFilter(
@@ -73,7 +88,9 @@ export class EventModel {
     return this.db ? await this.db.checkIsUpdateAvailable() : false;
   }
 
-  private constructor() {}
+  private constructor(regionModel: RegionModel) {
+    this.regionModel = regionModel;
+  }
 
   private async initialize() {
     try {
@@ -85,8 +102,8 @@ export class EventModel {
     }
   }
 
-  static create(): EventModel {
-    const model = new EventModel();
+  static create(regionModel: RegionModel): EventModel {
+    const model = new EventModel(regionModel);
     // Start async initialization in the background
     if (browser) {
       model.initialize();

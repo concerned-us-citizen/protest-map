@@ -1,5 +1,3 @@
-import type { Bounds } from "./store/RegionModel";
-
 export interface Coordinates {
   lat: number;
   lon: number;
@@ -38,14 +36,6 @@ export interface PopulatedEvent {
   state: string;
   cityThumbnailUrl: string;
   cityArticleUrl: string;
-}
-
-export interface EventFilterOptions {
-  date: Date;
-  eventNames?: string[]; // empty or missing means match all events
-  visibleBounds?: Bounds;
-  visibleBoundsOnly?: boolean;
-  voterLeans?: VoterLean[]; // empty or missing means match all voter leans
 }
 
 export type DateRange = {

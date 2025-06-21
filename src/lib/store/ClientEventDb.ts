@@ -1,14 +1,14 @@
 import type {
-  EventFilterOptions,
   EventMarkerInfoWithId,
   Nullable,
   PopulatedEvent,
   VoterLean,
 } from "$lib/types";
+import type { EventFilterOptions } from "./FilteredEventModel.svelte";
 import { type Database } from "sql.js";
 import { dateToYYYYMMDDInt, yyyymmddIntToDate } from "$lib/util/date";
 import { getSqlJs } from "./sqlJsInstance";
-import type { Bounds } from "./RegionModel";
+import type { NamedRegion } from "./RegionModel";
 
 interface LatestDbManifest {
   dbFilename: string;
@@ -61,16 +61,20 @@ export class ClientEventDb {
     }
   }
 
-  private addVisibleBoundsOnlySubquery(
-    visibleBoundsOnly: boolean | undefined,
-    bounds: Bounds | undefined,
+  private addNamedRegionOnlySubquery(
+    namedRegion: NamedRegion | undefined,
     qb: QueryBuilder
   ) {
-    if (visibleBoundsOnly && bounds) {
+    if (namedRegion) {
       qb.query += `
         AND lon BETWEEN ? AND ?
         AND lat BETWEEN ? AND ?`;
-      qb.params.push(bounds.xmin, bounds.xmax, bounds.ymin, bounds.ymax);
+      qb.params.push(
+        namedRegion.xmin,
+        namedRegion.xmax,
+        namedRegion.ymin,
+        namedRegion.ymax
+      );
     }
   }
 
@@ -87,8 +91,7 @@ export class ClientEventDb {
   }
 
   getEventMarkerInfos(filter: EventFilterOptions): EventMarkerInfoWithId[] {
-    const { date, eventNames, visibleBounds, visibleBoundsOnly, voterLeans } =
-      filter;
+    const { date, eventNames, namedRegion, voterLeans } = filter;
 
     const qb: QueryBuilder = {
       query: `
@@ -99,7 +102,7 @@ export class ClientEventDb {
     };
 
     this.addDateSubquery(date, qb);
-    this.addVisibleBoundsOnlySubquery(visibleBoundsOnly, visibleBounds, qb);
+    this.addNamedRegionOnlySubquery(namedRegion, qb);
     this.addSelectedEventNamesSubquery(eventNames, qb);
     this.addVoterLeanSubquery(voterLeans, qb);
 
@@ -219,7 +222,7 @@ export class ClientEventDb {
   getEventNamesAndCountsForFilter(
     filter: EventFilterOptions
   ): { name: string; count: number }[] {
-    const { date, visibleBounds, visibleBoundsOnly, voterLeans } = filter;
+    const { date, namedRegion, voterLeans } = filter;
 
     const qb: QueryBuilder = {
       query: `
@@ -232,7 +235,7 @@ export class ClientEventDb {
 
     this.addDateSubquery(date, qb);
     // Note this does NOT include the selectedNames, since that's what this a source for.
-    this.addVisibleBoundsOnlySubquery(visibleBoundsOnly, visibleBounds, qb);
+    this.addNamedRegionOnlySubquery(namedRegion, qb);
     this.addVoterLeanSubquery(voterLeans, qb);
 
     qb.query += `

@@ -3,20 +3,26 @@ import Fuse from "fuse.js";
 import { toTitleCase } from "$lib/util/string";
 import { browser } from "$app/environment";
 import { getSqlJs } from "./sqlJsInstance";
+import type { MultiPolygon, Polygon } from "geojson";
 
-export type BoundsType = "zip" | "city" | "state" | "unnamed";
-
-export type Bounds = Pick<RegionBounds, "xmin" | "ymin" | "xmax" | "ymax">;
-
-export interface RegionBounds {
-  id?: number;
-  name?: string;
-  type: BoundsType;
+export type Bounds = {
   xmin: number;
   ymin: number;
   xmax: number;
   ymax: number;
-}
+};
+
+export type NameAndRegionType = {
+  name: string;
+  type: RegionType;
+};
+
+export type RegionType = "zip" | "city" | "state" | "unnamed";
+
+export type NamedRegion = {
+  id: number;
+} & NameAndRegionType &
+  Bounds;
 
 export interface FuseRegionEntry {
   id: number;
@@ -84,30 +90,33 @@ export const abbreviationForStateName: Record<string, string> =
     ])
   );
 
-export function prettifyRegionName(
-  name: string | undefined,
-  type: BoundsType,
-  onUnhandled = (name: string, _type: string) => name
+export function prettifyNamedRegion(
+  region: NameAndRegionType,
+  onUnhandled = (_region: NameAndRegionType) => "US"
 ): string {
-  if (!name) name = "visible region";
-  switch (type) {
+  if (!region || !region.name || !region.type) return onUnhandled(region);
+
+  switch (region.type) {
     case "city": {
-      const match = name.match(/^(.+),\s*([A-Z]{2})$/);
+      const match = region.name.match(/^(.+)[,\s]\s([A-Za-z]{2})$/);
       if (match) {
         const [, city, stateAbbr] = match;
-        const stateFull = stateNameForAbbreviation[stateAbbr] ?? stateAbbr;
+        const uppedStateAbbr = stateAbbr.toUpperCase();
+        const stateFull =
+          stateNameForAbbreviation[uppedStateAbbr] ?? uppedStateAbbr;
         return `${toTitleCase(city)}, ${stateFull}`;
       } else {
-        return onUnhandled(name, type);
+        return onUnhandled(region);
       }
     }
     case "zip":
-      return `ZIP Code ${name}`;
+      return `ZIP Code ${region.name}`;
     case "state":
-      return stateNameForAbbreviation[name];
+      return stateNameForAbbreviation[region.name.toUpperCase()];
     case "unnamed":
-      return name;
+      return region.name;
   }
+  return onUnhandled(region);
 }
 
 export class RegionDB {
@@ -117,7 +126,7 @@ export class RegionDB {
     this.db = db;
   }
 
-  getBoundsByName(name: string): RegionBounds | undefined {
+  getNamedRegionByName(name: string): NamedRegion | undefined {
     return (
       this.querySingle(
         `SELECT * FROM region_bounds WHERE name = ? COLLATE NOCASE LIMIT 1`,
@@ -126,7 +135,7 @@ export class RegionDB {
     );
   }
 
-  getBoundsByZip(zip: string): RegionBounds | undefined {
+  getNamedRegionByZip(zip: string): NamedRegion | undefined {
     return (
       this.querySingle(
         `SELECT * FROM region_bounds where name = ? AND type = 'zip' LIMIT 1`,
@@ -135,7 +144,7 @@ export class RegionDB {
     );
   }
 
-  getBoundsByStateAbbreviation(state: string): RegionBounds | undefined {
+  getNamedRegionByStateAbbreviation(state: string): NamedRegion | undefined {
     return (
       this.querySingle(
         `SELECT * FROM region_bounds where name = ? COLLATE NOCASE AND type = 'state' LIMIT 1`,
@@ -144,7 +153,29 @@ export class RegionDB {
     );
   }
 
-  getBoundsById(id: number): RegionBounds | undefined {
+  getPolygonForState(id: number): Polygon | MultiPolygon | undefined {
+    const stmt = this.db.prepare(`
+      SELECT polygon_geojson FROM state_regions
+      WHERE region_id = ?
+    `);
+
+    const result = stmt.getAsObject([id]);
+    stmt.free();
+
+    if (result && result.polygon_geojson) {
+      try {
+        return JSON.parse(result.polygon_geojson as string) as
+          | Polygon
+          | MultiPolygon;
+      } catch {
+        console.error("Failed parse state region polygon");
+        return undefined;
+      }
+    }
+    return undefined;
+  }
+
+  getNamedRegionById(id: number): NamedRegion | undefined {
     return (
       this.querySingle(
         `SELECT * FROM region_bounds WHERE id = ? COLLATE NOCASE LIMIT 1`,
@@ -153,25 +184,24 @@ export class RegionDB {
     );
   }
 
-  /**
-   * Returns the best matching region whose bounds closely match the given viewport.
-   * This uses a symmetric delta match on all sides and scales fuzziness by viewport size.
-   */
-  getMatchingRegion(bounds: Bounds): RegionBounds | undefined {
-    const fuzziness = 0.05; // 5% of viewport span
+  getMatchingNamedRegion(bounds: Bounds): NamedRegion | undefined {
+    const minFraction = 0.8;
     const xSpan = bounds.xmax - bounds.xmin;
     const ySpan = bounds.ymax - bounds.ymin;
-    const xTol = xSpan * fuzziness;
-    const yTol = ySpan * fuzziness;
+
+    const minWidth = xSpan * minFraction;
+    const minHeight = ySpan * minFraction;
 
     const stmt = this.db.prepare(
-      `SELECT id, name, type, xmin, ymin, xmax, ymax FROM region_bounds
-       WHERE ABS(xmin - :xmin) < :xTol
-         AND ABS(ymin - :ymin) < :yTol
-         AND ABS(xmax - :xmax) < :xTol
-         AND ABS(ymax - :ymax) < :yTol
-       ORDER BY
-         ABS((xmax - xmin) * (ymax - ymin) - (:xSpan * :ySpan)) ASC
+      `SELECT id, name, type, xmin, ymin, xmax, ymax,
+              (xmax - xmin) * (ymax - ymin) AS area
+       FROM region_bounds
+       WHERE xmin >= :xmin
+         AND ymin >= :ymin
+         AND xmax <= :xmax
+         AND ymax <= :ymax
+         AND ((xmax - xmin) >= :minWidth OR (ymax - ymin) >= :minHeight)
+       ORDER BY area DESC
        LIMIT 1`
     );
 
@@ -180,10 +210,8 @@ export class RegionDB {
       ":ymin": bounds.ymin,
       ":xmax": bounds.xmax,
       ":ymax": bounds.ymax,
-      ":xTol": xTol,
-      ":yTol": yTol,
-      ":xSpan": xSpan,
-      ":ySpan": ySpan,
+      ":minWidth": minWidth,
+      ":minHeight": minHeight,
     });
 
     if (stmt.step()) {
@@ -200,7 +228,7 @@ export class RegionDB {
         return {
           id,
           name,
-          type: type as BoundsType,
+          type: type as RegionType,
           xmin,
           ymin,
           xmax,
@@ -212,20 +240,65 @@ export class RegionDB {
     return undefined;
   }
 
+  getNamedRegionWithin(bounds: Bounds): NamedRegion[] {
+    const stmt = this.db.prepare(
+      `SELECT id, name, type, xmin, ymin, xmax, ymax FROM region_bounds
+       WHERE xmin >= :xmin
+         AND ymin >= :ymin
+         AND xmax <= :xmax
+         AND ymax <= :ymax`
+    );
+
+    stmt.bind({
+      ":xmin": bounds.xmin,
+      ":ymin": bounds.ymin,
+      ":xmax": bounds.xmax,
+      ":ymax": bounds.ymax,
+    });
+
+    const results: NamedRegion[] = [];
+
+    while (stmt.step()) {
+      const [id, name, type, xmin, ymin, xmax, ymax] = stmt.get();
+      if (
+        typeof id === "number" &&
+        typeof name === "string" &&
+        typeof type === "string" &&
+        typeof xmin === "number" &&
+        typeof ymin === "number" &&
+        typeof xmax === "number" &&
+        typeof ymax === "number"
+      ) {
+        results.push({
+          id,
+          name,
+          type: type as RegionType,
+          xmin,
+          ymin,
+          xmax,
+          ymax,
+        });
+      }
+    }
+
+    stmt.free();
+    return results;
+  }
+
   private querySingle(
     sql: string,
     params: (string | number)[]
-  ): RegionBounds | undefined {
+  ): NamedRegion | undefined {
     const stmt = this.db.prepare(sql);
     stmt.bind(params);
 
-    let row: RegionBounds | null = null;
+    let row: NamedRegion | null = null;
     if (stmt.step()) {
       const result = stmt.getAsObject();
       row = {
         id: Number(result.id),
         name: String(result.name),
-        type: String(result.type) as BoundsType,
+        type: String(result.type) as RegionType,
         xmin: Number(result.xmin),
         ymin: Number(result.ymin),
         xmax: Number(result.xmax),
@@ -244,6 +317,8 @@ export class RegionModel {
   private db: RegionDB | null = null;
   private loaded = false;
   private readyPromise: Promise<void>;
+  private polygonCache: Map<string, Polygon | MultiPolygon | undefined> =
+    new Map();
 
   private constructor() {
     this.readyPromise = this.load();
@@ -314,47 +389,94 @@ export class RegionModel {
     return results.map((r) => ({
       id: r.item.id,
       type: r.item.type,
-      name: prettifyRegionName(r.item.name, r.item.type as BoundsType),
+      name: prettifyNamedRegion(r.item as NameAndRegionType),
     }));
   }
 
-  async getBoundsForName(name: string): Promise<RegionBounds | undefined> {
+  async getNamedRegionForName(name: string): Promise<NamedRegion | undefined> {
     await this.waitUntilReady();
-    return this.db!.getBoundsByName(name);
+    return this.db!.getNamedRegionByName(name);
   }
 
-  async getBoundsForZip(zip: string): Promise<RegionBounds | undefined> {
+  async getNamedRegionForZip(zip: string): Promise<NamedRegion | undefined> {
     await this.waitUntilReady();
-    return this.db!.getBoundsByZip(zip);
+    return this.db!.getNamedRegionByZip(zip);
   }
 
-  private async getBoundsByFuzzyTypeMatch(
-    query: string,
-    type: "city" | "state"
-  ): Promise<RegionBounds | undefined> {
-    await this.waitUntilReady();
+  async getNamedRegionForCity(
+    cityInput: string
+  ): Promise<NamedRegion | undefined> {
+    return this.getNamedRegionByFuzzyTypeMatch({
+      name: cityInput,
+      type: "city",
+    });
+  }
 
-    const cleaned = query.trim().toLowerCase();
+  async getNamedRegionForState(
+    stateInput: string
+  ): Promise<NamedRegion | undefined> {
+    await this.waitUntilReady();
+    if (stateInput.length === 2) {
+      return this.db!.getNamedRegionByStateAbbreviation(
+        stateInput.toUpperCase()
+      );
+    } else {
+      return this.getNamedRegionByFuzzyTypeMatch({
+        name: stateInput,
+        type: "state",
+      });
+    }
+  }
+
+  private getIdForNamedRegion(namedRegion: NameAndRegionType) {
+    const cleaned = namedRegion.name.trim().toLowerCase();
     const matches = this.fuse!.search(cleaned, { limit: 10 });
-    const filtered = matches.filter((m) => m.item.type === type);
+    const filtered = matches.filter((m) => m.item.type === namedRegion.type);
 
     if (filtered.length === 0) return undefined;
 
-    return this.db!.getBoundsById(filtered[0].item.id);
+    return filtered[0].item.id;
   }
 
-  async getBoundsForState(
-    stateInput: string
-  ): Promise<RegionBounds | undefined> {
-    return this.getBoundsByFuzzyTypeMatch(stateInput, "state");
-  }
-
-  async getBoundsForCity(cityInput: string): Promise<RegionBounds | undefined> {
-    return this.getBoundsByFuzzyTypeMatch(cityInput, "city");
-  }
-
-  async getMatchingRegion(bounds: Bounds): Promise<RegionBounds | undefined> {
+  private async getNamedRegionByFuzzyTypeMatch(
+    nameAndRegionType: NameAndRegionType
+  ): Promise<NamedRegion | undefined> {
     await this.waitUntilReady();
-    return this.db!.getMatchingRegion(bounds);
+    const id = this.getIdForNamedRegion(nameAndRegionType);
+    if (!id) return undefined;
+
+    return this.db!.getNamedRegionById(id);
+  }
+
+  async getPolygonForNamedRegion(
+    namedRegion: NamedRegion
+  ): Promise<Polygon | MultiPolygon | undefined> {
+    if (namedRegion.type !== "state") {
+      throw new Error("Only state regions available");
+    }
+    const cacheKey = `${namedRegion.type}:${namedRegion.name}`;
+    let cachedPolygon = this.polygonCache.get(cacheKey);
+    if (cachedPolygon) return cachedPolygon;
+
+    await this.waitUntilReady();
+    const id = this.getIdForNamedRegion(namedRegion);
+    if (!id) return undefined;
+    cachedPolygon = this.db!.getPolygonForState(id);
+    this.polygonCache.set(cacheKey, cachedPolygon);
+    return cachedPolygon;
+  }
+
+  async getMatchingNamedRegion(
+    bounds: Bounds
+  ): Promise<NamedRegion | undefined> {
+    await this.waitUntilReady();
+    return this.db!.getMatchingNamedRegion(bounds);
+  }
+
+  async getNamedRegionsWithin(
+    bounds: Bounds
+  ): Promise<NamedRegion[] | undefined> {
+    await this.waitUntilReady();
+    return this.db!.getNamedRegionWithin(bounds);
   }
 }

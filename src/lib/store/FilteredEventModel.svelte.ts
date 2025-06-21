@@ -1,20 +1,35 @@
 import { EventModel } from "./EventModel.svelte";
-import type { Nullable, SetTimeoutId, VoterLean } from "$lib/types";
+import type {
+  EventMarkerInfoWithId,
+  Nullable,
+  SetTimeoutId,
+  VoterLean,
+} from "$lib/types";
 import { formatDate } from "$lib/util/date";
 import { quote } from "$lib/util/string";
 import { titleCase } from "title-case";
 import type { MapModel } from "./MapModel.svelte";
-import type { RegionLabeler } from "./RegionLabeler.svelte";
+import { prettifyNamedRegion, type NamedRegion } from "./RegionModel";
 
 const INITIAL_REPEAT_DELAY = 400; // ms
 const REPEAT_INTERVAL = 80; // ms
 
+export interface EventFilterOptions {
+  date: Date;
+  eventNames?: string[]; // empty or missing means match all events
+  namedRegion?: NamedRegion; // If not null, only match events within the region (only states rn)
+  voterLeans?: VoterLean[]; // empty or missing means match all voter leans
+}
+
 export class FilteredEventModel {
   readonly eventModel: EventModel;
   readonly mapModel: MapModel;
-  readonly regionLabeler: RegionLabeler;
 
-  visibleBoundsOnly = $state<boolean>(false);
+  filteredEvents = $state<EventMarkerInfoWithId[]>([]);
+  currentDateEvents = $state<EventMarkerInfoWithId[]>([]);
+
+  namedRegion = $state<NamedRegion | undefined>();
+
   selectedVoterLeans = $state<VoterLean[]>([]);
 
   currentDateIndex = $state(-1);
@@ -62,22 +77,18 @@ export class FilteredEventModel {
 
   readonly formattedCurrentDate = $derived(formatDate(this.currentDate));
 
-  readonly currentDateEvents = $derived.by(() => {
-    const date = this.currentDate;
-    if (!date) return [];
-
-    return this.eventModel
-      ? (this.eventModel.getMarkerInfos({ date }) ?? [])
-      : [];
-  });
-
   readonly filteredEventNamesWithLocationCounts = $derived.by(() => {
     const date = this.currentDate;
-    const visibleBounds = this.mapModel.visibleBounds;
+    const namedRegion = this.namedRegion;
+    const voterLeans = this.selectedVoterLeans;
     if (!date) return [];
 
     return this.eventModel
-      ? this.eventModel.getEventNamesAndCountsForFilter({ date, visibleBounds })
+      ? this.eventModel.getEventNamesAndCountsForFilter({
+          date,
+          namedRegion,
+          voterLeans,
+        })
       : [];
   });
 
@@ -93,16 +104,18 @@ export class FilteredEventModel {
 
   isFiltering = $derived(
     this.selectedEventNames.length > 0 ||
-      this.visibleBoundsOnly ||
+      this.namedRegion ||
       this.selectedVoterLeans.length > 0
   );
 
   filterDescriptions = $derived.by(() => {
     const descriptions: { title: string; clearFunc: () => void }[] = [];
-    if (this.mapModel.visibleBounds && this.visibleBoundsOnly) {
+    const namedRegion = this.namedRegion;
+    if (namedRegion) {
+      const regionDisplayName = prettifyNamedRegion(namedRegion);
       descriptions.push({
-        title: `In ${this.regionLabeler.visibleRegionName}`,
-        clearFunc: () => this.clearVisibleBoundsOnly(),
+        title: `In ${regionDisplayName}`,
+        clearFunc: () => this.clearNamedRegionFilter(),
       });
     }
 
@@ -131,10 +144,6 @@ export class FilteredEventModel {
     return descriptions;
   });
 
-  toggleVisibleBoundsOnly() {
-    this.visibleBoundsOnly = !this.visibleBoundsOnly;
-  }
-
   toggleSelectedEventName(name: string) {
     const cur = this.selectedEventNames;
     this.selectedEventNames = cur.includes(name)
@@ -156,35 +165,13 @@ export class FilteredEventModel {
     this.selectedEventNames = [];
   }
 
-  clearVisibleBoundsOnly() {
-    this.visibleBoundsOnly = false;
+  clearNamedRegionFilter() {
+    this.namedRegion = undefined;
   }
 
   clearVoterLeans() {
     this.selectedVoterLeans = [];
   }
-
-  readonly filteredEvents = $derived.by(() => {
-    const date = this.currentDate;
-    const eventNames = this.selectedEventNames;
-    const visibleBoundsOnly = this.visibleBoundsOnly;
-    const visibleBounds = visibleBoundsOnly
-      ? this.mapModel.visibleBounds
-      : undefined;
-    const voterLeans = this.selectedVoterLeans;
-
-    if (!date) return [];
-
-    return this.eventModel
-      ? (this.eventModel.getMarkerInfos({
-          date,
-          eventNames,
-          visibleBounds,
-          voterLeans,
-          visibleBoundsOnly,
-        }) ?? [])
-      : [];
-  });
 
   #isRepeatingChange = false;
   #currentRepeatDirection: "next" | "prev" | null = null;
@@ -239,13 +226,43 @@ export class FilteredEventModel {
     );
   }
 
-  constructor(
-    eventModel: EventModel,
-    mapModel: MapModel,
-    regionLabeler: RegionLabeler
-  ) {
+  constructor(eventModel: EventModel, mapModel: MapModel) {
     this.eventModel = eventModel;
     this.mapModel = mapModel;
-    this.regionLabeler = regionLabeler;
+
+    $effect(() => {
+      const date = this.currentDate;
+      const eventNames = this.selectedEventNames;
+      const namedRegion = this.namedRegion;
+      const voterLeans = this.selectedVoterLeans;
+
+      const update = async () => {
+        if (date && this.eventModel) {
+          this.filteredEvents = await this.eventModel.getMarkerInfos({
+            date,
+            eventNames,
+            namedRegion: namedRegion,
+            voterLeans,
+          });
+        } else {
+          this.filteredEvents = [];
+        }
+      };
+      update();
+    });
+
+    $effect(() => {
+      const update = async () => {
+        const date = this.currentDate;
+        if (date && this.eventModel) {
+          this.currentDateEvents = await this.eventModel.getMarkerInfos({
+            date,
+          });
+        } else {
+          this.currentDateEvents = [];
+        }
+      };
+      update();
+    });
   }
 }

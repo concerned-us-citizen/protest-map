@@ -17,7 +17,7 @@
   import { countAndLabel } from "$lib/util/string";
   import Timeline from "$lib/Timeline.svelte";
   import IconButton from "$lib/IconButton.svelte";
-  import EventMap from "$lib/EventMap.svelte";
+  import EventMap from "$lib/map/EventMap.svelte";
   import { cubicInOut } from "svelte/easing";
   import { fade, slide } from "svelte/transition";
   import PrecinctStatsPanel from "$lib/PrecinctStatsPanel.svelte";
@@ -25,6 +25,7 @@
   import LoadingSpinner from "$lib/LoadingSpinner.svelte";
   import { page } from "$app/stores";
   import FilterIndicator from "$lib/FilterIndicator.svelte";
+  import { prettifyNamedRegion } from "$lib/store/RegionModel";
 
   const pageState = PageState.create();
   createPageStateInContext(pageState);
@@ -159,10 +160,18 @@
       .split("; ")
       .some((row) => row.startsWith("hasShownTour="));
   }
+
+  const mapTitle = $derived(
+    `Map of ${
+      pageState.filter.namedRegion
+        ? prettifyNamedRegion(pageState.filter.namedRegion)
+        : "US"
+    } Protests`
+  );
 </script>
 
 <svelte:head>
-  <title>Map of US Protests</title>
+  <title>{mapTitle}</title>
   <meta
     property="og:title"
     content={`An Interactive Map of US Protests by Date`}
@@ -184,7 +193,7 @@
     <div class="title-and-stats-container">
       {#if !deviceInfo.isShort}
         <div class="title-container panel">
-          <h1 class="title">Map of US Protests</h1>
+          <h1 class="title">{mapTitle}</h1>
         </div>
       {/if}
 
@@ -221,17 +230,6 @@
           className="filter panel"
           onClose={() => (pageState.filterVisible = false)}
         />
-      </div>
-
-      <div class="restrict-to-visible-panel highlight-adjusted-panel">
-        <button
-          class="link-button"
-          onclick={() => pageState.filter.toggleVisibleBoundsOnly()}
-        >
-          {pageState.filter.visibleRegionOnly
-            ? "Show all protests"
-            : "Hide offscreen protests"}
-        </button>
       </div>
     {/if}
   </div>
@@ -392,6 +390,18 @@
     margin: 0;
     padding: 0;
     text-align: center;
+  }
+
+  .named-region-title-container {
+    position: absolute;
+    top: var(--toolbar-margin);
+    left: 50%;
+    transform: translateX(-50%);
+
+    font-weight: bold;
+    padding: 0.4em 1em;
+    border-radius: 999px;
+    z-index: 1000;
   }
 
   .date-range {

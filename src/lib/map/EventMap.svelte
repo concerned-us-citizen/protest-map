@@ -3,12 +3,17 @@
   import maplibregl from "maplibre-gl";
   import EventPopup from "$lib/EventPopup.svelte";
   import { getPageStateFromContext } from "$lib/store/PageState.svelte";
-  import type { EventMarkerInfoWithId, Nullable } from "./types";
-  import { deviceInfo } from "./store/DeviceInfo.svelte";
+  import type { EventMarkerInfoWithId, Nullable } from "../types";
+  import { deviceInfo } from "../store/DeviceInfo.svelte";
   import "maplibre-gl/dist/maplibre-gl.css";
   import bbox from "@turf/bbox";
   import { featureCollection, point } from "@turf/helpers";
-  import { bboxToBounds, type BBox2D } from "./util/bounds";
+  import { bboxToBounds, type BBox2D } from "../util/bounds";
+  import {
+    createRegionPolygonLayer,
+    updateRegionPolygonLayer,
+  } from "./regionPolygonLayer.svelte";
+  import type { NamedRegion } from "$lib/store/RegionModel";
 
   const iconForPct = (pct: number | null) =>
     pct === null
@@ -40,7 +45,7 @@
   const pageState = getPageStateFromContext();
 
   let mapDiv: HTMLElement | undefined;
-  let map: maplibregl.Map | undefined;
+  let map = $state<maplibregl.Map | undefined>();
 
   let popup: Nullable<maplibregl.Popup> = null;
   let sveltePopupInstance: Nullable<ReturnType<typeof mount>> = null;
@@ -66,6 +71,19 @@
   });
 
   $effect(() => {
+    const namedRegion = pageState.filter.namedRegion;
+    if (!map) return;
+    const update = async () =>
+      await updateRegionPolygonLayer(
+        map,
+        namedRegion,
+        async (namedRegion: NamedRegion) =>
+          await pageState.regionModel.getPolygonForNamedRegion(namedRegion)
+      );
+    update();
+  });
+
+  $effect(() => {
     const isTouchDevice = deviceInfo.isTouchDevice;
     const isWide = deviceInfo.isWide;
     zoomControlVisible = !isTouchDevice && isWide;
@@ -77,7 +95,7 @@
         showZoom: true,
         showCompass: false,
       });
-      map.addControl(navigationControl, "top-left");
+      map.addControl(navigationControl, "bottom-right");
     } else if (navigationControl && !zoomControlVisible) {
       map.removeControl(navigationControl);
       navigationControl = null;
@@ -109,7 +127,7 @@
   onMount(async () => {
     if (!mapDiv) return;
 
-    map = new maplibregl.Map({
+    const pendingMap = new maplibregl.Map({
       container: mapDiv,
       style: "https://tiles.openfreemap.org/styles/bright",
       minZoom: 1,
@@ -118,31 +136,37 @@
       renderWorldCopies: true,
     });
 
-    if (map === undefined) {
+    if (pendingMap === undefined) {
       throw new Error("Map is undefined");
     }
-    const safeMap = map;
-    pageState.mapModel.setMapInstance(safeMap);
-    pageState.regionLabeler.setMapInstance(safeMap);
 
     try {
       // Await all image loading promises concurrently
       const imageLoadPromises = spriteIcons.map(([name, url]) =>
-        loadImageToMap(safeMap, name, url)
+        loadImageToMap(pendingMap, name, url)
       );
       await Promise.all(imageLoadPromises);
 
       // Await for the map to fully load its style and resources
       await new Promise<void>((resolve) => {
-        if (safeMap.isStyleLoaded()) {
+        if (pendingMap.isStyleLoaded()) {
           // Check if style is already loaded
           resolve();
         } else {
-          safeMap.on("load", () => {
+          pendingMap.on("load", () => {
             resolve();
           });
         }
       });
+
+      map = pendingMap;
+      if (!map) return;
+      const safeMap = map;
+
+      pageState.mapModel.setMapInstance(safeMap);
+      pageState.regionLabeler.setMapInstance(safeMap);
+
+      createRegionPolygonLayer(safeMap);
 
       // Now that images are loaded and map style is loaded, add source and layers
       safeMap.addSource("events", {
@@ -162,7 +186,7 @@
       });
 
       // cluster background marker
-      map.addLayer({
+      safeMap.addLayer({
         id: "cluster-icon",
         type: "symbol",
         source: "events",
@@ -196,7 +220,7 @@
       });
 
       // white badge background
-      map.addLayer({
+      safeMap.addLayer({
         id: "cluster-badge",
         type: "circle",
         source: "events",
@@ -216,7 +240,7 @@
       });
 
       // count label
-      map.addLayer({
+      safeMap.addLayer({
         id: "cluster-count",
         type: "symbol",
         source: "events",
@@ -268,13 +292,18 @@
         }
       });
 
+      // For debugging
+      // addVisibleNamedRegions(safeMap, pageState.regionModel);
+
       const clusterLayers = ["cluster-count", "cluster-badge", "cluster-icon"];
       clusterLayers.forEach(async (layerId) => {
         safeMap.on("click", layerId, async (e) => {
           const clusterId = e.features?.[0]?.properties?.cluster_id;
           if (clusterId === undefined) return;
 
-          const source = map?.getSource("events") as maplibregl.GeoJSONSource;
+          const source = safeMap.getSource(
+            "events"
+          ) as maplibregl.GeoJSONSource;
           try {
             const features = await source.getClusterLeaves(
               clusterId,

@@ -3,7 +3,7 @@ import { EventModel } from "./EventModel.svelte";
 import { FilteredEventModel } from "./FilteredEventModel.svelte";
 import { deviceInfo } from "$lib/store/DeviceInfo.svelte";
 import type { SetTimeoutId } from "$lib/types";
-import { RegionModel, type RegionBounds } from "./RegionModel";
+import { RegionModel, type NamedRegion } from "./RegionModel";
 import { isFutureDate } from "$lib/util/date";
 import { RegionLabeler } from "./RegionLabeler.svelte";
 import { MapModel } from "./MapModel.svelte";
@@ -49,7 +49,7 @@ export class PageState {
     this.scheduleNextDateAdvance();
   }
 
-  scheduleNextDateAdvance() {
+  async scheduleNextDateAdvance() {
     clearTimeout(this.#autoplayTimer);
     this.#autoplayTimer = undefined;
 
@@ -111,21 +111,23 @@ export class PageState {
 
     const zoomParams: [
       string,
-      (_val: string) => Promise<RegionBounds | undefined>,
+      (_val: string) => Promise<NamedRegion | undefined>,
     ][] = [
-      ["zip", this.regionModel.getBoundsForZip],
-      ["state", this.regionModel.getBoundsForState],
-      ["city", this.regionModel.getBoundsForCity],
-      ["zoomto", this.regionModel.getBoundsForName],
+      ["zip", this.regionModel.getNamedRegionForZip],
+      ["state", this.regionModel.getNamedRegionForState],
+      ["city", this.regionModel.getNamedRegionForCity],
+      ["zoomto", this.regionModel.getNamedRegionForName],
     ];
     for (const [key, lookupFn] of zoomParams) {
       const value = params.get(key);
       if (!value) continue;
 
-      const bounds = await lookupFn.call(this.regionModel, value);
-      if (bounds) {
-        this.filter.visibleBoundsOnly = true;
-        this.mapModel.navigateTo(bounds, true);
+      const namedRegion = await lookupFn.call(this.regionModel, value);
+      if (namedRegion) {
+        if (namedRegion.type === "state") {
+          this.filter.namedRegion = namedRegion;
+        }
+        this.mapModel.navigateTo(namedRegion, true);
         break;
       } else {
         console.log(`Could not find region bounds for ${key} = ${value}`);
@@ -168,15 +170,11 @@ export class PageState {
   }
 
   private constructor() {
-    this.eventModel = EventModel.create(); // Create EventModel immediately, it loads db in background
-    this.mapModel = new MapModel();
     this.regionModel = RegionModel.getInstance();
+    this.eventModel = EventModel.create(this.regionModel); // Create EventModel immediately, it loads db in background
+    this.mapModel = new MapModel();
     this.regionLabeler = new RegionLabeler(this.regionModel);
-    this.filter = new FilteredEventModel(
-      this.eventModel,
-      this.mapModel,
-      this.regionLabeler
-    );
+    this.filter = new FilteredEventModel(this.eventModel, this.mapModel);
     this.pollForUpdates();
   }
 

@@ -10,7 +10,7 @@
     unavailable: number;
   }
 
-  interface StatView {
+  interface VoterLeanInfo {
     voterLean: VoterLean;
     label: string;
   }
@@ -60,7 +60,7 @@
     return isFiltering ? getCounts(filteredEvents) : totalCounts;
   });
 
-  const statViews: StatView[] = [
+  const voterLeans: VoterLeanInfo[] = [
     {
       voterLean: "trump",
       label: "Locations in precincts favoring Trump",
@@ -76,9 +76,9 @@
   ];
 </script>
 
-<div class="stat-container">
+<div class="voter-lean-container">
   <div class="heading">2024 Lean</div>
-  {#each statViews as { voterLean, label }}
+  {#each voterLeans as { voterLean, label }}
     <button
       class="link-button"
       disabled={filteredCounts[voterLean] === 0}
@@ -96,7 +96,7 @@
 </div>
 
 <style>
-  .stat-container {
+  .voter-lean-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -104,12 +104,8 @@
     font-size: 0.85rem;
   }
 
-  .stat-container button {
+  .voter-lean-container button {
     text-decoration: none;
-  }
-
-  .stat-container button:hover {
-    text-decoration: underline;
   }
 
   .heading {
@@ -124,6 +120,13 @@
     gap: 0.2rem;
     white-space: nowrap;
     font-size: 0.9rem;
+    margin: -3px;
+    padding: 3px;
+    border-radius: 5px;
+  }
+
+  .stat:hover {
+    background: lightgray;
   }
 
   :global(.icon *) {

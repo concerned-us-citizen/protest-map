@@ -14,7 +14,7 @@
   import EventMap from "$lib/map/EventMap.svelte";
   import { cubicInOut } from "svelte/easing";
   import { fade, slide } from "svelte/transition";
-  import PrecinctStatsPanel from "$lib/PrecinctStatsPanel.svelte";
+  import VoterLeanPanel from "$lib/VoterLeanPanel.svelte";
   import UpgradeBanner from "$lib/UpgradeBanner.svelte";
   import LoadingSpinner from "$lib/LoadingSpinner.svelte";
   import { page } from "$app/stores";
@@ -217,7 +217,7 @@
 
     {#if !deviceInfo.isShort && pageState.filterVisible}
       <div class="precinct-stats highlight-adjusted-panel" transition:slide>
-        <PrecinctStatsPanel />
+        <VoterLeanPanel />
       </div>
 
       <div transition:slide>

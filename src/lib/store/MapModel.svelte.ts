@@ -6,12 +6,18 @@ import {
   boundsToLngLatBoundsLike,
 } from "$lib/util/bounds";
 
+interface FitBoundsOptions {
+  animate?: boolean;
+  addPadding?: boolean;
+}
+
 export class MapModel {
   #mapInstance: maplibregl.Map | undefined;
   #pendingBounds: Bounds | undefined;
   #initialBounds: Bounds | undefined;
   #currentBounds: Bounds | undefined;
   #boundsStack = $state<Bounds[]>([]);
+  #isAtInitialBounds = $state(false);
 
   constructor() {
     this.navigateTo(
@@ -30,30 +36,36 @@ export class MapModel {
   }
 
   readonly canPopBounds = $derived.by(() => {
-    const current = this.#currentBounds;
-    const initial = this.#initialBounds;
     const stackHasItems = this.#boundsStack.length > 0;
+    const isAtInitialBounds = this.#isAtInitialBounds;
 
-    if (!current || !initial) return false;
-
-    const moved = !boundsEqual(current, initial);
-    return stackHasItems || moved;
+    return stackHasItems || !isAtInitialBounds;
   });
 
   setMapInstance(map: maplibregl.Map) {
     this.#mapInstance = map;
 
     map.on("moveend", () => {
-      this.#currentBounds = boundsFromLngLatBounds(map.getBounds());
+      const newBounds = boundsFromLngLatBounds(map.getBounds());
+      this.#initialBounds ??= newBounds;
+      this.#currentBounds = newBounds;
+
+      this.#isAtInitialBounds = boundsEqual(
+        this.#currentBounds,
+        this.#initialBounds
+      );
     });
 
     if (this.#pendingBounds) {
-      this.fitBounds(this.#pendingBounds);
+      this.fitBounds(this.#pendingBounds, { animate: false });
       this.#pendingBounds = undefined;
     }
   }
 
-  private fitBounds(bounds: Bounds, animate = true) {
+  private fitBounds(bounds: Bounds, options?: FitBoundsOptions) {
+    const animate = options?.animate ?? true;
+    const addPadding = options?.addPadding ?? true;
+
     const container = this.mapInstance.getContainer();
     const paddingPercent = 0.1; // 10% of the smaller dimension
     const hPadding = paddingPercent * container.clientWidth;
@@ -66,7 +78,7 @@ export class MapModel {
     };
 
     this.mapInstance.fitBounds(boundsToLngLatBoundsLike(bounds), {
-      padding,
+      padding: addPadding ? padding : 0,
       duration: animate ? 500 : 0,
     });
   }
@@ -79,17 +91,18 @@ export class MapModel {
   }
 
   navigateTo(bounds: Bounds, initializing = false) {
-    this.#initialBounds ??= bounds;
-
     if (!this.#mapInstance) {
       this.#pendingBounds = bounds;
       return;
     }
 
     const stack = this.#boundsStack;
-    this.#boundsStack = [...stack, bounds];
+    if (!this.#currentBounds) {
+      throw new Error("No current bounds set");
+    }
+    this.#boundsStack = [...stack, this.#currentBounds];
 
-    this.fitBounds(bounds, !initializing);
+    this.fitBounds(bounds, { animate: !initializing });
   }
 
   popBounds(): void {
@@ -100,10 +113,12 @@ export class MapModel {
       this.#boundsStack = stack.slice(0, -1);
 
       if (poppedBounds) {
-        this.fitBounds(poppedBounds, true);
+        this.fitBounds(poppedBounds, { addPadding: false });
       }
     } else if (this.#initialBounds) {
-      this.fitBounds(this.#initialBounds);
+      this.fitBounds(this.#initialBounds, {
+        addPadding: false,
+      });
     }
   }
 

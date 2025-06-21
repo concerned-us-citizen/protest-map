@@ -81,10 +81,14 @@
   {#each voterLeans as { voterLean, label }}
     <button
       class="link-button"
-      disabled={filteredCounts[voterLean] === 0}
       onclick={() => pageState.filter.toggleVoterLean(voterLean)}
     >
-      <div class="stat" title={label}>
+      <div
+        class="stat {pageState.filter.selectedVoterLeans.includes(voterLean)
+          ? 'selected'
+          : ''}"
+        title={label}
+      >
         <span class="icon" style="color: {colorForVoterLean(voterLean)}">
           <!-- eslint-disable-next-line svelte/no-at-html-tags -->
           {@html circledMarkerSvg}
@@ -108,6 +112,10 @@
     text-decoration: none;
   }
 
+  .stat.selected {
+    background: lightgray;
+  }
+
   .heading {
     flex: 0 1 auto;
     white-space: nowrap;
@@ -126,7 +134,7 @@
   }
 
   .stat:hover {
-    background: lightgray;
+    background: gainsboro;
   }
 
   :global(.icon *) {

@@ -54,9 +54,20 @@ export class MapModel {
   }
 
   private fitBounds(bounds: Bounds, animate = true) {
+    const container = this.mapInstance.getContainer();
+    const paddingPercent = 0.1; // 10% of the smaller dimension
+    const hPadding = paddingPercent * container.clientWidth;
+
+    const padding = {
+      top: 80,
+      bottom: 120,
+      left: hPadding,
+      right: hPadding,
+    };
+
     this.mapInstance.fitBounds(boundsToLngLatBoundsLike(bounds), {
-      padding: 20,
-      duration: animate ? 300 : 0,
+      padding,
+      duration: animate ? 500 : 0,
     });
   }
 

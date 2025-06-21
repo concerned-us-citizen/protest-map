@@ -40,9 +40,11 @@ export async function updateRegionPolygonLayer(
     _namedRegion: NamedRegion
   ) => Promise<Polygon | MultiPolygon | undefined>
 ) {
-  if (!namedRegion || !map) return;
+  if (!map) return;
 
-  const polygon = await getPolygonForNamedRegion(namedRegion);
+  const polygon = namedRegion
+    ? await getPolygonForNamedRegion(namedRegion)
+    : undefined;
 
   const source = map.getSource(REGION_SOURCE_ID) as maplibregl.GeoJSONSource;
   if (!source) return;

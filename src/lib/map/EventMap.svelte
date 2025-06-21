@@ -14,6 +14,7 @@
     updateRegionPolygonLayer,
   } from "./regionPolygonLayer.svelte";
   import type { NamedRegion } from "$lib/store/RegionModel";
+  // import { addDebugRectangles } from "./addDebugRectangles";
 
   const iconForPct = (pct: number | null) =>
     pct === null
@@ -167,6 +168,21 @@
       pageState.regionLabeler.setMapInstance(safeMap);
 
       createRegionPolygonLayer(safeMap);
+
+      // addDebugRectangles(safeMap, [
+      //   {
+      //     xmin: -176.69228269495915,
+      //     ymin: 12.243896977924578,
+      //     xmax: -59.307717305039034,
+      //     ymax: 70.94777181706402,
+      //   },
+      //   {
+      //     xmin: -174.81111978806948,
+      //     ymin: 13.648410237882132,
+      //     xmax: -61.18888021192912,
+      //     ymax: 70.47169403678646,
+      //   },
+      // ]);
 
       // Now that images are loaded and map style is loaded, add source and layers
       safeMap.addSource("events", {

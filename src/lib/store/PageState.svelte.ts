@@ -33,8 +33,6 @@ export class PageState {
   #autoplayTimer: SetTimeoutId = undefined;
 
   toggleFilterVisible() {
-    if (!this.filterVisible && !this.filter.currentDateHasMultipleEventNames)
-      return;
     this.filterVisible = !this.filterVisible;
     this.helpVisible = false;
   }

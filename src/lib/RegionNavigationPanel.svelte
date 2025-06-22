@@ -37,7 +37,7 @@
     const r = await pageState.regionModel.getNamedRegionForId(v.id);
     if (!r) return;
     pageState.filter.namedRegion = r;
-    pageState.mapModel.navigateTo(r, true);
+    pageState.mapModel.navigateTo(r, false);
     addRecent(v);
     dismiss();
   }

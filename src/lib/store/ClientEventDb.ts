@@ -5,7 +5,7 @@ import type {
   VoterLean,
 } from "$lib/types";
 import type { EventFilterOptions } from "./FilteredEventModel.svelte";
-import { type Database } from "sql.js";
+import { type Database, type SqlValue } from "sql.js";
 import { dateToYYYYMMDDInt, yyyymmddIntToDate } from "$lib/util/date";
 import { getSqlJs } from "./sqlJsInstance";
 import type { NamedRegion } from "./RegionModel";
@@ -15,13 +15,6 @@ interface LatestDbManifest {
   lastUpdated: string;
   sha?: string;
 }
-
-interface QueryBuilder {
-  query: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  params: any[];
-}
-
 export class ClientEventDb {
   private db: Database;
   private manifest: LatestDbManifest;
@@ -31,83 +24,22 @@ export class ClientEventDb {
     this.manifest = manifest;
   }
 
-  private addDateSubquery(date: Date, qb: QueryBuilder) {
-    qb.query += `
-    date = ?`;
-    qb.params.push(dateToYYYYMMDDInt(date));
-  }
-
-  private addVoterLeanSubquery(
-    voterLeans: VoterLean[] | undefined,
-    qb: QueryBuilder
-  ) {
-    if (voterLeans && voterLeans.length > 0) {
-      const subquery: string[] = [];
-      for (const voterLean of voterLeans) {
-        switch (voterLean) {
-          case "trump":
-            subquery.push("pct_dem_lead < 0");
-            break;
-          case "harris":
-            subquery.push("pct_dem_lead > 0");
-            break;
-          case "unavailable":
-            subquery.push("pct_dem_lead IS NULL");
-            break;
-        }
-      }
-      qb.query += `
-        AND (${subquery.join(" OR ")})`;
-    }
-  }
-
-  private addNamedRegionOnlySubquery(
-    namedRegion: NamedRegion | undefined,
-    qb: QueryBuilder
-  ) {
-    if (namedRegion) {
-      qb.query += `
-        AND lon BETWEEN ? AND ?
-        AND lat BETWEEN ? AND ?`;
-      qb.params.push(
-        namedRegion.xmin,
-        namedRegion.xmax,
-        namedRegion.ymin,
-        namedRegion.ymax
-      );
-    }
-  }
-
-  private addSelectedEventNamesSubquery(
-    selectedEventNames: string[] | undefined,
-    qb: QueryBuilder
-  ) {
-    if (selectedEventNames && selectedEventNames.length > 0) {
-      const placeholders = selectedEventNames.map(() => "?").join(", ");
-      qb.query += `
-        AND name IN (${placeholders})`;
-      qb.params.push(...selectedEventNames);
-    }
-  }
-
   getEventMarkerInfos(filter: EventFilterOptions): EventMarkerInfoWithId[] {
     const { date, eventNames, namedRegion, voterLeans } = filter;
 
-    const qb: QueryBuilder = {
-      query: `
+    const builder = new QueryBuilder(
+      (whereClause) => `
       SELECT id, lat, lon, pct_dem_lead
       FROM events
-      WHERE`,
-      params: [],
-    };
+      ${whereClause}`
+    );
 
-    this.addDateSubquery(date, qb);
-    this.addNamedRegionOnlySubquery(namedRegion, qb);
-    this.addSelectedEventNamesSubquery(eventNames, qb);
-    this.addVoterLeanSubquery(voterLeans, qb);
+    builder.addDateSubquery(date);
+    builder.addVoterLeanSubquery(voterLeans);
+    builder.addSelectedEventNamesSubquery(eventNames);
+    builder.addNamedRegionOnlySubquery(namedRegion);
 
-    const stmt = this.db.prepare(qb.query);
-    stmt.bind(qb.params);
+    const stmt = builder.createStatement(this.db);
 
     const results: EventMarkerInfoWithId[] = [];
     while (stmt.step()) {
@@ -131,13 +63,26 @@ export class ClientEventDb {
     return results;
   }
 
-  getAllDatesWithEventCounts(): { date: Date; eventCount: number }[] {
-    const stmt = this.db.prepare(`
+  getAllDatesWithEventCounts(
+    filter: EventFilterOptions
+  ): { date: Date; eventCount: number }[] {
+    const { eventNames, namedRegion, voterLeans } = filter;
+
+    const builder = new QueryBuilder(
+      (whereClause) => `
       SELECT date, COUNT(*) as eventCount
       FROM events
+      ${whereClause}
       GROUP BY date
       ORDER BY date ASC
-    `);
+    `
+    );
+
+    builder.addNamedRegionOnlySubquery(namedRegion);
+    builder.addSelectedEventNamesSubquery(eventNames);
+    builder.addVoterLeanSubquery(voterLeans);
+
+    const stmt = builder.createStatement(this.db);
 
     const results: { date: Date; eventCount: number }[] = [];
     while (stmt.step()) {
@@ -224,28 +169,22 @@ export class ClientEventDb {
   ): { name: string; count: number }[] {
     const { date, namedRegion, voterLeans } = filter;
 
-    const qb: QueryBuilder = {
-      query: `
-        SELECT name, COUNT(*) as count
-        FROM events
-        WHERE
-      `,
-      params: [],
-    };
-
-    this.addDateSubquery(date, qb);
-    // Note this does NOT include the selectedNames, since that's what this a source for.
-    this.addNamedRegionOnlySubquery(namedRegion, qb);
-    this.addVoterLeanSubquery(voterLeans, qb);
-
-    qb.query += `
+    const builder = new QueryBuilder(
+      (whereClause) => `
+      SELECT name, COUNT(*) as count
+      FROM events
+      ${whereClause}
       GROUP BY name
       ORDER BY count DESC
-    `;
+      `
+    );
 
-    const stmt = this.db.prepare(qb.query);
+    builder.addDateSubquery(date);
+    // Note this doesn't include the selectedNames, since that's what this is a source for.
+    builder.addNamedRegionOnlySubquery(namedRegion);
+    builder.addVoterLeanSubquery(voterLeans);
 
-    stmt.bind(qb.params);
+    const stmt = builder.createStatement(this.db);
 
     const results: { name: string; count: number }[] = [];
     while (stmt.step()) {
@@ -298,5 +237,93 @@ export class ClientEventDb {
     const db = new SQL.Database(new Uint8Array(dbBuffer));
 
     return new ClientEventDb(db, manifest);
+  }
+}
+
+class QueryBuilder {
+  #whereClause = "";
+  #params: SqlValue[] = [];
+  #templateFunc: (_whereClause: string) => string;
+
+  addDateSubquery(date: Date | undefined) {
+    if (date) {
+      this.appendSubquery(`date = ?`);
+      this.#params.push(dateToYYYYMMDDInt(date));
+    }
+  }
+
+  addVoterLeanSubquery(voterLeans: VoterLean[] | undefined) {
+    if (voterLeans && voterLeans.length > 0) {
+      const subquery: string[] = [];
+      for (const voterLean of voterLeans) {
+        switch (voterLean) {
+          case "trump":
+            subquery.push("pct_dem_lead < 0");
+            break;
+          case "harris":
+            subquery.push("pct_dem_lead > 0");
+            break;
+          case "unavailable":
+            subquery.push("pct_dem_lead IS NULL");
+            break;
+        }
+      }
+      this.appendSubquery(`(${subquery.join(" OR ")})`);
+    }
+  }
+
+  addNamedRegionOnlySubquery(namedRegion: NamedRegion | undefined) {
+    if (namedRegion) {
+      this.appendSubquery(`lon BETWEEN ? AND ? AND lat BETWEEN ? AND ?`);
+      this.#params.push(
+        namedRegion.xmin,
+        namedRegion.xmax,
+        namedRegion.ymin,
+        namedRegion.ymax
+      );
+    }
+  }
+
+  addSelectedEventNamesSubquery(selectedEventNames: string[] | undefined) {
+    if (selectedEventNames && selectedEventNames.length > 0) {
+      const placeholders = selectedEventNames.map(() => "?").join(", ");
+      this.appendSubquery(`name IN (${placeholders})`);
+      this.#params.push(...selectedEventNames);
+    }
+  }
+
+  private appendSubquery(sub: string) {
+    if (this.#whereClause.length > 0) {
+      this.#whereClause += "\nAND ";
+    }
+    this.#whereClause += sub;
+  }
+
+  get fullWhereClause() {
+    return this.#whereClause.length > 0
+      ? `
+    WHERE\n${this.#whereClause}
+    `
+      : "";
+  }
+
+  get params() {
+    return this.#params;
+  }
+
+  createStatement(db: Database) {
+    const query = this.#templateFunc(this.fullWhereClause);
+    try {
+      const stmt = db.prepare(query);
+      stmt.bind(this.params);
+      return stmt;
+    } catch (err) {
+      console.error(`Failed to build sql statement ${query}`, err);
+      throw err;
+    }
+  }
+
+  constructor(templateFunc: (_whereClause: string) => string) {
+    this.#templateFunc = templateFunc;
   }
 }

@@ -35,7 +35,7 @@
   }
 
   function formatLabel(voterLean: VoterLean) {
-    return `${filteredCounts[voterLean as keyof Counts].toLocaleString()}`;
+    return `${counts[voterLean as keyof Counts].toLocaleString()}`;
   }
 
   function colorForVoterLean(voterLean: VoterLean) {
@@ -53,11 +53,8 @@
 
   const pageState = getPageStateFromContext();
 
-  const totalCounts = $derived(getCounts(pageState.filter.currentDateEvents));
-  const filteredCounts = $derived.by(() => {
-    const isFiltering = pageState.filter.isFiltering;
-    const filteredEvents = pageState.filter.filteredEvents;
-    return isFiltering ? getCounts(filteredEvents) : totalCounts;
+  const counts = $derived.by(() => {
+    return getCounts(pageState.filter.currentDateFilteredEvents);
   });
 
   const voterLeans: VoterLeanInfo[] = [

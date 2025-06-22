@@ -232,7 +232,10 @@
             data-suppress-click-outside
             onclick={() => pageState.toggleFilterVisible()}
           >
-            {countAndLabel(pageState.filter.filteredEvents, "location")} >
+            {countAndLabel(
+              pageState.filter.currentDateFilteredEvents,
+              "location"
+            )} >
           </button>
         </div>
       </div>
@@ -308,7 +311,7 @@
     {/if}
     <Timeline />
     <div class="date-range">
-      <div>{pageState.eventModel.formattedDateRangeStart}</div>
+      <div>{pageState.filter.formattedDateRangeStart}</div>
       <div class="attribution-link">
         <i
           >Data provided by <a
@@ -319,7 +322,7 @@
           ></i
         >
       </div>
-      <div>{pageState.eventModel.formattedDateRangeEnd}</div>
+      <div>{pageState.filter.formattedDateRangeEnd}</div>
     </div>
   </div>
 {:else}

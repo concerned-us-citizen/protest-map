@@ -14,7 +14,7 @@
   class={`event-info ${className}`}
   transition:fade={{ duration: 300, easing: cubicInOut }}
 >
-  {#if pageState.filter.currentDateEvents.length > 0}
+  {#if pageState.filter.currentDateFilteredEvents.length > 0}
     <div class="counts-line">
       <strong>
         <span class="date-display"
@@ -25,7 +25,7 @@
             pageState.filter.filteredEventNamesWithLocationCounts,
             "Event"
           )}, {countAndLabel(
-            pageState.filter.currentDateEvents,
+            pageState.filter.currentDateFilteredEvents,
             "Location"
           )}</span
         >

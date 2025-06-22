@@ -1,7 +1,6 @@
 import { setContext, getContext } from "svelte";
 import { EventModel } from "./EventModel.svelte";
 import { FilteredEventModel } from "./FilteredEventModel.svelte";
-import { deviceInfo } from "$lib/store/DeviceInfo.svelte";
 import { type SetTimeoutId } from "$lib/types";
 import { RegionModel } from "./RegionModel";
 import { RegionLabeler } from "./RegionLabeler.svelte";
@@ -26,7 +25,7 @@ export class PageState {
   navigationVisible = $state(false);
   updateAvailable = $state(false);
 
-  private _eventInfoVisible = $state(false);
+  private eventInfoVisible = $state(false);
   #hideEventInfoTimer: SetTimeoutId = undefined;
 
   autoplaying = $state(false);
@@ -54,10 +53,10 @@ export class PageState {
 
     if (!this.autoplaying) return;
 
-    const numEvents = this.filter.currentDateEvents.length;
+    const numEvents = this.filter.currentDateFilteredEvents.length;
     let lingerTime;
 
-    if (numEvents === 0 && this.eventModel.allDatesWithEventCounts.length > 1) {
+    if (numEvents === 0 && this.filter.allDatesWithEventCounts.length > 1) {
       lingerTime = ZERO_EVENT_NAV_TIME;
     } else if (numEvents < 20) {
       lingerTime = QUICK_NAV_TIME;
@@ -69,31 +68,23 @@ export class PageState {
       if (this.autoplaying) {
         this.filter.currentDateIndex =
           (this.filter.currentDateIndex + 1) %
-          this.eventModel.allDatesWithEventCounts.length;
+          this.filter.allDatesWithEventCounts.length;
         // Schedule the next date advance
         this.scheduleNextDateAdvance();
       }
     }, lingerTime);
   }
 
-  readonly eventInfoVisible = $derived.by(() => {
-    const isTall = deviceInfo.isTall;
-    const eventInfoVisible = this._eventInfoVisible;
-    return isTall || eventInfoVisible;
-  });
-
   showEventInfo() {
-    if (!deviceInfo.isTall) {
-      this._eventInfoVisible = true;
-      this.#debouncedHideEventInfo();
-    }
+    this.eventInfoVisible = true;
+    this.#debouncedHideEventInfo();
   }
 
   #debouncedHideEventInfo() {
     clearTimeout(this.#hideEventInfoTimer);
 
     this.#hideEventInfoTimer = setTimeout(() => {
-      this._eventInfoVisible = false;
+      this.eventInfoVisible = false;
     }, EVENTINFO_VISIBILITY_DURATION);
   }
 

@@ -4,7 +4,7 @@ import type {
   Nullable,
   PopulatedEvent,
 } from "$lib/types";
-import { formatDate, formatDateTime } from "$lib/util/date";
+import { formatDateTime } from "$lib/util/date";
 import { ClientEventDb } from "./ClientEventDb";
 import { booleanPointInPolygon, point } from "@turf/turf";
 import type { RegionModel } from "./RegionModel";
@@ -14,43 +14,9 @@ export class EventModel {
   private db: Nullable<ClientEventDb> = $state(null);
   private regionModel: RegionModel;
 
-  visibleMarkerInfos = $state<EventMarkerInfoWithId[]>([]);
-  allDatesWithEventCounts = $state<{ date: Date; eventCount: number }[]>([]);
   updatedAt = $state<Nullable<Date>>(null);
 
-  largestDateEventCount = $derived.by(() => {
-    const dates = this.allDatesWithEventCounts;
-    const counts = dates.map((d) => d.eventCount);
-    return counts.length > 0 ? Math.max(...dates.map((d) => d.eventCount)) : 0;
-  });
-
   readonly isLoading = $derived(this.db === null);
-
-  readonly hasDates = $derived(this.allDatesWithEventCounts.length > 0);
-
-  readonly dateRange = $derived.by(() => {
-    const dates = this.allDatesWithEventCounts;
-    if (dates.length === 0) return null;
-    return { start: dates[0].date, end: dates[dates.length - 1].date };
-  });
-
-  isValidDate(date: Date) {
-    return (
-      this.dateRange &&
-      date >= this.dateRange.start &&
-      date <= this.dateRange?.end
-    );
-  }
-
-  readonly formattedDateRangeStart = $derived.by(() => {
-    if (!this.dateRange) return "";
-    return formatDate(this.dateRange.start);
-  });
-
-  readonly formattedDateRangeEnd = $derived.by(() => {
-    if (!this.dateRange) return "";
-    return formatDate(this.dateRange.end);
-  });
 
   readonly formattedUpdatedAt = $derived(
     this.updatedAt
@@ -74,6 +40,10 @@ export class EventModel {
     return result;
   }
 
+  getAllDatesWithEventCounts(filter: EventFilterOptions) {
+    return this.db ? this.db.getAllDatesWithEventCounts(filter) : [];
+  }
+
   getEventNamesAndCountsForFilter(
     filter: EventFilterOptions
   ): { name: string; count: number }[] {
@@ -95,7 +65,6 @@ export class EventModel {
   private async initialize() {
     try {
       this.db = await ClientEventDb.create();
-      this.allDatesWithEventCounts = this.db.getAllDatesWithEventCounts();
       this.updatedAt = this.db.getCreatedAt();
     } catch (error) {
       console.error("Failed to load database:", error);

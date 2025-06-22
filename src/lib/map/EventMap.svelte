@@ -64,11 +64,11 @@
 
   // Update the markers when filtered events change
   $effect(() => {
-    const { filteredEvents } = pageState.filter;
-    if (!map || !filteredEvents) return;
+    const { currentDateFilteredEvents } = pageState.filter;
+    if (!map) return;
 
     const source = map.getSource("events") as maplibregl.GeoJSONSource;
-    if (source) source.setData(eventsToGeoJSON(filteredEvents));
+    if (source) source.setData(eventsToGeoJSON(currentDateFilteredEvents));
   });
 
   $effect(() => {
@@ -187,7 +187,7 @@
       // Now that images are loaded and map style is loaded, add source and layers
       safeMap.addSource("events", {
         type: "geojson",
-        data: eventsToGeoJSON(pageState.filter.filteredEvents ?? []),
+        data: eventsToGeoJSON(pageState.filter.allFilteredEvents ?? []),
         cluster: true,
         clusterRadius: 20,
         clusterMaxZoom: 15,

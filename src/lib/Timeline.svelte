@@ -5,8 +5,7 @@
   const pageState = getPageStateFromContext();
 
   let selectedDateWithEventCount = $derived.by(() => {
-    const allDatesWithEventCounts =
-      pageState.eventModel.allDatesWithEventCounts;
+    const allDatesWithEventCounts = pageState.filter.allDatesWithEventCounts;
     const currentDate = pageState.filter.currentDate;
     return (
       allDatesWithEventCounts.find((dc) => dc.date === currentDate) ?? null
@@ -76,7 +75,7 @@
   >
   <HistogramSlider
     className="slider"
-    items={pageState.eventModel.allDatesWithEventCounts}
+    items={pageState.filter.allDatesWithEventCounts}
     selectedItem={selectedDateWithEventCount}
     onSelect={(dc) => pageState.filter.setCurrentDate(dc.date)}
     magnitudeFor={(item) => item.eventCount}

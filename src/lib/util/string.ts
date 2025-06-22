@@ -61,3 +61,7 @@ export function asNormalizedKey(s: string): string {
 export function quote(s: string): string {
   return `"${s}"`;
 }
+
+export function singleQuote(s: string): string {
+  return `'${s}'`;
+}

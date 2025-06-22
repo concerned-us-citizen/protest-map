@@ -1,5 +1,5 @@
 import { VoterLeanValues } from "$lib/types";
-import { deserializeDate, isFutureDate, serializeDate } from "$lib/util/date";
+import { deserializeDate, serializeDate } from "$lib/util/date";
 import { quote, toTitleCase } from "$lib/util/string";
 import { PageState } from "./PageState.svelte";
 import { prettifyNamedRegion, type NamedRegion } from "./RegionModel";
@@ -27,15 +27,8 @@ export const shareOptions: ParamOption[] = [
     setValue: async (params, pageState) => {
       const dateStr = params.get("date");
       const date = dateStr ? deserializeDate(dateStr) : undefined;
-      if (date && pageState.eventModel.isValidDate(date)) {
+      if (date) {
         pageState.filter.setCurrentDate(date);
-      } else {
-        // If not specified, initialize currentDateIndex to be the date at or after the current system date
-        // (or - 1 if no match) any time the eventModel's items change
-        pageState.filter.currentDateIndex =
-          pageState.eventModel.allDatesWithEventCounts.findIndex((dc) =>
-            isFutureDate(dc.date, true)
-          );
       }
     },
   },

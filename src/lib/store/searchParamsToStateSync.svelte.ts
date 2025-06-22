@@ -66,9 +66,7 @@ export const shareOptions: ParamOption[] = [
 
         const namedRegion = await lookupFn.call(pageState.regionModel, value);
         if (namedRegion) {
-          if (namedRegion.type === "state") {
-            pageState.filter.namedRegion = namedRegion;
-          }
+          pageState.filter.namedRegion = namedRegion;
           pageState.mapModel.navigateTo(namedRegion, true);
           break;
         } else {

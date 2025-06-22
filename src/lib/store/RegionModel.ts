@@ -4,6 +4,7 @@ import { toTitleCase } from "$lib/util/string";
 import { browser } from "$app/environment";
 import { getSqlJs } from "./sqlJsInstance";
 import type { MultiPolygon, Polygon } from "geojson";
+import { boundsToPolygon } from "$lib/util/bounds";
 
 export type Bounds = {
   xmin: number;
@@ -468,8 +469,10 @@ export class RegionModel {
   async getPolygonForNamedRegion(
     namedRegion: NamedRegion
   ): Promise<Polygon | MultiPolygon | undefined> {
+    // We only keep polygon info for states - cities and zips
+    // would be too big for client download
     if (namedRegion.type !== "state") {
-      throw new Error("Only state regions available");
+      return boundsToPolygon(namedRegion);
     }
     const cacheKey = `${namedRegion.type}:${namedRegion.name}`;
     let cachedPolygon = this.polygonCache.get(cacheKey);

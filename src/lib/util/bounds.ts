@@ -1,5 +1,6 @@
 import type { Bounds } from "$lib/store/RegionModel";
 import type { LngLatBoundsLike, LngLatBounds } from "maplibre-gl";
+import type { Polygon } from "geojson";
 
 export type BBox2D = [number, number, number, number];
 
@@ -39,5 +40,20 @@ export function bboxToBounds(bboxValue: BBox2D) {
     ymin: bboxValue[1],
     xmax: bboxValue[2],
     ymax: bboxValue[3],
+  };
+}
+
+export function boundsToPolygon(b: Bounds): Polygon {
+  return {
+    type: "Polygon",
+    coordinates: [
+      [
+        [b.xmin, b.ymin],
+        [b.xmax, b.ymin],
+        [b.xmax, b.ymax],
+        [b.xmin, b.ymax],
+        [b.xmin, b.ymin], // close the ring
+      ],
+    ],
   };
 }

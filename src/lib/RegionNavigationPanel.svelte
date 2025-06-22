@@ -36,7 +36,7 @@
   async function picked(v: AutocompleteItem) {
     const r = await pageState.regionModel.getNamedRegionForId(v.id);
     if (!r) return;
-    if (r.type === "state") pageState.filter.namedRegion = r;
+    pageState.filter.namedRegion = r;
     pageState.mapModel.navigateTo(r, true);
     addRecent(v);
     dismiss();

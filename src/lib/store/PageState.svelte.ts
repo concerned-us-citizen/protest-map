@@ -25,7 +25,7 @@ export class PageState {
   navigationVisible = $state(false);
   updateAvailable = $state(false);
 
-  private eventInfoVisible = $state(false);
+  eventInfoVisible = $state(false);
   #hideEventInfoTimer: SetTimeoutId = undefined;
 
   autoplaying = $state(false);
@@ -66,10 +66,7 @@ export class PageState {
 
     this.#autoplayTimer = setTimeout(() => {
       if (this.autoplaying) {
-        this.filter.currentDateIndex =
-          (this.filter.currentDateIndex + 1) %
-          this.filter.allDatesWithEventCounts.length;
-        // Schedule the next date advance
+        this.filter.selectNextDate();
         this.scheduleNextDateAdvance();
       }
     }, lingerTime);

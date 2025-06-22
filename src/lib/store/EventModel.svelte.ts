@@ -1,8 +1,10 @@
 import { browser } from "$app/environment";
-import type {
-  EventMarkerInfoWithId,
-  Nullable,
-  PopulatedEvent,
+import {
+  EmptyVoterLeanCounts,
+  type EventMarkerInfoWithId,
+  type Nullable,
+  type PopulatedEvent,
+  type VoterLeanCounts,
 } from "$lib/types";
 import { formatDateTime } from "$lib/util/date";
 import { ClientEventDb } from "./ClientEventDb";
@@ -48,6 +50,10 @@ export class EventModel {
     filter: EventFilterOptions
   ): { name: string; count: number }[] {
     return this.db ? this.db.getEventNamesAndCountsForFilter(filter) : [];
+  }
+
+  getVoterLeanCounts(filter: EventFilterOptions): VoterLeanCounts {
+    return this.db ? this.db.getVoterLeanCounts(filter) : EmptyVoterLeanCounts;
   }
 
   getPopulatedEvent(eventId: number): Nullable<PopulatedEvent> {

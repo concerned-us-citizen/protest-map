@@ -2,11 +2,11 @@
  * Parses a date string, prioritizing "M/D/YYYY" and "M/D/YY" (assumes 20YY),
  * and "M/D" (assumes 2025).
  * Returns a Date object or null if parsing fails.
- * @param {string | null | undefined} dateStr The date string to parse.
- * @returns {Date | null} A Date object or null.
+ * @param {string | undefined} dateStr The date string to parse.
+ * @returns {Date | undefined} A Date object or undefined.
  */
-export const parseDateString = (dateStr: string): Date | null => {
-  if (!dateStr || typeof dateStr !== "string") return null;
+export const parseDateString = (dateStr: string): Date | undefined => {
+  if (!dateStr || typeof dateStr !== "string") return undefined;
 
   const parts = dateStr.split("/");
   let year;
@@ -87,13 +87,13 @@ export const parseDateString = (dateStr: string): Date | null => {
     }
   }
 
-  return null;
+  return undefined;
 };
 
 /**
  * Formats a date string into "Month D, YYYY" (e.g., "May 11, 2025").
  */
-export const formatDate = (date: Date | null): string => {
+export const formatDate = (date: Date | undefined): string => {
   if (!date) return "Unspecified";
   const currentYear = new Date().getFullYear();
   const options: Intl.DateTimeFormatOptions =
@@ -238,7 +238,7 @@ export const normalizeYearTo2025 = (
  * if includeToday is true, if it's today.
  */
 export const isFutureDate = (
-  date: Date | null,
+  date: Date | undefined,
   includeToday = false
 ): boolean => {
   if (!date) return false;
@@ -251,7 +251,7 @@ export const isFutureDate = (
   return includeToday ? date >= today : date > today;
 };
 
-export const formatDateIndicatingFuture = (date: Date | null) => {
+export const formatDateIndicatingFuture = (date: Date | undefined) => {
   return `${formatDate(date)}${isFutureDate(date) ? " (future)" : ""}`;
 };
 

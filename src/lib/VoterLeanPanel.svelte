@@ -2,40 +2,20 @@
   import { markerColor } from "$lib/colors";
   import { getPageStateFromContext } from "./store/PageState.svelte";
   import { circledMarkerSvg } from "$lib/icons";
-  import type { EventMarkerInfoWithId, VoterLean } from "./types";
-
-  interface Counts {
-    trump: number;
-    harris: number;
-    unavailable: number;
-  }
+  import type { VoterLean } from "./types";
 
   interface VoterLeanInfo {
     voterLean: VoterLean;
     label: string;
   }
 
-  function getCounts(events: EventMarkerInfoWithId[]): Counts {
-    let trump = 0,
-      harris = 0,
-      unavailable = 0;
-
-    for (const event of events) {
-      const lead = event.pctDemLead;
-      if (typeof lead !== "number" || lead === 0) {
-        unavailable++;
-      } else if (lead < 0) {
-        trump++;
-      } else if (lead > 0) {
-        harris++;
-      }
-    }
-
-    return { trump, harris, unavailable };
-  }
-
   function formatLabel(voterLean: VoterLean) {
-    return `${counts[voterLean as keyof Counts].toLocaleString()}`;
+    const result = pageState.filter.filteredVoterLeanCounts[voterLean];
+    try {
+      return `${result.toLocaleString()}`;
+    } catch (err) {
+      throw new Error(`Could not format voter lean count ${err}`);
+    }
   }
 
   function colorForVoterLean(voterLean: VoterLean) {
@@ -52,10 +32,6 @@
   }
 
   const pageState = getPageStateFromContext();
-
-  const counts = $derived.by(() => {
-    return getCounts(pageState.filter.currentDateFilteredEvents);
-  });
 
   const voterLeans: VoterLeanInfo[] = [
     {

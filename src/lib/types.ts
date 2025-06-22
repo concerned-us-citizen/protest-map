@@ -48,3 +48,9 @@ export type SetTimeoutId = ReturnType<typeof setTimeout> | undefined;
 
 export const VoterLeanValues = ["trump", "harris", "unavailable"];
 export type VoterLean = (typeof VoterLeanValues)[number];
+export type VoterLeanCounts = Record<VoterLean, number>;
+export const EmptyVoterLeanCounts: VoterLeanCounts = {
+  trump: 0,
+  harris: 0,
+  unavailable: 0,
+};

@@ -1,12 +1,12 @@
 import { EventModel } from "./EventModel.svelte";
-import type {
-  EventMarkerInfoWithId,
-  Nullable,
-  SetTimeoutId,
-  VoterLean,
+import {
+  EmptyVoterLeanCounts,
+  type EventMarkerInfoWithId,
+  type SetTimeoutId,
+  type VoterLean,
 } from "$lib/types";
 import { formatDate, isFutureDate } from "$lib/util/date";
-import { quote } from "$lib/util/string";
+import { pluralize, quote } from "$lib/util/string";
 import { titleCase } from "title-case";
 import type { MapModel } from "./MapModel.svelte";
 import { prettifyNamedRegion, type NamedRegion } from "./RegionModel";
@@ -42,28 +42,44 @@ export class FilteredEventModel {
 
   selectedVoterLeans = $state<VoterLean[]>([]);
 
-  currentDateIndex = $state(-1);
+  // We don't derive one from the other here, because
+  // we don't want to establish a dependency on allDatesWithEventCounts,
+  // since it may change with filters, causing the two to misalign.
+  // Instead, we explicitly set both of them when setting either one.
+  #currentDateIndex: number = $state(-1);
+  get currentDateIndex() {
+    return this.#currentDateIndex;
+  }
+  #currentDate = $state<Date | undefined>();
+  get currentDate() {
+    return this.#currentDate;
+  }
 
-  readonly currentDate = $derived.by(() => {
-    const dates = this.allDatesWithEventCounts;
-    return dates[this.currentDateIndex]?.date ?? null;
-  });
+  setCurrentDateIndex(index: number) {
+    this.#currentDateIndex = index;
+    if (index < 0 || index >= this.allDatesWithEventCounts.length) {
+      this.#currentDate = undefined;
+    } else {
+      this.#currentDate = this.allDatesWithEventCounts[index].date;
+    }
+  }
 
-  setCurrentDate(date: Nullable<Date>) {
-    if (date === null) {
-      this.currentDateIndex = -1;
+  setCurrentDate(date: Date | undefined) {
+    this.#currentDate = date;
+    if (!date) {
+      this.#currentDateIndex = -1;
     } else {
       const index = this.allDatesWithEventCounts.findIndex(
         (d) => d.date.getTime() === date.getTime()
       );
       if (index !== -1) {
-        this.currentDateIndex = index;
+        this.#currentDateIndex = index;
       } else {
         console.warn(
           "Setting currentDate to value not found in eventModel.allDatesWithEventCounts:",
           date
         );
-        this.currentDateIndex = -1;
+        this.#currentDateIndex = -1;
       }
     }
   }
@@ -111,9 +127,9 @@ export class FilteredEventModel {
     const dates = this.allDatesWithEventCounts;
     const count = dates.length;
     if (count === 0) return;
-    const curIndex = Math.max(0, this.currentDateIndex);
+    const curIndex = Math.max(0, this.#currentDateIndex);
 
-    this.currentDateIndex = (curIndex + increment + count) % count;
+    this.setCurrentDateIndex((curIndex + increment + count) % count);
   }
 
   selectNextDate() {
@@ -129,14 +145,12 @@ export class FilteredEventModel {
   readonly filteredEventNamesWithLocationCounts = $derived.by(() => {
     const date = this.currentDate;
     const namedRegion = this.namedRegion;
-    const voterLeans = this.selectedVoterLeans;
     if (!date) return [];
 
     return this.eventModel
       ? this.eventModel.getEventNamesAndCountsForFilter({
           date,
           namedRegion,
-          voterLeans,
         })
       : [];
   });
@@ -148,6 +162,19 @@ export class FilteredEventModel {
   readonly currentDateHasMultipleEventNames = $derived(
     this.filteredEventNamesWithLocationCounts.length > 1
   );
+
+  readonly filteredVoterLeanCounts = $derived.by(() => {
+    const date = this.currentDate;
+    const namedRegion = this.namedRegion;
+    if (!date) return EmptyVoterLeanCounts;
+
+    return this.eventModel
+      ? this.eventModel.getVoterLeanCounts({
+          date,
+          namedRegion,
+        })
+      : EmptyVoterLeanCounts;
+  });
 
   selectedEventNames = $state<string[]>([]);
 
@@ -171,9 +198,9 @@ export class FilteredEventModel {
     const eventCount = this.selectedEventNames.length;
     if (eventCount > 0) {
       const title =
-        eventCount === 1
-          ? `From event "${this.selectedEventNames[0]}"`
-          : `Associated with ${eventCount} events`;
+        eventCount < 5
+          ? `From ${pluralize(this.selectedEventNames, "event")} ${this.selectedEventNames.map(quote).join(", ")}`
+          : `From ${eventCount} events`;
       descriptions.push({
         title,
         clearFunc: () => this.clearSelectedNames(),
@@ -316,12 +343,12 @@ export class FilteredEventModel {
         // If no longer a valid date, set currentDateIndex to
         // be the date at or after the current system date
         // (or - 1 if no match) any time the eventModel's items change
-        this.currentDateIndex = allDatesWithEventCounts.findIndex((dc) =>
-          isFutureDate(dc.date, true)
+        this.setCurrentDateIndex(
+          allDatesWithEventCounts.findIndex((dc) => isFutureDate(dc.date, true))
         );
         // Handle case where there are no dates beyond today.
-        if (this.currentDateIndex < 0) {
-          this.currentDateIndex = allDatesWithEventCounts.length - 1;
+        if (this.#currentDateIndex < 0) {
+          this.setCurrentDateIndex(allDatesWithEventCounts.length - 1);
         }
       }
     });

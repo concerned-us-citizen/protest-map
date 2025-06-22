@@ -3,6 +3,7 @@ import type {
   Nullable,
   PopulatedEvent,
   VoterLean,
+  VoterLeanCounts,
 } from "$lib/types";
 import type { EventFilterOptions } from "./FilteredEventModel.svelte";
 import { type Database, type SqlValue } from "sql.js";
@@ -15,6 +16,7 @@ interface LatestDbManifest {
   lastUpdated: string;
   sha?: string;
 }
+
 export class ClientEventDb {
   private db: Database;
   private manifest: LatestDbManifest;
@@ -61,6 +63,33 @@ export class ClientEventDb {
 
     stmt.free();
     return results;
+  }
+
+  getVoterLeanCounts(filter: EventFilterOptions): VoterLeanCounts {
+    const { date, namedRegion } = filter;
+    const builder = new QueryBuilder(
+      (whereClause) => `
+      SELECT
+          SUM(CASE WHEN pct_dem_lead <  0 THEN 1 ELSE 0 END) AS trump,
+          SUM(CASE WHEN pct_dem_lead >  0 THEN 1 ELSE 0 END) AS harris,
+          SUM(CASE WHEN pct_dem_lead IS NULL THEN 1 ELSE 0 END) AS unavailable
+        FROM events
+        ${whereClause}
+`
+    );
+    builder.addDateSubquery(date);
+    builder.addNamedRegionOnlySubquery(namedRegion);
+    const stmt = builder.createStatement(this.db);
+    if (!stmt.step()) {
+      throw new Error("Nothing returned for voter lean counts");
+    }
+
+    const [trump, harris, unavailable] = stmt.get();
+    return {
+      trump: (trump ?? 0) as number,
+      harris: (harris ?? 0) as number,
+      unavailable: (unavailable ?? 0) as number,
+    };
   }
 
   getAllDatesWithEventCounts(

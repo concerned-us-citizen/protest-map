@@ -115,6 +115,40 @@ export const formatShortDate = (date: Date): string => {
 };
 
 /**
+ * Serialises a Date to "MM-DD-YYYY" (U S-friendly, no URL encoding needed).
+ */
+export function serializeDate(date: Date): string {
+  const mm = String(date.getMonth() + 1).padStart(2, "0"); // 01-12
+  const dd = String(date.getDate()).padStart(2, "0"); // 01-31
+  const yyyy = date.getFullYear();
+
+  return `${mm}-${dd}-${yyyy}`;
+}
+
+/**
+ * Parses "MM-DD-YYYY" back to a Date.
+ * Returns undefined for malformed or impossible dates (e.g. 02-30-2025).
+ */
+export function deserializeDate(text: string): Date | undefined {
+  const match = /^(\d{1,2})-(\d{1,2})-(\d{4})$/.exec(text);
+  if (!match) return undefined;
+
+  const [, mStr, dStr, yStr] = match;
+  const month = Number(mStr) - 1; // JS months are 0-based
+  const day = Number(dStr);
+  const year = Number(yStr);
+
+  const d = new Date(year, month, day);
+
+  // Guard against  JS date rollover (e.g. 02-31 →  Mar 03)
+  return d.getFullYear() === year &&
+    d.getMonth() === month &&
+    d.getDate() === day
+    ? d
+    : undefined;
+}
+
+/**
  * Formats a date string
  */
 export const formatDateTime = (date: Date): string => {

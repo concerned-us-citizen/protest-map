@@ -46,4 +46,5 @@ export type DateRange = {
 export type Nullable<T> = T | null;
 export type SetTimeoutId = ReturnType<typeof setTimeout> | undefined;
 
-export type VoterLean = "trump" | "harris" | "unavailable";
+export const VoterLeanValues = ["trump", "harris", "unavailable"];
+export type VoterLean = (typeof VoterLeanValues)[number];

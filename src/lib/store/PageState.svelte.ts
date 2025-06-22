@@ -2,9 +2,8 @@ import { setContext, getContext } from "svelte";
 import { EventModel } from "./EventModel.svelte";
 import { FilteredEventModel } from "./FilteredEventModel.svelte";
 import { deviceInfo } from "$lib/store/DeviceInfo.svelte";
-import type { SetTimeoutId } from "$lib/types";
-import { RegionModel, type NamedRegion } from "./RegionModel";
-import { isFutureDate } from "$lib/util/date";
+import { type SetTimeoutId } from "$lib/types";
+import { RegionModel } from "./RegionModel";
 import { RegionLabeler } from "./RegionLabeler.svelte";
 import { MapModel } from "./MapModel.svelte";
 
@@ -35,20 +34,18 @@ export class PageState {
 
   toggleFilterVisible() {
     this.filterVisible = !this.filterVisible;
-    this.helpVisible = false;
   }
 
   toggleHelpVisible() {
     this.helpVisible = !this.helpVisible;
+  }
+
   toggleNavigationVisible() {
     this.navigationVisible = !this.navigationVisible;
   }
 
-  }
-
   toggleAutoplay() {
     this.autoplaying = !this.autoplaying;
-    this.scheduleNextDateAdvance();
   }
 
   async scheduleNextDateAdvance() {
@@ -89,51 +86,6 @@ export class PageState {
     if (!deviceInfo.isTall) {
       this._eventInfoVisible = true;
       this.#debouncedHideEventInfo();
-    }
-  }
-
-  async updateFromUrlParams(params: URLSearchParams) {
-    if (this.eventModel.hasDates) {
-      // Only initialize date if eventModel has loaded dates
-      const specifiedDateStr = params.get("date");
-      const specifiedDate = specifiedDateStr
-        ? new Date(specifiedDateStr)
-        : undefined;
-      if (specifiedDate && this.eventModel.isValidDate(specifiedDate)) {
-        this.filter.setCurrentDate(new Date(specifiedDate));
-      } else {
-        // If not specified, initialize currentDateIndex to be the date at or after the current system date
-        // (or - 1 if no match) any time the eventModel's items change
-        this.filter.currentDateIndex =
-          this.eventModel.allDatesWithEventCounts.findIndex((dc) =>
-            isFutureDate(dc.date, true)
-          );
-      }
-    }
-
-    const zoomParams: [
-      string,
-      (_val: string) => Promise<NamedRegion | undefined>,
-    ][] = [
-      ["zip", this.regionModel.getNamedRegionForZip],
-      ["state", this.regionModel.getNamedRegionForState],
-      ["city", this.regionModel.getNamedRegionForCity],
-      ["zoomto", this.regionModel.getNamedRegionForName],
-    ];
-    for (const [key, lookupFn] of zoomParams) {
-      const value = params.get(key);
-      if (!value) continue;
-
-      const namedRegion = await lookupFn.call(this.regionModel, value);
-      if (namedRegion) {
-        if (namedRegion.type === "state") {
-          this.filter.namedRegion = namedRegion;
-        }
-        this.mapModel.navigateTo(namedRegion, true);
-        break;
-      } else {
-        console.warn(`Could not find region bounds for ${key} = ${value}`);
-      }
     }
   }
 
@@ -178,6 +130,12 @@ export class PageState {
     this.regionLabeler = new RegionLabeler(this.regionModel);
     this.filter = new FilteredEventModel(this.eventModel, this.mapModel);
     this.pollForUpdates();
+
+    $effect(() => {
+      if (this.autoplaying) {
+        this.scheduleNextDateAdvance();
+      }
+    });
   }
 
   static create(): PageState {

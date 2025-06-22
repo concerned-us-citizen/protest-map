@@ -35,7 +35,7 @@
   }
 
   function formatLabel(voterLean: VoterLean) {
-    return `${filteredCounts[voterLean].toLocaleString()}`;
+    return `${filteredCounts[voterLean as keyof Counts].toLocaleString()}`;
   }
 
   function colorForVoterLean(voterLean: VoterLean) {

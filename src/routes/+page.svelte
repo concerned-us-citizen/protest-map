@@ -20,24 +20,36 @@
   import { page } from "$app/stores";
   import FilterIndicator from "$lib/FilterIndicator.svelte";
   import { prettifyNamedRegion } from "$lib/store/RegionModel";
-  import {
-    CirclePlay,
-    CirclePause,
-    Info,
-    Undo2,
-    Search,
-    Share,
-  } from "@lucide/svelte";
+  import { CirclePlay, CirclePause, Info, Undo2, Search } from "@lucide/svelte";
   import RegionNavigationPanel from "$lib/RegionNavigationPanel.svelte";
+  import {
+    getSearchParamsFromState,
+    setStateFromWindowSearchParams,
+  } from "$lib/store/searchParamsToStateSync.svelte";
 
   const pageState = PageState.create();
   createPageStateInContext(pageState);
 
+  let initializedStateFromSearchParams = false;
+
+  // Update the search params in the window
   $effect(() => {
-    const searchParams = $page.url.searchParams;
-    (async () => {
-      await pageState.updateFromUrlParams(searchParams);
-    })();
+    const searchParams = getSearchParamsFromState(pageState);
+    if (!initializedStateFromSearchParams) return;
+
+    const url = new URL(window.location.href);
+    url.search = searchParams.toString();
+    history.replaceState(null, "", url);
+  });
+
+  // (at startup, once the db is loaded) update the state from search params
+  $effect(() => {
+    if (!pageState.eventModel.isLoading && !initializedStateFromSearchParams) {
+      (async () => {
+        await setStateFromWindowSearchParams($page.url.searchParams, pageState);
+        initializedStateFromSearchParams = true;
+      })();
+    }
   });
 
   $effect(() => {
@@ -61,7 +73,9 @@
   });
 
   function handleKeydown(event: KeyboardEvent) {
-    if (event.metaKey || event.ctrlKey || event.altKey) return;
+    if (event.metaKey || event.altKey) return;
+
+    if (!event.ctrlKey || !event.shiftKey) return;
 
     const key = event.key.toLowerCase();
     const code = event.code;
@@ -271,7 +285,6 @@
       >
         <Search />
       </IconButton>
-
     </div>
 
     {#if pageState.mapModel.canPopBounds}

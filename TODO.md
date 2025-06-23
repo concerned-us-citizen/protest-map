@@ -1,14 +1,11 @@
-TODO
-
 Next:
 
-
 Severe:
-- seeing clusters of two that can't be expanded
 - Update help
-- better keyboard handling, getting more complex with focus now
+- better aria/keyboard handling
 
 Moderate:
+- seeing clusters of two that can't be expanded
 - scroll map to show full tooltip
 - tour doesn't scroll when in landscape
 - investigate vitest failure

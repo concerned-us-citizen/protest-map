@@ -6,7 +6,7 @@
   import { deviceInfo } from "$lib/store/DeviceInfo.svelte.js";
   import ProtestMapTour from "$lib/ProtestMapTour.svelte";
   import EventInfoPanel from "$lib/EventInfoPanel.svelte";
-  import FilterPanel from "$lib/FilterPanel.svelte";
+  import EventNamePanel from "$lib/EventFilterPanel.svelte";
   import { formatDateIndicatingFuture } from "$lib/util/date.js";
   import { countAndLabel } from "$lib/util/string";
   import Timeline from "$lib/Timeline.svelte";
@@ -21,11 +21,12 @@
   import FilterIndicator from "$lib/FilterIndicator.svelte";
   import { prettifyNamedRegion } from "$lib/store/RegionModel";
   import { CirclePlay, CirclePause, Info, Undo2, Search } from "@lucide/svelte";
-  import RegionNavigationPanel from "$lib/RegionNavigationPanel.svelte";
+  import RegionNavigationDialog from "$lib/RegionNavigationDialog.svelte";
   import {
     getSearchParamsFromState,
     setStateFromWindowSearchParams,
   } from "$lib/store/searchParamsToStateSync.svelte";
+  import { getShortcutPrefix } from "$lib/util/os";
 
   const pageState = PageState.create();
   createPageStateInContext(pageState);
@@ -73,46 +74,48 @@
   });
 
   function handleKeydown(event: KeyboardEvent) {
-    if (event.metaKey || event.altKey) return;
+    // Ignore modifiers by themselves
+    const modifierKeys = ["Control", "Shift", "Alt", "Meta"];
+    if (modifierKeys.includes(event.key)) return;
 
-    if (!event.ctrlKey || !event.shiftKey) return;
+    // All shortcuts begin with ctrl-option-cmd
+    if (!(event.ctrlKey && event.altKey && event.metaKey)) return;
 
     const key = event.key.toLowerCase();
     const code = event.code;
 
+    console.log(`Key: ${key} code: ${code}`);
+
     // Spacebar always toggles playback
-    if (key === " " || code === "Space") {
+    if (code === "Space") {
       pageState.toggleAutoplay();
       event.preventDefault();
       return;
     }
 
-    // All other shortcuts are only active when NOT playing
-    if (pageState.autoplaying) return;
-
     // Events Filter (F)
-    if (key === "f") {
+    if (code === "KeyF") {
       pageState.toggleFilterVisible();
       event.preventDefault();
       return;
     }
 
     // Help (I/H)
-    if (key === "i" || key === "h") {
+    if (code === "KeyI" || code === "KeyH") {
       pageState.toggleHelpVisible();
       event.preventDefault();
       return;
     }
 
     // Jump to Region (J)
-    if (key === "j") {
+    if (code === "KeyJ") {
       pageState.navigationVisible = true;
       event.preventDefault();
       return;
     }
 
     // Escape
-    if (key === "escape" || code === "Escape") {
+    if (code === "Escape") {
       pageState.helpVisible = false;
       pageState.filterVisible = false;
       event.preventDefault();
@@ -120,7 +123,7 @@
     }
 
     // ArrowLeft
-    if (key === "arrowleft" || code === "ArrowLeft") {
+    if (code === "ArrowLeft") {
       pageState.filter.selectPreviousDate();
       pageState.filter.startDateRepeat("prev");
       event.preventDefault();
@@ -128,27 +131,27 @@
     }
 
     // ArrowRight
-    if (key === "arrowright" || code === "ArrowRight") {
+    if (code === "ArrowRight") {
       pageState.filter.selectNextDate();
       pageState.filter.startDateRepeat("next");
       event.preventDefault();
       return;
     }
 
-    if (key === "+" || event.key === "z") {
+    if (code === "Equal" || code === "KeyZ") {
       event.preventDefault();
       pageState.mapModel.zoomIn();
       return;
     }
 
-    if (key === "-" || event.key == "Z") {
+    if (code === "Minus" || (code == "KeyZ" && event.shiftKey)) {
       event.preventDefault();
       pageState.mapModel.zoomOut();
       return;
     }
 
-    // Unzoom to initial level (U, R, B)
-    if (key === "u" || key === "r" || key === "b") {
+    // Unzoom to last level (U, R, B)
+    if (code === "KeyU" || code === "KeyR" || code === "KeyB") {
       event.preventDefault();
       if (pageState.mapModel.canPopBounds) {
         pageState.mapModel.popBounds();
@@ -158,7 +161,9 @@
   }
 
   function handleKeyup(event: KeyboardEvent) {
-    if (pageState.autoplaying) return;
+    // All shortcuts begin with shift-option-cmd
+    if (!(event.shiftKey && event.altKey && event.metaKey && !event.ctrlKey))
+      return;
 
     const left = "ArrowLeft";
     const right = "ArrowRight";
@@ -230,6 +235,7 @@
           <button
             class={`link-button`}
             data-suppress-click-outside
+            title={`${pageState.filterVisible ? "Hide" : "Show"} Filter (${getShortcutPrefix()}F)`}
             onclick={() => pageState.toggleFilterVisible()}
           >
             {countAndLabel(
@@ -253,7 +259,7 @@
       </div>
 
       <div transition:slide>
-        <FilterPanel
+        <EventNamePanel
           className="filter panel"
           onClose={() => (pageState.filterVisible = false)}
         />
@@ -266,8 +272,8 @@
       <IconButton
         onClick={() => pageState.toggleAutoplay()}
         label={pageState.autoplaying
-          ? "Pause Animation (Space)"
-          : "Play Animation (Space)"}
+          ? `Pause Animation (${getShortcutPrefix()}Space)`
+          : `Play Animation (${getShortcutPrefix()}Space)`}
       >
         {#if pageState.autoplaying}
           <CirclePause />
@@ -277,14 +283,14 @@
       </IconButton>
       <IconButton
         onClick={() => pageState.toggleHelpVisible()}
-        label="Show Help (H)"
+        label={`Show Help (${getShortcutPrefix()}H)`}
       >
         <Info />
       </IconButton>
 
       <IconButton
         onClick={() => pageState.toggleNavigationVisible()}
-        label="Find a city, state, or ZIP code (F)"
+        label={`Find a city, state, or ZIP code (${getShortcutPrefix()}F)`}
       >
         <Search />
       </IconButton>
@@ -297,7 +303,7 @@
       >
         <IconButton
           onClick={() => pageState.mapModel.popBounds()}
-          label="Zoom Back Out (R, U, or B)"
+          label={"Zoom Back Out (${getShortcutPrefix()}R, +U, or +B)"}
         >
           <Undo2 />
         </IconButton>
@@ -339,7 +345,7 @@
 {/if}
 
 {#if pageState.navigationVisible}
-  <RegionNavigationPanel />
+  <RegionNavigationDialog />
 {/if}
 
 <UpgradeBanner />
@@ -369,7 +375,7 @@
   }
 
   .highlight-adjusted-panel {
-    /* TODO make this more DRY - it needs to be kept in sync with FilterPanel and FilterIndicator */
+    /* TODO make this more DRY - it needs to be kept in sync with EventNameFilterPanel and FilterIndicator */
     --highlight-border-h: 0.3em;
     border-radius: var(--panel-border-radius);
     padding: var(--panel-padding-v)

@@ -53,22 +53,27 @@
 
 <div
   class="panel-overlay"
-  role="button"
+  role="presentation"
   aria-label="Close dialog"
-  tabindex="0"
   onclick={(e) => {
     if (e.target === e.currentTarget) dismiss();
   }}
-  onkeydown={(e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      pageState.navigationVisible = false;
-    }
-  }}
 >
-  <div class="panel-dialog">
+  <div
+    class="panel-dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="panel-heading-id"
+    tabindex="-1"
+    onkeydown={(e) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        pageState.navigationVisible = false;
+      }
+    }}
+  >
     <div class="panel-header">
-      <h2 class="panel-heading">Jump to Region</h2>
+      <h2 id="panel-heading-id" class="panel-heading">Jump to Region</h2>
       <button class="close-button" type="button" onclick={dismiss}>X</button>
     </div>
 
@@ -84,9 +89,12 @@
     {#if recents.length}
       <div class="recents-block">
         <div class="recents-header">
-          <span>Recently viewed</span>
-          <button class="clear-button" type="button" onclick={clearRecents}
-            >Clear</button
+          <h4>Recently viewed</h4>
+          <button
+            class="clear-button"
+            type="button"
+            aria-label="Clear recently viewed items"
+            onclick={clearRecents}>Clear</button
           >
         </div>
         <ul class="recents-list">
@@ -160,6 +168,11 @@
     align-items: center;
     font-size: 0.8rem;
     color: #666;
+  }
+  .recents-header h4 {
+    margin: 0;
+    padding: 0;
+    font-weight: normal;
   }
   .clear-button {
     font-size: 0.75rem;

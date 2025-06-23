@@ -25,25 +25,26 @@
       ({titleCase(deviceInfo.tapOrClick)} to filter by one or more)
     </div>
   {/if}
-  <div class="event-list-scrollable-area">
+  <div class="event-list-scrollable-area" role="list">
     {#if eventNamesWithLocationCounts.length > 0}
       <div>
         {#each eventNamesWithLocationCounts as event (event.name)}
-          <div class="filter-item">
-            <button
-              type="button"
-              onclick={(e) => {
-                e.stopPropagation();
-                pageState.filter.toggleSelectedEventName(event.name);
-              }}
-              class:selected-event={pageState.filter.selectedEventNames.includes(
-                event.name
-              )}
-            >
-              <div class="event-name-in-list">{event.name || "Unnamed"}</div>
-              <div class="event-count-in-list">({event.count})</div>
-            </button>
-          </div>
+          {@const selected = pageState.filter.selectedEventNames.includes(
+            event.name
+          )}
+          <button
+            class="filter-item"
+            type="button"
+            onclick={(e) => {
+              e.stopPropagation();
+              pageState.filter.toggleSelectedEventName(event.name);
+            }}
+            aria-pressed={selected}
+            class:selected-event={selected}
+          >
+            <div class="event-name-in-list">{event.name || "Unnamed"}</div>
+            <div class="event-count-in-list">({event.count})</div>
+          </button>
         {/each}
       </div>
     {:else}
@@ -101,13 +102,10 @@
     display: none;
   }
 
-  .event-list-scrollable-area .filter-item {
+  .event-list-scrollable-area button.filter-item {
     display: block;
     padding: 0;
     margin: 0;
-  }
-
-  .event-list-scrollable-area .filter-item button {
     appearance: none;
     -webkit-appearance: none;
     background: none;
@@ -139,14 +137,14 @@
     cursor: pointer;
   }
 
-  .event-list-scrollable-area .filter-item button:hover {
+  .event-list-scrollable-area button:hover {
     --background-color: var(--hover-color);
   }
-  .event-list-scrollable-area .filter-item button.selected-event {
+  .event-list-scrollable-area button.selected-event {
     font-weight: bold;
     --background-color: var(--selected-color);
   }
-  .event-list-scrollable-area .filter-item button.selected-event:hover {
+  .event-list-scrollable-area button.selected-event:hover {
     --background-color: var(--hover-selected-color);
   }
   .no-events-message {

@@ -50,7 +50,7 @@
 </script>
 
 <div class="voter-lean-container">
-  <div class="heading">2024 Lean</div>
+  <h4 class="heading">2024 Lean</h4>
   {#each voterLeans as { voterLean, label }}
     <button
       class="link-button"
@@ -92,6 +92,9 @@
   .heading {
     flex: 0 1 auto;
     white-space: nowrap;
+    margin: 0;
+    padding: 0;
+    font-weight: normal;
     margin-right: 0.5rem;
   }
 

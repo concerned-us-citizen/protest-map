@@ -46,13 +46,13 @@
     open = false;
   };
 
-  const bold = (t: string, q: string) =>
-    !q
-      ? t
-      : t.replace(
-          new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi"),
-          (m) => `<strong>${m}</strong>`
-        );
+  const bold = (text: string, query: string) => {
+    if (!text || !query) return text ?? "";
+    const safe = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const exp = new RegExp(safe, "gi");
+    const result = text.replace(exp, (m) => `<strong>${m}</strong>`);
+    return result;
+  };
 
   function key(e: KeyboardEvent) {
     if (["ArrowDown", "ArrowUp", "Enter"].includes(e.key)) open = true;
@@ -135,6 +135,17 @@
     margin-top: 0.25rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
+
+  ul {
+    padding-inline-start: 0;
+  }
+
+  li {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
   .option-item {
     display: block;
     width: 100%;

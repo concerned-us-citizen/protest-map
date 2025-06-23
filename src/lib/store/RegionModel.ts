@@ -81,6 +81,12 @@ export const stateNameForAbbreviation: Record<string, string> = {
   WV: "West Virginia",
   WI: "Wisconsin",
   WY: "Wyoming",
+  PR: "Puerto Rico",
+  DC: "District of Columbia",
+  GU: "Guam",
+  AS: "American Samoa",
+  VI: "U.S. Virgin Islands",
+  MP: "Northern Mariana Islands",
 };
 
 export const abbreviationForStateName: Record<string, string> =
@@ -121,7 +127,6 @@ export function prettifyNamedRegion(
     case "unnamed":
       return region.name;
   }
-  return onUnhandled(region);
 }
 
 export class RegionDB {

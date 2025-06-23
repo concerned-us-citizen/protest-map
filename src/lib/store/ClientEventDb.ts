@@ -92,7 +92,7 @@ export class ClientEventDb {
     };
   }
 
-  getAllDatesWithEventCounts(
+  getDatesWithEventCounts(
     filter: EventFilterOptions
   ): { date: Date; eventCount: number }[] {
     const { eventNames, namedRegion, voterLeans } = filter;

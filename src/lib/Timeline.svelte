@@ -76,6 +76,8 @@
   <HistogramSlider
     className="slider"
     items={pageState.filter.allDatesWithEventCounts}
+    filteredItems={pageState.filter.filteredDatesWithEventCounts}
+    keyFor={(item) => item.date.getTime()}
     selectedItem={selectedDateWithEventCount}
     onSelect={(dc) => pageState.filter.setCurrentDate(dc.date)}
     magnitudeFor={(item) => item.eventCount}

@@ -42,8 +42,8 @@ export class EventModel {
     return result;
   }
 
-  getAllDatesWithEventCounts(filter: EventFilterOptions) {
-    return this.db ? this.db.getAllDatesWithEventCounts(filter) : [];
+  getDatesWithEventCounts(filter: EventFilterOptions) {
+    return this.db ? this.db.getDatesWithEventCounts(filter) : [];
   }
 
   getEventNamesAndCountsForFilter(

@@ -21,6 +21,11 @@ export interface EventFilterOptions {
   voterLeans?: VoterLean[]; // empty or missing means match all voter leans
 }
 
+interface DateAndEventCount {
+  date: Date;
+  eventCount: number;
+}
+
 export class FilteredEventModel {
   readonly eventModel: EventModel;
   readonly mapModel: MapModel;
@@ -38,14 +43,20 @@ export class FilteredEventModel {
   allFilteredEvents = $state<EventMarkerInfoWithId[]>([]);
   currentDateFilteredEvents = $state<EventMarkerInfoWithId[]>([]);
 
+  allDatesWithEventCounts = $state<DateAndEventCount[]>([]);
+  filteredDatesWithEventCounts = $state<DateAndEventCount[]>([]);
+
   namedRegion = $state<NamedRegion | undefined>();
 
   selectedVoterLeans = $state<VoterLean[]>([]);
 
   // We don't derive one from the other here, because
-  // we don't want to establish a dependency on allDatesWithEventCounts,
+  // we don't want to establish a dependency on filteredDatesWithEventCounts,
   // since it may change with filters, causing the two to misalign.
   // Instead, we explicitly set both of them when setting either one.
+
+  // Worth noting - currentDate Index is relative to
+  // allDatesWithEventCounts, not filteredDatesWithEventCounts.
   #currentDateIndex: number = $state(-1);
   get currentDateIndex() {
     return this.#currentDateIndex;
@@ -84,12 +95,6 @@ export class FilteredEventModel {
     }
   }
 
-  allDatesWithEventCounts = $derived.by(() =>
-    this.eventModel
-      ? this.eventModel.getAllDatesWithEventCounts(this.filter)
-      : []
-  );
-
   largestDateEventCount = $derived.by(() => {
     const dates = this.allDatesWithEventCounts;
     const counts = dates.map((d) => d.eventCount);
@@ -124,12 +129,34 @@ export class FilteredEventModel {
   });
 
   #selectRelativeDateWrapping(increment: number) {
-    const dates = this.allDatesWithEventCounts;
-    const count = dates.length;
-    if (count === 0) return;
-    const curIndex = Math.max(0, this.#currentDateIndex);
+    const filteredDates = this.filteredDatesWithEventCounts;
+    const allDates = this.allDatesWithEventCounts;
+    const currentDate = this.currentDate;
 
-    this.setCurrentDateIndex((curIndex + increment + count) % count);
+    if (filteredDates.length === 0 || !currentDate) return;
+
+    // Find current date’s index in filteredDates
+    let currentFilteredIndex = filteredDates.findIndex(
+      (d) => d.date.getTime() === currentDate.getTime()
+    );
+
+    if (currentFilteredIndex === -1) {
+      currentFilteredIndex = 0;
+    }
+
+    // Compute wrapped index
+    const len = filteredDates.length;
+    const targetIndex = (currentFilteredIndex + increment + len) % len;
+
+    const targetDate = filteredDates[targetIndex]?.date;
+    if (!targetDate) return undefined;
+
+    // Find target date's index in allDates
+    const newIndex = allDates.findIndex(
+      (d) => d.date.getTime() === targetDate.getTime()
+    );
+
+    this.setCurrentDateIndex(newIndex);
   }
 
   selectNextDate() {
@@ -306,12 +333,23 @@ export class FilteredEventModel {
     this.eventModel = eventModel;
     this.mapModel = mapModel;
 
+    // Update all the dates
+    $effect(() => {
+      if (!this.eventModel.isLoading) {
+        this.allDatesWithEventCounts = this.eventModel.getDatesWithEventCounts(
+          {}
+        );
+      }
+    });
+
+    // Update filtered date counts and events
     $effect(() => {
       const filter = this.filter;
+      const isLoading = this.eventModel.isLoading;
       const update = async () => {
-        if (this.eventModel) {
-          this.allDatesWithEventCounts =
-            this.eventModel.getAllDatesWithEventCounts(filter);
+        if (!isLoading) {
+          this.filteredDatesWithEventCounts =
+            this.eventModel.getDatesWithEventCounts(filter);
 
           this.allFilteredEvents = await this.eventModel.getMarkerInfos(
             this.filter
@@ -343,13 +381,17 @@ export class FilteredEventModel {
         // If no longer a valid date, set currentDateIndex to
         // be the date at or after the current system date
         // (or - 1 if no match) any time the eventModel's items change
-        this.setCurrentDateIndex(
-          allDatesWithEventCounts.findIndex((dc) => isFutureDate(dc.date, true))
+        console.log(
+          `🔁 Running setCurrentDateIndex effect ${this.#currentDateIndex}`
+        );
+        let newIndex = allDatesWithEventCounts.findIndex((dc) =>
+          isFutureDate(dc.date, true)
         );
         // Handle case where there are no dates beyond today.
-        if (this.#currentDateIndex < 0) {
-          this.setCurrentDateIndex(allDatesWithEventCounts.length - 1);
+        if (newIndex < 0) {
+          newIndex = allDatesWithEventCounts.length - 1;
         }
+        this.setCurrentDateIndex(newIndex);
       }
     });
   }

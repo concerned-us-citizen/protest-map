@@ -1,10 +1,13 @@
 <script lang="ts" generics="T">
-  import { browser } from '$app/environment';
-  import { onDestroy } from 'svelte';
-  import type { Nullable } from './types';
+  import { browser } from "$app/environment";
+  import { onDestroy } from "svelte";
+  import type { Nullable } from "./types";
+  import type { T } from "vitest/dist/chunks/environment.d.cL3nLXbE.js";
 
   interface Props {
     items: T[];
+    filteredItems: T[];
+    keyFor: (_item: T) => unknown;
     selectedItem: Nullable<T>;
     magnitudeFor: (_item: T) => number;
     firstShadedItemIndex: (_items: T[]) => number;
@@ -14,18 +17,27 @@
 
   const {
     items,
+    filteredItems,
     selectedItem,
+    keyFor,
     magnitudeFor,
     firstShadedItemIndex,
     onSelect,
-    className = ''
-  } : Props = $props();
-
+    className = "",
+  }: Props = $props();
 
   let maxMagnitude = $derived(Math.max(0, ...items.map(magnitudeFor)));
 
   const bottomPadding = 0;
   const topPadding = 3;
+
+  let filteredItemMap = $derived.by(() => {
+    const items: [unknown, T][] = filteredItems.map((item) => [
+      keyFor(item),
+      item,
+    ]);
+    return new Map<unknown, T>(items);
+  });
 
   let svgWrapperElement: HTMLDivElement;
   let svgWrapperWidth = $state(300);
@@ -86,7 +98,7 @@
       futureStartIndex = -1; // Reset if no data
     }
   });
-  
+
   let svgElement: SVGSVGElement;
   let isDragging = false;
 
@@ -98,12 +110,12 @@
     return Math.max(1, (locationCount / maxMagnitude) * svgWrapperHeight); // Ensure min height of 1 for visibility
   }
 
-   // --- Drag logic placeholder ---
-   function getIndexFromMouseEvent(event: MouseEvent): number | null {
+  // --- Drag logic placeholder ---
+  function getIndexFromMouseEvent(event: MouseEvent): number | null {
     if (!svgElement) return null;
     const CTM = svgElement.getScreenCTM();
     if (!CTM) return null;
-    
+
     const svgX = (event.clientX - CTM.e) / CTM.a;
     // Calculate index based on svgX and barWidth (no gap)
     const index = Math.floor(svgX / barWidth);
@@ -120,8 +132,8 @@
     if (index !== null && items[index]) {
       onSelect(items[index]);
     }
-    window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('mouseup', onMouseUp);
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
   }
 
   function onMouseMove(event: MouseEvent) {
@@ -139,12 +151,13 @@
   function onMouseUp() {
     if (!browser) return;
     isDragging = false;
-    window.removeEventListener('mousemove', onMouseMove);
-    window.removeEventListener('mouseup', onMouseUp);
+    window.removeEventListener("mousemove", onMouseMove);
+    window.removeEventListener("mouseup", onMouseUp);
   }
 
   function getIndexFromTouchEvent(event: TouchEvent): number | null {
-    if (!svgElement || !event.touches || event.touches.length === 0) return null;
+    if (!svgElement || !event.touches || event.touches.length === 0)
+      return null;
     const CTM = svgElement.getScreenCTM();
     if (!CTM) return null;
 
@@ -164,8 +177,8 @@
     if (index !== null && items[index]) {
       onSelect(items[index]);
     }
-    window.addEventListener('touchmove', onTouchMove, { passive: false }); // Use passive: false to allow preventDefault
-    window.addEventListener('touchend', onTouchEnd);
+    window.addEventListener("touchmove", onTouchMove, { passive: false }); // Use passive: false to allow preventDefault
+    window.addEventListener("touchend", onTouchEnd);
   }
 
   function onTouchMove(event: TouchEvent) {
@@ -184,22 +197,25 @@
   function onTouchEnd() {
     if (!browser) return;
     isDragging = false;
-    window.removeEventListener('touchmove', onTouchMove);
-    window.removeEventListener('touchend', onTouchEnd);
+    window.removeEventListener("touchmove", onTouchMove);
+    window.removeEventListener("touchend", onTouchEnd);
   }
 
   onDestroy(() => {
     if (!browser) return;
 
-    window.removeEventListener('mousemove', onMouseMove);
-    window.removeEventListener('mouseup', onMouseUp);
-    window.removeEventListener('touchmove', onTouchMove);
-    window.removeEventListener('touchend', onTouchEnd);
+    window.removeEventListener("mousemove", onMouseMove);
+    window.removeEventListener("mouseup", onMouseUp);
+    window.removeEventListener("touchmove", onTouchMove);
+    window.removeEventListener("touchend", onTouchEnd);
   });
+
+  function isDisabled(item: T) {
+    return filteredItemMap.get(keyFor(item)) === undefined;
+  }
 </script>
 
-<div class={`histogram-slider ${className}`}
-  bind:this={svgWrapperElement}>
+<div class={`histogram-slider ${className}`} bind:this={svgWrapperElement}>
   <!-- svelte-ignore a11y_interactive_supports_focus -->
   <svg
     bind:this={svgElement}
@@ -208,7 +224,7 @@
     role="slider"
     aria-valuemin="0"
     aria-valuemax={items.length - 1}
-    aria-valuenow={items.findIndex(d => d === selectedItem)}
+    aria-valuenow={items.findIndex((d) => d === selectedItem)}
     aria-orientation="horizontal"
   >
     {#if futureStartIndex !== -1}
@@ -232,24 +248,32 @@
           />
         {/if}
         <rect
-          class="data-bar"
-          class:selected={item === selectedItem}
+          class={[
+            "data-bar",
+            {
+              disabled: isDisabled(item),
+              selected: item === selectedItem,
+            },
+          ]}
           x={getBarX(i)}
-          y={svgWrapperHeight - getBarHeight(magnitudeFor(item)) - bottomPadding}
+          y={svgWrapperHeight -
+            getBarHeight(magnitudeFor(item)) -
+            bottomPadding}
           width={barWidth}
           height={getBarHeight(magnitudeFor(item))}
           onclick={() => onSelect(item)}
           role="option"
           aria-selected={item === selectedItem}
-          onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') onSelect(item); }}
-          />
+          onkeydown={(e) => {
+            if (e.key === "Enter" || e.key === " ") onSelect(item);
+          }}
+        />
       {/each}
     {/if}
   </svg>
 </div>
 
 <style>
-
   .histogram-slider {
     display: flex;
     align-items: stretch;
@@ -264,27 +288,30 @@
     width: 100%;
     height: 100%;
   }
-  
+
   .selected-background-highlight {
     fill: var(--accent-color);
   }
 
   rect.data-bar {
-    fill: #00008B; /* Dark blue for standard bars */
+    fill: #00008b; /* Dark blue for standard bars */
     transition: fill 0.2s ease-in-out;
   }
 
-
   rect.data-bar:hover {
-    fill: #4169E1; /* RoyalBlue on hover */
+    fill: #4169e1; /* RoyalBlue on hover */
   }
 
   rect.data-bar.selected {
-    fill: #FFA500; /* Orange for selected bars */
+    fill: #ffa500; /* Orange for selected bars */
   }
 
-.future-events-highlight {
-    fill: #A9A9A9; /* Medium gray */
+  rect.data-bar.disabled {
+    fill: #949494; /* Gray for disabled (not in current filter) bars */
+  }
+
+  .future-events-highlight {
+    fill: #a9a9a9; /* Medium gray */
     opacity: 0.5; /* Semi-transparent */
   }
 </style>

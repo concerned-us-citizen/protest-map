@@ -5,7 +5,7 @@ import type {
   VoterLean,
   VoterLeanCounts,
 } from "$lib/types";
-import type { EventFilterOptions } from "./FilteredEventModel.svelte";
+import type { EventFilterOptions } from "./FilterModel.svelte";
 import { type Database, type SqlValue } from "sql.js";
 import { dateToYYYYMMDDInt, yyyymmddIntToDate } from "$lib/util/date";
 import { getSqlJs } from "./sqlJsInstance";

@@ -12,17 +12,17 @@ body {
 
   font-family: sans-serif;
 
-  --toolbar-margin: 0.9375em;
+  --toolbar-margin: 0.9375rem;
   --icon-size: 1.8em;
-  --icon-button-size: 2.3em;
+  --icon-button-size: 2.3rem;
   --available-title-panel-width: calc(
     100vw - 2 * (var(--icon-button-size) - 2 * var(--toolbar-margin))
   );
-  --title-panel-width: min(var(--available-title-panel-width), 20em);
+  --title-panel-width: min(var(--available-title-panel-width), 20rem);
   --panel-background-color: #fffc;
-  --panel-border-radius: 0.4em;
-  --panel-padding-h: 1em;
-  --panel-padding-v: 0.5em;
+  --panel-border-radius: 0.4rem;
+  --panel-padding-h: 1rem;
+  --panel-padding-v: 0.5rem;
 
   --filtered-color: rgb(190, 40, 40);
   --accent-color: #ffd580;
@@ -49,7 +49,7 @@ body.touch-device {
 
 .link-button {
   background: none;
-  font-size: 1em;
+  font-size: 1rem;
   border: none;
   padding: 0;
   cursor: pointer;

@@ -1,11 +1,10 @@
 <script lang="ts">
-  import { attributions } from './attributions';
-  import { getPageStateFromContext } from './store/PageState.svelte';
+  import { attributions } from "./attributions";
+  import { getPageStateFromContext } from "./model/PageState.svelte";
 
   const { className } = $props();
 
   const pageState = getPageStateFromContext();
-
 </script>
 
 <div class={`content ${className}`}>
@@ -14,7 +13,9 @@
     {#each Object.values(attributions) as attribution}
       <div class="attribution">
         <div class="description">{attribution.description}</div>
-        <a href={attribution.resourceLink} target="_blank">{attribution.resourceName}</a>
+        <a href={attribution.resourceLink} target="_blank"
+          >{attribution.resourceName}</a
+        >
       </div>
     {/each}
   </div>
@@ -36,7 +37,7 @@
   .attribution {
     color: #555; /* Darker gray */
     text-align: start;
-    padding-bottom: 1em;
+    padding-bottom: 0.8rem;
     break-inside: avoid;
   }
   .attribution .description {
@@ -46,16 +47,16 @@
     display: block;
     color: #337ab7;
     text-decoration: none;
-    margin-top: 0.3em;
+    margin-top: 0.1rem;
   }
   .attribution a:hover {
     text-decoration: underline;
   }
   .last-updated {
     text-align: center;
-    font-size: 0.8em;
+    font-size: 0.8rem;
     color: #555;
-    margin-top: 1em;
+    margin-top: 1rem;
     margin-bottom: 0;
   }
 </style>

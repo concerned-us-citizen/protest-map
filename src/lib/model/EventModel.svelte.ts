@@ -10,7 +10,7 @@ import { formatDateTime } from "$lib/util/date";
 import { ClientEventDb } from "./ClientEventDb";
 import { booleanPointInPolygon, point } from "@turf/turf";
 import type { RegionModel } from "./RegionModel";
-import type { EventFilterOptions } from "./FilteredEventModel.svelte";
+import type { EventFilterOptions } from "./FilterModel.svelte";
 
 export class EventModel {
   private db: Nullable<ClientEventDb> = $state(null);

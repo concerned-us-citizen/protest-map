@@ -1,6 +1,7 @@
 <script lang="ts">
   import HistogramSlider from "./HistogramSlider.svelte";
-  import { getPageStateFromContext } from "./store/PageState.svelte";
+  import { getPageStateFromContext } from "./model/PageState.svelte";
+  import { getShortcutPrefix } from "./util/os";
 
   const pageState = getPageStateFromContext();
 
@@ -71,6 +72,7 @@
     ontouchstart={() => startDateRepeat("prev")}
     ontouchend={stopDateRepeat}
     ontouchcancel={stopDateRepeat}
+    title={`Show Previous Date (${getShortcutPrefix()}+Left Arrow)`}
     aria-label="Previous Date">‹</button
   >
   <HistogramSlider
@@ -93,6 +95,7 @@
     ontouchstart={() => startDateRepeat("next")}
     ontouchend={stopDateRepeat}
     ontouchcancel={stopDateRepeat}
+    title={`Show Next Date (${getShortcutPrefix()}+Right Arrow)`}
     aria-label="Next Date">›</button
   >
 </div>

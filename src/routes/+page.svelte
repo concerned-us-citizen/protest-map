@@ -2,8 +2,8 @@
   import {
     createPageStateInContext,
     PageState,
-  } from "$lib/store/PageState.svelte";
-  import { deviceInfo } from "$lib/store/DeviceInfo.svelte.js";
+  } from "$lib/model/PageState.svelte";
+  import { deviceInfo } from "$lib/model/DeviceInfo.svelte.js";
   import ProtestMapTour from "$lib/ProtestMapTour.svelte";
   import EventInfoPanel from "$lib/EventInfoPanel.svelte";
   import EventNamePanel from "$lib/EventFilterPanel.svelte";
@@ -19,7 +19,7 @@
   import LoadingSpinner from "$lib/LoadingSpinner.svelte";
   import { page } from "$app/stores";
   import FilterIndicator from "$lib/FilterIndicator.svelte";
-  import { prettifyNamedRegion } from "$lib/store/RegionModel";
+  import { prettifyNamedRegion } from "$lib/model/RegionModel";
   import {
     CirclePlay,
     CirclePause,
@@ -33,7 +33,7 @@
   import {
     getSearchParamsFromState,
     setStateFromWindowSearchParams,
-  } from "$lib/store/searchParamsToStateSync.svelte";
+  } from "$lib/model/searchParamsToStateSync.svelte";
   import { getShortcutPrefix } from "$lib/util/os";
   import ShareDialog from "$lib/ShareDialog.svelte";
 
@@ -300,6 +300,18 @@
       {/if}
       {#if !deviceInfo.isSmall || pageState.menuVisible}
         <IconButton
+          onClick={() => pageState.toggleNavigationVisible()}
+          label={`Find a city, state, or ZIP code (${getShortcutPrefix()}F)`}
+        >
+          <Search />
+        </IconButton>
+        <IconButton
+          onClick={() => pageState.toggleShareVisible()}
+          label={`Share a link to this page (${getShortcutPrefix()}S)`}
+        >
+          <Share />
+        </IconButton>
+        <IconButton
           onClick={() => pageState.toggleAutoplay()}
           label={pageState.autoplaying
             ? `Pause Animation (${getShortcutPrefix()}Space)`
@@ -316,20 +328,6 @@
           label={`Show Help (${getShortcutPrefix()}H)`}
         >
           <Info />
-        </IconButton>
-
-        <IconButton
-          onClick={() => pageState.toggleNavigationVisible()}
-          label={`Find a city, state, or ZIP code (${getShortcutPrefix()}F)`}
-        >
-          <Search />
-        </IconButton>
-
-        <IconButton
-          onClick={() => pageState.toggleShareVisible()}
-          label={`Share a link to this page (${getShortcutPrefix()}S)`}
-        >
-          <Share />
         </IconButton>
       {/if}
     </div>
@@ -358,7 +356,8 @@
       <div>{pageState.filter.formattedDateRangeStart}</div>
       <div class="attribution-link">
         <i
-          >Data provided by <a
+          >{deviceInfo.isSmall ? "Data:" : "Data provided by"}
+          <a
             href="https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748"
             target="_blank"
             title={pageState.eventModel.formattedUpdatedAt}
@@ -501,14 +500,14 @@
     display: flex;
     justify-content: space-between;
     font-size: 0.8em;
-    text-align: center;
+    text-align: baseline;
     color: #555;
     margin-bottom: 0.4em;
     margin-left: 1em;
     margin-right: 1em;
   }
   .attribution-link {
-    font-size: 0.8em;
+    font-size: 0.7rem;
     color: #555;
   }
   .attribution-link a:hover {

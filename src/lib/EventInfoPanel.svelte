@@ -3,7 +3,7 @@
   import { formatDateIndicatingFuture } from "./util/date";
   import { cubicInOut } from "svelte/easing";
   import { countAndLabel, joinWithAnd } from "./util/string";
-  import { getPageStateFromContext } from "./store/PageState.svelte";
+  import { getPageStateFromContext } from "./model/PageState.svelte";
 
   let { className = "" } = $props();
 

@@ -2,9 +2,9 @@
   import { onMount, onDestroy, mount } from "svelte";
   import maplibregl from "maplibre-gl";
   import EventPopup from "$lib/EventPopup.svelte";
-  import { getPageStateFromContext } from "$lib/store/PageState.svelte";
+  import { getPageStateFromContext } from "$lib/model/PageState.svelte";
   import type { EventMarkerInfoWithId, Nullable } from "../types";
-  import { deviceInfo } from "../store/DeviceInfo.svelte";
+  import { deviceInfo } from "../model/DeviceInfo.svelte";
   import "maplibre-gl/dist/maplibre-gl.css";
   import bbox from "@turf/bbox";
   import { featureCollection, point } from "@turf/helpers";
@@ -13,7 +13,7 @@
     createRegionPolygonLayer,
     updateRegionPolygonLayer,
   } from "./regionPolygonLayer.svelte";
-  import type { NamedRegion } from "$lib/store/RegionModel";
+  import type { NamedRegion } from "$lib/model/RegionModel";
   // import { addDebugRectangles } from "./addDebugRectangles";
 
   const iconForPct = (pct: number | null) =>

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getPageStateFromContext } from "./store/PageState.svelte";
-  
+  import { getPageStateFromContext } from "./model/PageState.svelte";
+
   const pageState = getPageStateFromContext();
 
   function refreshPage() {
@@ -22,13 +22,13 @@
     width: 100%;
     background-color: rgb(255, 140, 0);
     color: #000;
-    padding: .6rem;
+    padding: 0.6rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.2);
     font-family: sans-serif;
-    z-index: .6000;
+    z-index: 0.6;
     box-sizing: border-box;
     overflow-x: hidden;
   }

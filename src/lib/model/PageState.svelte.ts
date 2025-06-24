@@ -1,6 +1,6 @@
 import { setContext, getContext } from "svelte";
 import { EventModel } from "./EventModel.svelte";
-import { FilteredEventModel } from "./FilteredEventModel.svelte";
+import { FilterModel } from "./FilterModel.svelte";
 import { type SetTimeoutId } from "$lib/types";
 import { RegionModel } from "./RegionModel";
 import { RegionLabeler } from "./RegionLabeler.svelte";
@@ -15,7 +15,7 @@ const ZERO_EVENT_NAV_TIME = 50; // ms, for dates with no events
 
 export class PageState {
   readonly eventModel: EventModel;
-  readonly filter: FilteredEventModel;
+  readonly filter: FilterModel;
   readonly mapModel: MapModel;
   readonly regionModel: RegionModel;
   readonly regionLabeler: RegionLabeler;
@@ -127,7 +127,7 @@ export class PageState {
     this.eventModel = EventModel.create(this.regionModel); // Create EventModel immediately, it loads db in background
     this.mapModel = new MapModel();
     this.regionLabeler = new RegionLabeler(this.regionModel);
-    this.filter = new FilteredEventModel(this.eventModel, this.mapModel);
+    this.filter = new FilterModel(this.eventModel, this.mapModel);
     this.pollForUpdates();
 
     $effect(() => {

@@ -1,7 +1,7 @@
 <script lang="ts">
   import Autocomplete, { type AutocompleteItem } from "./Autocomplete.svelte";
   import Dialog from "./Dialog.svelte";
-  import { getPageStateFromContext } from "./store/PageState.svelte";
+  import { getPageStateFromContext } from "./model/PageState.svelte";
 
   const pageState = getPageStateFromContext();
   let recents = $state<AutocompleteItem[]>([]);

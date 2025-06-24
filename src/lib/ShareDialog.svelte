@@ -2,11 +2,11 @@
   import { Share2, ClipboardCheck, ClipboardCopy } from "@lucide/svelte";
   import Dialog from "./Dialog.svelte";
   import { SvelteSet } from "svelte/reactivity";
-  import { getPageStateFromContext } from "./store/PageState.svelte";
+  import { getPageStateFromContext } from "./model/PageState.svelte";
   import {
     getFilterParamOptions,
     getSearchParamsFromState,
-  } from "./store/searchParamsToStateSync.svelte";
+  } from "./model/searchParamsToStateSync.svelte";
   import { slide } from "svelte/transition";
   import FormattedText from "./FormattedText.svelte";
 

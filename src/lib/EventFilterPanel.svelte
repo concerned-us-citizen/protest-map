@@ -1,7 +1,7 @@
 <script lang="ts">
   import { titleCase } from "title-case";
-  import { deviceInfo } from "./store/DeviceInfo.svelte";
-  import { getPageStateFromContext } from "./store/PageState.svelte";
+  import { deviceInfo } from "./model/DeviceInfo.svelte";
+  import { getPageStateFromContext } from "./model/PageState.svelte";
   import { countAndLabel } from "./util/string";
 
   // svelte-ignore custom_element_props_identifier

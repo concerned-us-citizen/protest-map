@@ -1,6 +1,6 @@
 <script lang="ts">
   import { markerColor } from "$lib/colors";
-  import { getPageStateFromContext } from "./store/PageState.svelte";
+  import { getPageStateFromContext } from "./model/PageState.svelte";
   import { circledMarkerSvg } from "$lib/icons";
   import type { VoterLean } from "./types";
 

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { slide } from "svelte/transition";
-  import { getPageStateFromContext } from "./store/PageState.svelte";
+  import { getPageStateFromContext } from "./model/PageState.svelte";
   import FormattedText from "./FormattedText.svelte";
 
   const pageState = getPageStateFromContext();
@@ -33,7 +33,7 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    font-size: 0.8em;
+    font-size: 0.9rem;
     gap: 0.3em;
     --highlight-border-h: 0.3em;
     border-radius: var(--panel-border-radius);

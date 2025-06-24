@@ -1,7 +1,7 @@
 <script lang="ts">
   import Tour from "./Tour.svelte";
   import CreditsPanel from "./CreditsPanel.svelte";
-  import { deviceInfo } from "./store/DeviceInfo.svelte";
+  import { deviceInfo } from "./model/DeviceInfo.svelte";
   import { titleCase } from "title-case";
   import { markerColor } from "./colors";
   let { onClose, className = "" } = $props();

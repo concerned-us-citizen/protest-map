@@ -26,7 +26,7 @@ interface DateAndEventCount {
   eventCount: number;
 }
 
-export class FilteredEventModel {
+export class FilterModel {
   readonly eventModel: EventModel;
   readonly mapModel: MapModel;
 

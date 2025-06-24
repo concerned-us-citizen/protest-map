@@ -1,6 +1,6 @@
 import type { Map as MapLibreMap } from "maplibre-gl";
 import type { MultiPolygon, Polygon } from "geojson";
-import type { NamedRegion } from "$lib/store/RegionModel";
+import type { NamedRegion } from "$lib/model/RegionModel";
 
 const REGION_SOURCE_ID = "region-polygon";
 

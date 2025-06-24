@@ -9,6 +9,7 @@
   } from "./model/searchParamsToStateSync.svelte";
   import { slide } from "svelte/transition";
   import FormattedText from "./FormattedText.svelte";
+  import { safeCopyToClipboard } from "./util/os";
 
   const pageState = getPageStateFromContext();
 
@@ -57,7 +58,7 @@
 
   async function copyToClipboard(): Promise<void> {
     const url = buildUrl();
-    await navigator.clipboard.writeText(url);
+    safeCopyToClipboard(url);
     copied = true;
     setTimeout(() => (copied = false), 2000);
   }
@@ -164,7 +165,9 @@
   </form>
 
   {#if copied}
-    <p class="copied"><ClipboardCheck size={14} /> Copied to clipboard!</p>
+    <p class="copied" transition:slide>
+      <ClipboardCheck size={14} /> Copied to clipboard!
+    </p>
   {/if}
 </Dialog>
 
@@ -252,7 +255,9 @@
     background: #15803d;
   }
   .copied {
+    align-self: center;
     margin-top: 0.75rem;
+    margin-bottom: 0;
     display: flex;
     align-items: center;
     gap: 0.25rem;

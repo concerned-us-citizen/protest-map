@@ -23,7 +23,10 @@ export class PageState {
   filterVisible = $state(false);
   helpVisible = $state(false);
   navigationVisible = $state(false);
+  shareVisible = $state(false);
+  menuVisible = $state(false);
   updateAvailable = $state(false);
+  debug = $state(false);
 
   eventInfoVisible = $state(false);
   #hideEventInfoTimer: SetTimeoutId = undefined;
@@ -41,6 +44,14 @@ export class PageState {
 
   toggleNavigationVisible() {
     this.navigationVisible = !this.navigationVisible;
+  }
+
+  toggleShareVisible() {
+    this.shareVisible = !this.shareVisible;
+  }
+
+  toggleMenuVisible() {
+    this.menuVisible = !this.menuVisible;
   }
 
   toggleAutoplay() {

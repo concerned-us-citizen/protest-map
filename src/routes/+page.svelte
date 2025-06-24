@@ -20,13 +20,22 @@
   import { page } from "$app/stores";
   import FilterIndicator from "$lib/FilterIndicator.svelte";
   import { prettifyNamedRegion } from "$lib/store/RegionModel";
-  import { CirclePlay, CirclePause, Info, Undo2, Search } from "@lucide/svelte";
+  import {
+    CirclePlay,
+    CirclePause,
+    Info,
+    Undo2,
+    Search,
+    Share,
+    Menu,
+  } from "@lucide/svelte";
   import RegionNavigationDialog from "$lib/RegionNavigationDialog.svelte";
   import {
     getSearchParamsFromState,
     setStateFromWindowSearchParams,
   } from "$lib/store/searchParamsToStateSync.svelte";
   import { getShortcutPrefix } from "$lib/util/os";
+  import ShareDialog from "$lib/ShareDialog.svelte";
 
   const pageState = PageState.create();
   createPageStateInContext(pageState);
@@ -122,6 +131,13 @@
       return;
     }
 
+    // Toggle Menu
+    if (code === "KeyM") {
+      if (deviceInfo.isSmall) {
+        pageState.toggleMenuVisible();
+      }
+    }
+
     // ArrowLeft
     if (code === "ArrowLeft") {
       pageState.filter.selectPreviousDate();
@@ -191,11 +207,11 @@
   }
 
   const mapTitle = $derived(
-    `Map of ${
+    `${
       pageState.filter.namedRegion
         ? prettifyNamedRegion(pageState.filter.namedRegion)
         : "US"
-    } Protests`
+    } Protests Map`
   );
 </script>
 
@@ -213,7 +229,12 @@
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <!-- svelte-ignore a11y_click_events_have_key_events -->
-<div onclick={() => (pageState.filterVisible = false)}>
+<div
+  onclick={() => {
+    pageState.filterVisible = false;
+    pageState.menuVisible = false;
+  }}
+>
   <EventMap />
 </div>
 
@@ -269,31 +290,48 @@
 
   <div class="toolbar-container hide-on-popup">
     <div class="toolbar">
-      <IconButton
-        onClick={() => pageState.toggleAutoplay()}
-        label={pageState.autoplaying
-          ? `Pause Animation (${getShortcutPrefix()}Space)`
-          : `Play Animation (${getShortcutPrefix()}Space)`}
-      >
-        {#if pageState.autoplaying}
-          <CirclePause />
-        {:else}
-          <CirclePlay />
-        {/if}
-      </IconButton>
-      <IconButton
-        onClick={() => pageState.toggleHelpVisible()}
-        label={`Show Help (${getShortcutPrefix()}H)`}
-      >
-        <Info />
-      </IconButton>
+      {#if deviceInfo.isSmall}
+        <IconButton
+          onClick={() => pageState.toggleMenuVisible()}
+          label={`Show Toolbar (${getShortcutPrefix()}M)`}
+        >
+          <Menu />
+        </IconButton>
+      {/if}
+      {#if !deviceInfo.isSmall || pageState.menuVisible}
+        <IconButton
+          onClick={() => pageState.toggleAutoplay()}
+          label={pageState.autoplaying
+            ? `Pause Animation (${getShortcutPrefix()}Space)`
+            : `Play Animation (${getShortcutPrefix()}Space)`}
+        >
+          {#if pageState.autoplaying}
+            <CirclePause />
+          {:else}
+            <CirclePlay />
+          {/if}
+        </IconButton>
+        <IconButton
+          onClick={() => pageState.toggleHelpVisible()}
+          label={`Show Help (${getShortcutPrefix()}H)`}
+        >
+          <Info />
+        </IconButton>
 
-      <IconButton
-        onClick={() => pageState.toggleNavigationVisible()}
-        label={`Find a city, state, or ZIP code (${getShortcutPrefix()}F)`}
-      >
-        <Search />
-      </IconButton>
+        <IconButton
+          onClick={() => pageState.toggleNavigationVisible()}
+          label={`Find a city, state, or ZIP code (${getShortcutPrefix()}F)`}
+        >
+          <Search />
+        </IconButton>
+
+        <IconButton
+          onClick={() => pageState.toggleShareVisible()}
+          label={`Share a link to this page (${getShortcutPrefix()}S)`}
+        >
+          <Share />
+        </IconButton>
+      {/if}
     </div>
 
     {#if pageState.mapModel.canPopBounds}
@@ -346,6 +384,10 @@
 
 {#if pageState.navigationVisible}
   <RegionNavigationDialog />
+{/if}
+
+{#if pageState.shareVisible}
+  <ShareDialog />
 {/if}
 
 <UpgradeBanner />

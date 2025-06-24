@@ -65,3 +65,44 @@ export function quote(s: string): string {
 export function singleQuote(s: string): string {
   return `'${s}'`;
 }
+
+const PLACEHOLDER_DOUBLE_ASTERISK = "__LITERAL_DOUBLE_ASTERISK__";
+const PLACEHOLDER_SINGLE_ASTERISK = "__LITERAL_SINGLE_ASTERISK__";
+
+export function encodeMarkdownChars(str: string): string {
+  str = str.replace(/\*\*/g, PLACEHOLDER_DOUBLE_ASTERISK);
+  str = str.replace(/\*/g, PLACEHOLDER_SINGLE_ASTERISK);
+  return str;
+}
+
+export function decodeMarkdownChars(str: string): string {
+  str = str.replace(new RegExp(PLACEHOLDER_DOUBLE_ASTERISK, "g"), "&#42;&#42;");
+  str = str.replace(new RegExp(PLACEHOLDER_SINGLE_ASTERISK, "g"), "&#42;");
+
+  return str;
+}
+
+export function mdItalics(s: string): string {
+  return `*${encodeMarkdownChars(s)}*`;
+}
+export function mdBold(s: string): string {
+  return `**${encodeMarkdownChars(s)}**`;
+}
+
+export function joinWithAnd(items: string[]): string {
+  if (!items || items.length === 0) {
+    return "";
+  }
+  if (items.length === 1) {
+    return items[0];
+  }
+  if (items.length === 2) {
+    return `${items[0]} and ${items[1]}`;
+  }
+
+  // For 3 or more items, apply the Oxford comma rule
+  const lastItem = items[items.length - 1];
+  const allButLast = items.slice(0, items.length - 1);
+
+  return `${allButLast.join(", ")}, and ${lastItem}`;
+}

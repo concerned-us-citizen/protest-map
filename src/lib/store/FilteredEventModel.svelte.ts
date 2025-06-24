@@ -6,7 +6,7 @@ import {
   type VoterLean,
 } from "$lib/types";
 import { formatDate, isFutureDate } from "$lib/util/date";
-import { pluralize, quote } from "$lib/util/string";
+import { joinWithAnd, mdBold, pluralize } from "$lib/util/string";
 import { titleCase } from "title-case";
 import type { MapModel } from "./MapModel.svelte";
 import { prettifyNamedRegion, type NamedRegion } from "./RegionModel";
@@ -217,7 +217,7 @@ export class FilteredEventModel {
     if (namedRegion) {
       const regionDisplayName = prettifyNamedRegion(namedRegion);
       descriptions.push({
-        title: `In ${regionDisplayName}`,
+        title: `In ${mdBold(regionDisplayName)}`,
         clearFunc: () => this.clearNamedRegionFilter(),
       });
     }
@@ -226,7 +226,7 @@ export class FilteredEventModel {
     if (eventCount > 0) {
       const title =
         eventCount < 5
-          ? `From ${pluralize(this.selectedEventNames, "event")} ${this.selectedEventNames.map(quote).join(", ")}`
+          ? `From ${pluralize(this.selectedEventNames, "event")} ${joinWithAnd(this.selectedEventNames.map(mdBold))}`
           : `From ${eventCount} events`;
       descriptions.push({
         title,
@@ -236,7 +236,7 @@ export class FilteredEventModel {
 
     if (this.selectedVoterLeans.length > 0) {
       const voterLeanNames = this.selectedVoterLeans
-        .map((n) => quote(titleCase(n)))
+        .map((n) => mdBold(titleCase(n)))
         .join(" or ");
       descriptions.push({
         title: `In precincts with voter lean ${voterLeanNames}`,

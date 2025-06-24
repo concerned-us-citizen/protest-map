@@ -1,5 +1,6 @@
 <script lang="ts">
   import Autocomplete, { type AutocompleteItem } from "./Autocomplete.svelte";
+  import Dialog from "./Dialog.svelte";
   import { getPageStateFromContext } from "./store/PageState.svelte";
 
   const pageState = getPageStateFromContext();
@@ -51,114 +52,45 @@
   });
 </script>
 
-<div
-  class="panel-overlay"
-  role="presentation"
-  aria-label="Close dialog"
-  onclick={(e) => {
-    if (e.target === e.currentTarget) dismiss();
-  }}
->
-  <div
-    class="panel-dialog"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="panel-heading-id"
-    tabindex="-1"
-    onkeydown={(e) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        pageState.navigationVisible = false;
-      }
-    }}
-  >
-    <div class="panel-header">
-      <h2 id="panel-heading-id" class="panel-heading">Jump to Region</h2>
-      <button class="close-button" type="button" onclick={dismiss}>X</button>
-    </div>
+<Dialog {dismiss} title="Jump to Region">
+  <Autocomplete
+    {fetchSuggestions}
+    {addRecent}
+    placeholder="Enter a state, city or ZIP…"
+    maxVisible={20}
+    onSelect={picked}
+    onDismiss={dismiss}
+  />
 
-    <Autocomplete
-      {fetchSuggestions}
-      {addRecent}
-      placeholder="Enter a state, city or ZIP…"
-      maxVisible={20}
-      onSelect={picked}
-      onDismiss={dismiss}
-    />
-
-    {#if recents.length}
-      <div class="recents-block">
-        <div class="recents-header">
-          <h4>Recently viewed</h4>
-          <button
-            class="clear-button"
-            type="button"
-            aria-label="Clear recently viewed items"
-            onclick={clearRecents}>Clear</button
-          >
-        </div>
-        <ul class="recents-list">
-          {#each recents as r ("r-" + r.id)}
-            <li>
-              <button
-                type="button"
-                class="recents-item"
-                onclick={() => picked(r)}
-              >
-                {r.name}
-              </button>
-            </li>
-          {/each}
-        </ul>
+  {#if recents.length}
+    <div class="recents-block">
+      <div class="recents-header">
+        <h4>Recently viewed</h4>
+        <button
+          class="clear-button"
+          type="button"
+          aria-label="Clear recently viewed items"
+          onclick={clearRecents}>Clear</button
+        >
       </div>
-    {/if}
-  </div>
-</div>
+      <ul class="recents-list">
+        {#each recents as r ("r-" + r.id)}
+          <li>
+            <button
+              type="button"
+              class="recents-item"
+              onclick={() => picked(r)}
+            >
+              {r.name}
+            </button>
+          </li>
+        {/each}
+      </ul>
+    </div>
+  {/if}
+</Dialog>
 
 <style>
-  .panel-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.3);
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 1rem;
-    z-index: 50;
-  }
-  .panel-dialog {
-    width: 100%;
-    max-width: 26rem;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding-left: 1rem;
-    padding-right: 1rem;
-    padding-bottom: 0.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-  }
-  .panel-header {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-  }
-  .panel-heading {
-    width: 100%;
-    font-size: 1.125rem;
-    font-weight: 600;
-    margin-bottom: 0.3em;
-    justify-content: space-between;
-  }
-
-  .close-button {
-    font-size: 0.75rem;
-    color: #2563eb;
-    background: none;
-    border: none;
-    cursor: pointer;
-  }
   .recents-block {
     padding-top: 0.5rem;
   }
@@ -180,6 +112,7 @@
     background: none;
     border: none;
     cursor: pointer;
+    margin-right: -5px;
   }
   .clear-button:hover {
     text-decoration: underline;

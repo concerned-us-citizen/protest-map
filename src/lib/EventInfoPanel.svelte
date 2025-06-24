@@ -2,7 +2,7 @@
   import { fade } from "svelte/transition";
   import { formatDateIndicatingFuture } from "./util/date";
   import { cubicInOut } from "svelte/easing";
-  import { countAndLabel } from "./util/string";
+  import { countAndLabel, joinWithAnd } from "./util/string";
   import { getPageStateFromContext } from "./store/PageState.svelte";
 
   let { className = "" } = $props();
@@ -32,9 +32,11 @@
       </strong>
     </div>
     <div class="event-names-summary-text">
-      {pageState.filter.filteredEventNamesWithLocationCounts
-        .map((nc) => nc.name)
-        .join(", ")}
+      {joinWithAnd(
+        pageState.filter.filteredEventNamesWithLocationCounts.map(
+          (nc) => nc.name
+        )
+      )}
     </div>
   {:else}
     <div class="no-events-message">No named events</div>

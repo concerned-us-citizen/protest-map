@@ -1,6 +1,7 @@
 <script lang="ts">
   import { slide } from "svelte/transition";
   import { getPageStateFromContext } from "./store/PageState.svelte";
+  import FormattedText from "./FormattedText.svelte";
 
   const pageState = getPageStateFromContext();
 </script>
@@ -12,7 +13,7 @@
       <li class="filter" transition:slide>
         <span class="bullet">•</span>
         <div class="text-block">
-          <div class="title">{filter.title}</div>
+          <div class="title"><FormattedText text={filter.title} /></div>
         </div>
         <button
           class="link-button"
@@ -51,7 +52,7 @@
 
   .filter {
     display: flex;
-    align-items: stretch; /* ensure full height for centering */
+    align-items: stretch;
     gap: 0.5em;
     margin-bottom: 0.5em;
   }
@@ -59,8 +60,8 @@
   .bullet {
     flex: 0 0 auto;
     font-size: 1em;
-    line-height: 1; /* match to text */
-    padding-top: 0.15em; /* tweak until visually centered */
+    line-height: 1;
+    padding-top: 0.15em;
   }
 
   .text-block {
@@ -71,7 +72,7 @@
 
   .link-button {
     flex: 0 0 auto;
-    align-self: center; /* vertically center with wrapped block */
+    align-self: center;
     font-size: 0.9em;
     background: none;
     border: none;
@@ -79,7 +80,7 @@
   }
 
   .header {
-    font-weight: bold;
+    font-weight: normal;
     margin-bottom: 0.3em;
   }
 

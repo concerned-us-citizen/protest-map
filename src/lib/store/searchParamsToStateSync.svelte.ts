@@ -1,27 +1,25 @@
 import { VoterLeanValues } from "$lib/types";
 import { deserializeDate, serializeDate } from "$lib/util/date";
-import { quote, toTitleCase } from "$lib/util/string";
+import { mdItalics, pluralize, toTitleCase } from "$lib/util/string";
 import { PageState } from "./PageState.svelte";
 import { prettifyNamedRegion, type NamedRegion } from "./RegionModel";
+import { joinWithAnd } from "$lib/util/string";
 
-export interface ParamOption<T = string | number | boolean | Date> {
-  formTitle: string | ((_pageState: PageState) => string);
-  paramName: string | ((_pageState: PageState) => string);
+export interface ParamOption {
+  formTitle: (_pageState: PageState) => string;
+  paramName: (_pageState: PageState) => string;
   type: "date" | "string" | "boolean" | "number";
-  /**
-   * Return the value to include in the URL for this option.
-   * Return undefined (or null/empty) to omit this option altogether.
-   */
-  getValue: (_pageState: PageState) => T | undefined | null | "";
+  getValue: (_pageState: PageState) => unknown | undefined;
   setValue: (_params: URLSearchParams, _pageState: PageState) => Promise<void>;
+  isFilterProp: boolean;
 }
 
 export const shareOptions: ParamOption[] = [
   {
     formTitle: (pageState) => {
-      return `Restrict to Date ${pageState.filter.formattedCurrentDate}`;
+      return `on ${mdItalics(pageState.filter.formattedCurrentDate)}`;
     },
-    paramName: "date",
+    paramName: (_pageState) => "date",
     type: "date",
     getValue: (pageState) => pageState.filter.currentDate,
     setValue: async (params, pageState) => {
@@ -31,10 +29,11 @@ export const shareOptions: ParamOption[] = [
         pageState.filter.setCurrentDate(date);
       }
     },
+    isFilterProp: true,
   },
   {
     formTitle: (pageState) => {
-      return `Restrict to ${pageState.filter.namedRegion ? prettifyNamedRegion(pageState.filter.namedRegion) : "Unknown"}`;
+      return `in ${mdItalics(pageState.filter.namedRegion ? prettifyNamedRegion(pageState.filter.namedRegion) : "Unknown")}`;
     },
     paramName: (pageState) => {
       return pageState.filter.namedRegion
@@ -67,12 +66,13 @@ export const shareOptions: ParamOption[] = [
         }
       }
     },
+    isFilterProp: true,
   },
   {
     formTitle: (pageState) => {
-      return `Restrict to events ${pageState.filter.selectedEventNames.map(quote).join(", ")}`;
+      return `from ${pluralize(pageState.filter.selectedEventNames, "event")} ${joinWithAnd(pageState.filter.selectedEventNames.map(mdItalics))}`;
     },
-    paramName: "eventNames",
+    paramName: (_pageState) => "eventNames",
     type: "string",
     getValue: (pageState) => {
       return pageState.filter.selectedEventNames.length > 0
@@ -86,12 +86,13 @@ export const shareOptions: ParamOption[] = [
         pageState.filter.selectedEventNames = eventNameList;
       }
     },
+    isFilterProp: true,
   },
   {
     formTitle: (pageState) => {
-      return `Restrict to protests with voter leans ${pageState.filter.selectedVoterLeans.map(toTitleCase).map(quote).join(" and ")}`;
+      return `in precincts with voter lean ${joinWithAnd(pageState.filter.selectedVoterLeans.map(toTitleCase).map(mdItalics))}`;
     },
-    paramName: "voterleans",
+    paramName: (_pageState) => "voterleans",
     type: "string",
     getValue: (pageState) => {
       return pageState.filter.selectedVoterLeans.length > 0
@@ -107,10 +108,11 @@ export const shareOptions: ParamOption[] = [
         }
       }
     },
+    isFilterProp: true,
   },
   {
-    formTitle: "Animate Immediately",
-    paramName: "autoplay",
+    formTitle: (_pageState) => "Autoplay protests over time",
+    paramName: (_pageState) => "autoplay",
     type: "boolean",
     getValue: (pageState) => (pageState.autoplaying ? true : undefined),
     setValue: async (params, pageState) => {
@@ -119,6 +121,20 @@ export const shareOptions: ParamOption[] = [
         pageState.autoplaying = autoplay === "1";
       }
     },
+    isFilterProp: false,
+  },
+  {
+    formTitle: (_pageState) => "Debug",
+    paramName: (_pageState) => "debug",
+    type: "boolean",
+    getValue: (pageState) => (pageState.autoplaying ? true : undefined),
+    setValue: async (params, pageState) => {
+      const debug = params.get("debug");
+      if (debug) {
+        pageState.debug = debug === "1";
+      }
+    },
+    isFilterProp: false,
   },
 ];
 
@@ -151,9 +167,19 @@ export async function setStateFromWindowSearchParams(
   }
 }
 
-export function getSearchParamsFromState(pageState: PageState) {
+export function getSearchParamsFromState(
+  pageState: PageState,
+  specifiedParams?: string[],
+  includeAutoplay?: boolean
+) {
   const params = new URLSearchParams();
   for (const option of shareOptions) {
+    if (
+      specifiedParams &&
+      !specifiedParams.includes(option.paramName(pageState))
+    )
+      continue;
+
     const paramName = resolveWithPageState(option.paramName, pageState);
     const raw = option.getValue(pageState);
     if (raw) {
@@ -161,5 +187,26 @@ export function getSearchParamsFromState(pageState: PageState) {
       params.append(paramName, strValue);
     }
   }
+  // Total hack - generalize this for options that should be specified independently of current state
+  if (includeAutoplay) {
+    params.append("autoplay", "1");
+  }
   return params;
+}
+
+export type PresentableParamOption = {
+  title: string;
+  paramName: string;
+};
+
+export function getFilterParamOptions(
+  pageState: PageState
+): PresentableParamOption[] {
+  const filterOptions = shareOptions
+    .filter((option) => option.isFilterProp && option.getValue(pageState))
+    .map((option) => ({
+      title: option.formTitle(pageState),
+      paramName: option.paramName(pageState),
+    }));
+  return filterOptions;
 }

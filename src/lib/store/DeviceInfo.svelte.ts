@@ -16,6 +16,7 @@ export class DeviceInfo {
   readonly isTall = $derived(this.#height >= DeviceInfo.tallBreakpoint);
   readonly isShort = $derived(this.height <= DeviceInfo.shortBreakpoint);
   readonly isTouchDevice = $derived(this.#isTouchDevice);
+  readonly isSmall = $derived(this.isShort || !this.isWide);
 
   readonly tapOrClick = $derived(this.#isTouchDevice ? "tap" : "click");
   readonly tappingOrClicking = $derived(

@@ -28,6 +28,7 @@
     Search,
     Share,
     Menu,
+    ChevronRight,
   } from "@lucide/svelte";
   import RegionNavigationDialog from "$lib/RegionNavigationDialog.svelte";
   import {
@@ -211,7 +212,7 @@
       pageState.filter.namedRegion
         ? prettifyNamedRegion(pageState.filter.namedRegion)
         : "US"
-    } Protests Map`
+    } Protests`
   );
 </script>
 
@@ -252,9 +253,14 @@
         {#if deviceInfo.isShort}
           protests
         {/if}
-        <div class="location-count">
+        <div
+          class={{
+            "location-count": true,
+            "is-filtering-indicator": pageState.filter.isFiltering,
+          }}
+        >
           <button
-            class={`link-button`}
+            class={`pill-button`}
             data-suppress-click-outside
             title={`${pageState.filterVisible ? "Hide" : "Show"} Filter (${getShortcutPrefix()}F)`}
             onclick={() => pageState.toggleFilterVisible()}
@@ -262,28 +268,32 @@
             {countAndLabel(
               pageState.filter.currentDateFilteredEvents,
               "location"
-            )} >
+            )}
+            {pageState.filter.isFiltering ? "(Filtered)" : ""}
+            <ChevronRight size={16} />
           </button>
         </div>
       </div>
     </div>
 
-    {#if pageState.filter.isFiltering}
-      <div transition:slide>
-        <FilterIndicator />
-      </div>
-    {/if}
-
     {#if !deviceInfo.isShort && pageState.filterVisible}
-      <div class="precinct-stats highlight-adjusted-panel" transition:slide>
-        <VoterLeanPanel />
-      </div>
+      <div class="filter-container" transition:slide>
+        <div class="precinct-stats highlight-adjusted-panel">
+          <VoterLeanPanel />
+        </div>
 
-      <div transition:slide>
-        <EventNamePanel
-          className="filter panel"
-          onClose={() => (pageState.filterVisible = false)}
-        />
+        <div>
+          <EventNamePanel
+            className="filter panel"
+            onClose={() => (pageState.filterVisible = false)}
+          />
+        </div>
+
+        {#if pageState.filter.isFiltering}
+          <div transition:slide>
+            <FilterIndicator />
+          </div>
+        {/if}
       </div>
     {/if}
   </div>
@@ -472,8 +482,25 @@
     }
   }
 
-  .is-filtering-indicator {
-    color: var(--filtered-color);
+  .location-count {
+    padding-right: 0; /* chevron icon provides 5 to the right */
+    margin-right: -5px;
+  }
+
+  .location-count button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .is-filtering-indicator button {
+    background: var(--filtered-color);
+  }
+
+  .filter-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
   }
 
   .title {
@@ -509,6 +536,9 @@
   .attribution-link {
     font-size: 0.7rem;
     color: #555;
+  }
+  .attribution-link a {
+    text-decoration: none !important;
   }
   .attribution-link a:hover {
     text-decoration: underline;

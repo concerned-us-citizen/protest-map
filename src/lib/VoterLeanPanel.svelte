@@ -53,7 +53,7 @@
   <h4 class="heading">2024 Lean</h4>
   {#each voterLeans as { voterLean, label }}
     <button
-      class="link-button"
+      class="pill-button"
       onclick={() => pageState.filter.toggleVoterLean(voterLean)}
     >
       <div
@@ -107,10 +107,6 @@
     margin: -3px;
     padding: 3px;
     border-radius: 5px;
-  }
-
-  .stat:hover {
-    background: gainsboro;
   }
 
   :global(.icon *) {

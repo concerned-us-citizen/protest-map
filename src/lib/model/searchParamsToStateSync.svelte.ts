@@ -17,7 +17,7 @@ export interface ParamOption {
 export const shareOptions: ParamOption[] = [
   {
     formTitle: (pageState) => {
-      return `on ${mdItalics(pageState.filter.formattedCurrentDate)}`;
+      return `from ${mdItalics(pageState.filter.formattedCurrentDate)}`;
     },
     paramName: (_pageState) => "date",
     type: "date",

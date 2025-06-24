@@ -120,6 +120,7 @@
     padding: 0.5rem;
     border: 1px solid #ccc;
     border-radius: 4px;
+    font-size: 0.9rem;
   }
   .option-list {
     position: absolute;

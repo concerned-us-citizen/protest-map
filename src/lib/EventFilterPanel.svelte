@@ -21,9 +21,9 @@
         "Protest Event"
       )}
     </h4>
-    <div class="events-section-description">
+    <!-- <div class="events-section-description">
       ({titleCase(deviceInfo.tapOrClick)} to filter by one or more)
-    </div>
+    </div> -->
   {/if}
   <div class="event-list-scrollable-area" role="list">
     {#if eventNamesWithLocationCounts.length > 0}
@@ -94,7 +94,7 @@
     align-items: stretch;
     overflow-y: auto;
     /* TODO this should take title and slider heights into account */
-    max-height: 30vh;
+    max-height: 20vh;
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
@@ -117,7 +117,6 @@
     display: flex;
     justify-content: space-between;
     align-items: start;
-    font-size: 0.85em;
     border-radius: 5px;
     margin-top: 1px;
     padding: 0;

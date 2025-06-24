@@ -43,6 +43,7 @@
     padding: 0;
     box-shadow: none;
     cursor: pointer;
+    font-size: 0.7rem;
   }
   /* :global here to avoid css-unused-selector warning, since the svg tag is embedded in the icon string */
   .icon-button :global(svg) {

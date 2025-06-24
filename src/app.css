@@ -24,11 +24,15 @@ body {
   --panel-padding-h: 1rem;
   --panel-padding-v: 0.5rem;
 
-  --filtered-color: rgb(190, 40, 40);
+  --filtered-color: #ffd580;
   --accent-color: #ffd580;
   --selected-color: #e8f0fe;
   --hover-color: #f0f0f0;
   --hover-selected-color: #dceafe;
+
+  --pill-button-background: #e5e7eb;
+  --pill-button-hover-background: #d1d5db;
+  --pill-button-color: #111827;
 
   /* Suppress default OS long press actions on mobile */
   user-select: none;
@@ -45,6 +49,19 @@ body.touch-device {
   );
   --hover-color: transparent;
   --hover-selected-color: var(--selected-color);
+}
+
+.pill-button {
+  border: none;
+  cursor: pointer;
+  background: var(--pill-button-background);
+  color: var(--pill-button-color);
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.pill-button:hover {
+  background: var(--pill-button-hover-background);
 }
 
 .link-button {
@@ -64,4 +81,8 @@ body.touch-device {
 .maplibregl-ctrl-bottom-right {
   margin: var(--toolbar-margin);
   z-index: 999;
+}
+
+button {
+  font-size: 0.9rem;
 }

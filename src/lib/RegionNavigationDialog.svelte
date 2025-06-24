@@ -98,7 +98,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     color: #666;
   }
   .recents-header h4 {
@@ -107,7 +107,7 @@
     font-weight: normal;
   }
   .clear-button {
-    font-size: 0.75rem;
+    font-size: 0.9rem;
     color: #2563eb;
     background: none;
     border: none;

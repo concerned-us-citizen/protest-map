@@ -23,7 +23,7 @@
 
   let autoplay = $state(false);
 
-  let selectedUrlType: "default" | "custom" = $state("custom");
+  let selectedUrlType: "default" | "custom" = $state("default");
 
   let copied = $state(false);
 

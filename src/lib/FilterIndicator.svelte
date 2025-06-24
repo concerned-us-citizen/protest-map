@@ -41,7 +41,7 @@
       calc(var(--panel-padding-h) - var(--highlight-border-h));
     overflow: hidden;
 
-    background-color: var(--accent-color);
+    background-color: var(--filtered-color);
   }
 
   ul {

@@ -242,7 +242,8 @@
   }
 
   .dialog {
-    top: 14vh;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%) !important;
   }
 
   .spinner {

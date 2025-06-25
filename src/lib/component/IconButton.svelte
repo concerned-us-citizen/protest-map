@@ -39,7 +39,7 @@
     margin: 0;
     border: none;
     border-radius: 0;
-    --panel-background-color: #fff;
+    background-color: #fff;
     padding: 0;
     box-shadow: none;
     cursor: pointer;

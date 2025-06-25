@@ -1,8 +1,15 @@
-<script>
-  export let size = 24;
+<script lang="ts">
+  import type { ClassValue } from "svelte/elements";
+
+  interface LoadingSpinnerOptions {
+    size?: number;
+    class?: ClassValue;
+  }
+
+  const { size = 24, class: optionsClass }: LoadingSpinnerOptions = $props();
 </script>
 
-<div class="loader-wrapper">
+<div class={["loader-wrapper", optionsClass]}>
   <div class="spinner" style="width: {size}px; height: {size}px;"></div>
   <div class="loading-text">Loading Protests...</div>
 </div>
@@ -13,7 +20,6 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh; /* full viewport height */
     text-align: center;
   }
 
@@ -31,6 +37,8 @@
   }
 
   @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+      transform: rotate(360deg);
+    }
   }
 </style>

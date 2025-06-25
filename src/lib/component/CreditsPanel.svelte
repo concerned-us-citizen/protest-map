@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { attributions } from "./attributions";
-  import { getPageStateFromContext } from "./model/PageState.svelte";
+  import { attributions } from "../attributions";
+  import { getPageStateFromContext } from "../model/PageState.svelte";
 
   const { className } = $props();
 
@@ -10,7 +10,7 @@
 <div class={`content ${className}`}>
   <p>Many thanks to the valuable efforts of these contributors:</p>
   <div class="attribution-container">
-    {#each Object.values(attributions) as attribution}
+    {#each Object.values(attributions) as attribution, _i (attribution.resourceName)}
       <div class="attribution">
         <div class="description">{attribution.description}</div>
         <a href={attribution.resourceLink} target="_blank"

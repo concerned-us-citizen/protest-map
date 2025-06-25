@@ -1,4 +1,4 @@
-import type { RegionModel } from "../model/RegionModel";
+import type { RegionModel } from "../../model/RegionModel";
 import type {
   Feature,
   FeatureCollection,

@@ -1,0 +1,19 @@
+{
+  "PageState component skeleton": {
+    "prefix": "psc",
+    "scope": "svelte",
+    "description": "Svelte component with PageState context boilerplate",
+    "body": [
+      "<script lang=\"ts\">",
+      "  import { getPageStateFromContext } from \"\\$lib/model/PageState.svelte\";",
+      "",
+      "  const pageState = getPageStateFromContext();",
+      "",
+      "  $0",
+      "</script>",
+      "",
+      "<style>",
+      "</style>",
+    ],
+  },
+}

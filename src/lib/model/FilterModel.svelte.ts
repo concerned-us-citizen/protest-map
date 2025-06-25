@@ -207,7 +207,7 @@ export class FilterModel {
 
   isFiltering = $derived(
     this.selectedEventNames.length > 0 ||
-      this.namedRegion ||
+      this.namedRegion !== undefined ||
       this.selectedVoterLeans.length > 0
   );
 

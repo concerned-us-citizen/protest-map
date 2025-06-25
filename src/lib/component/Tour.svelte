@@ -1,11 +1,9 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
   import { quintOut } from "svelte/easing";
   import { crossfade } from "svelte/transition";
-  import { markerSvg } from "./icons";
-  import InlineSvg from "./InlineSvg.svelte";
-
-  const dispatch = createEventDispatcher();
+  import { markerSvg } from "$lib/icons";
+  import InlineSvg from "$lib/InlineSvg.svelte";
+  import type { ClassValue } from "svelte/elements";
 
   type Step = {
     title: string;
@@ -16,12 +14,13 @@
     props?: Record<string, any>;
   };
 
-  interface Props {
+  interface TourOptions {
     steps: Step[];
-    className?: string;
+    class?: ClassValue;
+    onClose: () => void;
   }
 
-  const { steps, className = "" }: Props = $props();
+  const { steps, class: optionsClass, onClose }: TourOptions = $props();
 
   let currentStepIndex = $state(0);
   let currentStep = $derived(steps[currentStepIndex]);
@@ -30,7 +29,7 @@
   let showNext = $derived(currentStepIndex < steps.length - 1);
 
   function dismiss() {
-    dispatch("dismiss");
+    onClose();
   }
 
   function nextStep() {
@@ -72,14 +71,6 @@
     }
   };
 
-  function handleBackgroundClick(event: MouseEvent) {
-    // Dismiss only if the click is directly on the dimmed background, not on the content panel
-    if (event.target === event.currentTarget) {
-      // TODO seems wrong - should just have a handler
-      dispatch("dismiss");
-    }
-  }
-
   // Crossfade transition for step content
   const [send, receive] = crossfade({
     duration: 300,
@@ -88,81 +79,59 @@
 </script>
 
 {#if currentStep}
-  <!-- svelte-ignore a11y_click_events_have_key_events -->
-  <!-- svelte-ignore a11y_no_static_element_interactions -->
-  <div class={`dimmed-background ${className}`} onclick={handleBackgroundClick}>
+  <div
+    class={["tour-panel", optionsClass]}
+    in:receive={{ key: currentStepIndex }}
+    out:send={{ key: currentStepIndex }}
+  >
     <div
-      class="tour-panel"
-      in:receive={{ key: currentStepIndex }}
-      out:send={{ key: currentStepIndex }}
+      class="swipe-panel"
+      ontouchstart={handleTouchStart}
+      ontouchend={handleTouchEnd}
     >
-      <div
-        class="swipe-panel"
-        ontouchstart={handleTouchStart}
-        ontouchend={handleTouchEnd}
-      >
-        <div class="header">
-          <div class="icon-container">
-            <InlineSvg content={markerSvg} />
-          </div>
-          <div class="title-container">
-            <h1>{currentStep.title}</h1>
-          </div>
+      <div class="header">
+        <div class="icon-container">
+          <InlineSvg content={markerSvg} />
         </div>
-        <div class="vertical-scroll">
-          {#if currentStep?.component}
-            <Component {...currentStep.props || {}} />
-          {:else}
-            <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-            {@html currentStep.description}
-          {/if}
+        <div class="title-container">
+          <h1>{currentStep.title}</h1>
         </div>
       </div>
-      <div class="footer">
-        <button class="link-button" onclick={dismiss}>Dismiss</button>
-        <div class="progress-indicator">
-          {#each steps as _, i}
-            <div
-              class="step-circle"
-              class:active={i === currentStepIndex}
-            ></div>
-          {/each}
-        </div>
-        <div class="navigation-buttons">
-          <button
-            class="link-button"
-            onclick={previousStep}
-            class:hidden={!showPrevious}>Prev</button
-          >
-          <button
-            class="link-button"
-            onclick={nextStep}
-            class:disabled={!showNext}>Next</button
-          >
-        </div>
+      <div class="vertical-scroll">
+        {#if currentStep?.component}
+          <Component {...currentStep.props || {}} />
+        {:else}
+          <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+          {@html currentStep.description}
+        {/if}
+      </div>
+    </div>
+    <div class="footer">
+      <button class="link-button" onclick={dismiss}>Dismiss</button>
+      <div class="progress-indicator">
+        {#each steps as step, i (step.title)}
+          <div class="step-circle" class:active={i === currentStepIndex}></div>
+        {/each}
+      </div>
+      <div class="navigation-buttons">
+        <button
+          class="link-button"
+          onclick={previousStep}
+          class:hidden={!showPrevious}>Prev</button
+        >
+        <button
+          class="link-button"
+          onclick={nextStep}
+          class:disabled={!showNext}>Next</button
+        >
       </div>
     </div>
   </div>
 {/if}
 
 <style>
-  .dimmed-background {
-    position: fixed;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: var(--toolbar-margin);
-    box-sizing: border-box;
-    z-index: 1000;
-  }
-
   .tour-panel {
+    pointer-events: auto;
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);

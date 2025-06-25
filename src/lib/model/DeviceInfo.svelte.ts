@@ -13,6 +13,7 @@ export class DeviceInfo {
   static shortBreakpoint = 400;
 
   readonly isWide = $derived(this.#width >= DeviceInfo.wideBreakpoint);
+  readonly isNarrow = $derived(this.#width <= DeviceInfo.wideBreakpoint);
   readonly isTall = $derived(this.#height >= DeviceInfo.tallBreakpoint);
   readonly isShort = $derived(this.height <= DeviceInfo.shortBreakpoint);
   readonly isTouchDevice = $derived(this.#isTouchDevice);

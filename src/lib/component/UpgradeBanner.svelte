@@ -1,26 +1,19 @@
 <script lang="ts">
-  import { getPageStateFromContext } from "./model/PageState.svelte";
-
-  const pageState = getPageStateFromContext();
-
   function refreshPage() {
     window.location.reload();
   }
 </script>
 
-{#if pageState.updateAvailable}
-  <div class="update-banner">
-    <span>Update available</span>
-    <button on:click={refreshPage}>Refresh</button>
-  </div>
-{/if}
+<div class="update-banner">
+  <span>Update available</span>
+  <button on:click={refreshPage}>Refresh</button>
+</div>
 
 <style>
   .update-banner {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
+    pointer-events: auto;
     background-color: rgb(255, 140, 0);
+    border-radius: 5px;
     color: #000;
     padding: 0.6rem;
     display: flex;

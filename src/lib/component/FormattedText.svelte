@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { decodeMarkdownChars } from "./util/string";
+  import { decodeMarkdownChars } from "$lib/util/string";
 
   interface FormattedTextProps {
     text: string;

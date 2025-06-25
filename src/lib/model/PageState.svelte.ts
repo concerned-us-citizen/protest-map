@@ -5,6 +5,7 @@ import { type SetTimeoutId } from "$lib/types";
 import { RegionModel } from "./RegionModel";
 import { RegionLabeler } from "./RegionLabeler.svelte";
 import { MapModel } from "./MapModel.svelte";
+import { OverlayModel } from "./OverlayModel.svelte";
 
 const EVENTINFO_VISIBILITY_DURATION = 1000; // 1s
 
@@ -19,12 +20,8 @@ export class PageState {
   readonly mapModel: MapModel;
   readonly regionModel: RegionModel;
   readonly regionLabeler: RegionLabeler;
+  readonly overlayModel: OverlayModel;
 
-  filterVisible = $state(false);
-  helpVisible = $state(false);
-  navigationVisible = $state(false);
-  shareVisible = $state(false);
-  menuVisible = $state(false);
   updateAvailable = $state(false);
   debug = $state(false);
 
@@ -33,26 +30,6 @@ export class PageState {
 
   autoplaying = $state(false);
   #autoplayTimer: SetTimeoutId = undefined;
-
-  toggleFilterVisible() {
-    this.filterVisible = !this.filterVisible;
-  }
-
-  toggleHelpVisible() {
-    this.helpVisible = !this.helpVisible;
-  }
-
-  toggleNavigationVisible() {
-    this.navigationVisible = !this.navigationVisible;
-  }
-
-  toggleShareVisible() {
-    this.shareVisible = !this.shareVisible;
-  }
-
-  toggleMenuVisible() {
-    this.menuVisible = !this.menuVisible;
-  }
 
   toggleAutoplay() {
     this.autoplaying = !this.autoplaying;
@@ -128,6 +105,7 @@ export class PageState {
     this.mapModel = new MapModel();
     this.regionLabeler = new RegionLabeler(this.regionModel);
     this.filter = new FilterModel(this.eventModel, this.mapModel);
+    this.overlayModel = new OverlayModel();
     this.pollForUpdates();
 
     $effect(() => {

@@ -13,7 +13,9 @@ body {
   font-family: sans-serif;
 
   --toolbar-margin: 0.9375rem;
-  --icon-size: 1.8em;
+
+  /* These below are here so that the size of the icon button can influence
+    the width of the title panel */
   --icon-button-size: 2.3rem;
   --available-title-panel-width: calc(
     100vw - 2 * (var(--icon-button-size) - 2 * var(--toolbar-margin))
@@ -30,10 +32,6 @@ body {
   --hover-color: #f0f0f0;
   --hover-selected-color: #dceafe;
 
-  --pill-button-background: #e5e7eb;
-  --pill-button-hover-background: #d1d5db;
-  --pill-button-color: #111827;
-
   /* Suppress default OS long press actions on mobile */
   user-select: none;
   -webkit-user-select: none; /* Safari */
@@ -49,19 +47,6 @@ body.touch-device {
   );
   --hover-color: transparent;
   --hover-selected-color: var(--selected-color);
-}
-
-.pill-button {
-  border: none;
-  cursor: pointer;
-  background: var(--pill-button-background);
-  color: var(--pill-button-color);
-  border-radius: 5px;
-  padding: 5px;
-}
-
-.pill-button:hover {
-  background: var(--pill-button-hover-background);
 }
 
 .link-button {

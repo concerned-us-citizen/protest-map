@@ -1,27 +1,29 @@
 <script lang="ts">
-  import Autocomplete, { type AutocompleteItem } from "./Autocomplete.svelte";
-  import Dialog from "./Dialog.svelte";
-  import { getPageStateFromContext } from "./model/PageState.svelte";
+  import Autocomplete, {
+    type AutocompleteItem,
+  } from "$lib/component/Autocomplete.svelte";
+  import Dialog from "$lib/component/Dialog.svelte";
+  import { getPageStateFromContext } from "$lib/model/PageState.svelte";
 
   const pageState = getPageStateFromContext();
-  let recents = $state<AutocompleteItem[]>([]);
 
   const MAX_RECENTS = 8;
-  const readRecents = () => {
+
+  let recents = $derived.by(() => {
     const m = document.cookie.match(/(?:^|;\s*)recentRegions=([^;]+)/);
     if (!m) return [];
     try {
-      return JSON.parse(decodeURIComponent(m[1]));
+      return JSON.parse(decodeURIComponent(m[1])) as AutocompleteItem[];
     } catch {
       return [];
     }
-  };
+  });
 
   const writeRecents = (a: AutocompleteItem[]) =>
     (document.cookie = `recentRegions=${encodeURIComponent(JSON.stringify(a.slice(0, MAX_RECENTS)))};path=/;max-age=${60 * 60 * 24 * 365}`);
 
   const addRecent = (v: AutocompleteItem) => {
-    const a = readRecents().filter((x: AutocompleteItem) => x.id !== v.id);
+    const a = recents.filter((x: AutocompleteItem) => x.id !== v.id);
     a.unshift(v);
     writeRecents(a);
     recents = a;
@@ -44,12 +46,8 @@
   }
 
   const dismiss = () => {
-    pageState.navigationVisible = false;
+    pageState.overlayModel.navigationVisible = false;
   };
-
-  $effect(() => {
-    recents = readRecents();
-  });
 </script>
 
 <Dialog {dismiss} title="Jump to Region">

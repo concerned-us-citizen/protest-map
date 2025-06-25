@@ -1,14 +1,14 @@
 <script lang="ts">
   import { onMount, onDestroy, mount } from "svelte";
   import maplibregl from "maplibre-gl";
-  import EventPopup from "$lib/EventPopup.svelte";
+  import EventPopup from "$lib/component/map/EventPopup.svelte";
   import { getPageStateFromContext } from "$lib/model/PageState.svelte";
-  import type { EventMarkerInfoWithId, Nullable } from "../types";
-  import { deviceInfo } from "../model/DeviceInfo.svelte";
+  import type { EventMarkerInfoWithId, Nullable } from "$lib/types";
+  import { deviceInfo } from "$lib/model/DeviceInfo.svelte";
   import "maplibre-gl/dist/maplibre-gl.css";
   import bbox from "@turf/bbox";
   import { featureCollection, point } from "@turf/helpers";
-  import { bboxToBounds, type BBox2D } from "../util/bounds";
+  import { bboxToBounds, type BBox2D } from "$lib/util/bounds";
   import {
     createRegionPolygonLayer,
     updateRegionPolygonLayer,
@@ -169,6 +169,7 @@
 
       createRegionPolygonLayer(safeMap);
 
+      // Useful for debugging specific rects
       // addDebugRectangles(safeMap, [
       //   {
       //     xmin: -176.69228269495915,
@@ -402,7 +403,15 @@
   }
 </script>
 
-<div bind:this={mapDiv} class="map-container"></div>
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<div
+  bind:this={mapDiv}
+  class="map-container"
+  onclick={() => {
+    pageState.overlayModel.closeAll();
+  }}
+></div>
 
 <style>
   .map-container {

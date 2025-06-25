@@ -1,10 +1,17 @@
 <script lang="ts">
-  import Tour from "./Tour.svelte";
+  import Tour from "$lib/component/Tour.svelte";
   import CreditsPanel from "./CreditsPanel.svelte";
-  import { deviceInfo } from "./model/DeviceInfo.svelte";
+  import { deviceInfo } from "../model/DeviceInfo.svelte";
   import { titleCase } from "title-case";
-  import { markerColor } from "./colors";
-  let { onClose, className = "" } = $props();
+  import { markerColor } from "../colors";
+  import type { ClassValue } from "svelte/elements";
+
+  interface ProtestMapTourOptions {
+    class?: ClassValue;
+    onClose: () => void;
+  }
+
+  const { onClose, class: optionsClass }: ProtestMapTourOptions = $props();
 
   let tapping = deviceInfo.tappingOrClicking;
   let tap = deviceInfo.tapOrClick;
@@ -17,7 +24,8 @@
 </svelte:head>
 
 <Tour
-  {className}
+  {onClose}
+  class={optionsClass}
   steps={[
     {
       title: "US Protests Map",
@@ -77,7 +85,4 @@
       component: CreditsPanel,
     },
   ]}
-  on:dismiss={() => {
-    onClose();
-  }}
 />

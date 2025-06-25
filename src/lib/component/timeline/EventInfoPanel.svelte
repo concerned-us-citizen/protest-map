@@ -1,9 +1,9 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
-  import { formatDateIndicatingFuture } from "./util/date";
+  import { formatDateIndicatingFuture } from "$lib/util/date";
   import { cubicInOut } from "svelte/easing";
-  import { countAndLabel, joinWithAnd } from "./util/string";
-  import { getPageStateFromContext } from "./model/PageState.svelte";
+  import { countAndLabel, joinWithAnd } from "$lib/util/string";
+  import { getPageStateFromContext } from "$lib/model/PageState.svelte";
 
   let { className = "" } = $props();
 

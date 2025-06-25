@@ -2,14 +2,14 @@
   import { Share2, ClipboardCheck, ClipboardCopy } from "@lucide/svelte";
   import Dialog from "./Dialog.svelte";
   import { SvelteSet } from "svelte/reactivity";
-  import { getPageStateFromContext } from "./model/PageState.svelte";
+  import { getPageStateFromContext } from "$lib/model/PageState.svelte";
   import {
     getFilterParamOptions,
     getSearchParamsFromState,
-  } from "./model/searchParamsToStateSync.svelte";
+  } from "$lib/model/searchParamsToStateSync.svelte";
   import { slide } from "svelte/transition";
   import FormattedText from "./FormattedText.svelte";
-  import { safeCopyToClipboard } from "./util/os";
+  import { safeCopyToClipboard } from "$lib/util/os";
 
   const pageState = getPageStateFromContext();
 
@@ -64,7 +64,7 @@
   }
 
   const dismiss = () => {
-    pageState.shareVisible = false;
+    pageState.overlayModel.shareVisible = false;
   };
 </script>
 
@@ -175,8 +175,9 @@
   .form {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.3rem;
     font-size: 1rem;
+    min-width: 14rem;
   }
   .custom-options {
     margin-left: 1.6rem;

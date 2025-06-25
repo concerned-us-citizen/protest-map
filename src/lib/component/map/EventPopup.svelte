@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { PopulatedEvent } from "$lib/types";
-  import { attributions } from "./attributions";
+  import { attributions } from "$lib/attributions";
 
   interface Props {
     populatedEvent: PopulatedEvent;

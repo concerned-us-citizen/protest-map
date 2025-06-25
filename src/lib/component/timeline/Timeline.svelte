@@ -1,7 +1,7 @@
 <script lang="ts">
   import HistogramSlider from "./HistogramSlider.svelte";
-  import { getPageStateFromContext } from "./model/PageState.svelte";
-  import { getShortcutPrefix } from "./util/os";
+  import { getPageStateFromContext } from "$lib/model/PageState.svelte";
+  import { getShortcutPrefix } from "$lib/util/os";
 
   const pageState = getPageStateFromContext();
 

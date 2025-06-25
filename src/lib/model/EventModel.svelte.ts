@@ -19,6 +19,7 @@ export class EventModel {
   updatedAt = $state<Nullable<Date>>(null);
 
   readonly isLoading = $derived(this.db === null);
+  readonly isLoaded = $derived(!this.isLoading);
 
   readonly formattedUpdatedAt = $derived(
     this.updatedAt

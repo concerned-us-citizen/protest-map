@@ -1,8 +1,7 @@
 <script lang="ts" generics="T">
   import { browser } from "$app/environment";
   import { onDestroy } from "svelte";
-  import type { Nullable } from "./types";
-  import type { T } from "vitest/dist/chunks/environment.d.cL3nLXbE.js";
+  import type { Nullable } from "$lib/types";
 
   interface Props {
     items: T[];
@@ -237,7 +236,7 @@
       />
     {/if}
     {#if items.length > 0}
-      {#each items as item, i}
+      {#each items as item, i (item)}
         {#if item === selectedItem}
           <rect
             class="selected-background-highlight"

@@ -26,7 +26,12 @@ body {
   --panel-padding-h: 1rem;
   --panel-padding-v: 0.5rem;
 
-  --filtered-color: #ffd580;
+  --map-layer: 0;
+  --controls-layer: 100;
+  --dimming-layer: 200;
+  --overlay-layer: 300;
+  --overlay-controls-layer: 400;
+
   --accent-color: #ffd580;
   --selected-color: #e8f0fe;
   --hover-color: #f0f0f0;
@@ -65,7 +70,7 @@ body.touch-device {
 
 .maplibregl-ctrl-bottom-right {
   margin: var(--toolbar-margin);
-  z-index: 999;
+  z-index: var(--controls-layer);
 }
 
 button {

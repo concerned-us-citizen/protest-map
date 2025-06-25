@@ -114,7 +114,7 @@
     background-color: #f5f5f5f2;
     border-radius: 8px;
     box-shadow: 0 -2px 10px #0000001a;
-    z-index: 1;
+    z-index: var(--over-layer);
     pointer-events: auto;
   }
 

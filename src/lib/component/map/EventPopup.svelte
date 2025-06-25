@@ -119,7 +119,6 @@
     margin-bottom: 0.2em;
     font-size: 1.15em;
     position: relative;
-    z-index: 10;
     pointer-events: auto;
   }
   .popup-text-container .location-title:hover {
@@ -129,7 +128,6 @@
   .popup-text-container a {
     pointer-events: auto;
     position: relative;
-    z-index: 10;
   }
   .popup-text-container a:hover {
     text-decoration: underline;

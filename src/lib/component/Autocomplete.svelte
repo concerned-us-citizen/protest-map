@@ -124,7 +124,7 @@
   }
   .option-list {
     position: absolute;
-    z-index: 10;
+    z-index: var(--overlay-controls-layer);
     top: 100%;
     left: 0;
     width: 100%;

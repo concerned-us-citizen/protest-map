@@ -198,13 +198,13 @@
       " title    .     toolbar "
       " title    .     toolbar "
       " timeline timeline timeline ";
-    z-index: 100;
+    z-index: var(--controls-layer);
   }
 
   .title-and-filter-wrapper {
     grid-area: title;
     pointer-events: none;
-    z-index: 500; /* TODO unclear why this is required - the title disappears if not there */
+    z-index: var(--overlay-layer);
   }
 
   .title-and-filter {
@@ -231,7 +231,7 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    z-index: 100;
+    z-index: var(--dimming-layer);
   }
 
   /* Common styles for all absolutely positioned children to center horizontally */

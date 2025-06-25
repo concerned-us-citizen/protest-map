@@ -17,6 +17,7 @@
   .overlay {
     position: absolute;
     inset: 0;
+    z-index: var(--dimming-layer);
   }
   .dimmed {
     background-color: hsl(0 0% 0% / 0.32);

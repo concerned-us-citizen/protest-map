@@ -97,7 +97,7 @@
     border: 2px solid rgba(0, 0, 0, 0.2);
     border-radius: 4px;
     overflow: hidden;
-    z-index: 800;
+    z-index: var(--overlay-layer);
   }
 
   .toolbar > :global(:not(:last-child)) {

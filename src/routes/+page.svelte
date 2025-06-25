@@ -204,7 +204,7 @@
   .title-and-filter-wrapper {
     grid-area: title;
     pointer-events: none;
-    z-index: var(--overlay-layer);
+    z-index: var(--controls-layer);
   }
 
   .title-and-filter {

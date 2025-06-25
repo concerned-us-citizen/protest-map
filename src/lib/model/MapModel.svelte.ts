@@ -5,6 +5,7 @@ import {
   boundsFromLngLatBounds,
   boundsToLngLatBoundsLike,
 } from "$lib/util/bounds";
+import { deviceInfo } from "./DeviceInfo.svelte";
 
 interface FitBoundsOptions {
   animate?: boolean;
@@ -16,6 +17,8 @@ export class MapModel {
   #pendingBounds: Bounds | undefined;
   #initialBounds: Bounds | undefined;
   #currentBounds: Bounds | undefined;
+
+  #initialViewPort = { width: 0, height: 0 };
   #boundsStack = $state<Bounds[]>([]);
   #isAtInitialBounds = $state(false);
 
@@ -38,12 +41,22 @@ export class MapModel {
   readonly canPopBounds = $derived.by(() => {
     const stackHasItems = this.#boundsStack.length > 0;
     const isAtInitialBounds = this.#isAtInitialBounds;
+    // Have to ignore it when viewport changes - don't have original bounds
+    // in context of new viewport.
+    const viewportChanged =
+      this.#initialViewPort.width !== deviceInfo.width ||
+      this.#initialViewPort.height !== deviceInfo.height;
 
-    return stackHasItems || !isAtInitialBounds;
+    return stackHasItems || (!isAtInitialBounds && !viewportChanged);
   });
 
   setMapInstance(map: maplibregl.Map) {
     this.#mapInstance = map;
+
+    this.#initialViewPort = {
+      width: deviceInfo.width,
+      height: deviceInfo.height,
+    };
 
     map.on("moveend", () => {
       const newBounds = boundsFromLngLatBounds(map.getBounds());

@@ -59,8 +59,7 @@
     text-decoration: underline;
   }
   .timeline-and-eventinfo {
-    position: fixed;
-    bottom: 0;
+    position: relative;
     left: 50%;
     transform: translateX(-50%);
     width: calc(100vw - 2 * var(--toolbar-margin));

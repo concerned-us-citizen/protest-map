@@ -30,7 +30,6 @@
 
   .panel {
     gap: 0.3rem;
-    --panel-background-color: #fff;
     --panel-border-radius: 0.4rem;
     --panel-padding-h: 0.5rem;
     --panel-padding-v: 0.5rem;
@@ -42,5 +41,6 @@
 
   .title {
     font-size: 0.8rem;
+    align-self: center;
   }
 </style>

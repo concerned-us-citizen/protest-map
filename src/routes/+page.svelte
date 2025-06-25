@@ -23,6 +23,9 @@
   import TitleContainer from "$lib/component/TitleContainer.svelte";
   import ClickOverlay from "$lib/component/ClickOverlay.svelte";
   import { deviceInfo } from "$lib/model/DeviceInfo.svelte";
+  import IconButton from "$lib/component/IconButton.svelte";
+  import { Undo2 } from "@lucide/svelte";
+  import { cubicInOut } from "svelte/easing";
 
   const pageState = PageState.create();
   createPageStateInContext(pageState);
@@ -122,16 +125,34 @@
         ]}
         transition:fade
       >
-        <TitleContainer {title} />
+        <div class="title-container">
+          <TitleContainer {title} />
+        </div>
 
         {#if pageState.overlayModel.filterVisible}
-          <FilterContainer />
+          <div class="filter-container">
+            <FilterContainer />
+          </div>
         {/if}
       </div>
     </div>
 
     <div class="toolbar hide-on-popup">
       <Toolbar />
+
+      {#if pageState.mapModel.canPopBounds}
+        <div
+          class="zoom-undo-button"
+          transition:fade={{ duration: 300, easing: cubicInOut }}
+        >
+          <IconButton
+            onClick={() => pageState.mapModel.popBounds()}
+            label={"Zoom Back Out (${getShortcutPrefix()}R, +U, or +B)"}
+          >
+            <Undo2 />
+          </IconButton>
+        </div>
+      {/if}
     </div>
 
     <div class="timeline">
@@ -205,6 +226,7 @@
     grid-area: title;
     pointer-events: none;
     z-index: var(--controls-layer);
+    height: 100%;
   }
 
   .title-and-filter {
@@ -212,7 +234,29 @@
     width: 20rem;
     display: flex;
     flex-direction: column;
+    max-height: 100%;
     gap: 0.3rem;
+    overflow: hidden;
+    border-radius: 8px;
+  }
+
+  .title-container {
+    flex: 0 0 auto;
+  }
+
+  .filter-container {
+    flex: 1 1 auto;
+    min-height: 0; /* Allow flexbox to shrink below content
+                       (Safari/Edge/Chrome all need this
+                       for overflow to work)                */
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    background: var(--panel-background-color);
+    border-radius: 0.3rem;
+  }
+  .filter-container::-webkit-scrollbar {
+    display: none;
   }
 
   .title-and-filter.isNarrow {
@@ -221,10 +265,24 @@
   .toolbar {
     grid-area: toolbar;
     justify-self: end;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .zoom-undo-button {
+    z-index: var(--controls-layer);
+    background-color: #fff;
+    border-radius: 5px;
+    overflow: hidden;
+    align-self: end;
   }
 
   .timeline {
     grid-area: timeline;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .overlay-container {

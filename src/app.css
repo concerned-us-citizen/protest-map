@@ -21,10 +21,11 @@ body {
     100vw - 2 * (var(--icon-button-size) - 2 * var(--toolbar-margin))
   );
   --title-panel-width: min(var(--available-title-panel-width), 20rem);
-  --panel-background-color: #fffc;
+
+  --panel-background-color: #fff;
   --panel-border-radius: 0.4rem;
   --panel-padding-h: 1rem;
-  --panel-padding-v: 0.5rem;
+  --panel-padding-v: 0.4rem;
 
   --map-layer: 0;
   --controls-layer: 100;

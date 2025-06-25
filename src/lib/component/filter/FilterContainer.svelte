@@ -22,6 +22,5 @@
   .filter-container {
     display: flex;
     flex-direction: column;
-    gap: 0.3rem;
   }
 </style>

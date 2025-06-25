@@ -27,9 +27,6 @@
           pageState.filter.currentDate
         )}</b
       >
-      {#if deviceInfo.isShort}
-        protests
-      {/if}
       <PillButton
         data-suppress-click-outside
         accented={pageState.filter.isFiltering}
@@ -78,19 +75,6 @@
 
   .date-and-location-count b {
     font-size: 1rem;
-  }
-
-  /* Compact view on phones in landscape (same is isShort above)*/
-  /* 
-* Note we have to hardwire the max-width here, can't use css variables,
-* and can't dynamically set the width from a TS variable unless
-* we want to use svelte:head. Keep this BREAKPOINT in sync with DeviceInfo.svelte.
-*/
-  @media (max-height: 400px) {
-    .date-and-location-count {
-      justify-content: start;
-      gap: 0.25em;
-    }
   }
 
   .location-count-button {

@@ -209,7 +209,7 @@
   .layout {
     height: 100dvh; /* full viewport minus safe-area */
     box-sizing: border-box;
-    padding: var(--gap);
+    padding: var(--gap) var(--gap) 0 var(--gap);
     display: grid;
     gap: var(--gap); /* margin between items */
 

@@ -87,27 +87,29 @@
   }
 
   .menu {
-    border: 2px solid rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    overflow: hidden;
     pointer-events: auto;
   }
   .toolbar-items {
     display: flex;
     flex-direction: row;
     pointer-events: auto;
-    border: 2px solid rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    border-radius: 6px;
   }
   .toolbar.vertical .toolbar-items {
     flex-direction: column;
     align-items: end;
   }
 
-  .toolbar-items > :global(:not(:last-child)) {
+  .toolbar:not(.vertical) .toolbar-items > :global(:not(:last-child)) {
     border-right: 1px solid #ccc;
   }
 
-  .toolbar-items > :global(:last-child) {
+  .toolbar:not(.vertical) .toolbar-items > :global(:last-child) {
     border-right: none;
   }
 

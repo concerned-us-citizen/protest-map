@@ -53,7 +53,7 @@ export function onKeyDown(event: KeyboardEvent, pageState: PageState) {
   // Toggle Menu
   if (code === "KeyM") {
     if (deviceInfo.isSmall) {
-      pageState.toggleMenuVisible();
+      pageState.overlayModel.toggleMenuVisible();
     }
   }
 

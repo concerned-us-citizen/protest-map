@@ -7,7 +7,6 @@ Severe:
 Moderate:
 - seeing clusters of two that can't be expanded
 - Filter should scroll at edge of timeline
-- dialogs aren't horizontally centered
 - X vertical alignment on filter indicator pill
 - scroll map to show full tooltip
 - tour doesn't scroll when in landscape

@@ -45,8 +45,7 @@
 <style>
   .dialog {
     pointer-events: auto;
-    width: 100%;
-    max-width: 26rem;
+    width: min(20rem, 80vw);
     background: #fff;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0 0 0 / 0.1);

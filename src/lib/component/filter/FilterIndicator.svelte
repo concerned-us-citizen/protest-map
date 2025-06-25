@@ -22,7 +22,7 @@
             >
               <div class="pill-content">
                 <div class="title"><FormattedText text={filter.title} /></div>
-                <div class="x">✖️</div>
+                <div class="x">&times</div>
               </div>
             </PillButton>
           </li>
@@ -59,8 +59,8 @@
 
   .pill-content {
     display: flex;
-    gap: 0.2rem;
-    align-items: start;
+    gap: 0.5rem;
+    align-items: center;
     justify-content: stretch;
   }
 
@@ -72,8 +72,6 @@
   }
 
   .x {
-    margin-top: -5px;
-    margin-bottom: -2px;
-    padding-top: 2px;
+    font-size: 1.3rem;
   }
 </style>

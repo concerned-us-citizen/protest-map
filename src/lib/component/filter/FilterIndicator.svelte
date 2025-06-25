@@ -10,7 +10,7 @@
 
 <div transition:slide>
   <Panel title="Filtering, Showing Protests:">
-    <div class="content">
+    <div class="content" transition:slide>
       <ul>
         {#each pageState.filter.filterDescriptions as filter, _i (filter.title)}
           <li class="filter" transition:slide>
@@ -33,15 +33,13 @@
 </div>
 
 <style>
-  .content {
+  ul {
     display: flex;
     flex-direction: column;
+    gap: 0.3rem;
     align-items: stretch;
-    overflow: hidden;
-  }
-  ul {
     list-style: none;
-    padding-left: 0;
+    padding: 0;
     margin: 0;
   }
 
@@ -49,17 +47,19 @@
     display: flex;
     flex-direction: column;
     justify-content: stretch;
+    padding: 0;
+    margin: 0;
   }
 
   .filter {
     display: flex;
     align-items: stretch;
     gap: 0.5em;
-    margin-bottom: 0.5em;
   }
 
   .pill-content {
     display: flex;
+    gap: 0.2rem;
     align-items: start;
     justify-content: stretch;
   }
@@ -69,5 +69,11 @@
     min-width: 0;
     white-space: normal;
     text-align: left;
+  }
+
+  .x {
+    margin-top: -5px;
+    margin-bottom: -2px;
+    padding-top: 2px;
   }
 </style>

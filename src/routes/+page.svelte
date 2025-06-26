@@ -26,6 +26,7 @@
   import IconButton from "$lib/component/IconButton.svelte";
   import { Undo2 } from "@lucide/svelte";
   import { cubicInOut } from "svelte/easing";
+  import PillButton from "$lib/component/PillButton.svelte";
 
   const pageState = PageState.create();
   createPageStateInContext(pageState);
@@ -135,6 +136,20 @@
           </div>
         {/if}
       </div>
+
+      {#if pageState.filter.isFiltering && !pageState.overlayModel.filterVisible}
+        <div class="show-all-button-wrapper">
+          <PillButton
+            large
+            onclick={() => {
+              pageState.filter.clearAllFilters();
+              pageState.mapModel.navigateToUS();
+            }}
+          >
+            View All US Protests
+          </PillButton>
+        </div>
+      {/if}
     </div>
 
     <div class="toolbar hide-on-popup">
@@ -227,6 +242,10 @@
     pointer-events: none;
     z-index: var(--controls-layer);
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
   }
 
   .title-and-filter {
@@ -261,6 +280,13 @@
 
   .title-and-filter.isNarrow {
     width: 16rem;
+  }
+
+  .show-all-button-wrapper {
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
   }
   .toolbar {
     grid-area: toolbar;

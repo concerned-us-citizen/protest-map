@@ -1,19 +1,35 @@
 /**
  * @param {string} str
  */
-export function toTitleCase(str: string) {
-  const minorWords =
+export function toTitleCase(str: string): string {
+  const minor =
     /^(a|an|and|as|at|but|by|for|if|in|nor|of|on|or|so|the|to|up|yet)$/i;
-  return str
-    .toLowerCase()
-    .split(" ")
-    .map((word, i, arr) => {
-      if (i === 0 || i === arr.length - 1 || !minorWords.test(word)) {
-        return word.charAt(0).toUpperCase() + word.slice(1);
-      }
-      return word;
-    })
-    .join(" ");
+
+  return (
+    str
+      .toLowerCase()
+      // keep every space or hyphen as its own token
+      .split(/([ -])/)
+      .map((token, i, arr) => {
+        // 1️⃣ delimiter → return unchanged
+        if (token === " " || token === "-") return token;
+
+        // 2️⃣ always capitalise the first word, the last word,
+        //    any word after a hyphen, or any non-“minor” word
+        const prevIsDash = i > 0 && arr[i - 1] === "-";
+        if (
+          i === 0 ||
+          prevIsDash ||
+          i === arr.length - 1 ||
+          !minor.test(token)
+        ) {
+          return token.charAt(0).toUpperCase() + token.slice(1);
+        }
+        return token;
+      })
+      // tokens already contain the delimiters, so just glue them back together
+      .join("")
+  );
 }
 
 export function countAndLabel(

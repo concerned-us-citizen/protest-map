@@ -5,12 +5,14 @@
   export interface PillButtonProps extends HTMLAttributes<HTMLButtonElement> {
     accented?: boolean;
     selected?: boolean;
+    large?: boolean;
     children: Snippet;
   }
 
   const {
     accented = false,
     selected = false,
+    large = false,
     children,
     ...restProps
   }: PillButtonProps = $props();
@@ -19,7 +21,7 @@
 <button
   type="button"
   aria-pressed={selected}
-  class={{ pill: true, accented, selected }}
+  class={{ pill: true, accented, selected, large }}
   {...restProps}
 >
   {@render children()}
@@ -41,6 +43,12 @@
     cursor: pointer;
     font-size: 0.875rem;
     transition: background-color 0.15s ease-in-out;
+  }
+
+  .pill.large {
+    padding: 0.6rem 0.6rem;
+    /* TODO this is a hack */
+    background-color: white;
   }
 
   .pill:hover {

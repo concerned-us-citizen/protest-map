@@ -23,6 +23,10 @@ export class MapModel {
   #isAtInitialBounds = $state(false);
 
   constructor() {
+    this.navigateToUS(true);
+  }
+
+  navigateToUS(initializing = false) {
     this.navigateTo(
       {
         xmin: -170,
@@ -30,7 +34,7 @@ export class MapModel {
         xmax: -66,
         ymax: 70,
       },
-      true
+      initializing
     );
   }
 

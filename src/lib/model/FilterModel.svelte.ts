@@ -276,6 +276,12 @@ export class FilterModel {
     this.selectedVoterLeans = [];
   }
 
+  clearAllFilters() {
+    this.clearSelectedNames();
+    this.clearNamedRegionFilter();
+    this.clearVoterLeans();
+  }
+
   #isRepeatingChange = false;
   #currentRepeatDirection: "next" | "prev" | null = null;
   #repeatTimer: SetTimeoutId;
@@ -381,9 +387,6 @@ export class FilterModel {
         // If no longer a valid date, set currentDateIndex to
         // be the date at or after the current system date
         // (or - 1 if no match) any time the eventModel's items change
-        console.log(
-          `🔁 Running setCurrentDateIndex effect ${this.#currentDateIndex}`
-        );
         let newIndex = allDatesWithEventCounts.findIndex((dc) =>
           isFutureDate(dc.date, true)
         );

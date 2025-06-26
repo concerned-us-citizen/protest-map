@@ -85,7 +85,7 @@
     out:send={{ key: currentStepIndex }}
   >
     <div
-      class="swipe-panel"
+      class="swipe-panel vertical-scroll"
       ontouchstart={handleTouchStart}
       ontouchend={handleTouchEnd}
     >
@@ -97,7 +97,7 @@
           <h1>{currentStep.title}</h1>
         </div>
       </div>
-      <div class="vertical-scroll">
+      <div>
         {#if currentStep?.component}
           <Component {...currentStep.props || {}} />
         {:else}

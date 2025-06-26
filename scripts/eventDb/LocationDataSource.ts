@@ -1,4 +1,5 @@
-import { LocationInfo, Nullable } from "../../src/lib/types";
+import { Nullable } from "../../src/lib/types";
+import { LocationInfo } from "./types";
 import { fetchEventLinkLocationInfo } from "./eventLinkLocationInfo";
 import { geocodeFromService } from "./geocode";
 import { logInvalidEvent } from "./IssueLog";

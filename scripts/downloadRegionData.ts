@@ -71,7 +71,7 @@ async function downloadWithRedirects(
 }
 for (const fileName of ["region-names.json.gz", "regions.sqlite.gz"]) {
   await downloadToStatic(
-    `https://github.com/concerned-us-citizen/us-region-db/releases/download/v1.0.0/${fileName}`
+    `https://github.com/concerned-us-citizen/us-region-db/releases/download/v1.0.1/${fileName}`
   ).catch((err) => {
     console.error("❌ Download failed:", err);
     process.exit(1);

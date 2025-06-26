@@ -5,6 +5,7 @@ import { browser } from "$app/environment";
 import { getSqlJs } from "./sqlJsInstance";
 import type { MultiPolygon, Polygon } from "geojson";
 import { boundsToPolygon } from "$lib/util/bounds";
+import { BinaryReader, Geometry } from "wkx-ts";
 
 export type Bounds = {
   xmin: number;
@@ -18,7 +19,7 @@ export type NameAndRegionType = {
   type: RegionType;
 };
 
-export type RegionType = "zip" | "city" | "state" | "unnamed";
+export type RegionType = "zip" | "city" | "state" | "metro" | "unnamed";
 
 export type NamedRegion = {
   id: number;
@@ -104,14 +105,15 @@ export function prettifyNamedRegion(
   if (!region || !region.name || !region.type) return onUnhandled(region);
 
   switch (region.type) {
-    case "city": {
+    case "city":
+    case "metro": {
       const match = region.name.match(/^(.+)[,\s]\s([A-Za-z]{2})$/);
       if (match) {
         const [, city, stateAbbr] = match;
         const uppedStateAbbr = stateAbbr.toUpperCase();
         const stateFull =
           stateNameForAbbreviation[uppedStateAbbr] ?? uppedStateAbbr;
-        return `${toTitleCase(city)}, ${stateFull}`;
+        return `${toTitleCase(city)}, ${stateFull}${region.type === "metro" ? " (Metro)" : ""}`;
       } else {
         return onUnhandled(region);
       }
@@ -163,9 +165,9 @@ export class RegionDB {
     );
   }
 
-  getPolygonForState(id: number): Polygon | MultiPolygon | undefined {
+  getPolygonForRegion(id: number): Polygon | MultiPolygon | undefined {
     const stmt = this.db.prepare(`
-      SELECT polygon_geojson FROM state_regions
+      SELECT polygon_geojson FROM polygon_regions
       WHERE region_id = ?
     `);
 
@@ -174,9 +176,10 @@ export class RegionDB {
 
     if (result && result.polygon_geojson) {
       try {
-        return JSON.parse(result.polygon_geojson as string) as
-          | Polygon
-          | MultiPolygon;
+        const bytes = result.polygon_geojson as Uint8Array;
+        // @ts-expect-error wkx-ts typings still require Node Buffer
+        const geo = Geometry.parse(new BinaryReader(bytes)).toGeoJSON();
+        return geo as Polygon | MultiPolygon;
       } catch {
         console.error("Failed parse state region polygon");
         return undefined;
@@ -474,19 +477,16 @@ export class RegionModel {
   async getPolygonForNamedRegion(
     namedRegion: NamedRegion
   ): Promise<Polygon | MultiPolygon | undefined> {
-    // We only keep polygon info for states - cities and zips
+    await this.waitUntilReady();
+    // We only keep polygon info for states and metros - cities and zips
     // would be too big for client download
-    if (namedRegion.type !== "state") {
+    if (namedRegion.type !== "state" && namedRegion.type !== "metro") {
       return boundsToPolygon(namedRegion);
     }
     const cacheKey = `${namedRegion.type}:${namedRegion.name}`;
     let cachedPolygon = this.polygonCache.get(cacheKey);
     if (cachedPolygon) return cachedPolygon;
-
-    await this.waitUntilReady();
-    const id = this.getIdForNamedRegion(namedRegion);
-    if (!id) return undefined;
-    cachedPolygon = this.db!.getPolygonForState(id);
+    cachedPolygon = this.db!.getPolygonForRegion(namedRegion.id);
     this.polygonCache.set(cacheKey, cachedPolygon);
     return cachedPolygon;
   }

@@ -49,3 +49,30 @@ export function debounce(fn: () => void, delay: number): () => void {
     timeout = setTimeout(fn, delay);
   };
 }
+
+/**
+ * Runs a synchronous function, logs its elapsed time, and returns the
+ * function’s own result.  Works in any browser (uses performance.now()
+ * when available, falls back to Date.now()).
+ *
+ * @param fn     The work to time.  Wrap your statement in an arrow fn.
+ * @param label  Optional text to prefix in the console.
+ *
+ * @example
+ *   const answer = withTiming(() => heavyCalc(1_000_000), "heavyCalc");
+ *   // ⇒ heavyCalc: 12.8 ms
+ */
+export function withTiming<T>(fn: () => T, label = "withTiming"): T {
+  const now =
+    typeof performance !== "undefined" && performance.now
+      ? () => performance.now()
+      : () => Date.now();
+
+  const t0 = now();
+  try {
+    return fn();
+  } finally {
+    const ms = now() - t0;
+    console.log(`${label}: ${ms.toFixed(1)} ms`);
+  }
+}

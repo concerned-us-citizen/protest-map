@@ -1,6 +1,5 @@
 import type { Map as MapLibreMap } from "maplibre-gl";
 import type { MultiPolygon, Polygon } from "geojson";
-import type { NamedRegion } from "$lib/model/RegionModel.svelte";
 
 const REGION_SOURCE_ID = "region-polygon";
 

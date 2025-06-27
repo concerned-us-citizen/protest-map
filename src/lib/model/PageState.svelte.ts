@@ -2,7 +2,7 @@ import { setContext, getContext } from "svelte";
 import { EventModel } from "./EventModel.svelte";
 import { FilterModel } from "./FilterModel.svelte";
 import { type SetTimeoutId } from "$lib/types";
-import { RegionModel } from "./RegionModel";
+import { RegionModel } from "./RegionModel.svelte";
 import { RegionLabeler } from "./RegionLabeler.svelte";
 import { MapModel } from "./MapModel.svelte";
 import { OverlayModel } from "./OverlayModel.svelte";
@@ -101,10 +101,14 @@ export class PageState {
 
   private constructor() {
     this.regionModel = RegionModel.getInstance();
-    this.eventModel = EventModel.create(this.regionModel); // Create EventModel immediately, it loads db in background
+    this.eventModel = EventModel.create(); // Create EventModel immediately, it loads db in background
     this.mapModel = new MapModel();
     this.regionLabeler = new RegionLabeler(this.regionModel);
-    this.filter = new FilterModel(this.eventModel, this.mapModel);
+    this.filter = new FilterModel(
+      this.eventModel,
+      this.mapModel,
+      this.regionModel
+    );
     this.overlayModel = new OverlayModel();
     this.pollForUpdates();
 

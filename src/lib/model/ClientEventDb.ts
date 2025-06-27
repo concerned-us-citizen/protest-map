@@ -9,7 +9,7 @@ import type { EventFilterOptions } from "./FilterModel.svelte";
 import { type Database, type SqlValue } from "sql.js";
 import { dateToYYYYMMDDInt, yyyymmddIntToDate } from "$lib/util/date";
 import { getSqlJs } from "./sqlJsInstance";
-import type { NamedRegion } from "./RegionModel";
+import type { NamedRegion } from "./RegionModel.svelte";
 
 interface LatestDbManifest {
   dbFilename: string;
@@ -66,7 +66,7 @@ export class ClientEventDb {
   }
 
   getVoterLeanCounts(filter: EventFilterOptions): VoterLeanCounts {
-    const { date, namedRegion } = filter;
+    const { date, eventNames, namedRegion, voterLeans } = filter;
     const builder = new QueryBuilder(
       (whereClause) => `
       SELECT
@@ -78,6 +78,8 @@ export class ClientEventDb {
 `
     );
     builder.addDateSubquery(date);
+    builder.addVoterLeanSubquery(voterLeans);
+    builder.addSelectedEventNamesSubquery(eventNames);
     builder.addNamedRegionOnlySubquery(namedRegion);
     const stmt = builder.createStatement(this.db);
     if (!stmt.step()) {
@@ -196,7 +198,7 @@ export class ClientEventDb {
   getEventNamesAndCountsForFilter(
     filter: EventFilterOptions
   ): { name: string; count: number }[] {
-    const { date, namedRegion, voterLeans } = filter;
+    const { date, namedRegion, eventNames, voterLeans } = filter;
 
     const builder = new QueryBuilder(
       (whereClause) => `
@@ -209,7 +211,7 @@ export class ClientEventDb {
     );
 
     builder.addDateSubquery(date);
-    // Note this doesn't include the selectedNames, since that's what this is a source for.
+    builder.addSelectedEventNamesSubquery(eventNames);
     builder.addNamedRegionOnlySubquery(namedRegion);
     builder.addVoterLeanSubquery(voterLeans);
 

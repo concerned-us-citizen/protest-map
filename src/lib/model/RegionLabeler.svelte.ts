@@ -4,7 +4,7 @@ import {
   type Bounds,
   type RegionModel,
   type NamedRegion,
-} from "./RegionModel";
+} from "./RegionModel.svelte";
 import { debounce } from "$lib/util/misc";
 
 export class RegionLabeler {

@@ -1,4 +1,4 @@
-import type { Bounds } from "$lib/model/RegionModel";
+import type { Bounds } from "$lib/model/RegionModel.svelte";
 import type { LngLatBoundsLike, LngLatBounds } from "maplibre-gl";
 import type { Polygon } from "geojson";
 

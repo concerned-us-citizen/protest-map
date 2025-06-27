@@ -69,7 +69,12 @@ async function downloadWithRedirects(
     request.on("error", reject);
   });
 }
-for (const fileName of ["region-names.json.gz", "regions.sqlite.gz"]) {
+const tag = "v1.0.1";
+for (const fileName of [
+  `region-names-${tag}.json.gz`,
+  `regions-${tag}.sqlite.gz`,
+  `regions-lite-${tag}.sqlite.gz`,
+]) {
   await downloadToStatic(
     `https://github.com/concerned-us-citizen/us-region-db/releases/download/v1.0.1/${fileName}`
   ).catch((err) => {

@@ -122,3 +122,24 @@ export function joinWithAnd(items: string[]): string {
 
   return `${allButLast.join(", ")}, and ${lastItem}`;
 }
+
+/**
+ * Left-pads `str` with `ch` until it reaches `length` characters.
+ * If `str` is already long enough it is returned unchanged.
+ *
+ * @example
+ * pad("42", 5, "0")    // → "00042"
+ * pad("abc", 8, "-=")  // → "-=-=-abc"
+ */
+export function padStart(str: string, length: number, ch = " "): string {
+  if (ch.length === 0) {
+    throw new Error("pad(): padding character must be at least one char long");
+  }
+
+  const deficit = length - str.length;
+  if (deficit <= 0) return str; // already long enough
+
+  // build just enough padding, even if `ch` is multi-char
+  const padding = ch.repeat(Math.ceil(deficit / ch.length)).slice(0, deficit);
+  return padding + str;
+}

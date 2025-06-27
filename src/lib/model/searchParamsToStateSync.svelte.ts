@@ -2,7 +2,7 @@ import { VoterLeanValues } from "$lib/types";
 import { deserializeDate, serializeDate } from "$lib/util/date";
 import { mdItalics, pluralize, toTitleCase } from "$lib/util/string";
 import { PageState } from "./PageState.svelte";
-import { prettifyNamedRegion, type NamedRegion } from "./RegionModel";
+import { prettifyNamedRegion, type NamedRegion } from "./RegionModel.svelte";
 import { joinWithAnd } from "$lib/util/string";
 
 export interface ParamOption {
@@ -50,6 +50,7 @@ export const shareOptions: ParamOption[] = [
         ["zip", pageState.regionModel.getNamedRegionForZip],
         ["state", pageState.regionModel.getNamedRegionForState],
         ["city", pageState.regionModel.getNamedRegionForCity],
+        ["metro", pageState.regionModel.getNamedRegionForMetro],
         ["zoomto", pageState.regionModel.getNamedRegionForName],
       ];
       for (const [key, lookupFn] of zoomParams) {

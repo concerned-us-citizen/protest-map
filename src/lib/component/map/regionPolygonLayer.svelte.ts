@@ -1,6 +1,6 @@
 import type { Map as MapLibreMap } from "maplibre-gl";
 import type { MultiPolygon, Polygon } from "geojson";
-import type { NamedRegion } from "$lib/model/RegionModel";
+import type { NamedRegion } from "$lib/model/RegionModel.svelte";
 
 const REGION_SOURCE_ID = "region-polygon";
 
@@ -35,16 +35,9 @@ export function createRegionPolygonLayer(map: MapLibreMap) {
 
 export async function updateRegionPolygonLayer(
   map: MapLibreMap | undefined,
-  namedRegion: NamedRegion | undefined,
-  getPolygonForNamedRegion: (
-    _namedRegion: NamedRegion
-  ) => Promise<Polygon | MultiPolygon | undefined>
+  polygon: Polygon | MultiPolygon | undefined
 ) {
   if (!map) return;
-
-  const polygon = namedRegion
-    ? await getPolygonForNamedRegion(namedRegion)
-    : undefined;
 
   const source = map.getSource(REGION_SOURCE_ID) as maplibregl.GeoJSONSource;
   if (!source) return;

@@ -1,5 +1,5 @@
 import maplibregl from "maplibre-gl";
-import type { Bounds } from "./RegionModel";
+import type { Bounds } from "./RegionModel.svelte";
 import {
   boundsEqual,
   boundsFromLngLatBounds,

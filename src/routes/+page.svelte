@@ -9,7 +9,7 @@
   import UpgradeBanner from "$lib/component/UpgradeBanner.svelte";
   import LoadingSpinner from "$lib/component/LoadingSpinner.svelte";
   import { page } from "$app/stores";
-  import { prettifyNamedRegion } from "$lib/model/RegionModel";
+  import { prettifyNamedRegion } from "$lib/model/RegionModel.svelte";
   import RegionNavigationDialog from "$lib/component/RegionNavigationDialog.svelte";
   import {
     getSearchParamsFromState,

@@ -1,4 +1,4 @@
-import type { RegionModel } from "../../model/RegionModel";
+import type { RegionModel } from "../../model/RegionModel.svelte";
 import type {
   Feature,
   FeatureCollection,

@@ -2,6 +2,7 @@
   import HistogramSlider from "./HistogramSlider.svelte";
   import { getPageStateFromContext } from "$lib/model/PageState.svelte";
   import { getShortcutPrefix } from "$lib/util/os";
+  import { datesEqual } from "$lib/util/date";
 
   const pageState = getPageStateFromContext();
 
@@ -66,6 +67,7 @@
   <button
     class="nav-button prev"
     onclick={() => pageState.filter.selectPreviousDate()}
+    disabled={pageState.filter.filteredDatesWithEventCounts.length < 2}
     onmousedown={() => startDateRepeat("prev")}
     onmouseup={stopDateRepeat}
     onmouseleave={stopDateRepeat}
@@ -81,7 +83,15 @@
     filteredItems={pageState.filter.filteredDatesWithEventCounts}
     keyFor={(item) => item.date.getTime()}
     selectedItem={selectedDateWithEventCount}
-    onSelect={(dc) => pageState.filter.setCurrentDate(dc.date)}
+    onSelect={(dc) => {
+      const inCurrentFilter =
+        pageState.filter.filteredDatesWithEventCounts.find((e) =>
+          datesEqual(e.date, dc.date)
+        );
+      if (inCurrentFilter) {
+        pageState.filter.setCurrentDate(dc.date);
+      }
+    }}
     magnitudeFor={(item) => item.eventCount}
     firstShadedItemIndex={(items) =>
       items.findIndex((item) => item.date >= new Date())}
@@ -89,6 +99,7 @@
   <button
     class="nav-button next"
     onclick={() => pageState.filter.selectNextDate()}
+    disabled={pageState.filter.filteredDatesWithEventCounts.length < 2}
     onmousedown={() => startDateRepeat("next")}
     onmouseup={stopDateRepeat}
     onmouseleave={stopDateRepeat}

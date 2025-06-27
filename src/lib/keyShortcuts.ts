@@ -9,10 +9,7 @@ export function onKeyDown(event: KeyboardEvent, pageState: PageState) {
   // All shortcuts begin with ctrl-option-cmd
   if (!(event.ctrlKey && event.altKey && event.metaKey)) return;
 
-  const key = event.key.toLowerCase();
   const code = event.code;
-
-  console.log(`Key: ${key} code: ${code}`);
 
   // Spacebar always toggles playback
   if (code === "Space") {

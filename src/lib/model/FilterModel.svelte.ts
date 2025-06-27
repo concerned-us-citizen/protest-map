@@ -9,7 +9,13 @@ import { formatDate, isFutureDate } from "$lib/util/date";
 import { joinWithAnd, mdBold, pluralize } from "$lib/util/string";
 import { titleCase } from "title-case";
 import type { MapModel } from "./MapModel.svelte";
-import { prettifyNamedRegion, type NamedRegion } from "./RegionModel";
+import {
+  prettifyNamedRegion,
+  RegionModel,
+  type NamedRegion,
+} from "./RegionModel.svelte";
+import type { Polygon, MultiPolygon } from "geojson";
+import { omit } from "$lib/util/misc";
 
 const INITIAL_REPEAT_DELAY = 400; // ms
 const REPEAT_INTERVAL = 80; // ms
@@ -17,7 +23,8 @@ const REPEAT_INTERVAL = 80; // ms
 export interface EventFilterOptions {
   date?: Date;
   eventNames?: string[]; // empty or missing means match all events
-  namedRegion?: NamedRegion; // If not null, only match events within the region (only states rn)
+  namedRegion?: NamedRegion; // If not null, only match events within the region
+  namedRegionPolygon?: Polygon | MultiPolygon;
   voterLeans?: VoterLean[]; // empty or missing means match all voter leans
 }
 
@@ -29,16 +36,15 @@ interface DateAndEventCount {
 export class FilterModel {
   readonly eventModel: EventModel;
   readonly mapModel: MapModel;
+  readonly regionModel: RegionModel;
 
-  filter = $derived.by(() => ({
+  currentFilter = $derived.by(() => ({
+    date: this.currentDate,
     eventNames: this.selectedEventNames,
     namedRegion: this.namedRegion,
+    namedRegionPolygon: this.namedRegionPolygon,
     voterLeans: this.selectedVoterLeans,
   }));
-
-  currentDateFilter = $derived.by(() => {
-    return { ...this.filter, date: this.currentDate };
-  });
 
   allFilteredEvents = $state<EventMarkerInfoWithId[]>([]);
   currentDateFilteredEvents = $state<EventMarkerInfoWithId[]>([]);
@@ -47,6 +53,7 @@ export class FilterModel {
   filteredDatesWithEventCounts = $state<DateAndEventCount[]>([]);
 
   namedRegion = $state<NamedRegion | undefined>();
+  namedRegionPolygon: Polygon | MultiPolygon | undefined = $state();
 
   selectedVoterLeans = $state<VoterLean[]>([]);
 
@@ -170,16 +177,35 @@ export class FilterModel {
   readonly formattedCurrentDate = $derived(formatDate(this.currentDate));
 
   readonly filteredEventNamesWithLocationCounts = $derived.by(() => {
-    const date = this.currentDate;
-    const namedRegion = this.namedRegion;
-    if (!date) return [];
+    const currentFilter = this.currentFilter;
 
-    return this.eventModel
+    if (!currentFilter?.date) return [];
+
+    // We want to see all the event names for the current date's filter,
+    // excluding other filters, but with counts that reflect the
+    // full current filter (i.e. many will be 0). This gives users the ability to select
+    // names that would otherwise be filtered out, but see accurate counts.
+    const allFullyFilteredEventNamesAndCounts = this.eventModel
+      ? this.eventModel.getEventNamesAndCountsForFilter(currentFilter)
+      : [];
+
+    const fullCountsMap = new Map(
+      allFullyFilteredEventNamesAndCounts.map(({ name, count }) => [
+        name,
+        count,
+      ])
+    );
+
+    const allCurrentDateEventNamesAndCounts = this.eventModel
       ? this.eventModel.getEventNamesAndCountsForFilter({
-          date,
-          namedRegion,
+          date: currentFilter.date,
         })
       : [];
+
+    return allCurrentDateEventNamesAndCounts.map(({ name }) => ({
+      name,
+      count: fullCountsMap.get(name) ?? 0,
+    }));
   });
 
   readonly currentDateHasEventNames = $derived(
@@ -191,15 +217,11 @@ export class FilterModel {
   );
 
   readonly filteredVoterLeanCounts = $derived.by(() => {
-    const date = this.currentDate;
-    const namedRegion = this.namedRegion;
-    if (!date) return EmptyVoterLeanCounts;
+    const currentFilter = this.currentFilter;
+    if (!currentFilter?.date) return EmptyVoterLeanCounts;
 
     return this.eventModel
-      ? this.eventModel.getVoterLeanCounts({
-          date,
-          namedRegion,
-        })
+      ? this.eventModel.getVoterLeanCounts(currentFilter)
       : EmptyVoterLeanCounts;
   });
 
@@ -335,9 +357,14 @@ export class FilterModel {
     );
   }
 
-  constructor(eventModel: EventModel, mapModel: MapModel) {
+  constructor(
+    eventModel: EventModel,
+    mapModel: MapModel,
+    regionModel: RegionModel
+  ) {
     this.eventModel = eventModel;
     this.mapModel = mapModel;
+    this.regionModel = regionModel;
 
     // Update all the dates
     $effect(() => {
@@ -350,15 +377,18 @@ export class FilterModel {
 
     // Update filtered date counts and events
     $effect(() => {
-      const filter = this.filter;
-      const isLoading = this.eventModel.isLoading;
+      const currentFilter = this.currentFilter;
+      const currentFilterWithoutDate = omit(currentFilter, "date");
+      const isLoaded = this.eventModel.isLoaded;
       const update = async () => {
-        if (!isLoading) {
-          this.filteredDatesWithEventCounts =
-            this.eventModel.getDatesWithEventCounts(filter);
+        if (isLoaded) {
+          const datesWithEventCounts = this.eventModel.getDatesWithEventCounts(
+            currentFilterWithoutDate
+          );
+          this.filteredDatesWithEventCounts = datesWithEventCounts;
 
           this.allFilteredEvents = await this.eventModel.getMarkerInfos(
-            this.filter
+            this.currentFilter
           );
         } else {
           this.allFilteredEvents = [];
@@ -368,11 +398,11 @@ export class FilterModel {
     });
 
     $effect(() => {
-      const currentDateFilter = this.currentDateFilter;
+      const currentFilter = this.currentFilter;
       const update = async () => {
         if (this.eventModel) {
           this.currentDateFilteredEvents =
-            await this.eventModel.getMarkerInfos(currentDateFilter);
+            await this.eventModel.getMarkerInfos(currentFilter);
         } else {
           this.currentDateFilteredEvents = [];
         }
@@ -396,6 +426,17 @@ export class FilterModel {
         }
         this.setCurrentDateIndex(newIndex);
       }
+    });
+
+    $effect(() => {
+      const namedRegion = this.namedRegion;
+      void this.regionModel.allPolygonsLoaded; // Polygon updates when the full db is loaded.
+      const update = async () => {
+        this.namedRegionPolygon = namedRegion
+          ? await this.regionModel.getPolygonForNamedRegion(namedRegion)
+          : undefined;
+      };
+      update();
     });
   }
 }

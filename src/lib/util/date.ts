@@ -268,3 +268,11 @@ export function yyyymmddIntToDate(yyyymmdd: number): Date {
   const day = yyyymmdd % 100;
   return new Date(year, month, day);
 }
+
+export function datesEqual(
+  a: Date | null | undefined,
+  b: Date | null | undefined
+): boolean {
+  if (!a || !b) return a === b; // handles null/undefined
+  return a.getTime() === b.getTime();
+}

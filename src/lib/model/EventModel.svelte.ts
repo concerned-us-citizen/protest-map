@@ -9,12 +9,10 @@ import {
 import { formatDateTime } from "$lib/util/date";
 import { ClientEventDb } from "./ClientEventDb";
 import { booleanPointInPolygon, point } from "@turf/turf";
-import type { RegionModel } from "./RegionModel";
 import type { EventFilterOptions } from "./FilterModel.svelte";
 
 export class EventModel {
   private db: Nullable<ClientEventDb> = $state(null);
-  private regionModel: RegionModel;
 
   updatedAt = $state<Nullable<Date>>(null);
 
@@ -31,11 +29,8 @@ export class EventModel {
     filter: EventFilterOptions
   ): Promise<EventMarkerInfoWithId[]> {
     let result = this.db ? this.db.getEventMarkerInfos(filter) : [];
-    if (filter.namedRegion) {
-      const polygon = await this.regionModel.getPolygonForNamedRegion(
-        filter.namedRegion
-      );
-      if (!polygon) return [];
+    const polygon = filter.namedRegionPolygon;
+    if (polygon) {
       result = result.filter((marker) =>
         booleanPointInPolygon(point([marker.lon, marker.lat]), polygon)
       );
@@ -65,9 +60,7 @@ export class EventModel {
     return this.db ? await this.db.checkIsUpdateAvailable() : false;
   }
 
-  private constructor(regionModel: RegionModel) {
-    this.regionModel = regionModel;
-  }
+  private constructor() {}
 
   private async initialize() {
     try {
@@ -78,8 +71,8 @@ export class EventModel {
     }
   }
 
-  static create(regionModel: RegionModel): EventModel {
-    const model = new EventModel(regionModel);
+  static create(): EventModel {
+    const model = new EventModel();
     // Start async initialization in the background
     if (browser) {
       model.initialize();

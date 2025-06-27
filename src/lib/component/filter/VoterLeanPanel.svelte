@@ -66,7 +66,7 @@
 </script>
 
 <Panel
-  title="2024 Results in Voter Precinct"
+  title="Area Lean in 2024"
   class={["voter-lean-container", userClass]}
   {...rest}
 >

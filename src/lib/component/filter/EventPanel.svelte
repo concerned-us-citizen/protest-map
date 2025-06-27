@@ -2,6 +2,7 @@
   import { getPageStateFromContext } from "$lib/model/PageState.svelte";
   import Panel from "$lib/component/Panel.svelte";
   import PillButton from "$lib/component/PillButton.svelte";
+  import { tick } from "svelte";
 
   const pageState = getPageStateFromContext();
   const eventNamesWithLocationCounts = $derived(
@@ -10,20 +11,57 @@
 
   const title = $derived.by(() => {
     const count = pageState.filter.filteredEventNamesWithLocationCounts.length;
-    return count > 0 ? `Protest Events (Total of ${count})` : "Protest Events";
+    return count > 0
+      ? `Protest Events That Day (Total ${count})`
+      : "Protest Events";
+  });
+
+  let listEl: HTMLDivElement;
+  $effect(() => {
+    const update = async () => {
+      // Runs every time selected event names changes
+      void pageState.filter.filteredEventNamesWithLocationCounts;
+      void pageState.filter.selectedEventNames;
+
+      // Wait until Svelte has flushed DOM updates
+      await tick();
+
+      if (!listEl) return;
+
+      // First selected pill in document order
+      const firstSelected = listEl.querySelector<HTMLElement>(
+        '[data-selected="true"]'
+      );
+      if (!firstSelected) return;
+
+      // Scroll only if it is outside the viewport of the container
+      const top = firstSelected.offsetTop;
+      const bottom = top + firstSelected.offsetHeight;
+      const viewTop = listEl.scrollTop;
+      const viewBottom = viewTop + listEl.clientHeight;
+
+      if (top < viewTop || bottom > viewBottom) {
+        firstSelected.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      }
+    };
+    update();
   });
 </script>
 
 <Panel {title}>
-  <div class="content" role="list">
+  <div class="content" role="list" bind:this={listEl}>
     {#if eventNamesWithLocationCounts.length > 0}
       {#each eventNamesWithLocationCounts as event (event.name)}
+        {@const selected = pageState.filter.selectedEventNames.includes(
+          event.name
+        )}
         <PillButton
           onclick={(e) => {
             e.stopPropagation();
             pageState.filter.toggleSelectedEventName(event.name);
           }}
-          selected={pageState.filter.selectedEventNames.includes(event.name)}
+          {selected}
+          data-selected={selected}
         >
           <div class="button-content">
             <div class="event-name-in-list">{event.name || "Unnamed"}</div>

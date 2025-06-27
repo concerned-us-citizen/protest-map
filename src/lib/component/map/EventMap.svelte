@@ -13,7 +13,6 @@
     createRegionPolygonLayer,
     updateRegionPolygonLayer,
   } from "./regionPolygonLayer.svelte";
-  import type { NamedRegion } from "$lib/model/RegionModel";
   // import { addDebugRectangles } from "./addDebugRectangles";
 
   const iconForPct = (pct: number | null) =>
@@ -72,15 +71,10 @@
   });
 
   $effect(() => {
-    const namedRegion = pageState.filter.namedRegion;
+    const namedRegionPolygon = pageState.filter.namedRegionPolygon;
     if (!map) return;
     const update = async () =>
-      await updateRegionPolygonLayer(
-        map,
-        namedRegion,
-        async (namedRegion: NamedRegion) =>
-          await pageState.regionModel.getPolygonForNamedRegion(namedRegion)
-      );
+      await updateRegionPolygonLayer(map, namedRegionPolygon);
     update();
   });
 

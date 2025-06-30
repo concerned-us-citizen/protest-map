@@ -50,25 +50,24 @@ async function fetchMobilizeEventLinkLocationInfo(
     return null;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const context: any = {};
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let eventInfo: any;
+  const context: vm.Context = {};
+
   try {
     vm.runInNewContext(dataScript, context);
-    eventInfo = context.window[dataProp].event;
+    const eventInfo = context.window[dataProp].event;
+    return {
+      name: eventInfo.location_name,
+      address: eventInfo.address_line1,
+      city: eventInfo.city,
+      state: eventInfo.state,
+      coordinates: {
+        lat: eventInfo.lat,
+        lon: eventInfo.lon,
+      },
+    };
   } catch (e) {
     console.error("Failed to evaluate JS", e);
   }
 
-  return {
-    name: eventInfo.location_name,
-    address: eventInfo.address_line1,
-    city: eventInfo.city,
-    state: eventInfo.state,
-    coordinates: {
-      lat: eventInfo.lat,
-      lon: eventInfo.lon,
-    },
-  };
+  return null;
 }

@@ -65,7 +65,9 @@
         >
           <div class="button-content">
             <div class="event-name-in-list">{event.name || "Unnamed"}</div>
-            <div class="event-count-in-list">({event.count})</div>
+            <div class="event-count-in-list">
+              {event.count.toLocaleString()}
+            </div>
           </div>
         </PillButton>
       {/each}

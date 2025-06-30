@@ -1,8 +1,10 @@
 import { EventModel } from "./EventModel.svelte";
 import {
   EmptyVoterLeanCounts,
-  type EventMarkerInfoWithId,
+  type Marker,
+  type MarkerType,
   type SetTimeoutId,
+  type TurnoutCountSource,
   type VoterLean,
 } from "$lib/types";
 import { formatDate, isFutureDate } from "$lib/util/date";
@@ -20,7 +22,9 @@ import { omit } from "$lib/util/misc";
 const INITIAL_REPEAT_DELAY = 400; // ms
 const REPEAT_INTERVAL = 80; // ms
 
-export interface EventFilterOptions {
+export interface FilterOptions {
+  markerType: MarkerType;
+  turnoutCountSource: TurnoutCountSource;
   date?: Date;
   eventNames?: string[]; // empty or missing means match all events
   namedRegion?: NamedRegion; // If not null, only match events within the region
@@ -28,9 +32,9 @@ export interface EventFilterOptions {
   voterLeans?: VoterLean[]; // empty or missing means match all voter leans
 }
 
-interface DateAndEventCount {
+interface DateAndCount {
   date: Date;
-  eventCount: number;
+  count: number;
 }
 
 export class FilterModel {
@@ -38,19 +42,25 @@ export class FilterModel {
   readonly mapModel: MapModel;
   readonly regionModel: RegionModel;
 
-  currentFilter = $derived.by(() => ({
-    date: this.currentDate,
+  filter = $derived.by(() => ({
+    markerType: this.markerType,
+    turnoutCountSource: this.turnoutCountSource,
+    date: this.date,
     eventNames: this.selectedEventNames,
     namedRegion: this.namedRegion,
     namedRegionPolygon: this.namedRegionPolygon,
     voterLeans: this.selectedVoterLeans,
   }));
 
-  allFilteredEvents = $state<EventMarkerInfoWithId[]>([]);
-  currentDateFilteredEvents = $state<EventMarkerInfoWithId[]>([]);
+  markerType: MarkerType = $state("event");
+  turnoutCountSource: TurnoutCountSource = $state("low");
 
-  allDatesWithEventCounts = $state<DateAndEventCount[]>([]);
-  filteredDatesWithEventCounts = $state<DateAndEventCount[]>([]);
+  allFilteredEvents = $state<Marker[]>([]);
+  dateFilteredMarkers = $state<Marker[]>([]);
+  totalCount = $state<number>(0);
+
+  allDatesWithCounts = $state<DateAndCount[]>([]);
+  filteredDatesWithEventCounts = $state<DateAndCount[]>([]);
 
   namedRegion = $state<NamedRegion | undefined>();
   namedRegionPolygon: Polygon | MultiPolygon | undefined = $state();
@@ -62,53 +72,53 @@ export class FilterModel {
   // since it may change with filters, causing the two to misalign.
   // Instead, we explicitly set both of them when setting either one.
 
-  // Worth noting - currentDate Index is relative to
+  // Worth noting - dateIndex is relative to
   // allDatesWithEventCounts, not filteredDatesWithEventCounts.
-  #currentDateIndex: number = $state(-1);
-  get currentDateIndex() {
-    return this.#currentDateIndex;
+  #dateIndex: number = $state(-1);
+  get dateIndex() {
+    return this.#dateIndex;
   }
-  #currentDate = $state<Date | undefined>();
-  get currentDate() {
-    return this.#currentDate;
+  #date = $state<Date | undefined>();
+  get date() {
+    return this.#date;
   }
 
-  setCurrentDateIndex(index: number) {
-    this.#currentDateIndex = index;
-    if (index < 0 || index >= this.allDatesWithEventCounts.length) {
-      this.#currentDate = undefined;
+  setDateIndex(index: number) {
+    this.#dateIndex = index;
+    if (index < 0 || index >= this.allDatesWithCounts.length) {
+      this.#date = undefined;
     } else {
-      this.#currentDate = this.allDatesWithEventCounts[index].date;
+      this.#date = this.allDatesWithCounts[index].date;
     }
   }
 
-  setCurrentDate(date: Date | undefined) {
-    this.#currentDate = date;
+  setDate(date: Date | undefined) {
+    this.#date = date;
     if (!date) {
-      this.#currentDateIndex = -1;
+      this.#dateIndex = -1;
     } else {
-      const index = this.allDatesWithEventCounts.findIndex(
+      const index = this.allDatesWithCounts.findIndex(
         (d) => d.date.getTime() === date.getTime()
       );
       if (index !== -1) {
-        this.#currentDateIndex = index;
+        this.#dateIndex = index;
       } else {
         console.warn(
-          "Setting currentDate to value not found in eventModel.allDatesWithEventCounts:",
+          "Setting date to value not found in eventModel.allDatesWithEventCounts:",
           date
         );
-        this.#currentDateIndex = -1;
+        this.#dateIndex = -1;
       }
     }
   }
 
-  largestDateEventCount = $derived.by(() => {
-    const dates = this.allDatesWithEventCounts;
-    const counts = dates.map((d) => d.eventCount);
-    return counts.length > 0 ? Math.max(...dates.map((d) => d.eventCount)) : 0;
+  largestDateCount = $derived.by(() => {
+    const dates = this.allDatesWithCounts;
+    const counts = dates.map((d) => d.count);
+    return counts.length > 0 ? Math.max(...dates.map((d) => d.count)) : 0;
   });
 
-  readonly hasDates = $derived(this.allDatesWithEventCounts.length > 0);
+  readonly hasDates = $derived(this.allDatesWithCounts.length > 0);
 
   isValidDate(date: Date | undefined) {
     if (!date) return false;
@@ -130,30 +140,30 @@ export class FilterModel {
   });
 
   readonly dateRange = $derived.by(() => {
-    const dates = this.allDatesWithEventCounts;
+    const dates = this.allDatesWithCounts;
     if (dates.length === 0) return null;
     return { start: dates[0].date, end: dates[dates.length - 1].date };
   });
 
   #selectRelativeDateWrapping(increment: number) {
     const filteredDates = this.filteredDatesWithEventCounts;
-    const allDates = this.allDatesWithEventCounts;
-    const currentDate = this.currentDate;
+    const allDates = this.allDatesWithCounts;
+    const currentDate = this.date;
 
     if (filteredDates.length === 0 || !currentDate) return;
 
     // Find current date’s index in filteredDates
-    let currentFilteredIndex = filteredDates.findIndex(
+    let filteredIndex = filteredDates.findIndex(
       (d) => d.date.getTime() === currentDate.getTime()
     );
 
-    if (currentFilteredIndex === -1) {
-      currentFilteredIndex = 0;
+    if (filteredIndex === -1) {
+      filteredIndex = 0;
     }
 
     // Compute wrapped index
     const len = filteredDates.length;
-    const targetIndex = (currentFilteredIndex + increment + len) % len;
+    const targetIndex = (filteredIndex + increment + len) % len;
 
     const targetDate = filteredDates[targetIndex]?.date;
     if (!targetDate) return undefined;
@@ -163,7 +173,7 @@ export class FilterModel {
       (d) => d.date.getTime() === targetDate.getTime()
     );
 
-    this.setCurrentDateIndex(newIndex);
+    this.setDateIndex(newIndex);
   }
 
   selectNextDate() {
@@ -174,19 +184,19 @@ export class FilterModel {
     this.#selectRelativeDateWrapping(-1);
   }
 
-  readonly formattedCurrentDate = $derived(formatDate(this.currentDate));
+  readonly formattedDate = $derived(formatDate(this.date));
 
   readonly filteredEventNamesWithLocationCounts = $derived.by(() => {
-    const currentFilter = this.currentFilter;
+    const filter = this.filter;
 
-    if (!currentFilter?.date) return [];
+    if (!filter?.date) return [];
 
     // We want to see all the event names for the current date's filter,
     // excluding other filters, but with counts that reflect the
     // full current filter (i.e. many will be 0). This gives users the ability to select
     // names that would otherwise be filtered out, but see accurate counts.
     const allFullyFilteredEventNamesAndCounts = this.eventModel
-      ? this.eventModel.getEventNamesAndCountsForFilter(currentFilter)
+      ? this.eventModel.getEventNamesAndCountsForFilter(filter)
       : [];
 
     const fullCountsMap = new Map(
@@ -196,32 +206,34 @@ export class FilterModel {
       ])
     );
 
-    const allCurrentDateEventNamesAndCounts = this.eventModel
+    const allDateEventNamesAndCounts = this.eventModel
       ? this.eventModel.getEventNamesAndCountsForFilter({
-          date: currentFilter.date,
+          markerType: filter.markerType,
+          turnoutCountSource: filter.turnoutCountSource,
+          date: filter.date,
         })
       : [];
 
-    return allCurrentDateEventNamesAndCounts.map(({ name }) => ({
+    return allDateEventNamesAndCounts.map(({ name }) => ({
       name,
       count: fullCountsMap.get(name) ?? 0,
     }));
   });
 
-  readonly currentDateHasEventNames = $derived(
+  readonly dateHasEventNames = $derived(
     this.filteredEventNamesWithLocationCounts.length > 0
   );
 
-  readonly currentDateHasMultipleEventNames = $derived(
+  readonly dateHasMultipleEventNames = $derived(
     this.filteredEventNamesWithLocationCounts.length > 1
   );
 
   readonly filteredVoterLeanCounts = $derived.by(() => {
-    const currentFilter = this.currentFilter;
-    if (!currentFilter?.date) return EmptyVoterLeanCounts;
+    const filter = this.filter;
+    if (!filter?.date) return EmptyVoterLeanCounts;
 
     return this.eventModel
-      ? this.eventModel.getVoterLeanCounts(currentFilter)
+      ? this.eventModel.getVoterLeanCounts(filter)
       : EmptyVoterLeanCounts;
   });
 
@@ -369,26 +381,26 @@ export class FilterModel {
     // Update all the dates
     $effect(() => {
       if (!this.eventModel.isLoading) {
-        this.allDatesWithEventCounts = this.eventModel.getDatesWithEventCounts(
-          {}
-        );
+        this.allDatesWithCounts = this.eventModel.getDatesWithCounts({
+          markerType: this.markerType,
+          turnoutCountSource: this.turnoutCountSource,
+        });
       }
     });
 
     // Update filtered date counts and events
     $effect(() => {
-      const currentFilter = this.currentFilter;
-      const currentFilterWithoutDate = omit(currentFilter, "date");
+      const filter = this.filter;
+      const filterWithoutDate = omit(filter, "date");
       const isLoaded = this.eventModel.isLoaded;
       const update = async () => {
         if (isLoaded) {
-          const datesWithEventCounts = this.eventModel.getDatesWithEventCounts(
-            currentFilterWithoutDate
-          );
+          const datesWithEventCounts =
+            this.eventModel.getDatesWithCounts(filterWithoutDate);
           this.filteredDatesWithEventCounts = datesWithEventCounts;
 
-          this.allFilteredEvents = await this.eventModel.getMarkerInfos(
-            this.currentFilter
+          this.allFilteredEvents = await this.eventModel.getMarkers(
+            this.filter
           );
         } else {
           this.allFilteredEvents = [];
@@ -398,23 +410,25 @@ export class FilterModel {
     });
 
     $effect(() => {
-      const currentFilter = this.currentFilter;
+      const currentFilter = this.filter;
       const update = async () => {
         if (this.eventModel) {
-          this.currentDateFilteredEvents =
-            await this.eventModel.getMarkerInfos(currentFilter);
+          this.dateFilteredMarkers =
+            await this.eventModel.getMarkers(currentFilter);
+          this.totalCount = await this.eventModel.getCount(currentFilter);
         } else {
-          this.currentDateFilteredEvents = [];
+          this.dateFilteredMarkers = [];
+          this.totalCount = 0;
         }
       };
       update();
     });
 
     $effect(() => {
-      const currentDate = this.currentDate;
-      const allDatesWithEventCounts = this.allDatesWithEventCounts;
-      if (!this.isValidDate(currentDate)) {
-        // If no longer a valid date, set currentDateIndex to
+      const date = this.date;
+      const allDatesWithEventCounts = this.allDatesWithCounts;
+      if (!this.isValidDate(date)) {
+        // If no longer a valid date, set dateIndex to
         // be the date at or after the current system date
         // (or - 1 if no match) any time the eventModel's items change
         let newIndex = allDatesWithEventCounts.findIndex((dc) =>
@@ -424,7 +438,7 @@ export class FilterModel {
         if (newIndex < 0) {
           newIndex = allDatesWithEventCounts.length - 1;
         }
-        this.setCurrentDateIndex(newIndex);
+        this.setDateIndex(newIndex);
       }
     });
 

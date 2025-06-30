@@ -1,23 +1,39 @@
 import { describe, it, expect, vi, beforeEach, afterEach, Mock } from "vitest";
 import { maybeCreateGithubIssue } from "./createGithubSummaryIssue";
 import { Octokit } from "@octokit/rest";
-import type { SummaryInfo } from "./types";
+import type { RunSummary, ProcessingSummary } from "./ScrapeLogger";
 
 vi.mock("@octokit/rest");
 
 const mockCreate = vi.fn();
+const mockPaginate = vi.fn();
 
-const baseSummary = {
-  processed: 11962,
-  rejects: 892,
-  duplicates: 982,
-  added: 10088,
-  skippedSheets: [],
-  elapsedSeconds: 17.88,
-  loggedIssues: 1299,
-  wikiFetches: 0,
-  geocodings: 0,
-};
+function createSummaryWithRunProps(
+  runProps: Partial<RunSummary>
+): ProcessingSummary {
+  const baseRun: RunSummary = {
+    fetchedDataType: "turnout",
+    rowsProcessed: 11962,
+    rejects: 892,
+    duplicates: 982,
+    added: 10088,
+    skippedSheets: [],
+    elapsedSeconds: 17.88,
+    loggedIssues: 1299,
+    wikiFetches: 0,
+    geocodings: 0,
+  };
+
+  return {
+    elapsedSeconds: 100,
+    runs: [
+      {
+        ...baseRun,
+        ...runProps,
+      },
+    ],
+  };
+}
 
 beforeEach(() => {
   // Set required env vars
@@ -33,14 +49,18 @@ beforeEach(() => {
     },
   });
 
+  mockPaginate.mockResolvedValue([]);
+
   // Replace Octokit constructor
   (Octokit as unknown as Mock).mockImplementation(() => ({
     issues: {
       create: mockCreate,
     },
+    paginate: mockPaginate,
   }));
 
   mockCreate.mockClear();
+  mockPaginate.mockClear();
 });
 
 afterEach(() => {
@@ -49,27 +69,25 @@ afterEach(() => {
 
 describe("maybeCreateGithubIssue", () => {
   it("creates an issue for low added count", async () => {
-    const info: SummaryInfo = {
-      ...baseSummary,
+    const info = createSummaryWithRunProps({
       added: 5000,
       rejects: 100,
       skippedSheets: [],
-    };
+    });
 
     await maybeCreateGithubIssue(info);
 
     expect(mockCreate).toHaveBeenCalledOnce();
     const body = mockCreate.mock.calls[0][0].body;
-    expect(body).toContain("Fewer events than expected");
+    expect(body).toContain("Fewer rows than expected");
   });
 
   it("creates an issue for high rejects", async () => {
-    const info: SummaryInfo = {
-      ...baseSummary,
+    const info = createSummaryWithRunProps({
       added: 12000,
-      rejects: 1000,
+      rejects: 5000,
       skippedSheets: [],
-    };
+    });
 
     await maybeCreateGithubIssue(info);
 
@@ -79,10 +97,9 @@ describe("maybeCreateGithubIssue", () => {
   });
 
   it("creates an issue for long script runs", async () => {
-    const info: SummaryInfo = {
-      ...baseSummary,
+    const info = createSummaryWithRunProps({
       elapsedSeconds: 60 * 60 + 1,
-    };
+    });
 
     await maybeCreateGithubIssue(info);
 
@@ -92,8 +109,7 @@ describe("maybeCreateGithubIssue", () => {
   });
 
   it("creates an issue for skipped sheets", async () => {
-    const info: SummaryInfo = {
-      ...baseSummary,
+    const info = createSummaryWithRunProps({
       added: 12000,
       rejects: 100,
       skippedSheets: [
@@ -106,7 +122,7 @@ describe("maybeCreateGithubIssue", () => {
           rows: 454,
         },
       ],
-    };
+    });
 
     await maybeCreateGithubIssue(info);
 
@@ -116,7 +132,7 @@ describe("maybeCreateGithubIssue", () => {
   });
 
   it("does not create an issue when all conditions are within threshold", async () => {
-    const info: SummaryInfo = baseSummary;
+    const info = createSummaryWithRunProps({});
 
     await maybeCreateGithubIssue(info);
 
@@ -126,12 +142,11 @@ describe("maybeCreateGithubIssue", () => {
   it("throws if required env vars are missing", async () => {
     delete process.env.GITHUB_REPOSITORY;
 
-    const info: SummaryInfo = {
-      ...baseSummary,
+    const info = createSummaryWithRunProps({
       added: 12000,
       rejects: 1000,
       skippedSheets: [],
-    };
+    });
 
     await expect(maybeCreateGithubIssue(info)).rejects.toThrow(
       "Missing required GitHub environment variables"

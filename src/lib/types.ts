@@ -3,35 +3,46 @@ export interface Coordinates {
   lon: number;
 }
 
-export interface EventMarkerInfo extends Coordinates {
+export type MarkerType = "event" | "turnout";
+export type TurnoutCountSource = "high" | "low" | "average";
+
+interface CommonMarkerProps extends Coordinates {
+  id: number;
   pctDemLead: Nullable<number>;
 }
 
-export interface EventMarkerInfoWithId extends EventMarkerInfo {
-  eventId: number;
-}
-
-export interface ProtestEvent extends EventMarkerInfo {
-  name: string;
-  date: string;
-  link: Nullable<string>;
-  cityInfoId: number;
-}
-
-export interface CityInfo {
-  city: string;
-  state: string;
-  cityThumbnailUrl: string;
-  cityArticleUrl: string;
-}
-
-export interface PopulatedEvent {
+interface CommonPopulatedProps extends CityInfo {
   name: string;
   date: Date;
   link: Nullable<string>;
-  lat: number;
-  lon: number;
-  pctDemLead: Nullable<number>;
+}
+
+export interface ProtestEventMarker extends CommonMarkerProps {
+  type: "event";
+}
+
+export interface PopulatedProtestEventMarker
+  extends ProtestEventMarker,
+    CommonPopulatedProps {}
+
+export interface TurnoutMarker extends CommonMarkerProps {
+  type: "turnout";
+  low: number;
+  high: number;
+}
+
+export interface PopulatedTurnoutMarker
+  extends TurnoutMarker,
+    CommonPopulatedProps {
+  coverageUrl: string;
+}
+
+export type Marker = ProtestEventMarker | TurnoutMarker;
+export type PopulatedMarker =
+  | PopulatedProtestEventMarker
+  | PopulatedTurnoutMarker;
+
+export interface CityInfo {
   city: string;
   state: string;
   cityThumbnailUrl: string;

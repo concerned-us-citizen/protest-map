@@ -2,7 +2,7 @@ import { Coordinates, Nullable } from "../../src/lib/types";
 import { delay } from "../../src/lib/util/misc";
 import { isValidZipCode } from "../../src/lib/util/string";
 import { config } from "./config";
-import { DissenterEvent } from "./types";
+import { Address } from "./types";
 
 const USER_AGENT = config.userAgent;
 const DELAY_MS = 1000;
@@ -24,11 +24,11 @@ export async function geocodeFromService({
   city,
   state,
   country,
-}: DissenterEvent): Promise<Geocode> {
+}: Address): Promise<Geocode> {
   // Defend against poorly formed zips
   zip = isValidZipCode(zip) ? zip : undefined;
 
-  console.log(`Geocoding ${address} ${city} ${state}...`);
+  console.log(`Geocoding ${address ? address : ""} ${city} ${state}...`);
 
   const allFieldsEmpty = [address, zip, city, state, country].every(
     (part) => !part?.trim()

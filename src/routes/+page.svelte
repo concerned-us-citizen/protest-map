@@ -73,9 +73,9 @@
     };
   });
 
-  // EventInfoPanel becomes visible any time currentDate changes after loading.
+  // EventInfoPanel becomes visible any time date changes after loading.
   $effect(() => {
-    if (pageState.filter.currentDate !== undefined) {
+    if (pageState.filter.date !== undefined) {
       pageState.showEventInfo();
     }
   });
@@ -138,7 +138,7 @@
       </div>
 
       {#if pageState.filter.isFiltering && !pageState.overlayModel.filterVisible}
-        <div class="show-all-button-wrapper">
+        <div class="show-all-button-wrapper hide-on-popup">
           <PillButton
             large
             onclick={() => {

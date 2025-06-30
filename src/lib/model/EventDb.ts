@@ -1,11 +1,16 @@
 import type {
-  EventMarkerInfoWithId,
+  MarkerType,
   Nullable,
-  PopulatedEvent,
+  PopulatedMarker,
+  PopulatedProtestEventMarker,
+  PopulatedTurnoutMarker,
+  ProtestEventMarker,
+  TurnoutCountSource,
+  TurnoutMarker,
   VoterLean,
   VoterLeanCounts,
 } from "$lib/types";
-import type { EventFilterOptions } from "./FilterModel.svelte";
+import type { FilterOptions } from "./FilterModel.svelte";
 import { type Database, type SqlValue } from "sql.js";
 import { dateToYYYYMMDDInt, yyyymmddIntToDate } from "$lib/util/date";
 import { getSqlJs } from "./sqlJsInstance";
@@ -17,7 +22,7 @@ interface LatestDbManifest {
   sha?: string;
 }
 
-export class ClientEventDb {
+export class EventDb {
   private db: Database;
   private manifest: LatestDbManifest;
 
@@ -26,13 +31,18 @@ export class ClientEventDb {
     this.manifest = manifest;
   }
 
-  getEventMarkerInfos(filter: EventFilterOptions): EventMarkerInfoWithId[] {
-    const { date, eventNames, namedRegion, voterLeans } = filter;
+  getMarkers(filter: FilterOptions): (ProtestEventMarker | TurnoutMarker)[] {
+    const { markerType, date, eventNames, namedRegion, voterLeans } = filter;
+
+    const selectFields = ["id", "lat", "lon", "pct_dem_lead"];
+    if (markerType === "turnout") {
+      selectFields.push("low", "high");
+    }
 
     const builder = new QueryBuilder(
       (whereClause) => `
-      SELECT id, lat, lon, pct_dem_lead
-      FROM events
+      SELECT ${selectFields.join(", ")}
+      FROM ${markerType}s
       ${whereClause}`
     );
 
@@ -43,37 +53,75 @@ export class ClientEventDb {
 
     const stmt = builder.createStatement(this.db);
 
-    const results: EventMarkerInfoWithId[] = [];
+    const results: (ProtestEventMarker | TurnoutMarker)[] = [];
     while (stmt.step()) {
       const row = stmt.get();
-      const [id, lat, lon, pctDemLead] = row as [
+      const [id, lat, lon, pctDemLead, low, high] = row as [
         number,
         number,
         number,
         number | null,
+        number | undefined,
+        number | undefined,
       ];
 
-      results.push({
-        eventId: id,
-        lat,
-        lon,
-        pctDemLead,
-      });
+      if (markerType === "turnout") {
+        results.push({
+          type: "turnout",
+          id,
+          lat,
+          lon,
+          pctDemLead,
+          high: high as number,
+          low: low as number,
+        } satisfies TurnoutMarker);
+      } else {
+        results.push({
+          type: "event",
+          id,
+          lat,
+          lon,
+          pctDemLead,
+        } satisfies ProtestEventMarker);
+      }
     }
 
     stmt.free();
     return results;
   }
 
-  getVoterLeanCounts(filter: EventFilterOptions): VoterLeanCounts {
-    const { date, eventNames, namedRegion, voterLeans } = filter;
+  private getCountSourceSql(
+    markerType: MarkerType,
+    turnoutCountSource: TurnoutCountSource
+  ) {
+    if (markerType === "event") {
+      return "1"; // This will yield the count of rows
+    } else if (turnoutCountSource === "average") {
+      return "(low + high) / 2.0";
+    } else {
+      return turnoutCountSource; // low or high
+    }
+  }
+
+  getVoterLeanCounts(filter: FilterOptions): VoterLeanCounts {
+    const {
+      markerType,
+      turnoutCountSource,
+      date,
+      eventNames,
+      namedRegion,
+      voterLeans,
+    } = filter;
+
+    const countSource = this.getCountSourceSql(markerType, turnoutCountSource);
+
     const builder = new QueryBuilder(
       (whereClause) => `
       SELECT
-          SUM(CASE WHEN pct_dem_lead <  0 THEN 1 ELSE 0 END) AS trump,
-          SUM(CASE WHEN pct_dem_lead >  0 THEN 1 ELSE 0 END) AS harris,
-          SUM(CASE WHEN pct_dem_lead IS NULL THEN 1 ELSE 0 END) AS unavailable
-        FROM events
+          SUM(CASE WHEN pct_dem_lead <  0 THEN ${countSource} ELSE 0 END) AS trump,
+          SUM(CASE WHEN pct_dem_lead >  0 THEN ${countSource} ELSE 0 END) AS harris,
+          SUM(CASE WHEN pct_dem_lead IS NULL THEN ${countSource} ELSE 0 END) AS unavailable
+        FROM ${markerType}s
         ${whereClause}
 `
     );
@@ -94,15 +142,56 @@ export class ClientEventDb {
     };
   }
 
-  getDatesWithEventCounts(
-    filter: EventFilterOptions
-  ): { date: Date; eventCount: number }[] {
-    const { eventNames, namedRegion, voterLeans } = filter;
+  getCount(filter: FilterOptions): number {
+    const {
+      date,
+      markerType,
+      turnoutCountSource,
+      eventNames,
+      namedRegion,
+      voterLeans,
+    } = filter;
+
+    const countSource = this.getCountSourceSql(markerType, turnoutCountSource);
 
     const builder = new QueryBuilder(
       (whereClause) => `
-      SELECT date, COUNT(*) as eventCount
-      FROM events
+      SELECT SUM(${countSource}) as count
+      FROM ${markerType}s
+      ${whereClause}
+      LIMIT 1
+    `
+    );
+    builder.addDateSubquery(date);
+    builder.addNamedRegionOnlySubquery(namedRegion);
+    builder.addSelectedEventNamesSubquery(eventNames);
+    builder.addVoterLeanSubquery(voterLeans);
+
+    const stmt = builder.createStatement(this.db);
+
+    stmt.step();
+    const row = stmt.get();
+    const [count] = row as [number];
+
+    stmt.free();
+    return count;
+  }
+
+  getDatesWithCounts(filter: FilterOptions): { date: Date; count: number }[] {
+    const {
+      markerType,
+      turnoutCountSource,
+      eventNames,
+      namedRegion,
+      voterLeans,
+    } = filter;
+
+    const countSource = this.getCountSourceSql(markerType, turnoutCountSource);
+
+    const builder = new QueryBuilder(
+      (whereClause) => `
+      SELECT date, SUM(${countSource}) as count
+      FROM ${markerType}s
       ${whereClause}
       GROUP BY date
       ORDER BY date ASC
@@ -115,38 +204,64 @@ export class ClientEventDb {
 
     const stmt = builder.createStatement(this.db);
 
-    const results: { date: Date; eventCount: number }[] = [];
+    const results: { date: Date; count: number }[] = [];
     while (stmt.step()) {
       const row = stmt.get();
-      const [date, eventCount] = row as [number, number];
-      results.push({ date: yyyymmddIntToDate(date), eventCount });
+      const [date, count] = row as [number, number];
+      results.push({ date: yyyymmddIntToDate(date), count });
     }
 
     stmt.free();
     return results;
   }
 
-  getPopulatedEvent(eventId: number): Nullable<PopulatedEvent> {
-    if (!eventId) {
+  getPopulatedMarker(
+    id: number,
+    markerType: MarkerType
+  ): Nullable<PopulatedMarker> {
+    if (!id) {
       return null;
     }
 
-    const eventStmt = this.db.prepare(`
-      SELECT 
-        lat, lon, pct_dem_lead, date, name, link, city_info_id
-      FROM events
+    const selectFields = [
+      "lat",
+      "lon",
+      "pct_dem_lead",
+      "date",
+      "name",
+      "link",
+      "city_info_id",
+    ];
+    if (markerType === "turnout") {
+      selectFields.push("low", "high", "coverage_url");
+    }
+
+    const stmt = this.db.prepare(`
+      SELECT ${selectFields.join(", ")}
+      FROM ${markerType}s
       WHERE id = ?
     `);
 
-    eventStmt.bind([eventId]);
+    stmt.bind([id]);
 
-    if (!eventStmt.step()) {
-      eventStmt.free();
-      throw new Error(`Event not found for id: ${eventId}`);
+    if (!stmt.step()) {
+      stmt.free();
+      throw new Error(`Marker not found for id: ${id}`);
     }
 
-    const eventRow = eventStmt.get();
-    const [lat, lon, pctDemLead, date, name, link, cityInfoId] = eventRow as [
+    const row = stmt.get();
+    const [
+      lat,
+      lon,
+      pctDemLead,
+      date,
+      name,
+      link,
+      cityInfoId,
+      low,
+      high,
+      coverageUrl,
+    ] = row as [
       number,
       number,
       number | null,
@@ -154,10 +269,43 @@ export class ClientEventDb {
       string,
       string | null,
       number,
+      number | undefined,
+      number | undefined,
+      string | undefined,
     ];
 
-    eventStmt.free();
+    stmt.free();
 
+    const cityInfo = this.getCityInfo(cityInfoId);
+
+    const populatedMarker = {
+      id,
+      name,
+      date: yyyymmddIntToDate(date),
+      link,
+      lat,
+      lon,
+      pctDemLead,
+      ...cityInfo,
+    };
+
+    if (markerType === "turnout") {
+      return {
+        ...populatedMarker,
+        type: "turnout",
+        low: low as number,
+        high: high as number,
+        coverageUrl: coverageUrl as string,
+      } satisfies PopulatedTurnoutMarker;
+    } else {
+      return {
+        ...populatedMarker,
+        type: "event",
+      } satisfies PopulatedProtestEventMarker;
+    }
+  }
+
+  getCityInfo(cityInfoId: number) {
     const cityStmt = this.db.prepare(`
       SELECT city, state, city_thumbnail_url, city_article_url
       FROM city_infos
@@ -182,12 +330,6 @@ export class ClientEventDb {
     cityStmt.free();
 
     return {
-      name,
-      date: yyyymmddIntToDate(date),
-      link,
-      lat,
-      lon,
-      pctDemLead,
       city,
       state,
       cityThumbnailUrl,
@@ -196,14 +338,21 @@ export class ClientEventDb {
   }
 
   getEventNamesAndCountsForFilter(
-    filter: EventFilterOptions
+    filter: FilterOptions
   ): { name: string; count: number }[] {
-    const { date, namedRegion, eventNames, voterLeans } = filter;
+    const {
+      markerType,
+      turnoutCountSource,
+      date,
+      namedRegion,
+      eventNames,
+      voterLeans,
+    } = filter;
 
     const builder = new QueryBuilder(
       (whereClause) => `
-      SELECT name, COUNT(*) as count
-      FROM events
+      SELECT name, SUM(${this.getCountSourceSql(markerType, turnoutCountSource)}) as count
+      FROM ${markerType}s
       ${whereClause}
       GROUP BY name
       ORDER BY count DESC
@@ -243,7 +392,7 @@ export class ClientEventDb {
   }
 
   async checkIsUpdateAvailable() {
-    const newManifest = await ClientEventDb.#fetchManifest();
+    const newManifest = await EventDb.#fetchManifest();
     return (
       newManifest.dbFilename !== this.manifest.dbFilename ||
       newManifest.sha !== this.manifest.sha
@@ -256,8 +405,8 @@ export class ClientEventDb {
     return (await manifestRes.json()) as LatestDbManifest;
   }
 
-  static async create(): Promise<ClientEventDb> {
-    const manifest = await ClientEventDb.#fetchManifest();
+  static async create(): Promise<EventDb> {
+    const manifest = await EventDb.#fetchManifest();
 
     const dbRes = await fetch(`/data/${manifest.dbFilename}`);
     if (!dbRes.ok)
@@ -267,7 +416,7 @@ export class ClientEventDb {
     const SQL = await getSqlJs();
     const db = new SQL.Database(new Uint8Array(dbBuffer));
 
-    return new ClientEventDb(db, manifest);
+    return new EventDb(db, manifest);
   }
 }
 

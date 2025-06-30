@@ -41,10 +41,10 @@ export class PageState {
 
     if (!this.autoplaying) return;
 
-    const numEvents = this.filter.currentDateFilteredEvents.length;
+    const numEvents = this.filter.dateFilteredMarkers.length;
     let lingerTime;
 
-    if (numEvents === 0 && this.filter.allDatesWithEventCounts.length > 1) {
+    if (numEvents === 0 && this.filter.allDatesWithCounts.length > 1) {
       lingerTime = ZERO_EVENT_NAV_TIME;
     } else if (numEvents < 20) {
       lingerTime = QUICK_NAV_TIME;

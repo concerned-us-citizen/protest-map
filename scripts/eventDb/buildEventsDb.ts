@@ -1,188 +1,45 @@
 import fs from "fs/promises";
 import { config } from "./config";
-import { EventSink } from "./EventSink";
-import { LocationDataSource } from "./LocationDataSource";
-import { getSheetData } from "./getSheetData";
-import { DissenterEvent, DissenterEventSchema, SummaryInfo } from "./types";
-import {
-  getLoggedIssueCount,
-  initLog,
-  logInfo,
-  logIssue,
-  saveSummary,
-} from "./IssueLog";
-// import { scanForSimilarNames } from "./similarNames";
+import { NodeEventAndTurnoutModel } from "./NodeEventAndTurnoutModel";
+import { LocationDataModel } from "./LocationDataModel";
+import { ScrapeLogger } from "./ScrapeLogger";
 import { loadVotingInfo } from "./votingInfo";
-import { maybeCreateGithubIssue } from "./createGithubSummaryIssue";
+import { processEventDataProps } from "./processEventDataProps";
+import { fetchAndProcessData } from "./fetchAndProcessData";
+import { processTurnoutDataProps } from "./processTurnoutDataProps";
 
 async function main() {
-  const startTime = Date.now();
-
   await fs.mkdir(config.dirs.build, { recursive: true });
 
-  initLog();
+  const logger = new ScrapeLogger();
+
+  const locationDataModel = await LocationDataModel.create(
+    config.paths.buildLocationCache,
+    logger
+  );
+
+  const eventAndTurnoutModel = await NodeEventAndTurnoutModel.create();
+
   loadVotingInfo();
 
-  const locationInfoSource = await LocationDataSource.create(
-    config.paths.buildLocationCache
+  await fetchAndProcessData(
+    processEventDataProps,
+    eventAndTurnoutModel,
+    locationDataModel,
+    logger
   );
-  const eventSink = await EventSink.create();
 
-  console.log("Retrieving events from google sheets...");
-  const SHEET_ID = "1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A";
-  const sheets = await getSheetData(SHEET_ID, (headers: string[]): string[] => {
-    // Transform headers for oddly formed tabs
+  await fetchAndProcessData(
+    processTurnoutDataProps,
+    eventAndTurnoutModel,
+    locationDataModel,
+    logger
+  );
 
-    // No header at all, but is a valid row, create a dummy header:
-    const dummyHeaders = [
-      "date",
-      "address",
-      "zip",
-      "city",
-      "state",
-      "country",
-      "name",
-      "link",
-      "unknown",
-      "mapby",
-      "info",
-      "reoccurs",
-    ];
+  eventAndTurnoutModel.close();
+  locationDataModel.close();
 
-    if (
-      headers.length === dummyHeaders.length &&
-      headers[0].match(/\d{1,4}\/\d{1,4}\/\d{1,4}/)
-    ) {
-      return dummyHeaders;
-    }
-
-    // Use the existing first row values, mapping some weird ones
-    return headers.map((header) => {
-      let firstWord = header.trim().split(/\s+/)[0].toLowerCase();
-      if (firstWord === "linke") {
-        firstWord = "name";
-      } else if (firstWord === "submit" || firstWord === "dill") {
-        firstWord = "date";
-      } else if (firstWord === "org.") {
-        firstWord = "link";
-      }
-      return firstWord;
-    });
-  });
-
-  let totalEvents = sheets.reduce((acc, sheet) => acc + sheet.rows.length, 0);
-  console.log(`Retrieved ${totalEvents} total events`);
-
-  const eventNames: string[] = [];
-
-  let totalEventsProcessed = 0;
-  let duplicates = 0;
-  let rejects = 0;
-  let sheetsProcessed = 0;
-  const skippedSheets: { title: string; rows: number }[] = [];
-  const totalSheets = sheets.length;
-  const knownBadSheetNames = ["June 14 State Counts"];
-  for (const sheet of sheets) {
-    sheetsProcessed++;
-    let sheetEventsProcessed = 0;
-    const totalSheetEvents = sheet.rows.length;
-
-    // Skip sheets that aren't tables of events
-    // (sample second row to avoid potentially bad first data)
-    if (sheet.rows.length > 1) {
-      // Skip sheets we know to ignore
-      if (knownBadSheetNames.includes(sheet.title)) {
-        continue;
-      }
-      const firstRowSampleResult = DissenterEventSchema.safeParse({
-        ...sheet.rows[1],
-        sheetName: sheet.title,
-      });
-      if (!firstRowSampleResult.success) {
-        logIssue(
-          `'${sheet.title}': differently shaped, skipping`,
-          firstRowSampleResult.error.errors
-        );
-        skippedSheets.push({ title: sheet.title, rows: sheet.rows.length });
-        totalEvents -= sheet.rows.length;
-        continue;
-      }
-    }
-
-    for (const row of sheet.rows) {
-      sheetEventsProcessed++;
-      totalEventsProcessed++;
-      console.log(
-        `${sheet.title} ${sheetsProcessed}/${totalSheets}: ${sheetEventsProcessed}/${totalSheetEvents} events, (total ${totalEventsProcessed}/${totalEvents}):`,
-        row
-      );
-      const namedRow = {
-        ...row,
-        sheetName: sheet.title,
-      };
-      let dissenterEvent: DissenterEvent;
-      try {
-        dissenterEvent = DissenterEventSchema.parse(namedRow);
-      } catch (err) {
-        logIssue(`'${sheet.title}': Zod failed to parse:`, err);
-        rejects++;
-        continue;
-      }
-
-      const sanitized = await eventSink.sanitize(dissenterEvent);
-      if (!sanitized) {
-        rejects++;
-        continue;
-      }
-
-      const locationInfo = await locationInfoSource.getLocationInfo(sanitized);
-      if (!locationInfo) {
-        rejects++;
-        continue;
-      }
-
-      const cityInfoId = eventSink.getOrCreateCityInfo(locationInfo);
-
-      // We denormalize a bit here, moving some location info to the
-      // event directly to optimize map marker generation
-      const locatedDissenterEvent = {
-        ...sanitized,
-        lat: locationInfo.lat,
-        lon: locationInfo.lon,
-        pctDemLead: locationInfo.pctDemLead,
-        cityInfoId: cityInfoId,
-      };
-
-      // Skips duplicates
-      if (!eventSink.maybeCreateEvent(locatedDissenterEvent)) {
-        duplicates++;
-      }
-
-      eventNames.push(locatedDissenterEvent.name);
-    }
-  }
-
-  // console.log("Looking for similar event names...");
-  // scanForSimilarNames(eventNames);
-
-  const summaryInfo: SummaryInfo = {
-    processed: totalEvents,
-    rejects,
-    duplicates,
-    added: totalEvents - rejects - duplicates,
-    skippedSheets,
-    elapsedSeconds: (Date.now() - startTime) / 1000,
-    loggedIssues: getLoggedIssueCount(),
-    wikiFetches: locationInfoSource.cityInfoFetchCount,
-    geocodings: locationInfoSource.geocodeFetchCount,
-  };
-  logInfo(`\nProcessing complete: `, summaryInfo);
-  saveSummary(summaryInfo);
-
-  await maybeCreateGithubIssue(summaryInfo);
-
-  locationInfoSource.close();
-  eventSink.close();
+  logger.publishResults();
 }
 
 main();

@@ -3,7 +3,7 @@
   import maplibregl from "maplibre-gl";
   import EventPopup from "$lib/component/map/EventPopup.svelte";
   import { getPageStateFromContext } from "$lib/model/PageState.svelte";
-  import type { EventMarkerInfoWithId, Nullable } from "$lib/types";
+  import type { Marker, Nullable } from "$lib/types";
   import { deviceInfo } from "$lib/model/DeviceInfo.svelte";
   import "maplibre-gl/dist/maplibre-gl.css";
   import bbox from "@turf/bbox";
@@ -24,7 +24,7 @@
           ? "marker-red"
           : "marker-purple";
 
-  function eventsToGeoJSON(events: EventMarkerInfoWithId[]): GeoJSON.GeoJSON {
+  function markersToGeoJSON(events: Marker[]): GeoJSON.GeoJSON {
     return {
       type: "FeatureCollection",
       features: events.map((e) => {
@@ -33,7 +33,8 @@
           type: "Feature",
           geometry: { type: "Point", coordinates: [e.lon, e.lat] },
           properties: {
-            eventId: e.eventId,
+            id: e.id,
+            type: e.type,
             pct: e.pctDemLead,
             icon,
           },
@@ -63,11 +64,11 @@
 
   // Update the markers when filtered events change
   $effect(() => {
-    const { currentDateFilteredEvents } = pageState.filter;
+    const { dateFilteredMarkers: dateFilteredEvents } = pageState.filter;
     if (!map) return;
 
     const source = map.getSource("events") as maplibregl.GeoJSONSource;
-    if (source) source.setData(eventsToGeoJSON(currentDateFilteredEvents));
+    if (source) source.setData(markersToGeoJSON(dateFilteredEvents));
   });
 
   $effect(() => {
@@ -182,7 +183,7 @@
       // Now that images are loaded and map style is loaded, add source and layers
       safeMap.addSource("events", {
         type: "geojson",
-        data: eventsToGeoJSON(pageState.filter.allFilteredEvents ?? []),
+        data: markersToGeoJSON(pageState.filter.allFilteredEvents ?? []),
         cluster: true,
         clusterRadius: 20,
         clusterMaxZoom: 15,
@@ -340,8 +341,9 @@
         const f = e.features?.[0];
         if (!f) return;
 
-        const populated = pageState.eventModel.getPopulatedEvent(
-          f.properties.eventId
+        const populated = pageState.eventModel.getPopulatedMarker(
+          f.properties.id,
+          f.properties.type
         );
         if (!populated) return;
 
@@ -350,7 +352,7 @@
         sveltePopupContainer = document.createElement("div");
         sveltePopupInstance = mount(EventPopup, {
           target: sveltePopupContainer,
-          props: { populatedEvent: populated },
+          props: { protestEvent: populated },
         });
         const vOffset = 14;
         const hOffset = 16;

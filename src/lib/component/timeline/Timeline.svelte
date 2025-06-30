@@ -7,11 +7,9 @@
   const pageState = getPageStateFromContext();
 
   let selectedDateWithEventCount = $derived.by(() => {
-    const allDatesWithEventCounts = pageState.filter.allDatesWithEventCounts;
-    const currentDate = pageState.filter.currentDate;
-    return (
-      allDatesWithEventCounts.find((dc) => dc.date === currentDate) ?? null
-    );
+    const allDatesWithEventCounts = pageState.filter.allDatesWithCounts;
+    const date = pageState.filter.date;
+    return allDatesWithEventCounts.find((dc) => dc.date === date) ?? null;
   });
 
   let isRepeatingChange = false;
@@ -79,7 +77,7 @@
   >
   <HistogramSlider
     className="slider"
-    items={pageState.filter.allDatesWithEventCounts}
+    items={pageState.filter.allDatesWithCounts}
     filteredItems={pageState.filter.filteredDatesWithEventCounts}
     keyFor={(item) => item.date.getTime()}
     selectedItem={selectedDateWithEventCount}
@@ -89,10 +87,10 @@
           datesEqual(e.date, dc.date)
         );
       if (inCurrentFilter) {
-        pageState.filter.setCurrentDate(dc.date);
+        pageState.filter.setDate(dc.date);
       }
     }}
-    magnitudeFor={(item) => item.eventCount}
+    magnitudeFor={(item) => item.count}
     firstShadedItemIndex={(items) =>
       items.findIndex((item) => item.date >= new Date())}
   />

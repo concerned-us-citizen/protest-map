@@ -3,7 +3,7 @@ import { urlForWikiThumbnailUrl } from "./util/wikimedia";
 import { runSparqlQuery } from "./sparql";
 import { getStateInfo } from "./usStateInfo";
 import { asNormalizedKey } from "../../src/lib/util/string";
-import { logIssue } from "./IssueLog";
+import type { ScrapeLogger } from "./ScrapeLogger";
 
 export interface WikiCityInfo {
   articleUrl: string;
@@ -42,11 +42,12 @@ async function fetchFuzzyLocationQids(
 
 export async function fetchWikiCityInfo(
   city: string,
-  state: string
+  state: string,
+  logger: ScrapeLogger
 ): Promise<WikiCityInfo | null> {
   const stateInfo = getStateInfo(state);
   if (!stateInfo) {
-    logIssue(`Invalid state provided for ${city}, ${state}`);
+    logger.logIssue(`Invalid state provided for ${city}, ${state}`);
     return null;
   }
 
@@ -65,7 +66,7 @@ export async function fetchWikiCityInfo(
   }
 
   if (fuzzyPlaceQids.length === 0) {
-    logIssue(`Could not find qids for ${city}, ${state}`);
+    logger.logIssue(`Could not find qids for ${city}, ${state}`);
     return null;
   }
 
@@ -90,7 +91,7 @@ export async function fetchWikiCityInfo(
     LIMIT 1
   `;
 
-  const data = await runSparqlQuery(sparqlQuery);
+  const data = await runSparqlQuery(sparqlQuery, logger);
   const result = data?.results?.bindings?.[0];
   if (!result) return null;
 

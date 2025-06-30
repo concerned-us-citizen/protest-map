@@ -17,16 +17,16 @@ export interface ParamOption {
 export const shareOptions: ParamOption[] = [
   {
     formTitle: (pageState) => {
-      return `from ${mdItalics(pageState.filter.formattedCurrentDate)}`;
+      return `from ${mdItalics(pageState.filter.formattedDate)}`;
     },
     paramName: (_pageState) => "date",
     type: "date",
-    getValue: (pageState) => pageState.filter.currentDate,
+    getValue: (pageState) => pageState.filter.date,
     setValue: async (params, pageState) => {
       const dateStr = params.get("date");
       const date = dateStr ? deserializeDate(dateStr) : undefined;
       if (date) {
-        pageState.filter.setCurrentDate(date);
+        pageState.filter.setDate(date);
       }
     },
     isFilterProp: true,

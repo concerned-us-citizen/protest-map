@@ -2,7 +2,7 @@ import Database, { Statement } from "better-sqlite3";
 import { Coordinates, Nullable } from "../../src/lib/types";
 import { WikiCityInfo } from "./wikiCityInfo";
 
-export class CachedLocationDataDb {
+export class LocationDataDb {
   private db: Database.Database;
 
   private addGeocodingStatement: Statement<[string, number, number], void>;
@@ -55,7 +55,7 @@ export class CachedLocationDataDb {
     );
   }
 
-  static create(dbPath: string): CachedLocationDataDb {
+  static create(dbPath: string): LocationDataDb {
     const db = new Database(dbPath);
 
     db.pragma("synchronous = FULL");
@@ -81,7 +81,7 @@ export class CachedLocationDataDb {
       city_key TEXT PRIMARY KEY
     );`);
 
-    return new CachedLocationDataDb(db);
+    return new LocationDataDb(db);
   }
 
   getGeocoding(address_key: string): Nullable<Coordinates> {

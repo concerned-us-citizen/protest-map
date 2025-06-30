@@ -1,18 +1,36 @@
 import Database, { Statement } from "better-sqlite3";
-import { CityInfo, ProtestEvent } from "../../src/lib/types";
+import { CityInfo, Coordinates, Nullable } from "../../src/lib/types";
 import { dateToYYYYMMDDInt } from "../../src/lib/util/date";
 
-export class EventDb {
-  private db: Database.Database;
-  private insertEventStatement: Statement<unknown[], unknown>;
-  private insertCityInfoStatement: Statement<unknown[], unknown>;
+interface CommonProps extends Coordinates {
+  pctDemLead: Nullable<number>;
+  cityInfoId: number;
+  name: string;
+  date: string;
+  link: Nullable<string>;
+}
+export interface RawProtestEvent extends CommonProps {
+  type: "event";
+}
 
-  private hasSeenEventStatement: Statement<
+export interface RawTurnout extends CommonProps {
+  type: "turnout";
+  coverageUrl: string;
+  low: number;
+  high: number;
+}
+
+export class NodeEventAndTurnoutDb {
+  private db: Database.Database;
+
+  private insertEventStatement: Statement<unknown[], unknown>;
+  private hasSeenEventOrTurnoutStatement: Statement<
     [string],
     { "1": number } | undefined
   >;
-  private addSeenEventStatement: Statement<[string], void>;
+  private addSeenEventOrTurnoutStatement: Statement<[string], void>;
 
+  private insertCityInfoStatement: Statement<unknown[], unknown>;
   private hasSeenCityInfoStatement: Statement<
     [string],
     { "1": number } | undefined
@@ -22,6 +40,8 @@ export class EventDb {
     { city_info_id: number } | undefined
   >;
   private addSeenCityInfoStatement: Statement<[string, number], void>;
+
+  private insertTurnoutStatement: Statement<unknown[], unknown>;
 
   private constructor(db: Database.Database) {
     this.db = db;
@@ -34,11 +54,15 @@ export class EventDb {
       "INSERT INTO city_infos (city, state, city_thumbnail_url, city_article_url) VALUES (?, ?, ?, ?)"
     );
 
-    this.hasSeenEventStatement = this.db.prepare(
-      "SELECT 1 FROM seen_events WHERE event_key = ?"
+    this.hasSeenEventOrTurnoutStatement = this.db.prepare(
+      "SELECT 1 FROM seen_events_or_turnouts WHERE event_key = ?"
     );
-    this.addSeenEventStatement = this.db.prepare(
-      "INSERT OR IGNORE INTO seen_events (event_key) VALUES (?)"
+    this.addSeenEventOrTurnoutStatement = this.db.prepare(
+      "INSERT OR IGNORE INTO seen_events_or_turnouts (event_key) VALUES (?)"
+    );
+
+    this.insertTurnoutStatement = db.prepare(
+      "INSERT INTO turnouts (lat, lon, pct_dem_lead, date, name, link, coverage_url, low, high, city_info_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
     );
 
     this.hasSeenCityInfoStatement = this.db.prepare(
@@ -52,7 +76,7 @@ export class EventDb {
     );
   }
 
-  static create(dbPath: string): EventDb {
+  static create(dbPath: string): NodeEventAndTurnoutDb {
     console.log("Creating SQLite database...");
     try {
       const db = new Database(dbPath);
@@ -86,7 +110,31 @@ export class EventDb {
       db.exec(`CREATE INDEX idx_events_name ON events(name)`);
 
       db.exec(`
-        CREATE TEMPORARY TABLE seen_events (
+        CREATE TEMPORARY TABLE seen_events_or_turnouts (
+          event_key TEXT PRIMARY KEY
+        );
+      `);
+
+      db.exec(`CREATE TABLE turnouts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            lat REAL NOT NULL,
+            lon REAL NOT NULL,
+            pct_dem_lead REAL,
+            date INTEGER NOT NULL,
+            name TEXT NOT NULL,
+            link TEXT,
+            coverage_url TEXT,
+            low INTEGER,
+            high INTEGER,
+            city_info_id INTEGER,
+            FOREIGN KEY (city_info_id) REFERENCES city_infos(id)
+        );
+      `);
+      db.exec(`CREATE INDEX idx_turnouts_date ON turnouts(date);`);
+      db.exec(`CREATE INDEX idx_turnouts_name ON turnouts(name)`);
+
+      db.exec(`
+        CREATE TEMPORARY TABLE seen_turnouts (
           event_key TEXT PRIMARY KEY
         );
       `);
@@ -109,14 +157,14 @@ export class EventDb {
         now
       );
 
-      return new EventDb(db);
+      return new NodeEventAndTurnoutDb(db);
     } catch (err) {
       console.error("Error creating database:", err);
       throw err;
     }
   }
 
-  insertEvent(event: ProtestEvent) {
+  insertEvent(event: RawProtestEvent) {
     const result = this.insertEventStatement.run(
       event.lat,
       event.lon,
@@ -129,13 +177,29 @@ export class EventDb {
     return Number(result.lastInsertRowid);
   }
 
-  hasSeenEventKey(eventKey: string): boolean {
-    const row = this.hasSeenEventStatement.get(eventKey);
+  hasSeenEventOrTurnoutKey(eventKey: string): boolean {
+    const row = this.hasSeenEventOrTurnoutStatement.get(eventKey);
     return !!row;
   }
 
-  addSeenEventKey(eventKey: string): number {
-    const result = this.addSeenEventStatement.run(eventKey);
+  addSeenEventOrTurnoutKey(eventKey: string): number {
+    const result = this.addSeenEventOrTurnoutStatement.run(eventKey);
+    return Number(result.lastInsertRowid);
+  }
+
+  insertTurnout(turnout: RawTurnout) {
+    const result = this.insertTurnoutStatement.run(
+      turnout.lat,
+      turnout.lon,
+      turnout.pctDemLead,
+      dateToYYYYMMDDInt(new Date(turnout.date)),
+      turnout.name,
+      turnout.link,
+      turnout.coverageUrl,
+      turnout.low,
+      turnout.high,
+      turnout.cityInfoId
+    );
     return Number(result.lastInsertRowid);
   }
 

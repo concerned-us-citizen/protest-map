@@ -1,12 +1,12 @@
 <script lang="ts">
-  import type { PopulatedEvent } from "$lib/types";
+  import type { PopulatedMarker } from "$lib/types";
   import { attributions } from "$lib/attributions";
 
   interface Props {
-    populatedEvent: PopulatedEvent;
+    protestEvent: PopulatedMarker;
   }
 
-  const { populatedEvent }: Props = $props();
+  const { protestEvent: populatedEvent }: Props = $props();
 
   const locationTitle = `${populatedEvent.city}, ${populatedEvent.state}`;
 

@@ -1,18 +1,18 @@
 import { browser } from "$app/environment";
 import {
   EmptyVoterLeanCounts,
-  type EventMarkerInfoWithId,
+  type Marker,
+  type MarkerType,
   type Nullable,
-  type PopulatedEvent,
   type VoterLeanCounts,
 } from "$lib/types";
 import { formatDateTime } from "$lib/util/date";
-import { ClientEventDb } from "./ClientEventDb";
+import { EventDb } from "./EventDb";
 import { booleanPointInPolygon, point } from "@turf/turf";
-import type { EventFilterOptions } from "./FilterModel.svelte";
+import type { FilterOptions } from "./FilterModel.svelte";
 
 export class EventModel {
-  private db: Nullable<ClientEventDb> = $state(null);
+  private db: Nullable<EventDb> = $state(null);
 
   updatedAt = $state<Nullable<Date>>(null);
 
@@ -25,10 +25,8 @@ export class EventModel {
       : "Not yet updated"
   );
 
-  async getMarkerInfos(
-    filter: EventFilterOptions
-  ): Promise<EventMarkerInfoWithId[]> {
-    let result = this.db ? this.db.getEventMarkerInfos(filter) : [];
+  async getMarkers(filter: FilterOptions): Promise<Marker[]> {
+    let result = this.db ? this.db.getMarkers(filter) : [];
     const polygon = filter.namedRegionPolygon;
     if (polygon) {
       result = result.filter((marker) =>
@@ -38,22 +36,26 @@ export class EventModel {
     return result;
   }
 
-  getDatesWithEventCounts(filter: EventFilterOptions) {
-    return this.db ? this.db.getDatesWithEventCounts(filter) : [];
+  getDatesWithCounts(filter: FilterOptions) {
+    return this.db ? this.db.getDatesWithCounts(filter) : [];
   }
 
   getEventNamesAndCountsForFilter(
-    filter: EventFilterOptions
+    filter: FilterOptions
   ): { name: string; count: number }[] {
     return this.db ? this.db.getEventNamesAndCountsForFilter(filter) : [];
   }
 
-  getVoterLeanCounts(filter: EventFilterOptions): VoterLeanCounts {
+  getVoterLeanCounts(filter: FilterOptions): VoterLeanCounts {
     return this.db ? this.db.getVoterLeanCounts(filter) : EmptyVoterLeanCounts;
   }
 
-  getPopulatedEvent(eventId: number): Nullable<PopulatedEvent> {
-    return this.db ? this.db.getPopulatedEvent(eventId) : null;
+  getCount(filter: FilterOptions): number {
+    return this.db ? this.db.getCount(filter) : 0;
+  }
+
+  getPopulatedMarker(id: number, markerType: MarkerType) {
+    return this.db ? this.db.getPopulatedMarker(id, markerType) : null;
   }
 
   async checkIsUpdateAvailable(): Promise<boolean> {
@@ -64,7 +66,7 @@ export class EventModel {
 
   private async initialize() {
     try {
-      this.db = await ClientEventDb.create();
+      this.db = await EventDb.create();
       this.updatedAt = this.db.getCreatedAt();
     } catch (error) {
       console.error("Failed to load database:", error);

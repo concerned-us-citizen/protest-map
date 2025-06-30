@@ -1,6 +1,6 @@
 import { delay } from "../../src/lib/util/misc";
 import { config } from "./config";
-import { logIssue } from "./IssueLog";
+import type { ScrapeLogger } from "./ScrapeLogger";
 
 const WIKIDATA_SPARQL_URL = "https://query.wikidata.org/sparql";
 
@@ -14,6 +14,7 @@ export interface SparqlResponse {
 
 export async function runSparqlQuery(
   query: string,
+  logger: ScrapeLogger,
   retries = 3
 ): Promise<SparqlResponse> {
   for (let attempt = 0; attempt < retries; attempt++) {
@@ -29,7 +30,7 @@ export async function runSparqlQuery(
     });
 
     if (res.status === 403) {
-      logIssue(
+      logger.logIssue(
         `403 Forbidden from Wikidata. Backing off... (Attempt ${attempt + 1})`
       );
       await delay(1000 + attempt * 1000);

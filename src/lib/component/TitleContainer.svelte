@@ -3,7 +3,7 @@
   import { getPageStateFromContext } from "$lib/model/PageState.svelte";
   import { formatDateIndicatingFuture } from "$lib/util/date";
   import { getShortcutPrefix } from "$lib/util/os";
-  import { countAndLabel } from "$lib/util/string";
+  import { countAndLabel, toTitleCase } from "$lib/util/string";
   import { ChevronRight } from "@lucide/svelte";
   import Panel from "./Panel.svelte";
   import PillButton from "./PillButton.svelte";
@@ -24,7 +24,7 @@
     <div class="date-and-location-count">
       <b
         >{deviceInfo.isWide ? "On " : ""}{formatDateIndicatingFuture(
-          pageState.filter.currentDate
+          pageState.filter.date
         )}</b
       >
       <PillButton
@@ -34,10 +34,9 @@
         onclick={() => pageState.overlayModel.toggleFilterVisible()}
       >
         <div class="location-count-button">
-          {countAndLabel(
-            pageState.filter.currentDateFilteredEvents,
-            "location"
-          )}
+          {pageState.filter.markerType === "event"
+            ? countAndLabel(pageState.filter.totalCount, "location")
+            : `${toTitleCase(pageState.filter.turnoutCountSource)}: ${pageState.filter.totalCount.toLocaleString()}`}
           {pageState.filter.isFiltering && deviceInfo.isWide
             ? "(Filtered)"
             : ""}

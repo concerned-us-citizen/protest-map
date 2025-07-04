@@ -5,12 +5,10 @@
   } from "$lib/model/PageState.svelte";
   import ProtestMapTour from "$lib/component/ProtestMapTour.svelte";
   import EventMap from "$lib/component/map/EventMap.svelte";
-  import { fade } from "svelte/transition";
-  import UpgradeBanner from "$lib/component/UpgradeBanner.svelte";
+  import UpdateBanner from "$lib/component/UpdateBanner.svelte";
   import LoadingSpinner from "$lib/component/LoadingSpinner.svelte";
   import { page } from "$app/stores";
   import { prettifyNamedRegion } from "$lib/model/RegionModel.svelte";
-  import RegionNavigationDialog from "$lib/component/RegionNavigationDialog.svelte";
   import {
     getSearchParamsFromState,
     setStateFromWindowSearchParams,
@@ -18,15 +16,16 @@
   import TimelineContainer from "$lib/component/timeline/TimelineContainer.svelte";
   import ShareDialog from "$lib/component/ShareDialog.svelte";
   import { onKeyDown, onKeyUp } from "$lib/keyShortcuts";
-  import Toolbar from "../lib/component/Toolbar.svelte";
-  import FilterContainer from "$lib/component/filter/FilterContainer.svelte";
-  import TitleContainer from "$lib/component/TitleContainer.svelte";
-  import ClickOverlay from "$lib/component/ClickOverlay.svelte";
-  import { deviceInfo } from "$lib/model/DeviceInfo.svelte";
+  import AppBar from "$lib/component/AppBar.svelte";
+  import Drawer from "$lib/component/filter/Drawer.svelte";
   import IconButton from "$lib/component/IconButton.svelte";
-  import { Undo2 } from "@lucide/svelte";
   import { cubicInOut } from "svelte/easing";
-  import PillButton from "$lib/component/PillButton.svelte";
+  import { fade } from "svelte/transition";
+  import { Undo2 } from "@lucide/svelte";
+  import FilterIndicator from "$lib/component/filter/FilterIndicator.svelte";
+  import VoterLeanPanel from "$lib/component/filter/VoterLeanPanel.svelte";
+  import EventPanel from "$lib/component/filter/EventPanel.svelte";
+  import TitlePanel from "$lib/component/TitlePanel.svelte";
 
   const pageState = PageState.create();
   createPageStateInContext(pageState);
@@ -113,245 +112,171 @@
   />
 </svelte:head>
 
-<div class="layout">
-  <EventMap />
+<div class="page">
+  <AppBar class="app-bar" />
+  <div class="map-area">
+    <EventMap class="map" />
 
-  {#if pageState.eventModel.isLoaded}
-    <div class="title-and-filter-wrapper">
-      <div
-        class={[
-          "title-and-filter",
-          "hide-on-popup",
-          { isNarrow: deviceInfo.isNarrow },
-        ]}
-        transition:fade
-      >
-        <div class="title-container">
-          <TitleContainer {title} />
-        </div>
+    <div class="map-overlays">
+      <div class="top-row">
+        <TitlePanel class="title-panel" />
 
-        {#if pageState.overlayModel.filterVisible}
-          <div class="filter-container">
-            <FilterContainer />
+        {#if pageState.mapModel.canPopBounds}
+          <div
+            class="zoom-undo-button-wrapper"
+            transition:fade={{ duration: 300, easing: cubicInOut }}
+          >
+            <IconButton
+              onClick={() => pageState.mapModel.popBounds()}
+              label={"Zoom Back Out (${getShortcutPrefix()}R, +U, or +B)"}
+            >
+              <Undo2 />
+            </IconButton>
           </div>
         {/if}
       </div>
 
-      {#if pageState.filter.isFiltering && !pageState.overlayModel.filterVisible}
-        <div class="show-all-button-wrapper hide-on-popup">
-          <PillButton
-            large
-            onclick={() => {
-              pageState.filter.clearAllFilters();
-              pageState.mapModel.navigateToUS();
-            }}
-          >
-            View All US Protests
-          </PillButton>
-        </div>
+      <Drawer class="drawer" open={pageState.overlayModel.drawerVisible}>
+        <VoterLeanPanel />
+        <EventPanel />
+
+        {#if pageState.filter.isFiltering}
+          <FilterIndicator />
+        {/if}
+      </Drawer>
+
+      {#if pageState.updateAvailable}
+        <UpdateBanner class="update-banner" />
+      {:else if pageState.eventModel.isLoaded}
+        <TimelineContainer class="timeline-container" />
       {/if}
     </div>
+  </div>
 
-    <div class="toolbar hide-on-popup">
-      <Toolbar />
+  {#if pageState.overlayModel.showingDialog}
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <div
+      class="overlay-click-background"
+      onclick={() => pageState.overlayModel.closeAll()}
+    ></div>
 
-      {#if pageState.mapModel.canPopBounds}
-        <div
-          class="zoom-undo-button"
-          transition:fade={{ duration: 300, easing: cubicInOut }}
-        >
-          <IconButton
-            onClick={() => pageState.mapModel.popBounds()}
-            label={"Zoom Back Out (${getShortcutPrefix()}R, +U, or +B)"}
-          >
-            <Undo2 />
-          </IconButton>
-        </div>
+    <div class="overlay-container">
+      {#if pageState.eventModel.isLoading}
+        <LoadingSpinner class="spinner" size={32} />
       {/if}
-    </div>
 
-    <div class="timeline">
-      <TimelineContainer />
-    </div>
-  {/if}
-</div>
+      {#if pageState.overlayModel.helpVisible}
+        <ProtestMapTour
+          class="dialog"
+          onClose={() => {
+            pageState.overlayModel.helpVisible = false;
+            saveShownTourToCookie();
+          }}
+        />
+      {/if}
 
-{#if pageState.overlayModel.showingDialog}
-  <ClickOverlay />
-{/if}
-
-<div class="overlay-container">
-  {#if pageState.eventModel.isLoading}
-    <div class="spinner">
-      <LoadingSpinner size={32} />
-    </div>
-  {/if}
-
-  {#if pageState.overlayModel.helpVisible}
-    <div class="dialog">
-      <ProtestMapTour
-        onClose={() => {
-          pageState.overlayModel.helpVisible = false;
-          saveShownTourToCookie();
-        }}
-      />
-    </div>
-  {/if}
-
-  {#if pageState.overlayModel.navigationVisible}
-    <div class="dialog">
-      <RegionNavigationDialog />
-    </div>
-  {/if}
-
-  {#if pageState.overlayModel.shareVisible}
-    <div class="dialog">
-      <ShareDialog />
-    </div>
-  {/if}
-
-  {#if pageState.updateAvailable}
-    <div class="banner">
-      <UpgradeBanner />
+      {#if pageState.overlayModel.shareVisible}
+        <ShareDialog class="dialog" />
+      {/if}
     </div>
   {/if}
 </div>
 
 <style>
-  :root {
-    --gap: 0.5rem;
-  }
-  .layout {
-    height: 100dvh; /* full viewport minus safe-area */
-    box-sizing: border-box;
-    padding: var(--gap) var(--gap) 0 var(--gap);
-    display: grid;
-    gap: var(--gap); /* margin between items */
-
-    grid-template-columns: auto 1fr auto;
-    grid-template-rows: auto 1fr auto;
-    grid-template-areas:
-      " title    .     toolbar "
-      " title    .     toolbar "
-      " timeline timeline timeline ";
-    z-index: var(--controls-layer);
+  .page {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  .title-and-filter-wrapper {
-    grid-area: title;
+  .map-area {
+    flex: 1;
+    position: relative;
+    display: flex;
+  }
+
+  :global(.map),
+  .map-overlays {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+  }
+
+  .map-overlays {
     pointer-events: none;
-    z-index: var(--controls-layer);
-    height: 100%;
     display: flex;
     flex-direction: column;
-    align-items: stretch;
-    gap: 0.5rem;
   }
 
-  .title-and-filter {
-    pointer-events: auto;
-    width: 20rem;
-    display: flex;
-    flex-direction: column;
-    max-height: 100%;
-    gap: 0.3rem;
-    overflow: hidden;
-    border-radius: 8px;
-  }
-
-  .title-container {
+  :global(.title-panel) {
     flex: 0 0 auto;
+    min-width: 15rem;
+    max-width: calc(min(20rem, 90vw));
   }
 
-  .filter-container {
-    flex: 1 1 auto;
-    min-height: 0; /* Allow flexbox to shrink below content
-                       (Safari/Edge/Chrome all need this
-                       for overflow to work)                */
-    overflow-y: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    background: var(--panel-background-color);
-    border-radius: 0.3rem;
-  }
-  .filter-container::-webkit-scrollbar {
-    display: none;
-  }
-
-  .title-and-filter.isNarrow {
-    width: 16rem;
-  }
-
-  .show-all-button-wrapper {
-    pointer-events: auto;
+  .top-row {
+    flex: 0 0 auto;
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .toolbar {
-    grid-area: toolbar;
-    justify-self: end;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    flex-direction: row;
+    padding: 0.5rem;
+    align-items: start;
+    justify-content: center;
   }
 
-  .zoom-undo-button {
-    z-index: var(--controls-layer);
+  .zoom-undo-button-wrapper {
+    margin-left: auto;
     background-color: #fff;
     border-radius: 5px;
     overflow: hidden;
-    align-self: end;
+    pointer-events: auto;
   }
 
-  .timeline {
-    grid-area: timeline;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  :global(.drawer) {
+    pointer-events: auto;
   }
 
+  :global(.timeline-container),
+  :global(.update-banner) {
+    flex: 0 0 1;
+    padding: 5px 0 0 0;
+    pointer-events: auto;
+    margin-top: auto;
+    align-self: center;
+  }
+
+  .overlay-click-background,
   .overlay-container {
     position: absolute;
-    inset: 0;
-    pointer-events: none;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+
+  .overlay-click-background {
     z-index: var(--dimming-layer);
   }
 
-  /* Common styles for all absolutely positioned children to center horizontally */
-  .overlay-container > div {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+  .overlay-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: hsl(0 0% 0% / 0.32);
   }
 
-  .dialog {
-    top: 50%;
-    transform: translateX(-50%) translateY(-50%) !important;
+  .overlay-container > :global(*) {
+    z-index: var(--overlay-layer);
   }
 
-  .spinner {
-    top: 30vh;
-  }
-
-  .banner {
-    bottom: 1.75rem;
-    width: 80%;
-    max-width: 20rem;
-  }
-
-  /* 
-  Hide all components that might be occluded by a popup when one appears
-  (those with .hide-on-popup, plus the built in maplibre zoom controls).
-  Since maplibre lacks the ability to have popups on top.
-*/
-  .hide-on-popup {
-    transition: opacity 0.5s;
-  }
-  :global(body:has(.maplibregl-popup-tip)) .hide-on-popup {
-    pointer-events: none;
-    opacity: 0;
-  }
   :global(.maplibregl-ctrl-top-left) {
     transition: opacity 0.5s;
   }

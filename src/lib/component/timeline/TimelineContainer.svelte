@@ -6,16 +6,14 @@
   import EventInfoPanel from "./EventInfoPanel.svelte";
   import Timeline from "./Timeline.svelte";
 
-  interface TimelineContainerOptions {
+  const { class: className } = $props<{
     class?: ClassValue;
-  }
-
-  const { class: optionsClass }: TimelineContainerOptions = $props();
+  }>();
 
   const pageState = getPageStateFromContext();
 </script>
 
-<div class={["timeline-and-eventinfo", optionsClass]}>
+<div class={["timeline-and-eventinfo", className]}>
   {#if pageState.eventInfoVisible}
     <EventInfoPanel />
   {/if}
@@ -38,6 +36,15 @@
 </div>
 
 <style>
+  .timeline-and-eventinfo {
+    width: calc(100vw - 2 * var(--toolbar-margin));
+    max-width: calc(600px - 2 * var(--toolbar-margin));
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.4em;
+    z-index: var(--controls-layer);
+  }
   .date-range {
     display: flex;
     justify-content: space-between;
@@ -57,14 +64,5 @@
   }
   .attribution-link a:hover {
     text-decoration: underline;
-  }
-  .timeline-and-eventinfo {
-    width: calc(100vw - 2 * var(--toolbar-margin));
-    max-width: calc(600px - 2 * var(--toolbar-margin));
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.4em;
-    z-index: var(--controls-layer);
   }
 </style>

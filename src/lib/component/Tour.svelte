@@ -14,13 +14,15 @@
     props?: Record<string, any>;
   };
 
-  interface TourOptions {
+  const {
+    steps,
+    class: className,
+    onClose,
+  } = $props<{
     steps: Step[];
     class?: ClassValue;
     onClose: () => void;
-  }
-
-  const { steps, class: optionsClass, onClose }: TourOptions = $props();
+  }>();
 
   let currentStepIndex = $state(0);
   let currentStep = $derived(steps[currentStepIndex]);
@@ -80,7 +82,7 @@
 
 {#if currentStep}
   <div
-    class={["tour-panel", optionsClass]}
+    class={["tour-panel", className]}
     in:receive={{ key: currentStepIndex }}
     out:send={{ key: currentStepIndex }}
   >
@@ -260,6 +262,11 @@
     padding: 0;
     font-size: 1em;
     text-decoration: none;
+  }
+
+  .link-button:hover {
+    text-decoration: underline;
+    text-decoration-color: currentColor;
   }
 
   :global(.tour-image) {

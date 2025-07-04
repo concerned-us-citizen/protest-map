@@ -3,7 +3,7 @@
   import maplibregl from "maplibre-gl";
   import EventPopup from "$lib/component/map/EventPopup.svelte";
   import { getPageStateFromContext } from "$lib/model/PageState.svelte";
-  import type { Marker, Nullable } from "$lib/types";
+  import { type Marker, type Nullable } from "$lib/types";
   import { deviceInfo } from "$lib/model/DeviceInfo.svelte";
   import "maplibre-gl/dist/maplibre-gl.css";
   import bbox from "@turf/bbox";
@@ -13,6 +13,14 @@
     createRegionPolygonLayer,
     updateRegionPolygonLayer,
   } from "./regionPolygonLayer.svelte";
+  import type { ClassValue } from "svelte/elements";
+  import {
+    colorsAndCountClusterProperties,
+    // countRadiusExpr,
+  } from "./mapLibreExpressions";
+  import { loadResources } from "./loadResources";
+  // import { markerColor } from "$lib/colors";
+  import { addClusterMarkerLayers } from "./addClusterMarkerLayers";
   // import { addDebugRectangles } from "./addDebugRectangles";
 
   const iconForPct = (pct: number | null) =>
@@ -27,21 +35,26 @@
   function markersToGeoJSON(events: Marker[]): GeoJSON.GeoJSON {
     return {
       type: "FeatureCollection",
-      features: events.map((e) => {
-        const icon = iconForPct(e.pctDemLead ?? null);
+      features: events.map((m) => {
+        const icon = iconForPct(m.pctDemLead ?? null);
         return {
           type: "Feature",
-          geometry: { type: "Point", coordinates: [e.lon, e.lat] },
+          geometry: { type: "Point", coordinates: [m.lon, m.lat] },
           properties: {
-            id: e.id,
-            type: e.type,
-            pct: e.pctDemLead,
+            id: m.id,
+            type: m.type,
+            pct: m.pctDemLead,
             icon,
+            count: pageState.filter.countForMarker(m) ?? 1,
           },
         };
       }),
     };
   }
+
+  const { class: className } = $props<{
+    class?: ClassValue;
+  }>();
 
   const pageState = getPageStateFromContext();
 
@@ -55,11 +68,53 @@
   let navigationControl: Nullable<maplibregl.NavigationControl> = $state(null);
   let zoomControlVisible = $state(false);
 
-  const spriteIcons = [
-    ["marker-red", "/sprites/marker-red.png"],
-    ["marker-blue", "/sprites/marker-blue.png"],
-    ["marker-purple", "/sprites/marker-purple.png"],
-    ["marker-unavailable", "/sprites/marker-unavailable.png"],
+  export function prefix(str: string, prefix: string) {
+    return `${prefix}-{str}`;
+  }
+
+  const baseClusterLayerNames = [
+    "cluster-icon",
+    "cluster-badge",
+    "cluster-count",
+  ];
+
+  const baseUnclusteredLayerNames = ["unclustered-point"];
+
+  const eventClusterLayerNames = baseClusterLayerNames.map((s) =>
+    prefix(s, "event")
+  );
+  const turnoutClusterLayerNames = baseClusterLayerNames.map((s) =>
+    prefix(s, "turnout")
+  );
+  turnoutClusterLayerNames.push("turnout-magnitude-circle");
+
+  const eventUnclusteredLayerNames = baseUnclusteredLayerNames.map((s) =>
+    prefix(s, "event")
+  );
+  const turnoutUnclusteredLayerNames = baseUnclusteredLayerNames.map((s) =>
+    prefix(s, "turnout")
+  );
+
+  const eventLayerNames = [
+    ...eventClusterLayerNames,
+    ...eventUnclusteredLayerNames,
+  ];
+  const turnoutLayerNames = [
+    ...turnoutClusterLayerNames,
+    ...turnoutUnclusteredLayerNames,
+  ];
+
+  const allClusteredLayerNames = [
+    ...eventClusterLayerNames,
+    ...turnoutClusterLayerNames,
+  ];
+  const allUnclusteredLayerNames = [
+    ...eventUnclusteredLayerNames,
+    ...turnoutUnclusteredLayerNames,
+  ];
+  const allEventAndTurnoutLayerNames = [
+    ...eventLayerNames,
+    ...turnoutLayerNames,
   ];
 
   // Update the markers when filtered events change
@@ -67,7 +122,7 @@
     const { dateFilteredMarkers: dateFilteredEvents } = pageState.filter;
     if (!map) return;
 
-    const source = map.getSource("events") as maplibregl.GeoJSONSource;
+    const source = map.getSource("markers") as maplibregl.GeoJSONSource;
     if (source) source.setData(markersToGeoJSON(dateFilteredEvents));
   });
 
@@ -98,27 +153,18 @@
     }
   });
 
-  // Helper function to load an individual image and add it to the map
-  async function loadImageToMap(
-    mapInstance: maplibregl.Map,
-    name: string,
-    url: string
-  ): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.src = url;
-      img.onload = () => {
-        if (!mapInstance.hasImage(name)) {
-          mapInstance.addImage(name, img);
-        }
-        resolve();
-      };
-      img.onerror = () => {
-        console.error(`Failed to load image: ${url}`);
-        reject(`Failed to load image: ${url}`);
-      };
-    });
-  }
+  // Hide/show the appropriate marker layers as markerType changes
+  $effect(() => {
+    function setLayerVisibility(id: string, v: "visible" | "none") {
+      if (map?.getLayer(id)) map.setLayoutProperty(id, "visibility", v);
+    }
+
+    const v = pageState.filter.markerType === "turnout" ? "visible" : "none";
+    turnoutLayerNames.forEach((id) => setLayerVisibility(id, v));
+
+    const vEvent = v === "visible" ? "none" : "visible";
+    eventLayerNames.forEach((id) => setLayerVisibility(id, vEvent));
+  });
 
   onMount(async () => {
     if (!mapDiv) return;
@@ -137,24 +183,7 @@
     }
 
     try {
-      // Await all image loading promises concurrently
-      const imageLoadPromises = spriteIcons.map(([name, url]) =>
-        loadImageToMap(pendingMap, name, url)
-      );
-      await Promise.all(imageLoadPromises);
-
-      // Await for the map to fully load its style and resources
-      await new Promise<void>((resolve) => {
-        if (pendingMap.isStyleLoaded()) {
-          // Check if style is already loaded
-          resolve();
-        } else {
-          pendingMap.on("load", () => {
-            resolve();
-          });
-        }
-      });
-
+      await loadResources(pendingMap);
       map = pendingMap;
       if (!map) return;
       const safeMap = map;
@@ -164,136 +193,57 @@
 
       createRegionPolygonLayer(safeMap);
 
-      // Useful for debugging specific rects
-      // addDebugRectangles(safeMap, [
-      //   {
-      //     xmin: -176.69228269495915,
-      //     ymin: 12.243896977924578,
-      //     xmax: -59.307717305039034,
-      //     ymax: 70.94777181706402,
-      //   },
-      //   {
-      //     xmin: -174.81111978806948,
-      //     ymin: 13.648410237882132,
-      //     xmax: -61.18888021192912,
-      //     ymax: 70.47169403678646,
-      //   },
-      // ]);
-
       // Now that images are loaded and map style is loaded, add source and layers
-      safeMap.addSource("events", {
+      safeMap.addSource("markers", {
         type: "geojson",
         data: markersToGeoJSON(pageState.filter.allFilteredEvents ?? []),
         cluster: true,
         clusterRadius: 20,
         clusterMaxZoom: 15,
-        clusterProperties: {
-          red: ["+", ["case", ["<", ["coalesce", ["get", "pct"], 0], 0], 1, 0]],
-          blue: [
-            "+",
-            ["case", [">", ["coalesce", ["get", "pct"], 0], 0], 1, 0],
-          ],
-          unavail: ["+", ["case", ["!", ["has", "pct"]], 1, 0]],
-        },
+        clusterProperties: colorsAndCountClusterProperties,
       });
 
-      // cluster background marker
-      safeMap.addLayer({
-        id: "cluster-icon",
-        type: "symbol",
-        source: "events",
-        filter: ["has", "point_count"],
-        layout: {
-          "icon-image": [
-            "case",
-            [
-              "all",
-              [">", ["coalesce", ["get", "red"], 0], 0],
-              [">", ["coalesce", ["get", "blue"], 0], 0],
-            ],
-            "marker-purple",
-            [
-              "all",
-              [">", ["coalesce", ["get", "blue"], 0], 0],
-              ["==", ["coalesce", ["get", "red"], 0], 0],
-            ],
-            "marker-blue",
-            [
-              "all",
-              [">", ["coalesce", ["get", "red"], 0], 0],
-              ["==", ["coalesce", ["get", "blue"], 0], 0],
-            ],
-            "marker-red",
-            "marker-unavailable",
-          ],
-          "icon-size": 0.5,
-          "icon-allow-overlap": true,
-        },
-      });
+      // safeMap.addLayer({
+      //   id: "turnout-magnitude-circle",
+      //   type: "circle",
+      //   source: "markers",
+      //   paint: {
+      //     "circle-radius": countRadiusExpr,
+      //     "circle-color": [
+      //       "case",
+      //       [
+      //         "all",
+      //         [">", ["coalesce", ["get", "red"], 0], 0],
+      //         [">", ["coalesce", ["get", "blue"], 0], 0],
+      //       ],
+      //       markerColor.purple,
+      //       [
+      //         "all",
+      //         [">", ["coalesce", ["get", "blue"], 0], 0],
+      //         ["==", ["coalesce", ["get", "red"], 0], 0],
+      //       ],
+      //       markerColor.blue,
+      //       [
+      //         "all",
+      //         [">", ["coalesce", ["get", "red"], 0], 0],
+      //         ["==", ["coalesce", ["get", "blue"], 0], 0],
+      //       ],
+      //       markerColor.red,
+      //       markerColor.unavailable,
+      //     ],
+      //     "circle-opacity": 0.3,
+      //   },
+      // });
+      addClusterMarkerLayers(map, "turnout");
 
-      // white badge background
-      safeMap.addLayer({
-        id: "cluster-badge",
-        type: "circle",
-        source: "events",
-        filter: ["has", "point_count"],
-        paint: {
-          "circle-color": "#fff",
-          "circle-stroke-color": "#000",
-          "circle-stroke-width": 1,
+      addClusterMarkerLayers(map, "event");
 
-          // 0–9 → 8 px, 10–99 → 10 px, 100-up → 12 px
-          "circle-radius": ["step", ["get", "point_count"], 8, 10, 10, 100, 12],
+      // For debugging
+      // addVisibleNamedRegions(safeMap, pageState.regionModel);
 
-          // push it down & right ~12 px (tweak to taste)
-          "circle-translate": [12, 12],
-          "circle-translate-anchor": "viewport",
-        },
-      });
-
-      // count label
-      safeMap.addLayer({
-        id: "cluster-count",
-        type: "symbol",
-        source: "events",
-        filter: ["has", "point_count"],
-        layout: {
-          "text-field": ["get", "point_count_abbreviated"],
-          "text-font": ["Noto Sans Bold"],
-          "text-size": 10,
-          "text-anchor": "center",
-          "text-allow-overlap": true,
-        },
-        paint: {
-          "text-color": "#000",
-          "text-halo-color": "#fff",
-          "text-halo-width": 1,
-          "text-translate": [12, 12], // same offset as circle
-          "text-translate-anchor": "viewport",
-        },
-      });
-
-      safeMap.addLayer({
-        id: "unclustered-point",
-        type: "symbol",
-        source: "events",
-        filter: ["!", ["has", "point_count"]],
-        layout: {
-          "icon-image": ["get", "icon"],
-          "icon-size": 0.5,
-          "icon-allow-overlap": true,
-        },
-      });
-
-      const hoverLayers = [
-        "cluster-count",
-        "cluster-badge",
-        "cluster-icon",
-        "unclustered-point",
-      ];
       safeMap.on("mousemove", (e) => {
         const features = safeMap.queryRenderedFeatures(e.point, {
-          layers: hoverLayers,
+          layers: allEventAndTurnoutLayerNames,
         });
 
         if (features.length > 0) {
@@ -304,17 +254,13 @@
         }
       });
 
-      // For debugging
-      // addVisibleNamedRegions(safeMap, pageState.regionModel);
-
-      const clusterLayers = ["cluster-count", "cluster-badge", "cluster-icon"];
-      clusterLayers.forEach(async (layerId) => {
+      allClusteredLayerNames.forEach(async (layerId) => {
         safeMap.on("click", layerId, async (e) => {
           const clusterId = e.features?.[0]?.properties?.cluster_id;
           if (clusterId === undefined) return;
 
           const source = safeMap.getSource(
-            "events"
+            "markers"
           ) as maplibregl.GeoJSONSource;
           try {
             const features = await source.getClusterLeaves(
@@ -337,42 +283,44 @@
         });
       });
 
-      safeMap.on("click", "unclustered-point", (e) => {
-        const f = e.features?.[0];
-        if (!f) return;
+      allUnclusteredLayerNames.forEach(async (layerId) => {
+        safeMap.on("click", layerId, (e) => {
+          const f = e.features?.[0];
+          if (!f) return;
 
-        const populated = pageState.eventModel.getPopulatedMarker(
-          f.properties.id,
-          f.properties.type
-        );
-        if (!populated) return;
+          const populated = pageState.eventModel.getPopulatedMarker(
+            f.properties.id,
+            f.properties.type
+          );
+          if (!populated) return;
 
-        if (popup) popup.remove();
+          if (popup) popup.remove();
 
-        sveltePopupContainer = document.createElement("div");
-        sveltePopupInstance = mount(EventPopup, {
-          target: sveltePopupContainer,
-          props: { protestEvent: populated },
+          sveltePopupContainer = document.createElement("div");
+          sveltePopupInstance = mount(EventPopup, {
+            target: sveltePopupContainer,
+            props: { populatedMarker: populated },
+          });
+          const vOffset = 14;
+          const hOffset = 16;
+          popup = new maplibregl.Popup({
+            closeButton: false,
+            maxWidth: "300px",
+            offset: {
+              top: [0, vOffset],
+              bottom: [0, -vOffset],
+              left: [hOffset, 0],
+              right: [-hOffset, 0],
+              // "top-left": [hOffset, vOffset],
+              // "top-right": [-hOffset, vOffset],
+              // "bottom-left": [hOffset, -vOffset],
+              // "bottom-right": [-hOffset, -vOffset],
+            } as maplibregl.Offset,
+          })
+            .setLngLat(e.lngLat)
+            .setDOMContent(sveltePopupContainer)
+            .addTo(safeMap);
         });
-        const vOffset = 14;
-        const hOffset = 16;
-        popup = new maplibregl.Popup({
-          closeButton: false,
-          maxWidth: "300px",
-          offset: {
-            top: [0, vOffset],
-            bottom: [0, -vOffset],
-            left: [hOffset, 0],
-            right: [-hOffset, 0],
-            // "top-left": [hOffset, vOffset],
-            // "top-right": [-hOffset, vOffset],
-            // "bottom-left": [hOffset, -vOffset],
-            // "bottom-right": [-hOffset, -vOffset],
-          } as maplibregl.Offset,
-        })
-          .setLngLat(e.lngLat)
-          .setDOMContent(sveltePopupContainer)
-          .addTo(safeMap);
       });
     } catch (error) {
       console.error("Error during map initialization:", error);
@@ -403,15 +351,8 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
   bind:this={mapDiv}
-  class="map-container"
+  class={className}
   onclick={() => {
     pageState.overlayModel.closeAll();
   }}
 ></div>
-
-<style>
-  .map-container {
-    position: absolute;
-    inset: 0;
-  }
-</style>

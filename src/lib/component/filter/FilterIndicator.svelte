@@ -16,9 +16,8 @@
           <li class="filter" transition:slide>
             <PillButton
               accented
-              onclick={filter.clearFunc}
+              onClick={filter.clearFunc}
               title={`Remove filter '${filter.title}'`}
-              aria-label={`Remove filter '${filter.title}'`}
             >
               <div class="pill-content">
                 <div class="title"><FormattedText text={filter.title} /></div>

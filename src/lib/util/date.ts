@@ -93,15 +93,40 @@ export const parseDateString = (dateStr: string): Date | undefined => {
 /**
  * Formats a date string into "Month D, YYYY" (e.g., "May 11, 2025").
  */
-export const formatDate = (date: Date | undefined): string => {
-  if (!date) return "Unspecified";
-  const currentYear = new Date().getFullYear();
-  const options: Intl.DateTimeFormatOptions =
-    date.getFullYear() === currentYear
-      ? { month: "long", day: "numeric" }
-      : { month: "long", day: "numeric", year: "numeric" };
-  return date.toLocaleDateString("en-US", options);
-};
+/**
+ * Formats a JS Date in US-English with three verbosity levels.
+ *
+ * - "short"  →  12/31/2025
+ * - "medium" →  Dec 31, 2025
+ * - "long"   →  December 31, 2025
+ *
+ * If the date is in the *current* calendar year the year part is omitted:
+ *  * 12/31
+ *  * Dec 31
+ *  * December 31
+ */
+export function formatDate(
+  date: Date | undefined,
+  verbosity: "short" | "medium" | "long" = "long"
+): string {
+  if (!(date instanceof Date) || isNaN(+date)) return "";
+
+  const sameYear = date.getFullYear() === new Date().getFullYear();
+
+  // Base options for the three verbosities
+  const base: Record<"short" | "medium" | "long", Intl.DateTimeFormatOptions> =
+    {
+      short: { month: "numeric", day: "numeric", year: "numeric" },
+      medium: { month: "short", day: "numeric", year: "numeric" },
+      long: { month: "long", day: "numeric", year: "numeric" },
+    };
+
+  // Copy the right template and drop the year if it matches the current year
+  const opts = { ...base[verbosity] };
+  if (sameYear) delete opts.year;
+
+  return date.toLocaleDateString("en-US", opts);
+}
 
 /**
  * Formats a date string into "M/D/YY" (e.g., "5/11/25").

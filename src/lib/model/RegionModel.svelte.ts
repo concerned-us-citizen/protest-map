@@ -100,7 +100,7 @@ export const abbreviationForStateName: Record<string, string> =
 
 export function prettifyNamedRegion(
   region: NameAndRegionType,
-  onUnhandled = (_region: NameAndRegionType) => "US"
+  onUnhandled = (_region: NameAndRegionType) => "In the US"
 ): string {
   if (!region || !region.name || !region.type) return onUnhandled(region);
 

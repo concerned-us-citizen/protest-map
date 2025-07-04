@@ -1,13 +1,18 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
+  import type { ClassValue } from "svelte/elements";
 
-  type DialogProps = {
+  const {
+    class: className,
+    title,
+    dismiss,
+    children,
+  } = $props<{
+    class?: ClassValue;
     title?: string;
     dismiss?: () => void;
     children: Snippet;
-  };
-
-  const { title, dismiss, children }: DialogProps = $props();
+  }>();
 
   function escKey(e: KeyboardEvent) {
     if (e.key === "Escape") {
@@ -18,7 +23,7 @@
 </script>
 
 <div
-  class="dialog"
+  class={["dialog", className]}
   role="dialog"
   aria-modal="true"
   aria-labelledby={title ? "dialog-heading" : undefined}

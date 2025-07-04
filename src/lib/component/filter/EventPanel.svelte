@@ -56,12 +56,11 @@
           event.name
         )}
         <PillButton
-          onclick={(e) => {
+          onClick={(e: MouseEvent) => {
             e.stopPropagation();
             pageState.filter.toggleSelectedEventName(event.name);
           }}
           {selected}
-          data-selected={selected}
         >
           <div class="button-content">
             <div class="event-name-in-list">{event.name || "Unnamed"}</div>
@@ -84,7 +83,7 @@
     align-items: stretch;
     overflow-y: auto;
     /* TODO this should take title and slider heights into account */
-    max-height: 20vh;
+    max-height: 40vh;
     scrollbar-width: none;
     -ms-overflow-style: none;
   }

@@ -1,15 +1,13 @@
 <script lang="ts">
   import type { ClassValue } from "svelte/elements";
 
-  interface LoadingSpinnerOptions {
+  const { size = 24, class: className } = $props<{
     size?: number;
     class?: ClassValue;
-  }
-
-  const { size = 24, class: optionsClass }: LoadingSpinnerOptions = $props();
+  }>();
 </script>
 
-<div class={["loader-wrapper", optionsClass]}>
+<div class={["loader-wrapper", className]}>
   <div class="spinner" style="width: {size}px; height: {size}px;"></div>
   <div class="loading-text">Loading Protests...</div>
 </div>

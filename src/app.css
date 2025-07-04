@@ -10,17 +10,26 @@ body {
   width: 100%; /* Ensure full width */
   height: 100%; /* Ensure full height */
 
+  /* Suppress default OS long press actions on mobile */
+  user-select: none;
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10+ */
+  touch-action: manipulation; /* Prevent default touch behaviors like context menu */
+
   font-family: sans-serif;
 
   --toolbar-margin: 0.9375rem;
+  --dropdown-top-margin: 0.4rem;
 
   /* These below are here so that the size of the icon button can influence
     the width of the title panel */
   --icon-button-size: 2.3rem;
-  --available-title-panel-width: calc(
-    100vw - 2 * (var(--icon-button-size) - 2 * var(--toolbar-margin))
-  );
-  --title-panel-width: min(var(--available-title-panel-width), 20rem);
+
+  --pill-button-background: #f3f4f6; /* gray-100 */
+  --pill-button-hover-background: #e5e7eb; /* gray-200 */
+  --pill-button-color: #374151; /* gray-700 */
+  --pill-button-selected-background: #dceafe; /* gray-300 */
+  --pill-button-selected-hover-background: #dceafe; /* gray-400 */
 
   --panel-background-color: #fff;
   --panel-border-radius: 0.4rem;
@@ -35,38 +44,11 @@ body {
 
   --accent-color: #ffd580;
   --selected-color: #e8f0fe;
-  --hover-color: #f0f0f0;
-  --hover-selected-color: #dceafe;
-
-  /* Suppress default OS long press actions on mobile */
-  user-select: none;
-  -webkit-user-select: none; /* Safari */
-  -ms-user-select: none; /* IE 10+ */
-  touch-action: manipulation; /* Prevent default touch behaviors like context menu */
 }
 
 body.touch-device {
   --icon-size: 2.5em;
   --icon-button-size: 4em;
-  --available-title-panel-width: calc(
-    100vw - (var(--icon-button-size) + 2 * var(--toolbar-margin))
-  );
-  --hover-color: transparent;
-  --hover-selected-color: var(--selected-color);
-}
-
-.link-button {
-  background: none;
-  font-size: 1rem;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  text-decoration: none;
-}
-
-.link-button:hover {
-  text-decoration: underline;
-  text-decoration-color: currentColor;
 }
 
 .maplibregl-ctrl-bottom-right {

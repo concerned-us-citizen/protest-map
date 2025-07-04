@@ -21,12 +21,11 @@
           >{formatDateIndicatingFuture(pageState.filter.date)}
         </span>
         <span class="stats-display"
-          >{countAndLabel(
-            pageState.filter.filteredEventNamesWithLocationCounts,
-            "Event"
-          )}, {countAndLabel(
-            pageState.filter.dateFilteredMarkers,
-            "Location"
+          >{countAndLabel(pageState.filter.filteredEventCount, "Event")}, {countAndLabel(
+            pageState.filter.filteredCount,
+            pageState.filter.markerType === "event"
+              ? "Location"
+              : "Demonstrator"
           )}</span
         >
       </strong>

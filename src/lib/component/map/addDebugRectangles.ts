@@ -1,6 +1,22 @@
 import maplibregl from "maplibre-gl";
 import type { Feature, FeatureCollection, Polygon } from "geojson";
 
+// Usage: for debugging specific rects, put this into the onMount() method
+// addDebugRectangles(safeMap, [
+//   {
+//     xmin: -176.69228269495915,
+//     ymin: 12.243896977924578,
+//     xmax: -59.307717305039034,
+//     ymax: 70.94777181706402,
+//   },
+//   {
+//     xmin: -174.81111978806948,
+//     ymin: 13.648410237882132,
+//     xmax: -61.18888021192912,
+//     ymax: 70.47169403678646,
+//   },
+// ]);
+
 export type Bounds = {
   xmin: number;
   ymin: number;

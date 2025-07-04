@@ -1,27 +1,41 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
-  import { type HTMLAttributes } from "svelte/elements";
-
-  export interface PillButtonProps extends HTMLAttributes<HTMLButtonElement> {
-    accented?: boolean;
-    selected?: boolean;
-    large?: boolean;
-    children: Snippet;
-  }
+  import type { ClassValue } from "svelte/elements";
 
   const {
+    title = "",
+    onClick,
+    onFocus,
+    onBlur,
+    class: className,
     accented = false,
     selected = false,
     large = false,
     children,
     ...restProps
-  }: PillButtonProps = $props();
+  } = $props<{
+    title?: string;
+    onClick?: (_e: MouseEvent) => void;
+    onFocus?: (_e: KeyboardEvent) => void;
+    onBlur?: (_e: KeyboardEvent) => void;
+    class?: ClassValue;
+    accented?: boolean;
+    selected?: boolean;
+    large?: boolean;
+    children: Snippet;
+  }>();
 </script>
 
 <button
+  {title}
   type="button"
+  data-selected={selected}
+  onclick={(e) => onClick && onClick(e)}
+  onfocus={(e) => onFocus && onFocus(e)}
+  onblur={(e) => onBlur && onBlur(e)}
   aria-pressed={selected}
-  class={{ pill: true, accented, selected, large }}
+  aria-label={title}
+  class={[{ pill: true, accented, selected, large }, className]}
   {...restProps}
 >
   {@render children()}
@@ -29,12 +43,6 @@
 
 <style>
   .pill {
-    --pill-button-background: #f3f4f6; /* gray-100 */
-    --pill-button-hover-background: #e5e7eb; /* gray-200 */
-    --pill-button-color: #374151; /* gray-700 */
-    --pill-button-selected-background: #dceafe; /* gray-300 */
-    --pill-button-selected-hover-background: #dceafe; /* gray-400 */
-
     background-color: var(--pill-button-background);
     color: var(--pill-button-color);
     padding: 0.3rem 0.4rem;

@@ -1,3 +1,4 @@
+import { giveFocusToAutocomplete } from "./component/AutocompleteOLD.svelte";
 import { deviceInfo } from "./model/DeviceInfo.svelte";
 import type { PageState } from "./model/PageState.svelte";
 
@@ -18,9 +19,9 @@ export function onKeyDown(event: KeyboardEvent, pageState: PageState) {
     return;
   }
 
-  // Events Filter (F)
-  if (code === "KeyF") {
-    pageState.overlayModel.toggleFilterVisible();
+  // Toggle Drawer (D)
+  if (code === "KeyD") {
+    pageState.overlayModel.toggleDrawerVisible();
     event.preventDefault();
     return;
   }
@@ -32,25 +33,23 @@ export function onKeyDown(event: KeyboardEvent, pageState: PageState) {
     return;
   }
 
-  // Jump to Region (J)
-  if (code === "KeyJ") {
-    pageState.overlayModel.navigationVisible = true;
-    event.preventDefault();
-    return;
+  // Focus Region dialog (R)
+  if (code === "KeyR") {
+    giveFocusToAutocomplete();
   }
 
   // Escape
   if (code === "Escape") {
     pageState.overlayModel.helpVisible = false;
-    pageState.overlayModel.filterVisible = false;
+    pageState.overlayModel.drawerVisible = false;
     event.preventDefault();
     return;
   }
 
-  // Toggle Menu
+  // Toggle Toolbar Visible
   if (code === "KeyM") {
     if (deviceInfo.isSmall) {
-      pageState.overlayModel.toggleMenuVisible();
+      pageState.overlayModel.toggleToolbarVisible();
     }
   }
 
@@ -82,8 +81,8 @@ export function onKeyDown(event: KeyboardEvent, pageState: PageState) {
     return;
   }
 
-  // Unzoom to last level (U, R, B)
-  if (code === "KeyU" || code === "KeyR" || code === "KeyB") {
+  // Unzoom to last level (U, B)
+  if (code === "KeyU" || code === "KeyB") {
     event.preventDefault();
     if (pageState.mapModel.canPopBounds) {
       pageState.mapModel.popBounds();

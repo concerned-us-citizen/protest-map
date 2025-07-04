@@ -67,6 +67,7 @@
     "fuse.js": "^7.1.0",
     "maplibre-gl": "^4.7.1",
     "sql.js": "^1.13.0",
+    "svelty-picker": "^6.1.5",
     "title-case": "^4.3.2",
     "wkx-ts": "^1.0.1"
   }

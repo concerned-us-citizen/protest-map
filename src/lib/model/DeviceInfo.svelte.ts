@@ -8,7 +8,7 @@ export class DeviceInfo {
    * media queries can't use css variables, and we can't dynamically set the width from a TS variable unless
    * we want to use svelte:head.  So when making changes to the below, search for BREAKPOINT.
    */
-  static wideBreakpoint = 768;
+  static wideBreakpoint = 640;
   static tallBreakpoint = 600;
   static shortBreakpoint = 400;
 

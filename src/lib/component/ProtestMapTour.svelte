@@ -6,12 +6,10 @@
   import { markerColor } from "../colors";
   import type { ClassValue } from "svelte/elements";
 
-  interface ProtestMapTourOptions {
+  const { onClose, class: className } = $props<{
     class?: ClassValue;
     onClose: () => void;
-  }
-
-  const { onClose, class: optionsClass }: ProtestMapTourOptions = $props();
+  }>();
 
   let tapping = deviceInfo.tappingOrClicking;
   let tap = deviceInfo.tapOrClick;
@@ -25,7 +23,7 @@
 
 <Tour
   {onClose}
-  class={optionsClass}
+  class={className}
   steps={[
     {
       title: "US Protests Map",

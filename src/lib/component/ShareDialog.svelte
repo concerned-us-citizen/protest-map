@@ -10,6 +10,11 @@
   import { slide } from "svelte/transition";
   import FormattedText from "./FormattedText.svelte";
   import { safeCopyToClipboard } from "$lib/util/os";
+  import type { ClassValue } from "svelte/elements";
+
+  const { class: className } = $props<{
+    class?: ClassValue;
+  }>();
 
   const pageState = getPageStateFromContext();
 
@@ -68,7 +73,7 @@
   };
 </script>
 
-<Dialog {dismiss} title="Share a Map Link">
+<Dialog {dismiss} class={className} title="Share a Map Link">
   <form class="form">
     <label>
       <input
@@ -100,6 +105,7 @@
             />
             Autoplay protests over time
           </label>
+
           <div class="filter-options-container">
             <p class="hint">Show only protest locations:</p>
             <div class="filter-options">

@@ -2,7 +2,6 @@
   import HistogramSlider from "./HistogramSlider.svelte";
   import { getPageStateFromContext } from "$lib/model/PageState.svelte";
   import { getShortcutPrefix } from "$lib/util/os";
-  import { datesEqual } from "$lib/util/date";
 
   const pageState = getPageStateFromContext();
 
@@ -82,11 +81,7 @@
     keyFor={(item) => item.date.getTime()}
     selectedItem={selectedDateWithEventCount}
     onSelect={(dc) => {
-      const inCurrentFilter =
-        pageState.filter.filteredDatesWithEventCounts.find((e) =>
-          datesEqual(e.date, dc.date)
-        );
-      if (inCurrentFilter) {
+      if (pageState.filter.inCurrentFilter(dc.date)) {
         pageState.filter.setDate(dc.date);
       }
     }}

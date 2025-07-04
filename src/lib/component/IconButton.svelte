@@ -1,27 +1,31 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
 
-  interface Props {
-    children: Snippet;
-    onClick?: () => void;
-    className?: string;
-    disabled?: boolean;
-    label?: string;
-  }
-
   let {
     children,
     onClick,
+    onFocus,
+    onBlur,
     className = "",
     disabled = false,
     label,
-  }: Props = $props();
+  } = $props<{
+    children: Snippet;
+    onClick?: () => void;
+    onFocus?: () => void;
+    onBlur?: () => void;
+    className?: string;
+    disabled?: boolean;
+    label?: string;
+  }>();
 </script>
 
 <button
   class={`icon-button ${className}`}
   class:disabled
   onclick={() => !disabled && onClick && onClick()}
+  onfocus={() => !disabled && onFocus && onFocus()}
+  onblur={() => !disabled && onBlur && onBlur()}
   title={label}
   aria-label={label}
   {disabled}

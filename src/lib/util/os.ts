@@ -1,4 +1,7 @@
+import { browser } from "$app/environment";
+
 export function isMac() {
+  if (!browser) return false;
   return (
     navigator.platform.toUpperCase().indexOf("MAC") >= 0 ||
     navigator.platform.toUpperCase().indexOf("IPAD") >= 0 || // iPads often mimic Mac for some APIs

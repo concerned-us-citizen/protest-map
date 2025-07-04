@@ -1,12 +1,18 @@
 <script lang="ts">
+  import type { ClassValue } from "svelte/elements";
+
   function refreshPage() {
     window.location.reload();
   }
+
+  const { class: className } = $props<{
+    class?: ClassValue;
+  }>();
 </script>
 
-<div class="update-banner">
+<div class={["update-banner", className]}>
   <span>Update available</span>
-  <button on:click={refreshPage}>Refresh</button>
+  <button onclick={refreshPage}>Refresh</button>
 </div>
 
 <style>

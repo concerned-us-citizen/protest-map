@@ -1,28 +1,30 @@
 const overlayProps = [
-  "filterVisible",
+  "drawerVisible",
   "helpVisible",
-  "navigationVisible",
   "shareVisible",
-  "menuVisible",
+  "toolbarVisible",
+  "markerTypePickerVisible",
+  "autocompleteVisible",
 ] as const;
 
 type OverlayProp = (typeof overlayProps)[number];
 
 export class OverlayModel {
-  #filterVisible = $state(false);
+  #drawerVisible = $state(false);
   #helpVisible = $state(false);
-  #navigationVisible = $state(false);
   #shareVisible = $state(false);
-  #menuVisible = $state(false);
+  #toolbarVisible = $state(false);
+  #markerTypePickerVisible = $state(false);
+  #autocompleteVisible = $state(false);
 
-  get filterVisible() {
-    return this.#filterVisible;
+  get drawerVisible() {
+    return this.#drawerVisible;
   }
-  set filterVisible(value: boolean) {
+  set drawerVisible(value: boolean) {
     if (value === true) {
       this.closeAll();
     }
-    this.#filterVisible = value;
+    this.#drawerVisible = value;
   }
 
   get helpVisible() {
@@ -35,16 +37,6 @@ export class OverlayModel {
     this.#helpVisible = value;
   }
 
-  get navigationVisible() {
-    return this.#navigationVisible;
-  }
-  set navigationVisible(value: boolean) {
-    if (value === true) {
-      this.closeAll();
-    }
-    this.#navigationVisible = value;
-  }
-
   get shareVisible() {
     return this.#shareVisible;
   }
@@ -55,17 +47,43 @@ export class OverlayModel {
     this.#shareVisible = value;
   }
 
-  get menuVisible() {
-    return this.#menuVisible;
+  get toolbarVisible() {
+    return this.#toolbarVisible;
   }
-  set menuVisible(value: boolean) {
+  set toolbarVisible(value: boolean) {
     if (value === true) {
       // Special case - don't close the filter when opening the menu
-      const filterWasVisible = this.filterVisible;
+      const drawerWasVisible = this.drawerVisible;
       this.closeAll();
-      this.filterVisible = filterWasVisible;
+      this.drawerVisible = drawerWasVisible;
     }
-    this.#menuVisible = value;
+    this.#toolbarVisible = value;
+  }
+
+  get markerTypePickerVisible() {
+    return this.#markerTypePickerVisible;
+  }
+  set markerTypePickerVisible(value: boolean) {
+    if (value === true) {
+      // Special case - don't close the filter when opening the menu
+      const drawerWasVisible = this.drawerVisible;
+      this.closeAll();
+      this.drawerVisible = drawerWasVisible;
+    }
+    this.#markerTypePickerVisible = value;
+  }
+
+  get autocompleteVisible() {
+    return this.#autocompleteVisible;
+  }
+  set autocompleteVisible(value: boolean) {
+    if (value === true) {
+      // Special case - don't close the filter when opening the menu
+      const drawerWasVisible = this.drawerVisible;
+      this.closeAll();
+      this.drawerVisible = drawerWasVisible;
+    }
+    this.#autocompleteVisible = value;
   }
 
   closeAll() {
@@ -78,31 +96,34 @@ export class OverlayModel {
     this[propertyName] = !this[propertyName];
   }
 
-  toggleFilterVisible() {
-    this.#toggle("filterVisible");
+  toggleDrawerVisible() {
+    this.#toggle("drawerVisible");
   }
 
   toggleHelpVisible() {
     this.#toggle("helpVisible");
   }
 
-  toggleNavigationVisible() {
-    this.#toggle("navigationVisible");
-  }
-
   toggleShareVisible() {
     this.#toggle("shareVisible");
   }
 
-  toggleMenuVisible() {
-    this.#toggle("menuVisible");
+  toggleToolbarVisible() {
+    this.#toggle("toolbarVisible");
+  }
+
+  toggleMarkerTypePickerVisible() {
+    this.#toggle("markerTypePickerVisible");
+  }
+
+  toggleAutocompleteVisible() {
+    this.#toggle("autocompleteVisible");
   }
 
   showingDialog = $derived.by(() => {
     const helpVisible = this.helpVisible;
-    const navigationVisible = this.navigationVisible;
     const shareVisible = this.shareVisible;
 
-    return helpVisible || navigationVisible || shareVisible;
+    return helpVisible || shareVisible;
   });
 }

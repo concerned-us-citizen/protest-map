@@ -9,12 +9,11 @@
   import { toTitleCase } from "$lib/util/string";
   import { deviceInfo } from "$lib/model/DeviceInfo.svelte";
 
-  interface VoterLeanPanelOptions {
+  const { class: userClass, ...rest } = $props<{
     class?: ClassValue;
-  }
+  }>();
 
   const pageState = getPageStateFromContext();
-  const { class: userClass, ...rest }: VoterLeanPanelOptions = $props();
 
   function formatLabel(voterLean: VoterLean) {
     const result = pageState.filter.filteredVoterLeanCounts[voterLean];
@@ -75,7 +74,7 @@
       <PillButton
         title={label}
         selected={pageState.filter.selectedVoterLeans.includes(voterLean)}
-        onclick={() => pageState.filter.toggleVoterLean(voterLean)}
+        onClick={() => pageState.filter.toggleVoterLean(voterLean)}
       >
         <div class="button-content">
           <span
@@ -96,6 +95,8 @@
   .content {
     display: flex;
     justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: nowrap;
     gap: 0.2rem;
     align-items: center;
   }

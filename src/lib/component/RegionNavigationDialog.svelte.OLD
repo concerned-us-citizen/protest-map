@@ -54,7 +54,7 @@
   <Autocomplete
     {fetchSuggestions}
     {addRecent}
-    placeholder="Enter a state, city or ZIP…"
+    placeholder="Enter a state, city, metro or ZIP…"
     maxVisible={20}
     onSelect={picked}
     onDismiss={dismiss}

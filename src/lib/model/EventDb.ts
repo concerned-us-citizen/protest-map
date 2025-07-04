@@ -5,7 +5,7 @@ import type {
   PopulatedProtestEventMarker,
   PopulatedTurnoutMarker,
   ProtestEventMarker,
-  TurnoutCountSource,
+  TurnoutEstimate,
   TurnoutMarker,
   VoterLean,
   VoterLeanCounts,
@@ -92,28 +92,28 @@ export class EventDb {
 
   private getCountSourceSql(
     markerType: MarkerType,
-    turnoutCountSource: TurnoutCountSource
+    TurnoutEstimate: TurnoutEstimate
   ) {
     if (markerType === "event") {
       return "1"; // This will yield the count of rows
-    } else if (turnoutCountSource === "average") {
+    } else if (TurnoutEstimate === "average") {
       return "(low + high) / 2.0";
     } else {
-      return turnoutCountSource; // low or high
+      return TurnoutEstimate; // low or high
     }
   }
 
   getVoterLeanCounts(filter: FilterOptions): VoterLeanCounts {
     const {
       markerType,
-      turnoutCountSource,
+      TurnoutEstimate,
       date,
       eventNames,
       namedRegion,
       voterLeans,
     } = filter;
 
-    const countSource = this.getCountSourceSql(markerType, turnoutCountSource);
+    const countSource = this.getCountSourceSql(markerType, TurnoutEstimate);
 
     const builder = new QueryBuilder(
       (whereClause) => `
@@ -146,13 +146,13 @@ export class EventDb {
     const {
       date,
       markerType,
-      turnoutCountSource,
+      TurnoutEstimate,
       eventNames,
       namedRegion,
       voterLeans,
     } = filter;
 
-    const countSource = this.getCountSourceSql(markerType, turnoutCountSource);
+    const countSource = this.getCountSourceSql(markerType, TurnoutEstimate);
 
     const builder = new QueryBuilder(
       (whereClause) => `
@@ -174,19 +174,14 @@ export class EventDb {
     const [count] = row as [number];
 
     stmt.free();
-    return count;
+    return count ?? 0;
   }
 
   getDatesWithCounts(filter: FilterOptions): { date: Date; count: number }[] {
-    const {
-      markerType,
-      turnoutCountSource,
-      eventNames,
-      namedRegion,
-      voterLeans,
-    } = filter;
+    const { markerType, TurnoutEstimate, eventNames, namedRegion, voterLeans } =
+      filter;
 
-    const countSource = this.getCountSourceSql(markerType, turnoutCountSource);
+    const countSource = this.getCountSourceSql(markerType, TurnoutEstimate);
 
     const builder = new QueryBuilder(
       (whereClause) => `
@@ -342,7 +337,7 @@ export class EventDb {
   ): { name: string; count: number }[] {
     const {
       markerType,
-      turnoutCountSource,
+      TurnoutEstimate,
       date,
       namedRegion,
       eventNames,
@@ -351,7 +346,7 @@ export class EventDb {
 
     const builder = new QueryBuilder(
       (whereClause) => `
-      SELECT name, SUM(${this.getCountSourceSql(markerType, turnoutCountSource)}) as count
+      SELECT name, SUM(${this.getCountSourceSql(markerType, TurnoutEstimate)}) as count
       FROM ${markerType}s
       ${whereClause}
       GROUP BY name

@@ -4,10 +4,11 @@ import {
   type Marker,
   type MarkerType,
   type SetTimeoutId,
-  type TurnoutCountSource,
+  type TurnoutEstimate,
+  type TurnoutMarker,
   type VoterLean,
 } from "$lib/types";
-import { formatDate, isFutureDate } from "$lib/util/date";
+import { datesEqual, formatDate, isFutureDate } from "$lib/util/date";
 import { joinWithAnd, mdBold, pluralize } from "$lib/util/string";
 import { titleCase } from "title-case";
 import type { MapModel } from "./MapModel.svelte";
@@ -18,13 +19,14 @@ import {
 } from "./RegionModel.svelte";
 import type { Polygon, MultiPolygon } from "geojson";
 import { omit } from "$lib/util/misc";
+import { deviceInfo } from "./DeviceInfo.svelte";
 
 const INITIAL_REPEAT_DELAY = 400; // ms
 const REPEAT_INTERVAL = 80; // ms
 
 export interface FilterOptions {
   markerType: MarkerType;
-  turnoutCountSource: TurnoutCountSource;
+  TurnoutEstimate: TurnoutEstimate;
   date?: Date;
   eventNames?: string[]; // empty or missing means match all events
   namedRegion?: NamedRegion; // If not null, only match events within the region
@@ -44,7 +46,7 @@ export class FilterModel {
 
   filter = $derived.by(() => ({
     markerType: this.markerType,
-    turnoutCountSource: this.turnoutCountSource,
+    TurnoutEstimate: this.turnoutEstimate,
     date: this.date,
     eventNames: this.selectedEventNames,
     namedRegion: this.namedRegion,
@@ -53,11 +55,11 @@ export class FilterModel {
   }));
 
   markerType: MarkerType = $state("event");
-  turnoutCountSource: TurnoutCountSource = $state("low");
+  turnoutEstimate: TurnoutEstimate = $state("low");
 
   allFilteredEvents = $state<Marker[]>([]);
   dateFilteredMarkers = $state<Marker[]>([]);
-  totalCount = $state<number>(0);
+  filteredCount = $state<number>(0);
 
   allDatesWithCounts = $state<DateAndCount[]>([]);
   filteredDatesWithEventCounts = $state<DateAndCount[]>([]);
@@ -112,6 +114,22 @@ export class FilterModel {
     }
   }
 
+  countForMarker(marker: Marker) {
+    if (this.markerType === "event") {
+      return 1;
+    } else {
+      const turnoutMarker = marker as TurnoutMarker;
+      switch (this.turnoutEstimate) {
+        case "low":
+          return turnoutMarker.low;
+        case "average":
+          return Math.round((turnoutMarker.low + turnoutMarker.high) / 2);
+        case "high":
+          return turnoutMarker.high;
+      }
+    }
+  }
+
   largestDateCount = $derived.by(() => {
     const dates = this.allDatesWithCounts;
     const counts = dates.map((d) => d.count);
@@ -129,14 +147,26 @@ export class FilterModel {
     );
   }
 
+  inCurrentFilter(date: Date) {
+    return this.filteredDatesWithEventCounts.find((e) =>
+      datesEqual(e.date, date)
+    );
+  }
+
   readonly formattedDateRangeStart = $derived.by(() => {
     if (!this.dateRange) return "";
-    return formatDate(this.dateRange.start);
+    return formatDate(
+      this.dateRange.start,
+      deviceInfo.isNarrow ? "medium" : "long"
+    );
   });
 
   readonly formattedDateRangeEnd = $derived.by(() => {
     if (!this.dateRange) return "";
-    return formatDate(this.dateRange.end);
+    return formatDate(
+      this.dateRange.end,
+      deviceInfo.isNarrow ? "medium" : "long"
+    );
   });
 
   readonly dateRange = $derived.by(() => {
@@ -209,7 +239,7 @@ export class FilterModel {
     const allDateEventNamesAndCounts = this.eventModel
       ? this.eventModel.getEventNamesAndCountsForFilter({
           markerType: filter.markerType,
-          turnoutCountSource: filter.turnoutCountSource,
+          TurnoutEstimate: filter.TurnoutEstimate,
           date: filter.date,
         })
       : [];
@@ -218,6 +248,12 @@ export class FilterModel {
       name,
       count: fullCountsMap.get(name) ?? 0,
     }));
+  });
+
+  readonly filteredEventCount = $derived.by(() => {
+    return this.filteredEventNamesWithLocationCounts.filter(
+      (nc) => nc.count > 0
+    ).length;
   });
 
   readonly dateHasEventNames = $derived(
@@ -383,7 +419,7 @@ export class FilterModel {
       if (!this.eventModel.isLoading) {
         this.allDatesWithCounts = this.eventModel.getDatesWithCounts({
           markerType: this.markerType,
-          turnoutCountSource: this.turnoutCountSource,
+          TurnoutEstimate: this.turnoutEstimate,
         });
       }
     });
@@ -415,10 +451,7 @@ export class FilterModel {
         if (this.eventModel) {
           this.dateFilteredMarkers =
             await this.eventModel.getMarkers(currentFilter);
-          this.totalCount = await this.eventModel.getCount(currentFilter);
-        } else {
-          this.dateFilteredMarkers = [];
-          this.totalCount = 0;
+          this.filteredCount = await this.eventModel.getCount(currentFilter);
         }
       };
       update();

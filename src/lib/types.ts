@@ -3,8 +3,11 @@ export interface Coordinates {
   lon: number;
 }
 
-export type MarkerType = "event" | "turnout";
-export type TurnoutCountSource = "high" | "low" | "average";
+export const markerTypes = ["event", "turnout"] as const;
+export type MarkerType = (typeof markerTypes)[number];
+
+export const turnoutEstimates = ["high", "low", "average"] as const;
+export type TurnoutEstimate = (typeof turnoutEstimates)[number];
 
 interface CommonMarkerProps extends Coordinates {
   id: number;

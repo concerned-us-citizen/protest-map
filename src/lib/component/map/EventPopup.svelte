@@ -2,13 +2,11 @@
   import type { PopulatedMarker } from "$lib/types";
   import { attributions } from "$lib/attributions";
 
-  interface Props {
-    protestEvent: PopulatedMarker;
-  }
+  const { populatedMarker } = $props<{
+    populatedMarker: PopulatedMarker;
+  }>();
 
-  const { protestEvent: populatedEvent }: Props = $props();
-
-  const locationTitle = `${populatedEvent.city}, ${populatedEvent.state}`;
+  const locationTitle = `${populatedMarker.city}, ${populatedMarker.state}`;
 
   let marginDisplay = $derived.by(() => {
     if (!location) {
@@ -20,7 +18,7 @@
       };
     }
 
-    const margin = populatedEvent.pctDemLead;
+    const margin = populatedMarker.pctDemLead;
     if (typeof margin === "number") {
       const absMarginPercent = Math.round(Math.abs(margin) * 100);
       const candidateName = margin > 0 ? "Harris" : "Trump";
@@ -38,12 +36,12 @@
 </script>
 
 <div class="popup-layout">
-  {#if populatedEvent}
+  {#if populatedMarker}
     <div class="popup-image-container">
-      <a href={populatedEvent.cityArticleUrl} target="_blank">
+      <a href={populatedMarker.cityArticleUrl} target="_blank">
         <img
-          src={populatedEvent.cityThumbnailUrl
-            ? populatedEvent.cityThumbnailUrl
+          src={populatedMarker.cityThumbnailUrl
+            ? populatedMarker.cityThumbnailUrl
             : "https://en.wikipedia.org/wiki/Springfield_(The_Simpsons)#/media/File:Springfield_(The_Simpsons).png"}
           alt={locationTitle}
         />
@@ -52,15 +50,15 @@
     <div class="popup-text-container">
       <a
         class="location-title"
-        href={populatedEvent.cityArticleUrl}
+        href={populatedMarker.cityArticleUrl}
         target="_blank"><strong>{locationTitle}</strong></a
       >
-      {#if populatedEvent.link}
-        <a class="event-title-link" href={populatedEvent.link} target="_blank"
-          ><div class="event-title">{populatedEvent.name}</div></a
+      {#if populatedMarker.link}
+        <a class="event-title-link" href={populatedMarker.link} target="_blank"
+          ><div class="event-title">{populatedMarker.name}</div></a
         >
       {:else}
-        <div class="event-title">{populatedEvent.name}</div>
+        <div class="event-title">{populatedMarker.name}</div>
       {/if}
     </div>
     {#if marginDisplay.show}

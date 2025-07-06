@@ -2,12 +2,16 @@ import type { PageState } from "$lib/model/PageState.svelte";
 import { type BBox2D, bboxToBounds } from "$lib/util/bounds";
 import bbox from "@turf/bbox";
 import { featureCollection, point } from "@turf/helpers";
-import type { FilterSpecification, MapMouseEvent } from "maplibre-gl";
+import type {
+  ExpressionSpecification,
+  FilterSpecification,
+  MapMouseEvent,
+} from "maplibre-gl";
 import maplibregl from "maplibre-gl";
 import { mount } from "svelte";
 import EventPopup from "./EventPopup.svelte";
 import { getTerseLabelExpr } from "./util";
-import { markerTypes, type Marker, type MarkerType } from "$lib/types";
+import { type Marker, type MarkerType } from "$lib/types";
 import { markerColor } from "$lib/colors";
 import type { MultiPolygon, Polygon } from "geojson";
 
@@ -17,12 +21,77 @@ type MapMouseEventWithFeatures = MapMouseEvent & {
 
 type ClusterOrPoint = "cluster" | "point";
 
+const innerRingRadius = 13;
+const ringStroke = 2;
+const clusterRingStroke = 1;
+const ringSpacing = 1;
+const outerRingRadius = innerRingRadius + ringStroke + ringSpacing;
+
 function clusterOrPointFilter(
   clusterOrPoint: ClusterOrPoint
 ): FilterSpecification {
   return clusterOrPoint === "cluster"
     ? ["has", "point_count"] // only cluster features
     : ["!", ["has", "point_count"]]; // only unclustered points
+}
+
+/**
+ * Choose the correct color for the current feature.
+ *
+ * ─────────────────────────────────────────────────────────
+ * 1. **Single point**
+ *    When `clusterOrPoint === "point"` the feature is an individual event.
+ *    Its color is stored directly in the feature’s `"color"` property,
+ *    so we simply return that (`["get", "color"]`).
+ *
+ * 2. **Cluster**
+ *    Otherwise we’re dealing with a MapLibre cluster that represents many
+ *    underlying events.  We color the cluster marker by inspecting two
+ *    count properties on the cluster:
+ *
+ *       • `red`   – number of “red” events in the cluster
+ *       • `blue`  – number of “blue” events in the cluster
+ *
+ *    The `coalesce(..., 0)` wrapper treats a missing attribute as **0**.
+ *    The logic is:
+ *
+ *       ┌────────────────────────────────────────────┐
+ *       │ Condition                                  │  Icon returned
+ *       ├────────────────────────────────────────────┤
+ *       │ red > 0  AND  blue > 0                     │  <markerType>-marker-purple
+ *       │ blue > 0 AND  red == 0                     │  <markerType>-marker-blue
+ *       │ red  > 0 AND  blue == 0                    │  <markerType>-marker-red
+ *       │ anything else (neither red nor blue)       │  <markerType>-marker-unavailable
+ *       └────────────────────────────────────────────┘
+ *
+ */
+function colorExpression(
+  clusterOrPoint: ClusterOrPoint
+): ExpressionSpecification {
+  return clusterOrPoint === "point"
+    ? ["get", "color"]
+    : [
+        "case",
+        [
+          "all",
+          [">", ["coalesce", ["get", "red"], 0], 0],
+          [">", ["coalesce", ["get", "blue"], 0], 0],
+        ],
+        markerColor.purple,
+        [
+          "all",
+          [">", ["coalesce", ["get", "blue"], 0], 0],
+          ["==", ["coalesce", ["get", "red"], 0], 0],
+        ],
+        markerColor.blue,
+        [
+          "all",
+          [">", ["coalesce", ["get", "red"], 0], 0],
+          ["==", ["coalesce", ["get", "blue"], 0], 0],
+        ],
+        markerColor.red,
+        markerColor.unavailable,
+      ];
 }
 
 const REGION_SOURCE_ID = "region-polygon";
@@ -125,15 +194,14 @@ export class MapLayerModel {
   }
 
   markersToGeoJSON(markers: Marker[]): GeoJSON.GeoJSON {
-    const iconForPct = (pct: number | null) => {
-      const markerType = markers.length === 0 ? "event" : markers[0].type;
+    const colorForPct = (pct: number | null) => {
       return pct === null
-        ? `${markerType}-marker-unavailable`
+        ? markerColor.unavailable
         : pct > 0
-          ? `${markerType}-marker-blue`
+          ? markerColor.blue
           : pct < 0
-            ? `${markerType}-marker-red`
-            : `${markerType}-marker-purple`;
+            ? markerColor.red
+            : markerColor.purple;
     };
     return {
       type: "FeatureCollection",
@@ -145,7 +213,7 @@ export class MapLayerModel {
             id: m.id,
             type: m.type,
             pct: m.pctDemLead,
-            icon: iconForPct(m.pctDemLead ?? null),
+            color: colorForPct(m.pctDemLead ?? null),
             count: this.pageState.filter.countForMarker(m),
           },
         };
@@ -165,56 +233,6 @@ export class MapLayerModel {
 
     this.sveltePopupContainer?.remove();
     this.sveltePopupContainer = undefined;
-  }
-
-  async loadImageToMap(
-    mapInstance: maplibregl.Map,
-    name: string,
-    url: string
-  ): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.src = url;
-      img.onload = () => {
-        if (!mapInstance.hasImage(name)) {
-          mapInstance.addImage(name, img);
-        }
-        resolve();
-      };
-      img.onerror = () => {
-        console.error(`Failed to load image: ${url}`);
-        reject(`Failed to load image: ${url}`);
-      };
-    });
-  }
-
-  async loadResources(map: maplibregl.Map) {
-    // Await all image loading promises concurrently
-
-    const spriteIcons: string[] = [];
-
-    for (const markerType of markerTypes) {
-      for (const color of ["red", "blue", "purple", "unavailable"]) {
-        spriteIcons.push(`${markerType}-marker-${color}`);
-      }
-    }
-
-    const imageLoadPromises = spriteIcons.map((name) =>
-      this.loadImageToMap(map, name, `/sprites/${name}.png`)
-    );
-    await Promise.all(imageLoadPromises);
-
-    // Await for the map to fully load its style and resources
-    await new Promise<void>((resolve) => {
-      if (map.isStyleLoaded()) {
-        // Check if style is already loaded
-        resolve();
-      } else {
-        map.on("load", () => {
-          resolve();
-        });
-      }
-    });
   }
 
   addRegionPolygonLayer() {
@@ -265,67 +283,44 @@ export class MapLayerModel {
     this.layerIdsByMarkerType[markerType].push(layerId);
   }
 
-  addBadge(markerType: MarkerType, clusterOrPoint: ClusterOrPoint) {
-    const layerIdPrefix = `${markerType}-${clusterOrPoint}`;
-
-    // white badge background
-    const badgeLayerId = `${layerIdPrefix}-badge`;
+  addMagnitudeHaloLayer(
+    markerType: MarkerType,
+    clusterOrPoint: ClusterOrPoint,
+    maxValue: number
+  ) {
+    const MIN_RADIUS = outerRingRadius;
+    const EXTRA_RADIUS = 20;
+    const layerId = `${markerType}-${clusterOrPoint}-magnitude-halo`;
     this.map.addLayer({
-      id: badgeLayerId,
+      id: layerId,
       type: "circle",
       source: "markers",
       filter: clusterOrPointFilter(clusterOrPoint),
       paint: {
-        "circle-color": "#fff",
-
-        // Make space for bigger numbers
-        // 0–9 → 8 px, 10–99 → 10 px, 100-up → 12 px
+        "circle-color": colorExpression(clusterOrPoint),
+        "circle-opacity": 0.1,
         "circle-radius": [
-          "step",
-          ["get", "count"],
-          8,
-          10,
-          9,
-          100,
-          10,
-          1000,
-          11,
-          100_000,
-          12,
+          "case",
+          /* guard: non-positive or missing "count" → just MIN_RADIUS */
+          ["<=", ["coalesce", ["get", "count"], 0], 0],
+          MIN_RADIUS,
+          /* else: MIN_RADIUS + EXTRA_RADIUS * sqrt(count / maxValue) */
+          [
+            "min",
+            [
+              "+",
+              MIN_RADIUS,
+              ["*", EXTRA_RADIUS, ["sqrt", ["/", ["get", "count"], maxValue]]],
+            ],
+            MIN_RADIUS + EXTRA_RADIUS, // hard cap
+          ],
         ],
 
-        // push it down & right ~12 px (tweak to taste)
-        "circle-translate": [12, 12],
-        "circle-translate-anchor": "viewport",
+        /* ------- kill the outline ------------------------------------ */
+        "circle-stroke-width": 0, // or omit the property entirely
       },
     });
-    this.registerLayer(badgeLayerId, markerType);
-    this.addMouseHandlers(badgeLayerId, clusterOrPoint);
-
-    // count label
-    const badgeLabelId = `${layerIdPrefix}-count`;
-    this.map.addLayer({
-      id: badgeLabelId,
-      type: "symbol",
-      source: "markers",
-      filter: clusterOrPointFilter(clusterOrPoint),
-      layout: {
-        "text-field": getTerseLabelExpr("count"),
-        "text-font": ["Noto Sans Bold"],
-        "text-size": ["step", ["get", "count"], 10, 10000, 9, 100_000, 8],
-        "text-anchor": "center",
-        "text-allow-overlap": true,
-      },
-      paint: {
-        "text-color": "#000",
-        "text-halo-color": "#fff",
-        "text-halo-width": 1,
-        "text-translate": [12, 12], // same offset as circle
-        "text-translate-anchor": "viewport",
-      },
-    });
-    this.registerLayer(badgeLabelId, markerType);
-    this.addMouseHandlers(badgeLabelId, clusterOrPoint);
+    this.registerLayer(layerId, markerType);
   }
 
   addMarkerIconLayer(markerType: MarkerType, clusterOrPoint: ClusterOrPoint) {
@@ -336,139 +331,115 @@ export class MapLayerModel {
       source: "markers",
       filter: clusterOrPointFilter(clusterOrPoint),
       layout: {
-        "icon-image":
-          /**
-           * Choose the correct marker icon for the current feature.
-           *
-           * ─────────────────────────────────────────────────────────
-           * 1. **Single point**
-           *    When `clusterOrPoint === "point"` the feature is an individual event.
-           *    Its icon name is stored directly in the feature’s `"icon"` property,
-           *    so we simply return that (`["get", "icon"]`).
-           *
-           * 2. **Cluster**
-           *    Otherwise we’re dealing with a MapLibre *cluster* that represents many
-           *    underlying events.  We colour the cluster marker by inspecting two
-           *    count properties on the cluster:
-           *
-           *       • `red`   – number of “red” events in the cluster
-           *       • `blue`  – number of “blue” events in the cluster
-           *
-           *    The `coalesce(..., 0)` wrapper treats a missing attribute as **0**.
-           *    The logic is:
-           *
-           *       ┌────────────────────────────────────────────┐
-           *       │ Condition                                  │  Icon returned
-           *       ├────────────────────────────────────────────┤
-           *       │ red > 0  AND  blue > 0                     │  <markerType>-marker-purple
-           *       │ blue > 0 AND  red == 0                     │  <markerType>-marker-blue
-           *       │ red  > 0 AND  blue == 0                    │  <markerType>-marker-red
-           *       │ anything else (neither red nor blue)       │  <markerType>-marker-unavailable
-           *       └────────────────────────────────────────────┘
-           *
-           */
-
-          clusterOrPoint === "point"
-            ? ["get", "icon"]
-            : [
-                "case",
-                [
-                  "all",
-                  [">", ["coalesce", ["get", "red"], 0], 0],
-                  [">", ["coalesce", ["get", "blue"], 0], 0],
-                ],
-                `${markerType}-marker-purple`,
-                [
-                  "all",
-                  [">", ["coalesce", ["get", "blue"], 0], 0],
-                  ["==", ["coalesce", ["get", "red"], 0], 0],
-                ],
-                `${markerType}-marker-blue`,
-                [
-                  "all",
-                  [">", ["coalesce", ["get", "red"], 0], 0],
-                  ["==", ["coalesce", ["get", "blue"], 0], 0],
-                ],
-                `${markerType}-marker-red`,
-                `${markerType}-marker-unavailable`,
-              ],
+        "icon-image": `markers:${markerType}`,
         "icon-size": 0.5,
         "icon-allow-overlap": true,
       },
+      paint: {
+        "icon-color": colorExpression(clusterOrPoint),
+      },
     });
+
     this.registerLayer(layerId, markerType);
     this.addMouseHandlers(layerId, clusterOrPoint);
   }
 
-  addMagnitudeCircleLayer(
-    markerType: MarkerType,
-    clusterOrPoint: ClusterOrPoint
-  ) {
-    const MAX_COUNT = 800_000;
-    const MAX_STROKE = 15;
-    const layerId = `${markerType}-${clusterOrPoint}-magnitude-circle`;
+  addMarkerRings(markerType: MarkerType, clusterOrPoint: ClusterOrPoint) {
+    // Add the main ring
+    const layerId = `${markerType}-${clusterOrPoint}-ring`;
     this.map.addLayer({
       id: layerId,
       type: "circle",
       source: "markers",
       filter: clusterOrPointFilter(clusterOrPoint),
       paint: {
-        "circle-radius": 17,
-        "circle-stroke-width": [
-          "case",
-          ["<=", ["get", "count"], 0], // guard against bad data
-          0,
-
-          // min( MAX_STROKE ,
-          //      MAX_STROKE * sqrt( count / MAX_COUNT ) )
-          [
-            "min",
-            MAX_STROKE,
-            ["*", MAX_STROKE, ["sqrt", ["/", ["get", "count"], MAX_COUNT]]],
-          ],
-        ],
-        "circle-stroke-color": [
-          "case",
-          [
-            "all",
-            [">", ["coalesce", ["get", "red"], 0], 0],
-            [">", ["coalesce", ["get", "blue"], 0], 0],
-          ],
-          markerColor.purple,
-          [
-            "all",
-            [">", ["coalesce", ["get", "blue"], 0], 0],
-            ["==", ["coalesce", ["get", "red"], 0], 0],
-          ],
-          markerColor.blue,
-          [
-            "all",
-            [">", ["coalesce", ["get", "red"], 0], 0],
-            ["==", ["coalesce", ["get", "blue"], 0], 0],
-          ],
-          markerColor.red,
-          markerColor.unavailable,
-        ],
+        "circle-stroke-color": colorExpression(clusterOrPoint),
         "circle-opacity": 0,
-        "circle-stroke-opacity": 0.1,
+        "circle-radius": innerRingRadius,
+        "circle-stroke-width": ringStroke,
+      },
+    });
+    this.registerLayer(layerId, markerType);
+
+    // Possibly add the cluster ring
+    if (clusterOrPoint === "cluster") {
+      const layerId = `${markerType}-${clusterOrPoint}-outer-ring`;
+      this.map.addLayer({
+        id: layerId,
+        type: "circle",
+        source: "markers",
+        filter: clusterOrPointFilter(clusterOrPoint),
+        paint: {
+          "circle-stroke-color": colorExpression(clusterOrPoint),
+          "circle-opacity": 0,
+          "circle-radius": outerRingRadius,
+          "circle-stroke-width": clusterRingStroke,
+          "circle-stroke-opacity": 0.5,
+        },
+      });
+      this.registerLayer(layerId, markerType);
+    }
+  }
+
+  addCountBadge(markerType: MarkerType, clusterOrPoint: ClusterOrPoint) {
+    const layerId = `${markerType}-${clusterOrPoint}-badge`;
+    this.map.addLayer({
+      id: layerId,
+      type: "symbol",
+      source: "markers",
+      filter: clusterOrPointFilter(clusterOrPoint),
+      layout: {
+        "text-field": getTerseLabelExpr("count"),
+        "text-font": ["Noto Sans Bold"],
+        "text-size": 10,
+
+        "icon-image": "markers:rounded-text-background",
+        "icon-text-fit": "both", // stretch X & Y to wrap text
+        "icon-text-fit-padding": [4, 8, 4, 8], // ↑ right ↓ left  (px)
+
+        "symbol-placement": "point",
+        "text-allow-overlap": true,
+        "icon-allow-overlap": true,
+        "icon-anchor": "center",
+        "text-anchor": "center",
+      },
+      paint: {
+        "icon-color": "#FFFFFF",
+        "icon-translate": [0, innerRingRadius],
+        "text-translate": [0, innerRingRadius],
       },
     });
     this.registerLayer(layerId, markerType);
   }
 
   addMarkerLayers() {
-    // Events
+    const maxLikelyLocationsInCluster = 1000;
+    // Event points
+    this.addMarkerRings("event", "point");
     this.addMarkerIconLayer("event", "point");
-    this.addMarkerIconLayer("event", "cluster");
-    this.addBadge("event", "cluster");
 
-    // Turnouts
-    this.addMagnitudeCircleLayer("turnout", "point");
-    this.addMagnitudeCircleLayer("turnout", "cluster");
+    // Event clusters
+    this.addMagnitudeHaloLayer(
+      "turnout",
+      "cluster",
+      maxLikelyLocationsInCluster
+    );
+    this.addMarkerRings("event", "cluster");
+    this.addMarkerIconLayer("event", "cluster");
+    this.addCountBadge("event", "cluster");
+
+    // Turnout points
+    const maxLikelyTurnoutInMarker = 1_000_000;
+    this.addMagnitudeHaloLayer("turnout", "point", maxLikelyTurnoutInMarker);
+    this.addMarkerRings("turnout", "point");
     this.addMarkerIconLayer("turnout", "point");
-    this.addBadge("turnout", "point");
+    this.addCountBadge("turnout", "point");
+
+    // Turnout clusters
+    this.addMagnitudeHaloLayer("turnout", "cluster", maxLikelyTurnoutInMarker);
+    this.addMarkerRings("turnout", "cluster");
     this.addMarkerIconLayer("turnout", "cluster");
-    this.addBadge("turnout", "cluster");
+    this.addCountBadge("turnout", "cluster");
   }
 
   addMarkerSource(geoJSON: GeoJSON.GeoJSON) {
@@ -510,8 +481,7 @@ export class MapLayerModel {
     }
   }
 
-  async initializeMap(markers: Marker[]) {
-    await this.loadResources(this.map);
+  initializeMap(markers: Marker[]) {
     this.addRegionPolygonLayer();
     this.addMarkerSource(this.markersToGeoJSON(markers));
     this.addMarkerLayers();

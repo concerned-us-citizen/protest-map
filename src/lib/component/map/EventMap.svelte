@@ -63,7 +63,7 @@
   onMount(async () => {
     if (!mapDiv) return;
 
-    const pendingMap = new maplibregl.Map({
+    const safeMap = new maplibregl.Map({
       container: mapDiv,
       style: "https://tiles.openfreemap.org/styles/bright",
       minZoom: 1,
@@ -72,21 +72,21 @@
       renderWorldCopies: true,
     });
 
-    if (pendingMap === undefined) {
-      throw new Error("Map is undefined");
-    }
-    map = pendingMap;
-    pageState.mapModel.setMapInstance(map);
-    pageState.regionLabeler.setMapInstance(map);
+    map = safeMap;
 
-    try {
-      mapLayerModel = new MapLayerModel(map, pageState);
-      await mapLayerModel.initializeMap(
-        pageState.filter.allFilteredEvents ?? []
-      );
-    } catch (error) {
-      console.error("Error during map initialization:", error);
-    }
+    safeMap.on("style.load", () => {
+      safeMap.addSprite("markers", "sprites/sprite");
+
+      pageState.mapModel.setMapInstance(safeMap);
+      pageState.regionLabeler.setMapInstance(safeMap);
+
+      try {
+        mapLayerModel = new MapLayerModel(safeMap, pageState);
+        mapLayerModel.initializeMap(pageState.filter.allFilteredEvents ?? []);
+      } catch (error) {
+        console.error("Error during map initialization:", error);
+      }
+    });
   });
 
   onDestroy(() => {

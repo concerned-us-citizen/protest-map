@@ -1,0 +1,26 @@
+{
+  "event": {
+    "height": 86,
+    "pixelRatio": 2,
+    "width": 86,
+    "x": 0,
+    "y": 0,
+    "sdf": true
+  },
+  "rounded-text-background": {
+    "height": 36,
+    "pixelRatio": 2,
+    "width": 46,
+    "x": 0,
+    "y": 86,
+    "sdf": true
+  },
+  "turnout": {
+    "height": 86,
+    "pixelRatio": 2,
+    "width": 86,
+    "x": 86,
+    "y": 0,
+    "sdf": true
+  }
+}

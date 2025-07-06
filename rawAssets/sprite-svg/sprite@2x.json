@@ -1,0 +1,18 @@
+{
+  "protest": {
+    "height": 86,
+    "pixelRatio": 2,
+    "width": 86,
+    "x": 0,
+    "y": 0,
+    "sdf": true
+  },
+  "turnout": {
+    "height": 86,
+    "pixelRatio": 2,
+    "width": 86,
+    "x": 86,
+    "y": 0,
+    "sdf": true
+  }
+}

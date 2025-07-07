@@ -1,5 +1,28 @@
 import { markerColor } from "$lib/colors";
 import type { ExpressionSpecification } from "maplibre-gl";
+import type { Feature, GeoJsonProperties, Point } from "geojson";
+import { nearlyEqual } from "$lib/util/number";
+
+/**
+ * Returns true if all Point features are nearly at the same coordinates,
+ * using a custom `nearlyEqual(a, b)` function.
+ */
+export function areFeaturesCoLocated(features: Feature<Point>[]): boolean {
+  if (features.length <= 1) return true;
+
+  const [lng0, lat0] = features[0].geometry.coordinates;
+
+  return features.every(({ geometry }) => {
+    const [lng, lat] = geometry.coordinates;
+    return nearlyEqual(lng, lng0) && nearlyEqual(lat, lat0);
+  });
+}
+
+export function isPointFeature(
+  f: Feature
+): f is Feature<Point, GeoJsonProperties> {
+  return f.geometry?.type === "Point";
+}
 
 /**
  * Choose the correct color for the current feature.

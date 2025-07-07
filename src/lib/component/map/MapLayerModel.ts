@@ -2,19 +2,25 @@ import type { PageState } from "$lib/model/PageState.svelte";
 import { type BBox2D, bboxToBounds } from "$lib/util/bounds";
 import bbox from "@turf/bbox";
 import { featureCollection, point } from "@turf/helpers";
-import type { FilterSpecification, MapMouseEvent } from "maplibre-gl";
+import type {
+  FilterSpecification,
+  LngLatLike,
+  MapMouseEvent,
+} from "maplibre-gl";
 import maplibregl from "maplibre-gl";
 import { mount } from "svelte";
-import EventPopup from "./EventPopup.svelte";
+import MarkerPopup from "./MarkerPopup.svelte";
 import {
   type ClusterOrPoint,
   buildColorExpression,
   getTerseLabelExpr,
   buildLinearRadiusExpr,
+  areFeaturesCoLocated,
+  isPointFeature,
 } from "./util";
 import { type Marker, type MarkerType } from "$lib/types";
 import { markerColor } from "$lib/colors";
-import type { MultiPolygon, Polygon } from "geojson";
+import type { Feature, MultiPolygon, Point, Polygon } from "geojson";
 
 type MapMouseEventWithFeatures = MapMouseEvent & {
   features?: maplibregl.MapGeoJSONFeature[];
@@ -77,14 +83,19 @@ export class MapLayerModel {
 
     const source = map.getSource("markers") as maplibregl.GeoJSONSource;
     try {
-      const features = await source.getClusterLeaves(clusterId, Infinity, 0);
+      const features = await (
+        await source.getClusterLeaves(clusterId, Infinity, 0)
+      ).filter(isPointFeature);
+      if (areFeaturesCoLocated(features)) {
+        this.showMarkersPopup(features);
+      } else {
+        const fc = featureCollection(
+          features.map((f) => point((f.geometry as GeoJSON.Point).coordinates))
+        );
 
-      const fc = featureCollection(
-        features.map((f) => point((f.geometry as GeoJSON.Point).coordinates))
-      );
-
-      const bboxValue = bbox(fc) as BBox2D; // [minX, minY, maxX, maxY]
-      this.pageState.mapModel.navigateTo(bboxToBounds(bboxValue));
+        const bboxValue = bbox(fc) as BBox2D; // [minX, minY, maxX, maxY]
+        this.pageState.mapModel.navigateTo(bboxToBounds(bboxValue));
+      }
     } catch (error) {
       console.error("Error getting cluster leaves:", error);
     }
@@ -93,19 +104,38 @@ export class MapLayerModel {
   onMarkerClick = (e: MapMouseEventWithFeatures) => {
     const f = e.features?.[0];
     if (!f) return;
+    this.showMarkersPopup([f]);
+  };
 
-    const populated = this.pageState.eventModel.getPopulatedMarker(
-      f.properties.id,
-      f.properties.type
+  showMarkersPopup(fc: Feature[]) {
+    const safeFc = fc.filter(
+      (f): f is Feature<Point> =>
+        f.geometry?.type === "Point" && f.properties !== undefined
     );
-    if (!populated) return;
+
+    if (safeFc.length < 1) return;
+
+    const lngLat: LngLatLike = safeFc[0].geometry.coordinates as [
+      number,
+      number,
+    ];
+
+    const populatedMarkers = safeFc
+      .map((f) => {
+        const props = f.properties!;
+        return this.pageState.eventModel.getPopulatedMarker(
+          props.id,
+          props.type
+        );
+      })
+      .filter((p) => p !== null);
 
     if (this.popup) this.popup.remove();
 
     this.sveltePopupContainer = document.createElement("div");
-    this.sveltePopupInstance = mount(EventPopup, {
+    this.sveltePopupInstance = mount(MarkerPopup, {
       target: this.sveltePopupContainer,
-      props: { populatedMarker: populated },
+      props: { populatedMarkers },
     });
     const vOffset = 14;
     const hOffset = 16;
@@ -119,10 +149,10 @@ export class MapLayerModel {
         right: [-hOffset, 0],
       } as maplibregl.Offset,
     })
-      .setLngLat(e.lngLat)
+      .setLngLat(lngLat)
       .setDOMContent(this.sveltePopupContainer)
       .addTo(this.map);
-  };
+  }
 
   addMouseHandlers(layerId: string, clusterOrPoint: ClusterOrPoint) {
     this.mouseMoveLayerIds.push(layerId);

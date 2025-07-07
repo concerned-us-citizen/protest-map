@@ -87,3 +87,14 @@ export function withTiming<T>(fn: () => T, label = "withTiming"): T {
     console.log(`${label}: ${ms.toFixed(1)} ms`);
   }
 }
+
+export function isHttpUrl(
+  input: string
+): input is `${"http" | "https"}://${string}` {
+  try {
+    const url = new URL(input);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false; // thrown if input is not absolute or is malformed
+  }
+}

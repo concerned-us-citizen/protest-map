@@ -25,7 +25,7 @@ const ringStroke = 2;
 const clusterRingStroke = 1;
 const ringSpacing = 1;
 const outerRingRadius = innerRingRadius + ringStroke + ringSpacing;
-const minHaloRadius = innerRingRadius - 5;
+const minHaloRadius = innerRingRadius - 4;
 const maxHaloRadius = 30;
 
 function clusterOrPointFilter(
@@ -342,7 +342,6 @@ export class MapLayerModel {
       minHaloRadius,
       maxHaloRadius
     );
-    this.addMagnitudeHaloLayer("event", "point", eventRadiusExpression);
     this.addMarkerRings("event", "point");
     this.addMarkerIconLayer("event", "point");
 

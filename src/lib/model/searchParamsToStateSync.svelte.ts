@@ -176,7 +176,7 @@ export const shareOptions: ParamOption[] = [
     setValue: async (params, pageState) => {
       const debug = params.get("debug");
       if (debug) {
-        pageState.debug = debug === "1";
+        pageState.debug = debug === "1" || debug == "true" || debug == "t";
       }
     },
     isFilterProp: false,

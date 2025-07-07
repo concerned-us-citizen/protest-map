@@ -2,15 +2,16 @@ import type { PageState } from "$lib/model/PageState.svelte";
 import { type BBox2D, bboxToBounds } from "$lib/util/bounds";
 import bbox from "@turf/bbox";
 import { featureCollection, point } from "@turf/helpers";
-import type {
-  ExpressionSpecification,
-  FilterSpecification,
-  MapMouseEvent,
-} from "maplibre-gl";
+import type { FilterSpecification, MapMouseEvent } from "maplibre-gl";
 import maplibregl from "maplibre-gl";
 import { mount } from "svelte";
 import EventPopup from "./EventPopup.svelte";
-import { getTerseLabelExpr } from "./util";
+import {
+  type ClusterOrPoint,
+  buildColorExpression,
+  getTerseLabelExpr,
+  buildLinearRadiusExpr,
+} from "./util";
 import { type Marker, type MarkerType } from "$lib/types";
 import { markerColor } from "$lib/colors";
 import type { MultiPolygon, Polygon } from "geojson";
@@ -19,13 +20,13 @@ type MapMouseEventWithFeatures = MapMouseEvent & {
   features?: maplibregl.MapGeoJSONFeature[];
 };
 
-type ClusterOrPoint = "cluster" | "point";
-
 const innerRingRadius = 13;
 const ringStroke = 2;
 const clusterRingStroke = 1;
 const ringSpacing = 1;
 const outerRingRadius = innerRingRadius + ringStroke + ringSpacing;
+const minHaloRadius = innerRingRadius - 5;
+const maxHaloRadius = 30;
 
 function clusterOrPointFilter(
   clusterOrPoint: ClusterOrPoint
@@ -33,65 +34,6 @@ function clusterOrPointFilter(
   return clusterOrPoint === "cluster"
     ? ["has", "point_count"] // only cluster features
     : ["!", ["has", "point_count"]]; // only unclustered points
-}
-
-/**
- * Choose the correct color for the current feature.
- *
- * ─────────────────────────────────────────────────────────
- * 1. **Single point**
- *    When `clusterOrPoint === "point"` the feature is an individual event.
- *    Its color is stored directly in the feature’s `"color"` property,
- *    so we simply return that (`["get", "color"]`).
- *
- * 2. **Cluster**
- *    Otherwise we’re dealing with a MapLibre cluster that represents many
- *    underlying events.  We color the cluster marker by inspecting two
- *    count properties on the cluster:
- *
- *       • `red`   – number of “red” events in the cluster
- *       • `blue`  – number of “blue” events in the cluster
- *
- *    The `coalesce(..., 0)` wrapper treats a missing attribute as **0**.
- *    The logic is:
- *
- *       ┌────────────────────────────────────────────┐
- *       │ Condition                                  │  Icon returned
- *       ├────────────────────────────────────────────┤
- *       │ red > 0  AND  blue > 0                     │  <markerType>-marker-purple
- *       │ blue > 0 AND  red == 0                     │  <markerType>-marker-blue
- *       │ red  > 0 AND  blue == 0                    │  <markerType>-marker-red
- *       │ anything else (neither red nor blue)       │  <markerType>-marker-unavailable
- *       └────────────────────────────────────────────┘
- *
- */
-function colorExpression(
-  clusterOrPoint: ClusterOrPoint
-): ExpressionSpecification {
-  return clusterOrPoint === "point"
-    ? ["get", "color"]
-    : [
-        "case",
-        [
-          "all",
-          [">", ["coalesce", ["get", "red"], 0], 0],
-          [">", ["coalesce", ["get", "blue"], 0], 0],
-        ],
-        markerColor.purple,
-        [
-          "all",
-          [">", ["coalesce", ["get", "blue"], 0], 0],
-          ["==", ["coalesce", ["get", "red"], 0], 0],
-        ],
-        markerColor.blue,
-        [
-          "all",
-          [">", ["coalesce", ["get", "red"], 0], 0],
-          ["==", ["coalesce", ["get", "blue"], 0], 0],
-        ],
-        markerColor.red,
-        markerColor.unavailable,
-      ];
 }
 
 const REGION_SOURCE_ID = "region-polygon";
@@ -112,7 +54,7 @@ export class MapLayerModel {
   constructor(map: maplibregl.Map, pageState: PageState) {
     this.map = map;
     this.pageState = pageState;
-    map.on("mousemove", this.onMouseMove);
+    map.on("mousemove", this.onMouseMove.bind(this));
   }
 
   onMouseMove = (e: MapMouseEvent) => {
@@ -286,10 +228,8 @@ export class MapLayerModel {
   addMagnitudeHaloLayer(
     markerType: MarkerType,
     clusterOrPoint: ClusterOrPoint,
-    maxValue: number
+    radiusExpression: maplibregl.ExpressionSpecification
   ) {
-    const MIN_RADIUS = outerRingRadius;
-    const EXTRA_RADIUS = 20;
     const layerId = `${markerType}-${clusterOrPoint}-magnitude-halo`;
     this.map.addLayer({
       id: layerId,
@@ -297,27 +237,10 @@ export class MapLayerModel {
       source: "markers",
       filter: clusterOrPointFilter(clusterOrPoint),
       paint: {
-        "circle-color": colorExpression(clusterOrPoint),
-        "circle-opacity": 0.1,
-        "circle-radius": [
-          "case",
-          /* guard: non-positive or missing "count" → just MIN_RADIUS */
-          ["<=", ["coalesce", ["get", "count"], 0], 0],
-          MIN_RADIUS,
-          /* else: MIN_RADIUS + EXTRA_RADIUS * sqrt(count / maxValue) */
-          [
-            "min",
-            [
-              "+",
-              MIN_RADIUS,
-              ["*", EXTRA_RADIUS, ["sqrt", ["/", ["get", "count"], maxValue]]],
-            ],
-            MIN_RADIUS + EXTRA_RADIUS, // hard cap
-          ],
-        ],
-
-        /* ------- kill the outline ------------------------------------ */
-        "circle-stroke-width": 0, // or omit the property entirely
+        "circle-color": buildColorExpression(clusterOrPoint),
+        "circle-opacity": 0.3,
+        "circle-radius": radiusExpression,
+        "circle-stroke-width": 0,
       },
     });
     this.registerLayer(layerId, markerType);
@@ -336,7 +259,7 @@ export class MapLayerModel {
         "icon-allow-overlap": true,
       },
       paint: {
-        "icon-color": colorExpression(clusterOrPoint),
+        "icon-color": buildColorExpression(clusterOrPoint),
       },
     });
 
@@ -353,7 +276,7 @@ export class MapLayerModel {
       source: "markers",
       filter: clusterOrPointFilter(clusterOrPoint),
       paint: {
-        "circle-stroke-color": colorExpression(clusterOrPoint),
+        "circle-stroke-color": buildColorExpression(clusterOrPoint),
         "circle-opacity": 0,
         "circle-radius": innerRingRadius,
         "circle-stroke-width": ringStroke,
@@ -370,7 +293,7 @@ export class MapLayerModel {
         source: "markers",
         filter: clusterOrPointFilter(clusterOrPoint),
         paint: {
-          "circle-stroke-color": colorExpression(clusterOrPoint),
+          "circle-stroke-color": buildColorExpression(clusterOrPoint),
           "circle-opacity": 0,
           "circle-radius": outerRingRadius,
           "circle-stroke-width": clusterRingStroke,
@@ -395,7 +318,7 @@ export class MapLayerModel {
 
         "icon-image": "markers:rounded-text-background",
         "icon-text-fit": "both", // stretch X & Y to wrap text
-        "icon-text-fit-padding": [4, 8, 4, 8], // ↑ right ↓ left  (px)
+        "icon-text-fit-padding": [4, 4, 4, 4], // ↑ right ↓ left  (px)
 
         "symbol-placement": "point",
         "text-allow-overlap": true,
@@ -413,30 +336,35 @@ export class MapLayerModel {
   }
 
   addMarkerLayers() {
-    const maxLikelyLocationsInCluster = 1000;
     // Event points
+    const eventRadiusExpression = buildLinearRadiusExpr(
+      [1, 20, 50, 200, 100, 1000],
+      minHaloRadius,
+      maxHaloRadius
+    );
+    this.addMagnitudeHaloLayer("event", "point", eventRadiusExpression);
     this.addMarkerRings("event", "point");
     this.addMarkerIconLayer("event", "point");
 
     // Event clusters
-    this.addMagnitudeHaloLayer(
-      "turnout",
-      "cluster",
-      maxLikelyLocationsInCluster
-    );
+    this.addMagnitudeHaloLayer("event", "cluster", eventRadiusExpression);
     this.addMarkerRings("event", "cluster");
     this.addMarkerIconLayer("event", "cluster");
     this.addCountBadge("event", "cluster");
 
     // Turnout points
-    const maxLikelyTurnoutInMarker = 1_000_000;
-    this.addMagnitudeHaloLayer("turnout", "point", maxLikelyTurnoutInMarker);
+    const turnoutRadiusExpression = buildLinearRadiusExpr(
+      [1, 1_000, 10_000, 100_000, 2_000_000],
+      minHaloRadius,
+      maxHaloRadius
+    );
+    this.addMagnitudeHaloLayer("turnout", "point", turnoutRadiusExpression);
     this.addMarkerRings("turnout", "point");
     this.addMarkerIconLayer("turnout", "point");
     this.addCountBadge("turnout", "point");
 
     // Turnout clusters
-    this.addMagnitudeHaloLayer("turnout", "cluster", maxLikelyTurnoutInMarker);
+    this.addMagnitudeHaloLayer("turnout", "cluster", turnoutRadiusExpression);
     this.addMarkerRings("turnout", "cluster");
     this.addMarkerIconLayer("turnout", "cluster");
     this.addCountBadge("turnout", "cluster");

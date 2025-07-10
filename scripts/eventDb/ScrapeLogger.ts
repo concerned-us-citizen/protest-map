@@ -8,6 +8,14 @@ import { maybeCreateGithubIssue } from "./createGithubSummaryIssue";
 export interface RunSummary {
   fetchedDataType: FetchedDataType;
   rowsProcessed: number;
+  badAddresses: number;
+  badCities: number;
+  badZipcodes: number;
+  badDates: number;
+  badLinks: number;
+  badNames: number;
+  badCoverageUrls: number;
+  badTurnoutNumbers: number;
   rejects: number;
   duplicates: number;
   added: number;
@@ -30,6 +38,14 @@ class ScrapeRun {
   totalRows = 0; // Used to track progress, known after csv scraped.
   rowsProcessed = 0; // Incremented as they're processed
   duplicates = 0;
+  badAddresses = 0;
+  badCities = 0;
+  badZipcodes = 0;
+  badDates = 0;
+  badLinks = 0;
+  badNames = 0;
+  badCoverageUrls = 0;
+  badTurnoutNumbers = 0;
   rejects = 0;
   sheetsProcessed = 0;
   skippedSheets: { title: string; rows: number }[] = [];
@@ -44,11 +60,19 @@ class ScrapeRun {
     this.fetchedDataType = fetchedDataType;
   }
 
-  get summary() {
+  get summary(): RunSummary {
     return {
       fetchedDataType: this.fetchedDataType,
       elapsedSeconds: (Date.now() - this.startTime) / 1000,
       rowsProcessed: this.rowsProcessed,
+      badAddresses: this.badAddresses,
+      badCities: this.badCities,
+      badZipcodes: this.badZipcodes,
+      badDates: this.badDates,
+      badLinks: this.badLinks,
+      badNames: this.badNames,
+      badCoverageUrls: this.badCoverageUrls,
+      badTurnoutNumbers: this.badTurnoutNumbers,
       rejects: this.rejects,
       duplicates: this.duplicates,
       added: this.totalRows - this.rejects - this.duplicates,
@@ -120,7 +144,7 @@ export class ScrapeLogger {
     await fs.appendFile(path, logEntry, "utf8");
   }
 
-  async saveSummary(summary: Record<string, unknown>) {
+  async saveSummary(summary: ProcessingSummary) {
     const summaryPath = config.paths.buildSummary;
     if (await fileExists(summaryPath)) {
       await fs.unlink(summaryPath);
@@ -133,7 +157,7 @@ export class ScrapeLogger {
   }
 
   async publishResults() {
-    const summaryInfo = {
+    const summaryInfo: ProcessingSummary = {
       elapsedSeconds: (Date.now() - this.startTime) / 1000,
       runs: this.#runs.map((r) => r.summary),
     };

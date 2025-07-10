@@ -153,7 +153,7 @@ async function sanitize<T extends EventRow | TurnoutRow>(
   fetchedDataType: FetchedDataType,
   logger: ScrapeLogger
 ): Promise<Nullable<T>> {
-  const unnamed = `Unnamed ${fetchedDataType}`;
+  const unnamed = "Unnamed event";
   const badNames = new Set(["None", "No name"]);
 
   const { name, zip, date, link, ...rest } = row;
@@ -164,6 +164,15 @@ async function sanitize<T extends EventRow | TurnoutRow>(
   if (!name || name === "" || badNames.has(name)) {
     sanitizedName = unnamed;
     logger.logInvalidEntry(row, sheetName, `Unnamed ${fetchedDataType}`);
+    logger.current.badNames++;
+  } else if (name.includes("http:") || name.includes("https:")) {
+    logger.logInvalidEntry(
+      row,
+      sheetName,
+      `Bad event name ${name} - shouldn't be a URL`
+    );
+    logger.current.badNames++;
+    sanitizedName = unnamed;
   } else {
     sanitizedName = toTitleCase(name).trim();
   }
@@ -172,6 +181,7 @@ async function sanitize<T extends EventRow | TurnoutRow>(
   const sanitizedDate = normalizeYearTo2025(normalizeToMMDDYYYY(date));
   if (!sanitizedDate) {
     logger.logInvalidEntry(row, sheetName, `Bad date '${date}'`);
+    logger.current.badDates++;
     return null; // Skip row if date is invalid
   }
 
@@ -179,6 +189,7 @@ async function sanitize<T extends EventRow | TurnoutRow>(
   let sanitizedZip = zip?.trim();
   if (!isValidZipCode(sanitizedZip)) {
     logger.logInvalidEntry(row, sheetName, `Bad zipcode '${sanitizedZip}'`);
+    logger.current.badZipcodes++;
     sanitizedZip = "";
   }
 
@@ -186,6 +197,7 @@ async function sanitize<T extends EventRow | TurnoutRow>(
   let sanitizedLink = link?.trim();
   if (isLikelyMalformedUrl(sanitizedLink)) {
     logger.logInvalidEntry(row, sheetName, `Bad link '${sanitizedLink}'`);
+    logger.current.badLinks++;
     sanitizedLink = "";
   }
 
@@ -203,6 +215,7 @@ async function sanitize<T extends EventRow | TurnoutRow>(
           sheetName,
           `Bad coverageUrl '${sanitizedCoverageUrl}'`
         );
+        logger.current.badCoverageUrls++;
         sanitizedCoverageUrl = "";
       }
     }
@@ -220,6 +233,7 @@ async function sanitize<T extends EventRow | TurnoutRow>(
         sheetName,
         `Bad turnout #, low (${low}) should be a whole number`
       );
+      logger.current.badTurnoutNumbers++;
     }
     let badHigh = false;
     if (!Number.isInteger(high)) {
@@ -229,6 +243,7 @@ async function sanitize<T extends EventRow | TurnoutRow>(
         sheetName,
         `Bad turnout #, high (${high}) should be a whole number`
       );
+      logger.current.badTurnoutNumbers++;
     }
     if (badLow && badHigh) {
       return null;
@@ -244,6 +259,7 @@ async function sanitize<T extends EventRow | TurnoutRow>(
         sheetName,
         `Bad turnout #, low of ${low} > high of ${high}`
       );
+      logger.current.badTurnoutNumbers++;
       return null;
     }
   }

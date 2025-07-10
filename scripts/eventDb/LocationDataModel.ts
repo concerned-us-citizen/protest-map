@@ -6,7 +6,11 @@ import { LocationDataDb } from "./LocationDataDb";
 import { getStateInfo as getStateIdInfo } from "./usStateInfo";
 import { Address } from "./types";
 import { fetchVotingInfo } from "./votingInfo";
-import { fetchWikiCityInfo } from "./wikiCityInfo";
+import {
+  fallBackCityThumbnailUrl,
+  fetchWikiCityInfo,
+  WikiCityInfo,
+} from "./wikiCityInfo";
 import { asNormalizedKey } from "../../src/lib/util/string";
 
 function getCity(sheetAddress: Address) {
@@ -53,8 +57,9 @@ export class LocationDataModel {
       this.logger.logInvalidEntry(
         address,
         sheetName,
-        `Bad address '${getAddress(address)}' (cached)`
+        `Bad address - unable to find geolocation for'${getAddress(address)}' (cached)`
       );
+      this.logger.current.badAddresses++;
       return null;
     }
 
@@ -73,8 +78,9 @@ export class LocationDataModel {
         this.logger.logInvalidEntry(
           address,
           sheetName,
-          `Bad address '${getAddress(address)}'`
+          `Bad address - unable to find geolocation for '${getAddress(address)}'`
         );
+        this.logger.current.badAddresses++;
         return null;
       }
     }
@@ -86,36 +92,41 @@ export class LocationDataModel {
         sheetName,
         `Invalid state name '${state}'`
       );
+      this.logger.current.badAddresses++;
     } else {
       state = stateIdInfo.fullName;
     }
     const cityKey = asNormalizedKey(`${city}-${state}`);
 
-    // Failed wiki search for city before?
-    if (this.db.isBadCity(cityKey)) {
-      this.logger.logInvalidEntry(
-        address,
-        sheetName,
-        `Bad city '${getCity(address)}' (cached)`
-      );
-      return null;
-    }
+    let cityInfo: WikiCityInfo | null = {
+      articleUrl: "",
+      thumbnailUrl: fallBackCityThumbnailUrl,
+    };
 
-    // Seen city before?
-    let cityInfo = this.db.getCityInfo(cityKey);
-    if (!cityInfo) {
-      cityInfo = await fetchWikiCityInfo(city, state, this.logger);
-      this.logger.current.wikiFetches++;
-      if (!cityInfo) {
-        this.logger.logInvalidEntry(
-          address,
-          sheetName,
-          `Bad city '${getCity(address)}'`
-        );
-        this.db.addBadCity(cityKey);
-        return null;
+    const badCityMsg = `Bad city - could not resolve '${getCity(address)}' on Wikipedia, not rejecting, but may be malformed, and will lack thumbnail and article`;
+
+    // Failed wiki search for city before => use the default
+    if (this.db.isBadCity(cityKey)) {
+      this.logger.logInvalidEntry(address, sheetName, `${badCityMsg} (cached)`);
+      this.logger.current.badCities++;
+    } else {
+      // Seen city before?
+      let fetched = this.db.getCityInfo(cityKey);
+      if (fetched) {
+        cityInfo = fetched;
+      } else {
+        // If not, fetch it
+        fetched = await fetchWikiCityInfo(city, state);
+        this.logger.current.wikiFetches++;
+        if (fetched) {
+          cityInfo = fetched;
+          this.db.addCityInfo(cityKey, cityInfo);
+        } else {
+          this.logger.logInvalidEntry(address, sheetName, badCityMsg);
+          this.logger.current.badCities++;
+          this.db.addBadCity(cityKey);
+        }
       }
-      this.db.addCityInfo(cityKey, cityInfo);
     }
 
     // Get precinct voting stats

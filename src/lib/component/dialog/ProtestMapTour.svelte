@@ -26,9 +26,12 @@
 </script>
 
 <svelte:head>
-  <link rel="preload" as="image" href="timeline.png" />
-  <link rel="preload" as="image" href="info-popup.png" />
-  <link rel="preload" as="image" href="event-filter.png" />
+  <link rel="preload" as="image" href="tour-images/timeline.png" />
+  <link rel="preload" as="image" href="tour-images/date-picker.png" />
+  <link rel="preload" as="image" href="tour-images/info-popup.png" />
+  <link rel="preload" as="image" href="tour-images/popup-turnout.png" />
+  <link rel="preload" as="image" href="tour-images/event-filter.png" />
+  <link rel="preload" as="image" href="tour-images/back-button.png" />
 </svelte:head>
 
 <Tour

@@ -83,10 +83,12 @@
     text-decoration: underline;
   }
   .last-updated {
-    text-align: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
     font-size: 0.8rem;
     color: #555;
-    margin-top: 1rem;
+    margin-top: 0;
     margin-bottom: 0;
   }
 

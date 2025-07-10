@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { deviceInfo } from "$lib/model/DeviceInfo.svelte";
-
   import { getPageStateFromContext } from "$lib/model/PageState.svelte";
   import type { ClassValue } from "svelte/elements";
   import EventInfoPanel from "./EventInfoPanel.svelte";
@@ -46,11 +44,5 @@
   .attribution-link {
     font-size: 0.7rem;
     color: #555;
-  }
-  .attribution-link a {
-    text-decoration: none !important;
-  }
-  .attribution-link a:hover {
-    text-decoration: underline;
   }
 </style>

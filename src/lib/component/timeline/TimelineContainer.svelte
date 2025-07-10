@@ -20,17 +20,6 @@
   <Timeline />
   <div class="date-range">
     <div>{pageState.filter.formattedDateRangeStart}</div>
-    <div class="attribution-link">
-      <i
-        >{deviceInfo.isSmall ? "Data:" : "Data provided by"}
-        <a
-          href="https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/preview#gid=1269890748"
-          target="_blank"
-          title={pageState.eventModel.formattedUpdatedAt}
-          >We (the People) Dissent</a
-        ></i
-      >
-    </div>
     <div>{pageState.filter.formattedDateRangeEnd}</div>
   </div>
 </div>
@@ -42,8 +31,7 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: 0.4em;
-    z-index: var(--controls-layer);
+    gap: 0.2em;
   }
   .date-range {
     display: flex;
@@ -51,7 +39,7 @@
     font-size: 0.8em;
     text-align: baseline;
     color: #555;
-    margin-bottom: 0.4em;
+    margin-bottom: 0.3em;
     margin-left: 1em;
     margin-right: 1em;
   }

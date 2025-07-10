@@ -5,10 +5,10 @@
 
   interface Props {
     items: T[];
-    filteredItems: T[];
-    keyFor: (_item: T) => unknown;
     selectedItem: Nullable<T>;
     magnitudeFor: (_item: T) => number;
+    isEnabled: (_item: T) => boolean;
+    isHighlighted: (_item: T) => boolean;
     firstShadedItemIndex: (_items: T[]) => number;
     onSelect: (_item: T) => void;
     className?: string;
@@ -16,10 +16,10 @@
 
   const {
     items,
-    filteredItems,
     selectedItem,
-    keyFor,
     magnitudeFor,
+    isEnabled,
+    isHighlighted,
     firstShadedItemIndex,
     onSelect,
     className = "",
@@ -30,27 +30,25 @@
   const bottomPadding = 0;
   const topPadding = 3;
 
-  let filteredItemMap = $derived.by(() => {
-    const items: [unknown, T][] = filteredItems.map((item) => [
-      keyFor(item),
-      item,
-    ]);
-    return new Map<unknown, T>(items);
-  });
-
   let svgWrapperElement: HTMLDivElement;
   let svgWrapperWidth = $state(300);
   let svgWrapperHeight = $state(40);
 
   let resizeObserver: ResizeObserver;
 
+  function updateSvgWrapperSizes() {
+    if (!svgWrapperElement) return;
+    svgWrapperWidth = svgWrapperElement.clientWidth;
+    svgWrapperHeight = svgWrapperElement.clientHeight;
+  }
+  updateSvgWrapperSizes();
+
   $effect(() => {
-    if (!browser || !svgWrapperElement) return;
+    if (!browser) return;
 
     resizeObserver = new ResizeObserver(() => {
       // This will trigger recomputation
-      svgWrapperWidth = svgWrapperElement.clientWidth;
-      svgWrapperHeight = svgWrapperElement.clientHeight;
+      updateSvgWrapperSizes();
     });
 
     resizeObserver.observe(svgWrapperElement);
@@ -106,7 +104,10 @@
   }
 
   function getBarHeight(locationCount: number): number {
-    return Math.max(1, (locationCount / maxMagnitude) * svgWrapperHeight); // Ensure min height of 1 for visibility
+    return Math.min(
+      Math.max(1, (locationCount / maxMagnitude) * svgWrapperHeight),
+      svgWrapperHeight
+    ); // Ensure min height of 1 for visibility
   }
 
   // --- Drag logic placeholder ---
@@ -208,10 +209,6 @@
     window.removeEventListener("touchmove", onTouchMove);
     window.removeEventListener("touchend", onTouchEnd);
   });
-
-  function isDisabled(item: T) {
-    return filteredItemMap.get(keyFor(item)) === undefined;
-  }
 </script>
 
 <div class={`histogram-slider ${className}`} bind:this={svgWrapperElement}>
@@ -237,21 +234,13 @@
     {/if}
     {#if items.length > 0}
       {#each items as item, i (item)}
-        {#if item === selectedItem}
-          <rect
-            class="selected-background-highlight"
-            x={getBarX(i)}
-            y={topPadding - 2}
-            width={barWidth}
-            height={svgWrapperHeight - bottomPadding - topPadding + 4}
-          />
-        {/if}
         <rect
           class={[
             "data-bar",
             {
-              disabled: isDisabled(item),
+              disabled: !isEnabled(item),
               selected: item === selectedItem,
+              highlighted: isHighlighted(item),
             },
           ]}
           x={getBarX(i)}
@@ -267,6 +256,16 @@
             if (e.key === "Enter" || e.key === " ") onSelect(item);
           }}
         />
+
+        {#if item === selectedItem}
+          <rect
+            class="selected-highlight"
+            x={getBarX(i)}
+            y={topPadding}
+            width={barWidth}
+            height={svgWrapperHeight}
+          />
+        {/if}
       {/each}
     {/if}
   </svg>
@@ -288,7 +287,7 @@
     height: 100%;
   }
 
-  .selected-background-highlight {
+  .selected-highlight {
     fill: var(--accent-color);
   }
 
@@ -306,7 +305,11 @@
   }
 
   rect.data-bar.disabled {
-    fill: #949494; /* Gray for disabled (not in current filter) bars */
+    opacity: 0.4;
+  }
+
+  rect.data-bar.highlighted {
+    fill: var(--color-red);
   }
 
   .future-events-highlight {

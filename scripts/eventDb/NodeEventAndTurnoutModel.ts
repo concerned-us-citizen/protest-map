@@ -77,4 +77,8 @@ export class NodeEventAndTurnoutModel {
       return false;
     }
   }
+
+  createSummaries() {
+    this.db.createDateSummaryTable();
+  }
 }

@@ -23,18 +23,17 @@
 
 <style>
   .panel {
+    position: relative;
     display: flex;
     flex-direction: column;
-    gap: 0.3rem;
     --panel-border-radius: 0.4rem;
+    border-radius: var(--panel-border-radius);
+    background-color: var(--panel-background-color);
+    gap: 0.5rem;
     --panel-padding-h: 0.5rem;
     --panel-padding-v: 0.5rem;
-    border-radius: var(--panel-border-radius);
     padding: var(--panel-padding-v) var(--panel-padding-h);
-    background-color: var(--panel-background-color);
-    overflow: hidden;
   }
-
   .title {
     font-size: 0.8rem;
     align-self: start;

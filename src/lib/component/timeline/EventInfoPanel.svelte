@@ -14,7 +14,7 @@
   class={`event-info ${className}`}
   transition:fade={{ duration: 300, easing: cubicInOut }}
 >
-  {#if pageState.filter.dateFilteredMarkers.length > 0}
+  {#if pageState.filter.markers.length > 0}
     <div class="counts-line">
       <strong>
         <span class="date-display"
@@ -22,7 +22,7 @@
         </span>
         <span class="stats-display"
           >{countAndLabel(pageState.filter.filteredEventCount, "Event")}, {countAndLabel(
-            pageState.filter.filteredCount,
+            pageState.filter.markerCount,
             pageState.filter.markerType === "event"
               ? "Location"
               : "Demonstrator"

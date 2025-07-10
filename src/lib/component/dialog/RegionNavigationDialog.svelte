@@ -1,15 +1,29 @@
+<script module lang="ts">
+  export const regionNavigationDialogId = "region-navigation-dialog-id";
+</script>
+
 <script lang="ts">
+  import { browser } from "$app/environment";
+
   import Autocomplete, {
     type AutocompleteItem,
   } from "$lib/component/Autocomplete.svelte";
   import Dialog from "$lib/component/Dialog.svelte";
   import { getPageStateFromContext } from "$lib/model/PageState.svelte";
+  import type { ClassValue } from "svelte/elements";
+
+  const { class: className } = $props<{
+    class?: ClassValue;
+  }>();
 
   const pageState = getPageStateFromContext();
+
+  let dialog: Dialog;
 
   const MAX_RECENTS = 8;
 
   let recents = $derived.by(() => {
+    if (!browser) return [];
     const m = document.cookie.match(/(?:^|;\s*)recentRegions=([^;]+)/);
     if (!m) return [];
     try {
@@ -19,8 +33,10 @@
     }
   });
 
-  const writeRecents = (a: AutocompleteItem[]) =>
-    (document.cookie = `recentRegions=${encodeURIComponent(JSON.stringify(a.slice(0, MAX_RECENTS)))};path=/;max-age=${60 * 60 * 24 * 365}`);
+  const writeRecents = (a: AutocompleteItem[]) => {
+    if (!browser) return;
+    document.cookie = `recentRegions=${encodeURIComponent(JSON.stringify(a.slice(0, MAX_RECENTS)))};path=/;max-age=${60 * 60 * 24 * 365}`;
+  };
 
   const addRecent = (v: AutocompleteItem) => {
     const a = recents.filter((x: AutocompleteItem) => x.id !== v.id);
@@ -42,22 +58,24 @@
     pageState.filter.namedRegion = r;
     pageState.mapModel.navigateTo(r, false);
     addRecent(v);
-    dismiss();
+    dialog.dismiss();
   }
-
-  const dismiss = () => {
-    pageState.overlayModel.navigationVisible = false;
-  };
 </script>
 
-<Dialog {dismiss} title="Jump to Region">
+<Dialog
+  bind:this={dialog}
+  id={regionNavigationDialogId}
+  class={className}
+  title="Jump to Region"
+  showDismissButton
+>
   <Autocomplete
     {fetchSuggestions}
     {addRecent}
-    placeholder="Enter a state, city, metro or ZIP…"
+    placeholder="Enter a state, city or ZIP…"
     maxVisible={20}
     onSelect={picked}
-    onDismiss={dismiss}
+    onDismiss={() => dialog.dismiss()}
   />
 
   {#if recents.length}

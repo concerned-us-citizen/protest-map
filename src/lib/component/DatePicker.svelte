@@ -8,8 +8,6 @@
   } from "svelty-picker";
   import { en } from "svelty-picker/i18n";
   import PillButton from "./PillButton.svelte";
-  import { Calendar } from "@lucide/svelte";
-  import { deviceInfo } from "$lib/model/DeviceInfo.svelte";
   import { formatDate } from "$lib/util/date";
 
   const { class: className } = $props<{
@@ -62,6 +60,12 @@
     clearToggle={false}
     clearBtn={false}
     manualInput={false}
+    positionResolver={(el: HTMLElement) => {
+      Object.assign(el.style, {
+        left: `-0.5rem`,
+        top: `0.75rem`,
+      });
+    }}
     bind:value={
       () => {
         return pageState.filter.date
@@ -86,15 +90,8 @@
     }}
   >
     <div class="date-container">
-      {#if deviceInfo.isWide}
-        <Calendar />
-      {/if}
-
       <h4>
-        {formatDate(
-          pageState.filter.date,
-          deviceInfo.isWide ? "long" : "medium"
-        )}
+        {formatDate(pageState.filter.date)}
       </h4>
     </div>
   </PillButton>
@@ -110,8 +107,7 @@
 
   :global(.sdt-component-wrap) {
     position: absolute !important;
-    bottom: 0;
-    z-index: calc(var(--controls-layer) - 1);
+    top: 100%;
   }
 
   :global(.inner-input) {
@@ -140,11 +136,6 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    pointer-events: auto;
-    z-index: var(--controls-layer);
-  }
-
-  :global(.calendar-icon-button) :global(svg) {
     pointer-events: auto;
   }
 </style>

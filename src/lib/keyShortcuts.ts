@@ -1,6 +1,7 @@
-import { giveFocusToAutocomplete } from "./component/AutocompleteOLD.svelte";
-import { deviceInfo } from "./model/DeviceInfo.svelte";
+import { regionNavigationDialogId } from "./component/dialog/RegionNavigationDialog.svelte";
 import type { PageState } from "./model/PageState.svelte";
+import { togglePopover } from "./component/popover";
+import { protestMapTourId } from "./component/dialog/ProtestMapTour.svelte";
 
 export function onKeyDown(event: KeyboardEvent, pageState: PageState) {
   // Ignore modifiers by themselves
@@ -19,44 +20,44 @@ export function onKeyDown(event: KeyboardEvent, pageState: PageState) {
     return;
   }
 
-  // Toggle Drawer (D)
-  if (code === "KeyD") {
-    pageState.overlayModel.toggleDrawerVisible();
+  // Toggle Filter (F)
+  if (code === "KeyF") {
+    pageState.toggleFilterVisible();
     event.preventDefault();
     return;
+  }
+
+  // Toggle Navigation (R)
+  if (code === "KeyR") {
+    togglePopover(regionNavigationDialogId);
+    event.preventDefault();
+    return;
+  }
+
+  // View entire US (C)
+  if (code === "KeyC") {
+    pageState.filter.clearAllFilters();
+    pageState.mapModel.navigateToUS();
   }
 
   // Help (I/H)
   if (code === "KeyI" || code === "KeyH") {
-    pageState.overlayModel.toggleHelpVisible();
-    event.preventDefault();
-    return;
-  }
-
-  // Focus Region dialog (R)
-  if (code === "KeyR") {
-    giveFocusToAutocomplete();
-  }
-
-  // Escape
-  if (code === "Escape") {
-    pageState.overlayModel.helpVisible = false;
-    pageState.overlayModel.drawerVisible = false;
+    togglePopover(protestMapTourId);
     event.preventDefault();
     return;
   }
 
   // Toggle Toolbar Visible
   if (code === "KeyM") {
-    if (deviceInfo.isSmall) {
-      pageState.overlayModel.toggleToolbarVisible();
-    }
+    pageState.toggleToolbarVisible();
   }
 
   // ArrowLeft
   if (code === "ArrowLeft") {
     pageState.filter.selectPreviousDate();
-    pageState.filter.startDateRepeat("prev");
+    if (event.repeat) {
+      pageState.filter.startDateRepeat("prev");
+    }
     event.preventDefault();
     return;
   }
@@ -64,7 +65,9 @@ export function onKeyDown(event: KeyboardEvent, pageState: PageState) {
   // ArrowRight
   if (code === "ArrowRight") {
     pageState.filter.selectNextDate();
-    pageState.filter.startDateRepeat("next");
+    if (event.repeat) {
+      pageState.filter.startDateRepeat("next");
+    }
     event.preventDefault();
     return;
   }
@@ -88,23 +91,5 @@ export function onKeyDown(event: KeyboardEvent, pageState: PageState) {
       pageState.mapModel.popBounds();
     }
     return;
-  }
-}
-
-export function onKeyUp(event: KeyboardEvent, pageState: PageState) {
-  // All shortcuts begin with shift-option-cmd
-  if (!(event.shiftKey && event.altKey && event.metaKey && !event.ctrlKey))
-    return;
-
-  const left = "ArrowLeft";
-  const right = "ArrowRight";
-
-  if (
-    event.key === left ||
-    event.code === left ||
-    event.key === right ||
-    event.code === right
-  ) {
-    pageState.filter.stopDateRepeat();
   }
 }

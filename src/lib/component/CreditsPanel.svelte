@@ -8,7 +8,32 @@
 </script>
 
 <div class={`content ${className}`}>
-  <p>Many thanks to the valuable efforts of these contributors:</p>
+  <p>
+    This project is open source. To give feedback, you can either post
+    <a href="https://github.com/concerned-us-citizen/protest-map"
+      >an issue on GitHub</a
+    >
+    or
+    <a href="mailto:support@protestmap.info?subject=Feedback"
+      >send us an email</a
+    >.
+  </p>
+  <p>
+    The map owes much to the the data provided by <a
+      href="https://thepeopledissent.substack.com">We (The People) Dissent</a
+    >. Data Sources:
+  </p>
+  <p class="data-source-links">
+    <a
+      href="https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/edit?gid=2111558793#gid=2111558793"
+      >Event Data
+    </a>
+    <a
+      href="https://docs.google.com/spreadsheets/d/1hQzNbsbupLqtijfQywpmZs6nKSNLmEbugaYl6HWbyvA/edit?gid=1716080084#gid=1716080084"
+      >Turnout Data
+    </a>
+  </p>
+  <p>Many thanks also to those responsible for these valuable resources:</p>
   <div class="attribution-container">
     {#each Object.values(attributions) as attribution, _i (attribution.resourceName)}
       <div class="attribution">
@@ -19,6 +44,7 @@
       </div>
     {/each}
   </div>
+
   <p class="last-updated">
     {pageState.eventModel.formattedUpdatedAt}
   </p>
@@ -33,6 +59,7 @@
     column-gap: 1vw;
     width: 100%;
     overflow-y: auto;
+    margin-top: 1rem;
   }
   .attribution {
     color: #555; /* Darker gray */
@@ -43,11 +70,14 @@
   .attribution .description {
     font-weight: bold;
   }
-  .attribution a {
+
+  .attribution-container a {
     display: block;
+    margin-top: 0.1rem;
+  }
+  a {
     color: #337ab7;
     text-decoration: none;
-    margin-top: 0.1rem;
   }
   .attribution a:hover {
     text-decoration: underline;
@@ -58,5 +88,13 @@
     color: #555;
     margin-top: 1rem;
     margin-bottom: 0;
+  }
+
+  .data-source-links {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    justify-content: center;
+    padding: 0 0.5rem;
   }
 </style>

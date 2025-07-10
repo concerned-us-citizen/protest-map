@@ -5,7 +5,6 @@ import { type SetTimeoutId } from "$lib/types";
 import { RegionModel } from "./RegionModel.svelte";
 import { RegionLabeler } from "./RegionLabeler.svelte";
 import { MapModel } from "./MapModel.svelte";
-import { OverlayModel } from "./OverlayModel.svelte";
 
 const EVENTINFO_VISIBILITY_DURATION = 1000; // 1s
 
@@ -20,11 +19,12 @@ export class PageState {
   readonly mapModel: MapModel;
   readonly regionModel: RegionModel;
   readonly regionLabeler: RegionLabeler;
-  readonly overlayModel: OverlayModel;
 
   updateAvailable = $state(false);
   debug = $state(false);
 
+  filterVisible = $state(false);
+  toolbarVisible = $state(true);
   eventInfoVisible = $state(false);
   #hideEventInfoTimer: SetTimeoutId = undefined;
 
@@ -35,16 +35,24 @@ export class PageState {
     this.autoplaying = !this.autoplaying;
   }
 
+  toggleFilterVisible() {
+    this.filterVisible = !this.filterVisible;
+  }
+
+  toggleToolbarVisible() {
+    this.toolbarVisible = !this.toolbarVisible;
+  }
+
   async scheduleNextDateAdvance() {
     clearTimeout(this.#autoplayTimer);
     this.#autoplayTimer = undefined;
 
     if (!this.autoplaying) return;
 
-    const numEvents = this.filter.dateFilteredMarkers.length;
+    const numEvents = this.filter.markers.length;
     let lingerTime;
 
-    if (numEvents === 0 && this.filter.allDatesWithCounts.length > 1) {
+    if (numEvents === 0 && this.filter.dateSummaries.length > 1) {
       lingerTime = ZERO_EVENT_NAV_TIME;
     } else if (numEvents < 20) {
       lingerTime = QUICK_NAV_TIME;
@@ -109,7 +117,6 @@ export class PageState {
       this.mapModel,
       this.regionModel
     );
-    this.overlayModel = new OverlayModel();
     this.pollForUpdates();
 
     $effect(() => {

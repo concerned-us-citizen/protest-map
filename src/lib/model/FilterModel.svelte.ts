@@ -8,7 +8,7 @@ import {
   type TurnoutMarker,
   type VoterLean,
 } from "$lib/types";
-import { datesEqual, formatDate, isFutureDate } from "$lib/util/date";
+import { formatDate, isFutureDate } from "$lib/util/date";
 import { joinWithAnd, mdBold, pluralize } from "$lib/util/string";
 import { titleCase } from "title-case";
 import type { MapModel } from "./MapModel.svelte";
@@ -18,15 +18,15 @@ import {
   type NamedRegion,
 } from "./RegionModel.svelte";
 import type { Polygon, MultiPolygon } from "geojson";
-import { omit } from "$lib/util/misc";
 import { deviceInfo } from "./DeviceInfo.svelte";
+import { type DateSummary } from "./EventDb";
 
 const INITIAL_REPEAT_DELAY = 400; // ms
 const REPEAT_INTERVAL = 80; // ms
 
 export interface FilterOptions {
   markerType: MarkerType;
-  TurnoutEstimate: TurnoutEstimate;
+  turnoutEstimate: TurnoutEstimate;
   date?: Date;
   eventNames?: string[]; // empty or missing means match all events
   namedRegion?: NamedRegion; // If not null, only match events within the region
@@ -34,19 +34,14 @@ export interface FilterOptions {
   voterLeans?: VoterLean[]; // empty or missing means match all voter leans
 }
 
-interface DateAndCount {
-  date: Date;
-  count: number;
-}
-
 export class FilterModel {
   readonly eventModel: EventModel;
   readonly mapModel: MapModel;
   readonly regionModel: RegionModel;
 
-  filter = $derived.by(() => ({
+  readonly filter = $derived.by(() => ({
     markerType: this.markerType,
-    TurnoutEstimate: this.turnoutEstimate,
+    turnoutEstimate: this.turnoutEstimate,
     date: this.date,
     eventNames: this.selectedEventNames,
     namedRegion: this.namedRegion,
@@ -54,15 +49,40 @@ export class FilterModel {
     voterLeans: this.selectedVoterLeans,
   }));
 
-  markerType: MarkerType = $state("event");
+  // The marker type a user has picked as their default.
+  // Will be used if that marker type is available
+  desiredMarkerType: MarkerType = $state("turnout");
   turnoutEstimate: TurnoutEstimate = $state("low");
 
-  allFilteredEvents = $state<Marker[]>([]);
-  dateFilteredMarkers = $state<Marker[]>([]);
-  filteredCount = $state<number>(0);
+  // The actual marker type to use
+  readonly markerType: MarkerType = $derived.by(() => {
+    void this.date;
+    return this.dateHasTurnout ? this.desiredMarkerType : "event";
+  });
 
-  allDatesWithCounts = $state<DateAndCount[]>([]);
-  filteredDatesWithEventCounts = $state<DateAndCount[]>([]);
+  readonly dateHasTurnout = $derived.by(
+    () => this.eventModel.getSummaryForDate(this.date)?.hasTurnout ?? false
+  );
+
+  markers = $state<Marker[]>([]);
+  markerCount = $state<number>(0);
+
+  dateSummaries = $state<DateSummary[]>([]);
+
+  #datesInFilterAsIntSet = $derived.by(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+    const { date, ...rest } = this.filter;
+    const filterOverEventsWithNoDate = {
+      ...rest,
+      markerType: "event" as MarkerType,
+    };
+    const dates = this.eventModel.getDates(filterOverEventsWithNoDate);
+    return new Set(dates.map((d) => d.getTime()));
+  });
+  inCurrentFilter(date: Date) {
+    return this.#datesInFilterAsIntSet.has(date.getTime());
+  }
+  readonly filteredDateCount = $derived(this.#datesInFilterAsIntSet.size);
 
   namedRegion = $state<NamedRegion | undefined>();
   namedRegionPolygon: Polygon | MultiPolygon | undefined = $state();
@@ -70,12 +90,12 @@ export class FilterModel {
   selectedVoterLeans = $state<VoterLean[]>([]);
 
   // We don't derive one from the other here, because
-  // we don't want to establish a dependency on filteredDatesWithEventCounts,
+  // we don't want to establish a dependency on getDates(),
   // since it may change with filters, causing the two to misalign.
   // Instead, we explicitly set both of them when setting either one.
 
   // Worth noting - dateIndex is relative to
-  // allDatesWithEventCounts, not filteredDatesWithEventCounts.
+  // dateStatistics, not datesInFilter.
   #dateIndex: number = $state(-1);
   get dateIndex() {
     return this.#dateIndex;
@@ -87,10 +107,10 @@ export class FilterModel {
 
   setDateIndex(index: number) {
     this.#dateIndex = index;
-    if (index < 0 || index >= this.allDatesWithCounts.length) {
+    if (index < 0 || index >= this.dateSummaries.length) {
       this.#date = undefined;
     } else {
-      this.#date = this.allDatesWithCounts[index].date;
+      this.#date = this.dateSummaries[index].date;
     }
   }
 
@@ -99,14 +119,14 @@ export class FilterModel {
     if (!date) {
       this.#dateIndex = -1;
     } else {
-      const index = this.allDatesWithCounts.findIndex(
+      const index = this.dateSummaries.findIndex(
         (d) => d.date.getTime() === date.getTime()
       );
       if (index !== -1) {
         this.#dateIndex = index;
       } else {
         console.warn(
-          "Setting date to value not found in eventModel.allDatesWithEventCounts:",
+          "Setting date to value not found in eventModel.dateSummaries:",
           date
         );
         this.#dateIndex = -1;
@@ -130,26 +150,12 @@ export class FilterModel {
     }
   }
 
-  largestDateCount = $derived.by(() => {
-    const dates = this.allDatesWithCounts;
-    const counts = dates.map((d) => d.count);
-    return counts.length > 0 ? Math.max(...dates.map((d) => d.count)) : 0;
-  });
-
-  readonly hasDates = $derived(this.allDatesWithCounts.length > 0);
-
   isValidDate(date: Date | undefined) {
     if (!date) return false;
     return (
       this.dateRange &&
       date >= this.dateRange.start &&
       date <= this.dateRange?.end
-    );
-  }
-
-  inCurrentFilter(date: Date) {
-    return this.filteredDatesWithEventCounts.find((e) =>
-      datesEqual(e.date, date)
     );
   }
 
@@ -170,48 +176,41 @@ export class FilterModel {
   });
 
   readonly dateRange = $derived.by(() => {
-    const dates = this.allDatesWithCounts;
+    const dates = this.dateSummaries;
     if (dates.length === 0) return null;
     return { start: dates[0].date, end: dates[dates.length - 1].date };
   });
 
-  #selectRelativeDateWrapping(increment: number) {
-    const filteredDates = this.filteredDatesWithEventCounts;
-    const allDates = this.allDatesWithCounts;
+  #selectRelativeDateWrapping(direction: "forward" | "backward") {
+    const allDates = this.dateSummaries;
     const currentDate = this.date;
+    if (!currentDate || this.filteredDateCount < 2) return;
 
-    if (filteredDates.length === 0 || !currentDate) return;
-
-    // Find current date’s index in filteredDates
-    let filteredIndex = filteredDates.findIndex(
+    const currentIndex = allDates.findIndex(
       (d) => d.date.getTime() === currentDate.getTime()
     );
 
-    if (filteredIndex === -1) {
-      filteredIndex = 0;
+    const step = direction === "forward" ? 1 : -1;
+    const total = allDates.length;
+
+    let index = currentIndex;
+
+    for (let i = 1; i < total; i++) {
+      index = (index + step + total) % total;
+      const dateSummary = allDates[index];
+      if (this.inCurrentFilter(dateSummary.date)) {
+        this.setDateIndex(index);
+        return;
+      }
     }
-
-    // Compute wrapped index
-    const len = filteredDates.length;
-    const targetIndex = (filteredIndex + increment + len) % len;
-
-    const targetDate = filteredDates[targetIndex]?.date;
-    if (!targetDate) return undefined;
-
-    // Find target date's index in allDates
-    const newIndex = allDates.findIndex(
-      (d) => d.date.getTime() === targetDate.getTime()
-    );
-
-    this.setDateIndex(newIndex);
   }
 
   selectNextDate() {
-    this.#selectRelativeDateWrapping(1);
+    this.#selectRelativeDateWrapping("forward");
   }
 
   selectPreviousDate() {
-    this.#selectRelativeDateWrapping(-1);
+    this.#selectRelativeDateWrapping("backward");
   }
 
   readonly formattedDate = $derived(formatDate(this.date));
@@ -226,7 +225,7 @@ export class FilterModel {
     // full current filter (i.e. many will be 0). This gives users the ability to select
     // names that would otherwise be filtered out, but see accurate counts.
     const allFullyFilteredEventNamesAndCounts = this.eventModel
-      ? this.eventModel.getEventNamesAndCountsForFilter(filter)
+      ? this.eventModel.getEventNamesAndCounts(filter)
       : [];
 
     const fullCountsMap = new Map(
@@ -237,9 +236,9 @@ export class FilterModel {
     );
 
     const allDateEventNamesAndCounts = this.eventModel
-      ? this.eventModel.getEventNamesAndCountsForFilter({
+      ? this.eventModel.getEventNamesAndCounts({
           markerType: filter.markerType,
-          TurnoutEstimate: filter.TurnoutEstimate,
+          turnoutEstimate: filter.turnoutEstimate,
           date: filter.date,
         })
       : [];
@@ -256,14 +255,6 @@ export class FilterModel {
     ).length;
   });
 
-  readonly dateHasEventNames = $derived(
-    this.filteredEventNamesWithLocationCounts.length > 0
-  );
-
-  readonly dateHasMultipleEventNames = $derived(
-    this.filteredEventNamesWithLocationCounts.length > 1
-  );
-
   readonly filteredVoterLeanCounts = $derived.by(() => {
     const filter = this.filter;
     if (!filter?.date) return EmptyVoterLeanCounts;
@@ -275,13 +266,13 @@ export class FilterModel {
 
   selectedEventNames = $state<string[]>([]);
 
-  isFiltering = $derived(
+  readonly isFiltering = $derived(
     this.selectedEventNames.length > 0 ||
       this.namedRegion !== undefined ||
       this.selectedVoterLeans.length > 0
   );
 
-  filterDescriptions = $derived.by(() => {
+  readonly filterDescriptions = $derived.by(() => {
     const descriptions: { title: string; clearFunc: () => void }[] = [];
     const namedRegion = this.namedRegion;
     if (namedRegion) {
@@ -417,41 +408,16 @@ export class FilterModel {
     // Update all the dates
     $effect(() => {
       if (!this.eventModel.isLoading) {
-        this.allDatesWithCounts = this.eventModel.getDatesWithCounts({
-          markerType: this.markerType,
-          TurnoutEstimate: this.turnoutEstimate,
-        });
+        this.dateSummaries = this.eventModel.getDateSummaries();
       }
-    });
-
-    // Update filtered date counts and events
-    $effect(() => {
-      const filter = this.filter;
-      const filterWithoutDate = omit(filter, "date");
-      const isLoaded = this.eventModel.isLoaded;
-      const update = async () => {
-        if (isLoaded) {
-          const datesWithEventCounts =
-            this.eventModel.getDatesWithCounts(filterWithoutDate);
-          this.filteredDatesWithEventCounts = datesWithEventCounts;
-
-          this.allFilteredEvents = await this.eventModel.getMarkers(
-            this.filter
-          );
-        } else {
-          this.allFilteredEvents = [];
-        }
-      };
-      update();
     });
 
     $effect(() => {
       const currentFilter = this.filter;
       const update = async () => {
         if (this.eventModel) {
-          this.dateFilteredMarkers =
-            await this.eventModel.getMarkers(currentFilter);
-          this.filteredCount = await this.eventModel.getCount(currentFilter);
+          this.markers = this.eventModel.getMarkers(currentFilter);
+          this.markerCount = this.eventModel.getCount(currentFilter);
         }
       };
       update();
@@ -459,17 +425,17 @@ export class FilterModel {
 
     $effect(() => {
       const date = this.date;
-      const allDatesWithEventCounts = this.allDatesWithCounts;
+      const dateSummaries = this.dateSummaries;
       if (!this.isValidDate(date)) {
         // If no longer a valid date, set dateIndex to
         // be the date at or after the current system date
         // (or - 1 if no match) any time the eventModel's items change
-        let newIndex = allDatesWithEventCounts.findIndex((dc) =>
+        let newIndex = dateSummaries.findIndex((dc) =>
           isFutureDate(dc.date, true)
         );
         // Handle case where there are no dates beyond today.
         if (newIndex < 0) {
-          newIndex = allDatesWithEventCounts.length - 1;
+          newIndex = dateSummaries.length - 1;
         }
         this.setDateIndex(newIndex);
       }

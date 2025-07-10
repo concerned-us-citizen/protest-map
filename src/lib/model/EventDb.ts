@@ -22,6 +22,12 @@ interface LatestDbManifest {
   sha?: string;
 }
 
+export interface DateSummary {
+  date: Date;
+  eventCount: number;
+  hasTurnout: boolean;
+}
+
 export class EventDb {
   private db: Database;
   private manifest: LatestDbManifest;
@@ -92,28 +98,28 @@ export class EventDb {
 
   private getCountSourceSql(
     markerType: MarkerType,
-    TurnoutEstimate: TurnoutEstimate
+    turnoutEstimate: TurnoutEstimate
   ) {
     if (markerType === "event") {
       return "1"; // This will yield the count of rows
-    } else if (TurnoutEstimate === "average") {
+    } else if (turnoutEstimate === "average") {
       return "(low + high) / 2.0";
     } else {
-      return TurnoutEstimate; // low or high
+      return turnoutEstimate; // low or high
     }
   }
 
   getVoterLeanCounts(filter: FilterOptions): VoterLeanCounts {
     const {
       markerType,
-      TurnoutEstimate,
+      turnoutEstimate,
       date,
       eventNames,
       namedRegion,
       voterLeans,
     } = filter;
 
-    const countSource = this.getCountSourceSql(markerType, TurnoutEstimate);
+    const countSource = this.getCountSourceSql(markerType, turnoutEstimate);
 
     const builder = new QueryBuilder(
       (whereClause) => `
@@ -146,13 +152,13 @@ export class EventDb {
     const {
       date,
       markerType,
-      TurnoutEstimate,
+      turnoutEstimate,
       eventNames,
       namedRegion,
       voterLeans,
     } = filter;
 
-    const countSource = this.getCountSourceSql(markerType, TurnoutEstimate);
+    const countSource = this.getCountSourceSql(markerType, turnoutEstimate);
 
     const builder = new QueryBuilder(
       (whereClause) => `
@@ -177,18 +183,14 @@ export class EventDb {
     return count ?? 0;
   }
 
-  getDatesWithCounts(filter: FilterOptions): { date: Date; count: number }[] {
-    const { markerType, TurnoutEstimate, eventNames, namedRegion, voterLeans } =
-      filter;
-
-    const countSource = this.getCountSourceSql(markerType, TurnoutEstimate);
+  getDates(filter: FilterOptions): Date[] {
+    const { markerType, eventNames, namedRegion, voterLeans } = filter;
 
     const builder = new QueryBuilder(
       (whereClause) => `
-      SELECT date, SUM(${countSource}) as count
+      SELECT DISTINCT date
       FROM ${markerType}s
       ${whereClause}
-      GROUP BY date
       ORDER BY date ASC
     `
     );
@@ -199,11 +201,11 @@ export class EventDb {
 
     const stmt = builder.createStatement(this.db);
 
-    const results: { date: Date; count: number }[] = [];
+    const results: Date[] = [];
     while (stmt.step()) {
       const row = stmt.get();
-      const [date, count] = row as [number, number];
-      results.push({ date: yyyymmddIntToDate(date), count });
+      const [date] = row as [number, number];
+      results.push(yyyymmddIntToDate(date));
     }
 
     stmt.free();
@@ -332,12 +334,53 @@ export class EventDb {
     };
   }
 
-  getEventNamesAndCountsForFilter(
+  getDateSummaries(): DateSummary[] {
+    const stmt = this.db.prepare(`
+      SELECT date, event_count, has_turnout FROM date_summaries
+    `);
+
+    const results: DateSummary[] = [];
+    while (stmt.step()) {
+      const [dateInt, eventCount, hasTurnout] = stmt.get();
+      results.push({
+        date: yyyymmddIntToDate(dateInt as number),
+        eventCount: eventCount as number,
+        hasTurnout: hasTurnout === 1,
+      });
+    }
+
+    stmt.free();
+    return results;
+  }
+
+  getSummaryForDate(date: Date): DateSummary | null {
+    const stmt = this.db.prepare(`
+      SELECT date, event_count, has_turnout FROM date_summaries WHERE date = ?
+    `);
+
+    const dateAsInt = dateToYYYYMMDDInt(date);
+
+    stmt.bind([dateAsInt]);
+    if (stmt.step()) {
+      const [dateInt, eventCount, hasTurnout] = stmt.get();
+      stmt.free();
+      return {
+        date: yyyymmddIntToDate(dateInt as number),
+        eventCount: eventCount as number,
+        hasTurnout: !!hasTurnout,
+      };
+    }
+
+    stmt.free();
+    return null;
+  }
+
+  getEventNamesAndCounts(
     filter: FilterOptions
   ): { name: string; count: number }[] {
     const {
       markerType,
-      TurnoutEstimate,
+      turnoutEstimate,
       date,
       namedRegion,
       eventNames,
@@ -346,7 +389,7 @@ export class EventDb {
 
     const builder = new QueryBuilder(
       (whereClause) => `
-      SELECT name, SUM(${this.getCountSourceSql(markerType, TurnoutEstimate)}) as count
+      SELECT name, SUM(${this.getCountSourceSql(markerType, turnoutEstimate)}) as count
       FROM ${markerType}s
       ${whereClause}
       GROUP BY name
@@ -422,7 +465,7 @@ class QueryBuilder {
 
   addDateSubquery(date: Date | undefined) {
     if (date) {
-      this.appendSubquery(`date = ?`);
+      this.appendSubquery(` date = ?`);
       this.#params.push(dateToYYYYMMDDInt(date));
     }
   }
@@ -477,7 +520,7 @@ class QueryBuilder {
   get fullWhereClause() {
     return this.#whereClause.length > 0
       ? `
-    WHERE\n${this.#whereClause}
+    WHERE \n${this.#whereClause}
     `
       : "";
   }

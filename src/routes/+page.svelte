@@ -1,9 +1,14 @@
 <script lang="ts">
+  import RegionNavigationDialog from "$lib/component/dialog/RegionNavigationDialog.svelte";
+  import { getShortcutPrefix } from "$lib/util/os";
+
   import {
     createPageStateInContext,
     PageState,
   } from "$lib/model/PageState.svelte";
-  import ProtestMapTour from "$lib/component/ProtestMapTour.svelte";
+  import ProtestMapTour, {
+    protestMapTourId,
+  } from "$lib/component/dialog/ProtestMapTour.svelte";
   import EventMap from "$lib/component/map/EventMap.svelte";
   import UpdateBanner from "$lib/component/UpdateBanner.svelte";
   import LoadingSpinner from "$lib/component/LoadingSpinner.svelte";
@@ -14,18 +19,18 @@
     setStateFromWindowSearchParams,
   } from "$lib/model/searchParamsToStateSync.svelte";
   import TimelineContainer from "$lib/component/timeline/TimelineContainer.svelte";
-  import ShareDialog from "$lib/component/ShareDialog.svelte";
-  import { onKeyDown, onKeyUp } from "$lib/keyShortcuts";
-  import AppBar from "$lib/component/AppBar.svelte";
-  import Drawer from "$lib/component/filter/Drawer.svelte";
-  import IconButton from "$lib/component/IconButton.svelte";
+  import { onKeyDown } from "$lib/keyShortcuts";
   import { cubicInOut } from "svelte/easing";
   import { fade } from "svelte/transition";
   import { Undo2 } from "@lucide/svelte";
-  import FilterIndicator from "$lib/component/filter/FilterIndicator.svelte";
-  import VoterLeanPanel from "$lib/component/filter/VoterLeanPanel.svelte";
-  import EventPanel from "$lib/component/filter/EventPanel.svelte";
-  import TitlePanel from "$lib/component/TitlePanel.svelte";
+  import TitleContainer from "$lib/component/TitleContainer.svelte";
+  import FilterContainer from "$lib/component/filter/FilterContainer.svelte";
+  import { deviceInfo } from "$lib/model/DeviceInfo.svelte";
+  import Panel from "$lib/component/Panel.svelte";
+  import PillButton from "$lib/component/PillButton.svelte";
+  import ShareDialog from "$lib/component/dialog/ShareDialog.svelte";
+  import { showPopover } from "$lib/component/popover";
+  import PopupToolbar from "$lib/component/PopupToolbar.svelte";
 
   const pageState = PageState.create();
   createPageStateInContext(pageState);
@@ -55,19 +60,16 @@
   const handleKeyDown = (e: KeyboardEvent): void => {
     onKeyDown(e, pageState);
   };
-  const handleKeyUp = (e: KeyboardEvent): void => {
-    onKeyUp(e, pageState);
-  };
 
   $effect(() => {
-    pageState.overlayModel.helpVisible = !hasShownTourCookieExists();
+    if (!hasShownTourCookieExists) {
+      showPopover(protestMapTourId);
+    }
 
     window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
       pageState.cleanup();
     };
   });
@@ -79,25 +81,23 @@
     }
   });
 
-  function saveShownTourToCookie() {
-    const expiryDate = new Date();
-    expiryDate.setFullYear(expiryDate.getFullYear() + 1);
-    document.cookie = `hasShownTour=true; expires=${expiryDate.toUTCString()}; path=/; SameSite=Lax`;
-  }
-
   function hasShownTourCookieExists() {
     return document.cookie
       .split("; ")
       .some((row) => row.startsWith("hasShownTour="));
   }
 
-  const title = $derived(
-    `Protests in ${
+  const title = $derived.by(() => {
+    const type =
+      pageState.filter.markerType === "event"
+        ? "Protests"
+        : "Protester Turnout";
+    return `${type} in ${
       pageState.filter.namedRegion
         ? prettifyNamedRegion(pageState.filter.namedRegion)
         : "the US"
-    }`
-  );
+    }`;
+  });
 </script>
 
 <svelte:head>
@@ -113,75 +113,73 @@
 </svelte:head>
 
 <div class="page">
-  <AppBar class="app-bar" />
-  <div class="map-area">
-    <EventMap class="map" />
+  <EventMap class="map" />
 
-    <div class="map-overlays">
-      <div class="top-row">
-        <TitlePanel class="title-panel" />
-
-        {#if pageState.mapModel.canPopBounds}
-          <div
-            class="zoom-undo-button-wrapper"
-            transition:fade={{ duration: 300, easing: cubicInOut }}
-          >
-            <IconButton
-              onClick={() => pageState.mapModel.popBounds()}
-              label={"Zoom Back Out (${getShortcutPrefix()}R, +U, or +B)"}
+  {#if !pageState.eventModel.isLoading}
+    <div class="map-overlay">
+      <div class="top-area">
+        <div class="left-column">
+          <Panel class="title-and-filter-panel">
+            <TitleContainer {title} class="title-container" />
+            {#if pageState.filterVisible}
+              <FilterContainer class="filter-container" />
+            {/if}
+          </Panel>
+          {#if pageState.filter.isFiltering && !pageState.filterVisible}
+            <PillButton
+              white
+              class="show-all-button"
+              large
+              title={`Clear all filters and view entire US (${getShortcutPrefix()}C)`}
+              onClick={() => {
+                pageState.filter.clearAllFilters();
+                pageState.mapModel.navigateToUS();
+              }}
             >
-              <Undo2 />
-            </IconButton>
-          </div>
+              View All US Protests
+            </PillButton>
+          {/if}
+        </div>
+        <div class="buttons-container">
+          <PopupToolbar
+            class="toolbar"
+            cookieId="toolbar-popped-up"
+            orientation={deviceInfo.isNarrow ? "vertical" : "horizontal"}
+          />
+          {#if pageState.mapModel.canPopBounds}
+            <div
+              class="zoom-undo-button-wrapper"
+              transition:fade={{ duration: 300, easing: cubicInOut }}
+            >
+              <PillButton
+                white
+                onClick={() => pageState.mapModel.popBounds()}
+                title={"Zoom Back Out (${getShortcutPrefix()}R, +U, or +B)"}
+              >
+                <Undo2 />
+              </PillButton>
+            </div>
+          {/if}
+        </div>
+      </div>
+      <div class="bottom-bar">
+        {#if pageState.updateAvailable}
+          <UpdateBanner />
+        {:else if pageState.eventModel.isLoaded}
+          <TimelineContainer class="timeline-container" />
         {/if}
       </div>
-
-      <Drawer class="drawer" open={pageState.overlayModel.drawerVisible}>
-        <VoterLeanPanel />
-        <EventPanel />
-
-        {#if pageState.filter.isFiltering}
-          <FilterIndicator />
-        {/if}
-      </Drawer>
-
-      {#if pageState.updateAvailable}
-        <UpdateBanner class="update-banner" />
-      {:else if pageState.eventModel.isLoaded}
-        <TimelineContainer class="timeline-container" />
-      {/if}
-    </div>
-  </div>
-
-  {#if pageState.overlayModel.showingDialog}
-    <!-- svelte-ignore a11y_click_events_have_key_events -->
-    <!-- svelte-ignore a11y_no_static_element_interactions -->
-    <div
-      class="overlay-click-background"
-      onclick={() => pageState.overlayModel.closeAll()}
-    ></div>
-
-    <div class="overlay-container">
-      {#if pageState.eventModel.isLoading}
-        <LoadingSpinner class="spinner" size={32} />
-      {/if}
-
-      {#if pageState.overlayModel.helpVisible}
-        <ProtestMapTour
-          class="dialog"
-          onClose={() => {
-            pageState.overlayModel.helpVisible = false;
-            saveShownTourToCookie();
-          }}
-        />
-      {/if}
-
-      {#if pageState.overlayModel.shareVisible}
-        <ShareDialog class="dialog" />
-      {/if}
     </div>
   {/if}
 </div>
+
+{#if pageState.eventModel.isLoading}
+  <LoadingSpinner class="loading-spinner" size={32} />
+{/if}
+
+<RegionNavigationDialog />
+<ProtestMapTour />
+<ShareDialog />
 
 <style>
   .page {
@@ -195,14 +193,8 @@
     align-items: stretch;
   }
 
-  .map-area {
-    flex: 1;
-    position: relative;
-    display: flex;
-  }
-
   :global(.map),
-  .map-overlays {
+  .map-overlay {
     position: absolute;
     left: 0;
     right: 0;
@@ -210,25 +202,75 @@
     bottom: 0;
   }
 
-  .map-overlays {
-    pointer-events: none;
+  .map-overlay {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
+    pointer-events: none;
   }
 
-  :global(.title-panel) {
-    flex: 0 0 auto;
-    min-width: 15rem;
-    max-width: calc(min(20rem, 90vw));
+  :global(.title-container),
+  :global(.filter-container),
+  :global(.show-all-button),
+  .zoom-undo-button-wrapper,
+  :global(.toolbar) {
+    pointer-events: auto;
   }
 
-  .top-row {
-    flex: 0 0 auto;
+  .top-area {
     display: flex;
     flex-direction: row;
-    padding: 0.5rem;
     align-items: start;
-    justify-content: center;
+    justify-content: space-between;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .left-column {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    width: 23rem;
+    min-height: 0;
+    max-height: 100%;
+    box-sizing: border-box;
+  }
+  :global(.title-and-filter-panel) {
+    min-height: 0;
+    max-height: 100%;
+    max-width: 75vw;
+  }
+
+  :global(.title-container) {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  :global(.filter-container) {
+    flex: 1;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  :global(.filter-container)::-webkit-scrollbar {
+    display: none;
+  }
+
+  .buttons-container {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+  }
+
+  .buttons-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0.5rem;
   }
 
   .zoom-undo-button-wrapper {
@@ -236,54 +278,31 @@
     background-color: #fff;
     border-radius: 5px;
     overflow: hidden;
-    pointer-events: auto;
   }
 
-  :global(.drawer) {
-    pointer-events: auto;
+  .bottom-bar {
+    align-self: center;
+    flex: 0 0 auto;
+  }
+
+  :global(.loading-spinner) {
+    position: absolute;
+    inset: 0;
   }
 
   :global(.timeline-container),
   :global(.update-banner) {
     flex: 0 0 1;
-    padding: 5px 0 0 0;
     pointer-events: auto;
     margin-top: auto;
     align-self: center;
   }
-
-  .overlay-click-background,
-  .overlay-container {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-  }
-
-  .overlay-click-background {
-    z-index: var(--dimming-layer);
-  }
-
-  .overlay-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: hsl(0 0% 0% / 0.32);
-  }
-
-  .overlay-container > :global(*) {
-    z-index: var(--overlay-layer);
-  }
-
   :global(.maplibregl-ctrl-top-left) {
     transition: opacity 0.5s;
   }
 
   :global(body:has(.maplibregl-popup-tip))
     :global(:is(.maplibregl-ctrl-top-left, .maplibregl-ctrl-top-left *)) {
-    pointer-events: none;
     opacity: 0;
   }
 </style>

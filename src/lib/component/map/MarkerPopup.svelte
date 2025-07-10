@@ -20,5 +20,6 @@
     max-height: 60vh;
     gap: 1rem;
     overflow-y: scroll;
+    pointer-events: auto;
   }
 </style>

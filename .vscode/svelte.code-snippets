@@ -16,4 +16,10 @@
       "</style>",
     ],
   },
+  "Derived by": {
+    "prefix": "idb",
+    "scope": "svelte,typescript",
+    "description": "Svelte derived by expression",
+    "body": ["$derived.by(() => {", "$0", "}"],
+  },
 }

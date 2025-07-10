@@ -60,6 +60,7 @@
   },
   "dependencies": {
     "@eslint/compat": "^1.2.9",
+    "@floating-ui/dom": "^1.7.2",
     "@lucide/svelte": "^0.519.0",
     "@turf/bbox": "^7.2.0",
     "@turf/helpers": "^7.2.0",

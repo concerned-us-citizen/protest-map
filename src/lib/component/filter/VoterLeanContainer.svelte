@@ -5,26 +5,31 @@
   import type { VoterLean } from "$lib/types";
   import PillButton from "$lib/component/PillButton.svelte";
   import type { ClassValue } from "svelte/elements";
-  import Panel from "../Panel.svelte";
   import { toTitleCase } from "$lib/util/string";
   import { deviceInfo } from "$lib/model/DeviceInfo.svelte";
+  import Panel from "../Panel.svelte";
+  import { formatAsInteger } from "$lib/util/number";
 
-  const { class: userClass, ...rest } = $props<{
+  const { class: className, ...rest } = $props<{
     class?: ClassValue;
   }>();
 
   const pageState = getPageStateFromContext();
 
-  function formatLabel(voterLean: VoterLean) {
-    const result = pageState.filter.filteredVoterLeanCounts[voterLean];
+  function formatName(voterLean: VoterLean) {
     let name = toTitleCase(voterLean);
 
     // Special case 'unavailable'
     if (deviceInfo.isNarrow && name === "Unavailable") {
       name = "N/A";
     }
+    return name;
+  }
+
+  function formatCount(voterLean: VoterLean) {
+    const result = pageState.filter.filteredVoterLeanCounts[voterLean];
     try {
-      return `${name} ${result.toLocaleString()}`;
+      return `${name} ${formatAsInteger(result)}`;
     } catch (err) {
       throw new Error(`Could not format voter lean count ${err}`);
     }
@@ -66,25 +71,29 @@
 
 <Panel
   title="Area Lean in 2024"
-  class={["voter-lean-container", userClass]}
+  class={["voter-lean-container", className]}
   {...rest}
 >
-  <div class="content">
+  <div class="leans">
     {#each voterLeans as { voterLean, label }, _i (voterLean)}
       <PillButton
         title={label}
+        class="voter-lean-button"
         selected={pageState.filter.selectedVoterLeans.includes(voterLean)}
         onClick={() => pageState.filter.toggleVoterLean(voterLean)}
       >
         <div class="button-content">
-          <span
-            class={deviceInfo.isWide ? "large-icon" : "small-icon"}
-            style="color: {colorForVoterLean(voterLean)}"
-          >
-            <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-            {@html circledMarkerSvg}
-          </span>
-          <span class="stat-label">{formatLabel(voterLean)}</span>
+          <div class="icon-and-label">
+            <div
+              class="small-icon"
+              style="color: {colorForVoterLean(voterLean)}"
+            >
+              <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+              {@html circledMarkerSvg}
+            </div>
+            <div class="name-label">{formatName(voterLean)}</div>
+          </div>
+          <div class="count-label">{formatCount(voterLean)}</div>
         </div>
       </PillButton>
     {/each}
@@ -92,22 +101,30 @@
 </Panel>
 
 <style>
-  .content {
+  .leans {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     flex-direction: row;
-    flex-wrap: nowrap;
-    gap: 0.2rem;
-    align-items: center;
+    gap: 0.5rem;
+    align-items: start;
+    min-width: 0;
   }
 
   .button-content {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     font-size: 0.85rem;
     gap: 0.2rem;
   }
+  .icon-and-label {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    gap: 0.2rem;
+    align-items: center;
+  }
+
   :global(.large-icon *) {
     width: 30px;
     height: 30px;

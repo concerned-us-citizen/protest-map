@@ -21,9 +21,10 @@
   let zoomControlVisible = $state(false);
 
   $effect(() => {
-    const { dateFilteredMarkers: dateFilteredEvents } = pageState.filter;
+    const { markers: dateFilteredMarkers } = pageState.filter;
     if (mapLayerModel) {
-      mapLayerModel.updateMarkers(dateFilteredEvents);
+      mapLayerModel.closePopup();
+      mapLayerModel.updateMarkers(dateFilteredMarkers);
     }
   });
 
@@ -37,6 +38,7 @@
   $effect(() => {
     const markerType = pageState.filter.markerType;
     if (mapLayerModel) {
+      mapLayerModel.closePopup();
       mapLayerModel?.updateLayerVisibility(markerType);
     }
   });
@@ -82,7 +84,7 @@
 
       try {
         mapLayerModel = new MapLayerModel(safeMap, pageState);
-        mapLayerModel.initializeMap(pageState.filter.allFilteredEvents ?? []);
+        mapLayerModel.initializeMap(pageState.filter.markers ?? []);
       } catch (error) {
         console.error("Error during map initialization:", error);
       }
@@ -90,7 +92,7 @@
   });
 
   onDestroy(() => {
-    mapLayerModel?.destroyPopup();
+    mapLayerModel?.closePopup();
     map?.remove();
   });
 </script>
@@ -101,6 +103,6 @@
   bind:this={mapDiv}
   class={className}
   onclick={() => {
-    pageState.overlayModel.closeAll();
+    pageState.filterVisible = false;
   }}
 ></div>

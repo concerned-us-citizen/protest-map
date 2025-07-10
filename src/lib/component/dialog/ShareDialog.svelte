@@ -1,6 +1,10 @@
+<script module lang="ts">
+  export const shareDialogId = "share-dialog-id";
+</script>
+
 <script lang="ts">
   import { Share2, ClipboardCheck, ClipboardCopy } from "@lucide/svelte";
-  import Dialog from "./Dialog.svelte";
+  import Dialog from "../Dialog.svelte";
   import { SvelteSet } from "svelte/reactivity";
   import { getPageStateFromContext } from "$lib/model/PageState.svelte";
   import {
@@ -8,9 +12,10 @@
     getSearchParamsFromState,
   } from "$lib/model/searchParamsToStateSync.svelte";
   import { slide } from "svelte/transition";
-  import FormattedText from "./FormattedText.svelte";
+  import FormattedText from "../FormattedText.svelte";
   import { safeCopyToClipboard } from "$lib/util/os";
   import type { ClassValue } from "svelte/elements";
+  import { browser } from "$app/environment";
 
   const { class: className } = $props<{
     class?: ClassValue;
@@ -18,21 +23,24 @@
 
   const pageState = getPageStateFromContext();
 
-  let url = $derived.by(() => buildUrl());
-
-  const filterOptions = getFilterParamOptions(pageState);
-
-  let chosenParamNames = new SvelteSet<string>([
-    ...filterOptions.map((opt) => opt.paramName),
-  ]);
-
-  let autoplay = $state(false);
+  let dialog: Dialog;
 
   let selectedUrlType: "default" | "custom" = $state("default");
+
+  let url = $derived.by(() => buildUrl());
+
+  const filterOptions = $derived(getFilterParamOptions(pageState));
+
+  let chosenParamNames = $derived(
+    new SvelteSet<string>([...filterOptions.map((opt) => opt.paramName)])
+  );
+
+  let autoplay = $state(false);
 
   let copied = $state(false);
 
   function buildUrl() {
+    if (!browser) return "";
     let paramString = "";
     if (selectedUrlType === "custom") {
       paramString = getSearchParamsFromState(
@@ -58,7 +66,7 @@
     } catch (err) {
       console.error("Share failed", err);
     }
-    dismiss();
+    dialog.dismiss();
   }
 
   async function copyToClipboard(): Promise<void> {
@@ -67,13 +75,15 @@
     copied = true;
     setTimeout(() => (copied = false), 2000);
   }
-
-  const dismiss = () => {
-    pageState.overlayModel.shareVisible = false;
-  };
 </script>
 
-<Dialog {dismiss} class={className} title="Share a Map Link">
+<Dialog
+  bind:this={dialog}
+  id={shareDialogId}
+  class={className}
+  title="Share a Map Link"
+  showDismissButton
+>
   <form class="form">
     <label>
       <input
@@ -106,32 +116,34 @@
             Autoplay protests over time
           </label>
 
-          <div class="filter-options-container">
-            <p class="hint">Show only protest locations:</p>
-            <div class="filter-options">
-              {#each filterOptions as opt, _i (opt.paramName)}
-                <div class="row">
-                  <input
-                    id={`chk-${opt.paramName}`}
-                    type="checkbox"
-                    class="chk"
-                    checked={chosenParamNames.has(opt.paramName)}
-                    onclick={() => {
-                      const p = opt.paramName;
-                      if (chosenParamNames.has(p)) {
-                        chosenParamNames.delete(p);
-                      } else {
-                        chosenParamNames.add(p);
-                      }
-                    }}
-                  />
-                  <label for={`chk-${opt.paramName}`} class="label"
-                    ><FormattedText text={opt.title} /></label
-                  >
-                </div>
-              {/each}
+          {#if filterOptions.length > 0}
+            <div class="filter-options-container">
+              <p class="hint">Show only protest locations:</p>
+              <div class="filter-options">
+                {#each filterOptions as opt, _i (opt.paramName)}
+                  <div class="row">
+                    <input
+                      id={`chk-${opt.paramName}`}
+                      type="checkbox"
+                      class="chk"
+                      checked={chosenParamNames.has(opt.paramName)}
+                      onclick={() => {
+                        const p = opt.paramName;
+                        if (chosenParamNames.has(p)) {
+                          chosenParamNames.delete(p);
+                        } else {
+                          chosenParamNames.add(p);
+                        }
+                      }}
+                    />
+                    <label for={`chk-${opt.paramName}`} class="label"
+                      ><FormattedText text={opt.title} /></label
+                    >
+                  </div>
+                {/each}
+              </div>
             </div>
-          </div>
+          {/if}
         </div>
       {/if}
     </div>

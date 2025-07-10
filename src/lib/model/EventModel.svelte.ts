@@ -25,7 +25,7 @@ export class EventModel {
       : "Not yet updated"
   );
 
-  async getMarkers(filter: FilterOptions): Promise<Marker[]> {
+  getMarkers(filter: FilterOptions): Marker[] {
     let result = this.db ? this.db.getMarkers(filter) : [];
     const polygon = filter.namedRegionPolygon;
     if (polygon) {
@@ -36,14 +36,22 @@ export class EventModel {
     return result;
   }
 
-  getDatesWithCounts(filter: FilterOptions) {
-    return this.db ? this.db.getDatesWithCounts(filter) : [];
+  getDateSummaries() {
+    return this.db ? this.db.getDateSummaries() : [];
   }
 
-  getEventNamesAndCountsForFilter(
+  getSummaryForDate(date: Date | undefined) {
+    return this.db && date ? this.db.getSummaryForDate(date) : null;
+  }
+
+  getDates(filter: FilterOptions) {
+    return this.db ? this.db.getDates(filter) : [];
+  }
+
+  getEventNamesAndCounts(
     filter: FilterOptions
   ): { name: string; count: number }[] {
-    return this.db ? this.db.getEventNamesAndCountsForFilter(filter) : [];
+    return this.db ? this.db.getEventNamesAndCounts(filter) : [];
   }
 
   getVoterLeanCounts(filter: FilterOptions): VoterLeanCounts {

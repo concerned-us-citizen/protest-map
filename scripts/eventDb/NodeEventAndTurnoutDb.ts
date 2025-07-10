@@ -232,6 +232,28 @@ export class NodeEventAndTurnoutDb {
     return Number(result.lastInsertRowid);
   }
 
+  createDateSummaryTable() {
+    this.db.exec(`CREATE TABLE date_summaries (
+      date INTEGER PRIMARY KEY,
+      event_count INTEGER NOT NULL,
+      has_turnout INTEGER NOT NULL
+      );
+
+      INSERT INTO date_summaries (date, event_count, has_turnout)
+        SELECT
+          e.date,
+          COUNT(*) AS event_count,
+          CASE WHEN COALESCE(t.total_low, 0) > 1000000 THEN 1 ELSE 0 END AS has_turnout
+        FROM events e
+        LEFT JOIN (
+          SELECT date, SUM(low) AS total_low
+          FROM turnouts
+          GROUP BY date
+        ) t ON t.date = e.date
+        GROUP BY e.date;
+`);
+  }
+
   beginTransaction() {
     this.db.exec("BEGIN TRANSACTION;");
   }

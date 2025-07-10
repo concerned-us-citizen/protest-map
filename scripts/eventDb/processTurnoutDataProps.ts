@@ -8,7 +8,7 @@ export const processTurnoutDataProps: SheetProcessingProps<
   sheetId: "1hQzNbsbupLqtijfQywpmZs6nKSNLmEbugaYl6HWbyvA",
   mapHeaders,
   schema: TurnoutRowSchema,
-  knownBadSheetNames: [],
+  knownBadSheetNames: ["June 14 Duplicates"],
 };
 
 function mapHeaders(headers: string[]) {

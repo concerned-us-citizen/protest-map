@@ -1,8 +1,4 @@
-import {
-  VoterLeanValues,
-  type MarkerType,
-  type TurnoutEstimate,
-} from "$lib/types";
+import { VoterLeanValues, type TurnoutEstimate } from "$lib/types";
 import { deserializeDate, serializeDate } from "$lib/util/date";
 import { mdItalics, pluralize, toTitleCase } from "$lib/util/string";
 import { PageState } from "./PageState.svelte";
@@ -127,24 +123,6 @@ export const shareOptions: ParamOption[] = [
       }
     },
     isFilterProp: false,
-  },
-  {
-    formTitle: (pageState) => {
-      return `Show ${pageState.filter.markerType}`;
-    },
-    paramName: (_pageState) => "marker",
-    type: "string",
-    getValue: (pageState) =>
-      pageState.filter.markerType !== "event"
-        ? pageState.filter.markerType
-        : undefined,
-    setValue: async (params, pageState) => {
-      const countType = params.get("marker");
-      if (countType === "event" || countType === "turnout") {
-        pageState.filter.markerType = countType as MarkerType;
-      }
-    },
-    isFilterProp: true,
   },
   {
     formTitle: (pageState) => {

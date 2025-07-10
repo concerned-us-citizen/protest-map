@@ -3,4 +3,5 @@ export const markerColor = {
   blue: "#174e9a", // rgb(23, 78, 154)
   purple: "#6e309b", // rgb(110, 48, 155)
   unavailable: "#ff8c00", // rgb(255, 140, 0)
+  green: "#1e7e34",
 } as const;

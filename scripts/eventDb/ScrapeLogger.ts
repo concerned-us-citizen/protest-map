@@ -12,6 +12,7 @@ export interface RunSummary {
   duplicates: number;
   added: number;
   skippedSheets: { title: string; rows: number }[];
+  unfetchedSheets: { title: string; error: string }[];
   elapsedSeconds: number;
   loggedIssues: number;
   wikiFetches: number;
@@ -32,6 +33,7 @@ class ScrapeRun {
   rejects = 0;
   sheetsProcessed = 0;
   skippedSheets: { title: string; rows: number }[] = [];
+  unfetchedSheets: { title: string; error: string }[] = [];
   fetchedDataType: FetchedDataType;
   loggedIssueCount = 0;
   startTime = Date.now();
@@ -51,6 +53,7 @@ class ScrapeRun {
       duplicates: this.duplicates,
       added: this.totalRows - this.rejects - this.duplicates,
       skippedSheets: this.skippedSheets,
+      unfetchedSheets: this.unfetchedSheets,
       loggedIssues: this.loggedIssueCount,
       wikiFetches: this.wikiFetches,
       geocodings: this.geocodings,

@@ -193,7 +193,7 @@ export class MapLayerModel {
     };
   }
 
-  destroyPopup() {
+  closePopup() {
     this.popup?.remove();
     this.popup = undefined;
     // TODO get clear on why there is a $destroy and not a destroy, and

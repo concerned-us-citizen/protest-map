@@ -2,6 +2,7 @@ import crypto from "crypto";
 import { fetchHtml } from "../../src/lib/util/html";
 import { load } from "cheerio";
 import { parse } from "csv-parse/sync";
+import { ScrapeLogger } from "./ScrapeLogger";
 
 export interface SheetTabData {
   title: string;
@@ -89,6 +90,7 @@ export function getCsvRows(
 
 export async function getSheetData(
   sheetId: string,
+  logger: ScrapeLogger,
   mapHeaders?: (_headers: string[]) => string[]
 ): Promise<SheetTabData[]> {
   const tabs = await getTabNames(sheetId);
@@ -96,15 +98,24 @@ export async function getSheetData(
   const results: SheetTabData[] = [];
 
   for (const tab of tabs) {
-    const csv = await getCsvForTab(sheetId, tab.gid);
-    const hash = getCsvHash(csv);
-    const rows = getCsvRows(csv, mapHeaders);
-    results.push({
-      title: tab.title,
-      gid: tab.gid,
-      hash,
-      rows,
-    });
+    console.log(`Retrieving tab ${tab.title}...`);
+    try {
+      const csv = await getCsvForTab(sheetId, tab.gid);
+      const hash = getCsvHash(csv);
+      const rows = getCsvRows(csv, mapHeaders);
+      results.push({
+        title: tab.title,
+        gid: tab.gid,
+        hash,
+        rows,
+      });
+    } catch (e) {
+      console.log("Failed to retrieve tab ", e);
+      logger.current.unfetchedSheets.push({
+        title: tab.title,
+        error: JSON.stringify(e),
+      });
+    }
   }
 
   return results;

@@ -70,6 +70,10 @@
     text-align: left;
   }
 
+  .title :global(strong) {
+    font-size: 0.95em;
+  }
+
   .x {
     font-size: 1.3rem;
   }

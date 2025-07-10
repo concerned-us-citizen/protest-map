@@ -1,8 +1,14 @@
 <script lang="ts">
   import { getPageStateFromContext } from "$lib/model/PageState.svelte";
-  import Panel from "$lib/component/Panel.svelte";
   import PillButton from "$lib/component/PillButton.svelte";
   import { tick } from "svelte";
+  import type { ClassValue } from "svelte/elements";
+  import Panel from "../Panel.svelte";
+  import { formatAsInteger } from "$lib/util/number";
+
+  const { class: className } = $props<{
+    class?: ClassValue;
+  }>();
 
   const pageState = getPageStateFromContext();
   const eventNamesWithLocationCounts = $derived(
@@ -48,7 +54,7 @@
   });
 </script>
 
-<Panel {title}>
+<Panel class={["event-name-container", className]} {title}>
   <div class="content" role="list" bind:this={listEl}>
     {#if eventNamesWithLocationCounts.length > 0}
       {#each eventNamesWithLocationCounts as event (event.name)}
@@ -65,7 +71,7 @@
           <div class="button-content">
             <div class="event-name-in-list">{event.name || "Unnamed"}</div>
             <div class="event-count-in-list">
-              {event.count.toLocaleString()}
+              {formatAsInteger(event.count)}
             </div>
           </div>
         </PillButton>

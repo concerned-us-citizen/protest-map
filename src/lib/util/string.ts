@@ -1,3 +1,5 @@
+import { formatAsInteger } from "./number";
+
 /**
  * @param {string} str
  */
@@ -39,7 +41,7 @@ export function countAndLabel(
 ) {
   const count =
     typeof countOrList === "number" ? countOrList : countOrList.length;
-  return `${count.toLocaleString()} ${pluralize(countOrList, name, pluralForm)}`;
+  return `${formatAsInteger(count)} ${pluralize(countOrList, name, pluralForm)}`;
 }
 
 export function pluralize(
@@ -68,6 +70,24 @@ export function isValidZipCode(
 
   // Test the string against the pattern
   return pattern.test(zipcodeString);
+}
+
+export function isLikelyMalformedUrl(input: string): boolean {
+  const trimmed = input.trim();
+
+  const maybeUrl =
+    trimmed.includes(":/") ||
+    trimmed.includes("http") ||
+    /\.[a-zA-Z]{3}$/.test(trimmed);
+
+  if (!maybeUrl) return false;
+
+  try {
+    new URL(trimmed);
+    return false; // It's a valid URL
+  } catch {
+    return true; // Looks like a URL, but is malformed
+  }
 }
 
 export function asNormalizedKey(s: string): string {

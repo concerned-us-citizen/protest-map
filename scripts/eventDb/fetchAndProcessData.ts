@@ -14,7 +14,11 @@ import {
   normalizeYearTo2025,
   normalizeToMMDDYYYY,
 } from "../../src/lib/util/date";
-import { toTitleCase, isValidZipCode } from "../../src/lib/util/string";
+import {
+  toTitleCase,
+  isValidZipCode,
+  isLikelyMalformedUrl,
+} from "../../src/lib/util/string";
 import { Nullable } from "../../src/lib/types";
 import { RawProtestEvent, RawTurnout } from "./NodeEventAndTurnoutDb";
 
@@ -38,7 +42,7 @@ export async function fetchAndProcessData<
 
   logger.startRun(fetchedDataType);
 
-  const { sheets, rowCount } = await fetchData(props);
+  const { sheets, rowCount } = await fetchData(props, logger);
   logger.current.totalRows = rowCount;
 
   const totalSheets = sheets.length;
@@ -125,14 +129,17 @@ export async function fetchAndProcessData<
   }
 }
 
-export async function fetchData(props: {
-  fetchedDataType: FetchedDataType;
-  sheetId: string;
-  mapHeaders: (_headers: string[]) => string[];
-}) {
+export async function fetchData(
+  props: {
+    fetchedDataType: FetchedDataType;
+    sheetId: string;
+    mapHeaders: (_headers: string[]) => string[];
+  },
+  logger: ScrapeLogger
+) {
   const { fetchedDataType, sheetId, mapHeaders } = props;
   console.log(`Retrieving ${fetchedDataType}s from google sheets...`);
-  const sheets = await getSheetData(sheetId, mapHeaders);
+  const sheets = await getSheetData(sheetId, logger, mapHeaders);
 
   const rowCount = sheets.reduce((acc, sheet) => acc + sheet.rows.length, 0);
   console.log(`Retrieved ${rowCount} total ${fetchedDataType}s`);
@@ -150,6 +157,7 @@ async function sanitize<T extends EventRow | TurnoutRow>(
   const badNames = new Set(["None", "No name"]);
 
   const { name, zip, date, link, ...rest } = row;
+  const { coverageUrl, low, high } = row as TurnoutRow;
 
   // Sanitize Name
   let sanitizedName: string;
@@ -174,10 +182,70 @@ async function sanitize<T extends EventRow | TurnoutRow>(
     sanitizedZip = "";
   }
 
-  // Strip out bad links
+  // Look for bad links
   let sanitizedLink = link?.trim();
-  if (!sanitizedLink.startsWith("http")) {
+  if (isLikelyMalformedUrl(sanitizedLink)) {
+    logger.logInvalidEntry(row, sheetName, `Bad link '${sanitizedLink}'`);
     sanitizedLink = "";
+  }
+
+  // Specific to turnouts
+  let sanitizedLow: number | undefined = undefined;
+  let sanitizedHigh: number | undefined = undefined;
+  let sanitizedCoverageUrl: string | undefined = undefined;
+  if (fetchedDataType === "turnout") {
+    // Look for bad coverageUrls
+    sanitizedCoverageUrl = coverageUrl?.trim();
+    if (sanitizedCoverageUrl) {
+      if (isLikelyMalformedUrl(sanitizedCoverageUrl)) {
+        logger.logInvalidEntry(
+          row,
+          sheetName,
+          `Bad coverageUrl '${sanitizedCoverageUrl}'`
+        );
+        sanitizedCoverageUrl = "";
+      }
+    }
+
+    // Look for invalid low/high numbers
+
+    sanitizedLow = low;
+    sanitizedHigh = high;
+
+    let badLow = false;
+    if (!Number.isInteger(low)) {
+      badLow = true;
+      logger.logInvalidEntry(
+        row,
+        sheetName,
+        `Bad turnout #, low (${low}) should be a whole number`
+      );
+    }
+    let badHigh = false;
+    if (!Number.isInteger(high)) {
+      badHigh = true;
+      logger.logInvalidEntry(
+        row,
+        sheetName,
+        `Bad turnout #, high (${high}) should be a whole number`
+      );
+    }
+    if (badLow && badHigh) {
+      return null;
+    } else if (badLow) {
+      sanitizedLow = high;
+    } else {
+      sanitizedHigh = low;
+    }
+
+    if (low > high) {
+      logger.logInvalidEntry(
+        row,
+        sheetName,
+        `Bad turnout #, low of ${low} > high of ${high}`
+      );
+      return null;
+    }
   }
 
   // Return the sanitized raw event
@@ -186,6 +254,9 @@ async function sanitize<T extends EventRow | TurnoutRow>(
     date: sanitizedDate,
     zip: sanitizedZip,
     link: sanitizedLink,
+    low: sanitizedLow,
+    high: sanitizedHigh,
+    coverageUrl: sanitizedCoverageUrl,
     ...rest,
   } as T;
 }

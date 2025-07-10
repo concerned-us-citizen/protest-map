@@ -1,50 +1,69 @@
 <script lang="ts">
-  import type { Snippet } from "svelte";
+  import { type Snippet } from "svelte";
   import type { ClassValue } from "svelte/elements";
+
+  let dialogEl: HTMLDivElement;
 
   const {
     class: className,
     title,
-    dismiss,
+    showDismissButton = false,
+    onDismiss,
     children,
+    id,
   } = $props<{
     class?: ClassValue;
     title?: string;
-    dismiss?: () => void;
+    showDismissButton?: boolean;
+    onDismiss?: () => void;
     children: Snippet;
+    id: string;
   }>();
 
-  function escKey(e: KeyboardEvent) {
-    if (e.key === "Escape") {
-      e.preventDefault();
-      dismiss?.();
+  function handleToggle(event: ToggleEvent) {
+    if (event.newState === "closed") {
+      onDismiss?.();
     }
+  }
+
+  export function dismiss() {
+    dialogEl.hidePopover();
   }
 </script>
 
 <div
+  {id}
+  bind:this={dialogEl}
   class={["dialog", className]}
   role="dialog"
   aria-modal="true"
   aria-labelledby={title ? "dialog-heading" : undefined}
   tabindex="-1"
-  onkeydown={escKey}
+  ontoggle={handleToggle}
+  popover
 >
-  <header class="dialog-header">
-    {#if title}
-      <h2 id="dialog-heading">{title}</h2>
+  <div class="dialog-content">
+    {#if title || showDismissButton}
+      <header class="dialog-header">
+        {#if title}
+          <h2 id="dialog-heading">{title}</h2>
+        {/if}
+        {#if showDismissButton}
+          <button
+            type="button"
+            class="close-btn"
+            aria-label="Close dialog"
+            popovertarget={id}
+            popovertargetaction="hide"
+          >
+            ×
+          </button>
+        {/if}
+      </header>
     {/if}
-    <button
-      type="button"
-      class="close-btn"
-      aria-label="Close dialog"
-      onclick={dismiss}
-    >
-      ×
-    </button>
-  </header>
 
-  {@render children()}
+    {@render children()}
+  </div>
 </div>
 
 <style>
@@ -55,11 +74,15 @@
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0 0 0 / 0.1);
     padding: 0.5rem 1rem 1rem 1rem;
+    outline: none;
+  }
+
+  .dialog-content {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    outline: none;
   }
+
   .dialog-header {
     display: flex;
     align-items: center;
@@ -78,5 +101,46 @@
     cursor: pointer;
     color: #2563eb;
     margin-right: -6px;
+  }
+
+  .dialog {
+    border: none;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease,
+      overlay 0.3s allow-discrete,
+      display 0.3s allow-discrete;
+
+    &:popover-open {
+      opacity: 1;
+      transform: translateY(0);
+
+      @starting-style {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+    }
+  }
+
+  .dialog::backdrop {
+    background: rgba(0, 0, 0, 0);
+    transition:
+      background 0.3s ease,
+      overlay 0.3s allow-discrete,
+      display 0.3s allow-discrete;
+  }
+
+  .dialog:popover-open::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+
+    @starting-style {
+      background: rgba(0, 0, 0, 0);
+    }
+  }
+
+  .dialog {
+    touch-action: auto;
   }
 </style>

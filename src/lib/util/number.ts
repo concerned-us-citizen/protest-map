@@ -49,3 +49,7 @@ function formatUnit(value: number, suffix: "K" | "M"): string {
 
   return str + suffix; // ≤ 5 chars guaranteed
 }
+
+export function formatAsInteger(n: number) {
+  return Math.round(n).toLocaleString(undefined, { maximumFractionDigits: 0 });
+}

@@ -4,6 +4,7 @@
   import { markerSvg } from "$lib/icons";
   import InlineSvg from "$lib/InlineSvg.svelte";
   import type { ClassValue } from "svelte/elements";
+  import Dialog from "../Dialog.svelte";
 
   type Step = {
     title: string;
@@ -16,12 +17,14 @@
 
   const {
     steps,
+    id,
+    onDismiss,
     class: className,
-    onClose,
   } = $props<{
     steps: Step[];
+    id: string;
+    onDismiss: () => void;
     class?: ClassValue;
-    onClose: () => void;
   }>();
 
   let currentStepIndex = $state(0);
@@ -29,10 +32,6 @@
   let Component = $derived(currentStep?.component);
   let showPrevious = $derived(currentStepIndex > 0);
   let showNext = $derived(currentStepIndex < steps.length - 1);
-
-  function dismiss() {
-    onClose();
-  }
 
   function nextStep() {
     if (showNext) {
@@ -80,65 +79,69 @@
   });
 </script>
 
-{#if currentStep}
-  <div
-    class={["tour-panel", className]}
-    in:receive={{ key: currentStepIndex }}
-    out:send={{ key: currentStepIndex }}
-  >
+<Dialog {id} {onDismiss}>
+  {#if currentStep}
     <div
-      class="swipe-panel vertical-scroll"
-      ontouchstart={handleTouchStart}
-      ontouchend={handleTouchEnd}
+      class={["tour-panel", className]}
+      in:receive={{ key: currentStepIndex }}
+      out:send={{ key: currentStepIndex }}
     >
-      <div class="header">
-        <div class="icon-container">
-          <InlineSvg content={markerSvg} />
+      <div
+        class="swipe-panel vertical-scroll"
+        ontouchstart={handleTouchStart}
+        ontouchend={handleTouchEnd}
+      >
+        <div class="header">
+          <div class="icon-container">
+            <InlineSvg content={markerSvg} />
+          </div>
+          <div class="title-container">
+            <h1>{currentStep.title}</h1>
+          </div>
         </div>
-        <div class="title-container">
-          <h1>{currentStep.title}</h1>
+        <div>
+          {#if currentStep?.component}
+            <Component {...currentStep.props || {}} />
+          {:else}
+            <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+            {@html currentStep.description}
+          {/if}
         </div>
       </div>
-      <div>
-        {#if currentStep?.component}
-          <Component {...currentStep.props || {}} />
-        {:else}
-          <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-          {@html currentStep.description}
-        {/if}
-      </div>
-    </div>
-    <div class="footer">
-      <button class="link-button" onclick={dismiss}>Dismiss</button>
-      <div class="progress-indicator">
-        {#each steps as step, i (step.title)}
-          <div class="step-circle" class:active={i === currentStepIndex}></div>
-        {/each}
-      </div>
-      <div class="navigation-buttons">
+      <div class="footer">
         <button
           class="link-button"
-          onclick={previousStep}
-          class:hidden={!showPrevious}>Prev</button
+          popovertarget={id}
+          popovertargetaction="hide">Dismiss</button
         >
-        <button
-          class="link-button"
-          onclick={nextStep}
-          class:disabled={!showNext}>Next</button
-        >
+        <div class="progress-indicator">
+          {#each steps as step, i (step.title)}
+            <div
+              class="step-circle"
+              class:active={i === currentStepIndex}
+            ></div>
+          {/each}
+        </div>
+        <div class="navigation-buttons">
+          <button
+            class="link-button"
+            onclick={previousStep}
+            class:hidden={!showPrevious}>Prev</button
+          >
+          <button
+            class="link-button"
+            onclick={nextStep}
+            class:disabled={!showNext}>Next</button
+          >
+        </div>
       </div>
     </div>
-  </div>
-{/if}
+  {/if}
+</Dialog>
 
 <style>
   .tour-panel {
-    pointer-events: auto;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    padding: var(--toolbar-margin);
-    width: min(20em, 100vw - 4 * var(--toolbar-margin));
+    max-width: min(20em, 100vw - 4 * var(--toolbar-margin));
     height: min(30em, calc(100vh - 4 * var(--toolbar-margin)));
     display: flex;
     flex-direction: column;

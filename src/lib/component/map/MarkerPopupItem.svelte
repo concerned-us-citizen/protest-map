@@ -3,6 +3,7 @@
   import { attributions } from "$lib/attributions";
   import { isHttpUrl } from "$lib/util/misc";
   import { pluralize } from "$lib/util/string";
+  import { formatAsInteger } from "$lib/util/number";
 
   const { populatedMarker } = $props<{
     populatedMarker: PopulatedMarker;
@@ -47,8 +48,8 @@
     if (turnout) {
       const val =
         turnout.low !== turnout.high
-          ? `${turnout.low.toLocaleString()}-${turnout.high.toLocaleString()}`
-          : `${turnout.low.toLocaleString()}`;
+          ? `${formatAsInteger(turnout.low)}-${formatAsInteger(turnout.high)}`
+          : `${formatAsInteger(turnout.low)}`;
       return `${val}`;
     }
   });

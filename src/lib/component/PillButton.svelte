@@ -2,15 +2,18 @@
   import type { Snippet } from "svelte";
   import type { ClassValue } from "svelte/elements";
 
-  const {
+  let {
     title = "",
     onClick,
     onFocus,
     onBlur,
     class: className,
+    white = false,
     accented = false,
     selected = false,
     large = false,
+    popoverTarget,
+    button = $bindable(),
     children,
     ...restProps
   } = $props<{
@@ -19,15 +22,19 @@
     onFocus?: (_e: KeyboardEvent) => void;
     onBlur?: (_e: KeyboardEvent) => void;
     class?: ClassValue;
+    white?: boolean;
     accented?: boolean;
     selected?: boolean;
     large?: boolean;
+    popoverTarget?: string;
+    button?: HTMLButtonElement;
     children: Snippet;
   }>();
 </script>
 
 <button
   {title}
+  bind:this={button}
   type="button"
   data-selected={selected}
   onclick={(e) => onClick && onClick(e)}
@@ -35,7 +42,8 @@
   onblur={(e) => onBlur && onBlur(e)}
   aria-pressed={selected}
   aria-label={title}
-  class={[{ pill: true, accented, selected, large }, className]}
+  popovertarget={popoverTarget}
+  class={[{ pill: true, accented, selected, large, white }, className]}
   {...restProps}
 >
   {@render children()}
@@ -55,8 +63,6 @@
 
   .pill.large {
     padding: 0.6rem 0.6rem;
-    /* TODO this is a hack */
-    background-color: white;
   }
 
   .pill:hover {
@@ -78,5 +84,9 @@
     --pill-button-color: #7a4e00;
     --pill-button-selected-background: #f4bc51;
     --pill-button-selected-hover-background: #dca53c;
+  }
+
+  .pill.white {
+    --pill-button-background: white;
   }
 </style>

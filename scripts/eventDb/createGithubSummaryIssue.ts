@@ -99,6 +99,10 @@ export async function maybeCreateGithubIssue(summaryInfo: ProcessingSummary) {
       message: (s) => `${s.fetchedDataType}: Skipped bad tab data`,
     },
     {
+      test: (s) => s.unfetchedSheets.length > 0,
+      message: (s) => `${s.fetchedDataType}: Failed fetching tab`,
+    },
+    {
       test: (s) => s.added < thresholds[s.fetchedDataType].minRowCount,
       message: (s) =>
         `${s.fetchedDataType}: Fewer rows than expected (min ${thresholds[s.fetchedDataType].minRowCount}, added ${s.added})`,

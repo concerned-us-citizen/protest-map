@@ -5,10 +5,10 @@
 
   const pageState = getPageStateFromContext();
 
-  let selectedDateWithEventCount = $derived.by(() => {
-    const allDatesWithEventCounts = pageState.filter.allDatesWithCounts;
+  let selectedDateSummary = $derived.by(() => {
+    const dateSummaries = pageState.filter.dateSummaries;
     const date = pageState.filter.date;
-    return allDatesWithEventCounts.find((dc) => dc.date === date) ?? null;
+    return dateSummaries.find((dc) => dc.date === date) ?? null;
   });
 
   let isRepeatingChange = false;
@@ -64,7 +64,7 @@
   <button
     class="nav-button prev"
     onclick={() => pageState.filter.selectPreviousDate()}
-    disabled={pageState.filter.filteredDatesWithEventCounts.length < 2}
+    disabled={pageState.filter.filteredDateCount < 2}
     onmousedown={() => startDateRepeat("prev")}
     onmouseup={stopDateRepeat}
     onmouseleave={stopDateRepeat}
@@ -76,23 +76,24 @@
   >
   <HistogramSlider
     className="slider"
-    items={pageState.filter.allDatesWithCounts}
-    filteredItems={pageState.filter.filteredDatesWithEventCounts}
-    keyFor={(item) => item.date.getTime()}
-    selectedItem={selectedDateWithEventCount}
+    items={pageState.filter.dateSummaries}
+    isEnabled={(dateSummary) =>
+      pageState.filter.inCurrentFilter(dateSummary.date)}
+    isHighlighted={(dateSummary) => dateSummary.hasTurnout}
+    selectedItem={selectedDateSummary}
     onSelect={(dc) => {
       if (pageState.filter.inCurrentFilter(dc.date)) {
         pageState.filter.setDate(dc.date);
       }
     }}
-    magnitudeFor={(item) => item.count}
+    magnitudeFor={(item) => item.eventCount}
     firstShadedItemIndex={(items) =>
       items.findIndex((item) => item.date >= new Date())}
   />
   <button
     class="nav-button next"
     onclick={() => pageState.filter.selectNextDate()}
-    disabled={pageState.filter.filteredDatesWithEventCounts.length < 2}
+    disabled={pageState.filter.filteredDateCount < 2}
     onmousedown={() => startDateRepeat("next")}
     onmouseup={stopDateRepeat}
     onmouseleave={stopDateRepeat}
@@ -118,7 +119,6 @@
     background-color: #f5f5f5f2;
     border-radius: 8px;
     box-shadow: 0 -2px 10px #0000001a;
-    z-index: var(--over-layer);
     pointer-events: auto;
   }
 

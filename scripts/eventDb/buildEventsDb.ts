@@ -36,6 +36,8 @@ async function main() {
     logger
   );
 
+  eventAndTurnoutModel.createSummaries();
+
   eventAndTurnoutModel.close();
   locationDataModel.close();
 

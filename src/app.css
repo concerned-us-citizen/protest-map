@@ -44,6 +44,13 @@ body {
 
   --accent-color: #ffd580;
   --selected-color: #e8f0fe;
+
+  /* These should match the colors in colors.ts */
+  --color-red: #be2828;
+  --color-blue: #174e9a;
+  --color-purple: #6e309b;
+  --color-unavailable: #ff8c00;
+  --color-green: #1e7e34;
 }
 
 body.touch-device {

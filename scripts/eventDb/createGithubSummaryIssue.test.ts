@@ -18,6 +18,7 @@ function createSummaryWithRunProps(
     duplicates: 982,
     added: 10088,
     skippedSheets: [],
+    unfetchedSheets: [],
     elapsedSeconds: 17.88,
     loggedIssues: 1299,
     wikiFetches: 0,

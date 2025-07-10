@@ -38,16 +38,19 @@ export async function geocodeFromService({
   }
 
   const tryQuery = async ({
-    useStructured,
+    useStructured = true,
     includeStreet = true,
     includeZip = true,
+    includeCity = true,
+    includeState = true,
+    includeCountry = true,
   }) => {
     const queryParts = {
       street: includeStreet ? address : undefined,
-      city,
-      state,
+      city: includeCity ? city : undefined,
+      state: includeState ? state : undefined,
       postalcode: includeZip ? zip : undefined,
-      country,
+      country: includeCountry ? country : undefined,
     };
 
     let params: Nullable<URLSearchParams> = null;
@@ -89,23 +92,45 @@ export async function geocodeFromService({
     { useStructured: false, includeStreet: true, includeZip: false },
     { useStructured: true, includeStreet: false, includeZip: true },
     { useStructured: false, includeStreet: false, includeZip: false },
+    // Last gasp, try just the zip
+    {
+      useStructured: false,
+      includeStreet: false,
+      includeZip: true,
+      includeCity: false,
+      includeState: false,
+      includeCountry: false,
+    },
   ];
 
   for (const [i, attempt] of attempts.entries()) {
     const label =
       `${attempt.useStructured ? "structured" : "q"} query` +
       (attempt.includeStreet ? " + street" : "") +
-      (attempt.includeZip ? " + zip" : "");
+      (attempt.includeZip ? " + zip" : "") +
+      (attempt.includeCity ? " + city" : "") +
+      (attempt.includeState ? " + state" : "") +
+      (attempt.includeCountry ? " + country " : "");
     console.log(`🔎 Attempt ${i + 1}: ${label}`);
     const data = await tryQuery(attempt);
     if (data.length > 0) {
-      return {
+      const loc = {
         lat: parseFloat(data[0].lat),
         lon: parseFloat(data[0].lon),
         displayName: data[0].display_name,
       };
+      if (isRoughlyInUS(loc.lat, loc.lon)) {
+        return loc;
+      }
     }
   }
 
   throw new Error(`No results found after all fallbacks.`);
+}
+
+function isRoughlyInUS(lat: number, lon: number): boolean {
+  // Rough bounding box for continental US
+  const withinLat = lat >= 24.396308 && lat <= 49.384358;
+  const withinLng = lon >= -125.0 && lon <= -66.93457;
+  return withinLat && withinLng;
 }

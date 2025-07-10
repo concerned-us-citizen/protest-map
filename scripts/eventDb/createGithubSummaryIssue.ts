@@ -24,14 +24,14 @@ async function maybeCreateGhIssue(
     throw new Error("Missing required GitHub environment variables");
   }
 
+  const octokit = new Octokit({ auth: token });
+
   const [owner, repo] = repoString.split("/");
   if (!owner || !repo) {
     throw new Error(`Invalid GITHUB_REPOSITORY format: ${repoString}`);
   }
 
   const runUrl = `https://github.com/${repoString}/actions/runs/${runId}`;
-
-  const octokit = new Octokit({ auth: token });
 
   const body = `## ⚠️ Issues Found: 
   
@@ -48,7 +48,16 @@ ${issues.map((issue) => `- ${issue}`).join("\n")}
 `;
 
   const hashLabel =
-    "id-" + crypto.createHash("sha256").update(body).digest("hex");
+    "id-" + crypto.createHash("sha256").update(body).digest("hex").slice(0, 12);
+
+  await ensureLabelExists(
+    octokit,
+    owner,
+    repo,
+    hashLabel,
+    "f29513",
+    "Hash signature for duplicate detection"
+  );
 
   const existingIssues = await octokit.paginate(octokit.issues.listForRepo, {
     owner,
@@ -82,7 +91,7 @@ export async function maybeCreateGithubIssue(summaryInfo: ProcessingSummary) {
   > = {
     event: {
       minRowCount: 10000,
-      maxRejects: 1000,
+      maxRejects: 1100,
     },
     turnout: {
       minRowCount: 1000,
@@ -140,5 +149,50 @@ export async function maybeCreateGithubIssue(summaryInfo: ProcessingSummary) {
 
   if (issues.length > 0) {
     await maybeCreateGhIssue(issues, summaryInfo, ghInfo);
+  }
+}
+
+/**
+ * Ensures that a GitHub label exists in the given repository.
+ * If it doesn't exist, it will be created.
+ *
+ * @param octokit An authenticated Octokit instance
+ * @param owner Repository owner (user or org)
+ * @param repo Repository name
+ * @param name Name of the label (must be URL-safe)
+ * @param color Optional 6-digit hex color string (default: "ededed")
+ * @param description Optional label description
+ */
+async function ensureLabelExists(
+  octokit: Octokit,
+  owner: string,
+  repo: string,
+  name: string,
+  color: string = "ededed",
+  description: string = ""
+): Promise<void> {
+  try {
+    await octokit.issues.getLabel({ owner, repo, name });
+    // Label exists
+  } catch (err: unknown) {
+    if (
+      typeof err === "object" &&
+      err !== null &&
+      "status" in err &&
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (err as any).status === 404
+    ) {
+      // Label does not exist, create it
+      await octokit.issues.createLabel({
+        owner,
+        repo,
+        name,
+        color,
+        description,
+      });
+    } else {
+      // Rethrow other errors
+      throw err;
+    }
   }
 }

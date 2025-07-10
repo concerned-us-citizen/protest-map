@@ -8,7 +8,7 @@ export const processEventDataProps: SheetProcessingProps<
   sheetId: "1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A",
   mapHeaders,
   schema: EventRowSchema,
-  knownBadSheetNames: ["June 14 State Counts"],
+  knownBadSheetNames: ["June 14 State Counts", "Good Trouble State Counts"],
 };
 
 function mapHeaders(headers: string[]) {

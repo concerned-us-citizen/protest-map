@@ -1,34 +1,21 @@
-Next:
-Autocomplete shows non pretty name in pill (suggestions have pretty names, but id'd regions don't)
-startup looks janky - should show initial state first
-z-order of dim layer is wrong - buttons and timeline showing through
-Using synchronous results on autocomplete before opening feels unresponsive
-Fix width of drawer
-Alignment of buttons on appbar
-Alignment of top of all dropdowns
-On mobile, clear text field to show recents, then try scrolling. Entire screen scrolls.
-Font size on filter descriptors?
-Arrow key advance is skipping an extra sometimes
-Look for references to labels that say Protests, add a func to show that or Protesters.
-Showing numbers > 1 in turnout mode - more than one at a location? Need to group them
-The main screen scrolls on the phone when in landscape and the drawer is opened
-Size adjusted radius of count marker, with correct counts
-Count specific popup
-Visible region filtering
-
-Severe:
-- Update help
-- better aria/keyboard handling
+Critical:
+- Verify counts against K's numbers
 
 Moderate:
-- Worcester, MA showing up in upper Michigan? 7/4
-- seeing clusters of two that can't be expanded
-- Undo zoom sometimes fails
+
+- Using synchronous results on autocomplete before opening may end up feeling unresponsive
+- better aria/keyboard handling
 - scroll map to show full tooltip
-- investigate vitest failure
-- layout of timeline sometimes not wide enough
+- timeline selection bar disappears when selecting from date picker
+- timeline can overlap map zoom controls
+- Timeline highlighted date bars extend beyond top of selection
+- Slide transition for filter
+- Scroll map popups into view
+- Transitions for map markers
+- Fold multiple events into one in popup
+- date picker header button colors should match ours (would require layout css tweaks as well as background color)
 
 Back Burner:
 - switch to using undefined everywhere
-- refactor map to have its different layers in a separate files
 - move geocoding to the other project
+- Visible region filtering

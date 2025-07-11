@@ -225,7 +225,7 @@ export class EventDb {
       "lon",
       "pct_dem_lead",
       "date",
-      "name",
+      "event_name",
       "link",
       "city_info_id",
     ];
@@ -252,7 +252,7 @@ export class EventDb {
       lon,
       pctDemLead,
       date,
-      name,
+      eventName,
       link,
       cityInfoId,
       low,
@@ -277,7 +277,7 @@ export class EventDb {
 
     const populatedMarker = {
       id,
-      name,
+      eventName,
       date: yyyymmddIntToDate(date),
       link,
       lat,
@@ -304,7 +304,7 @@ export class EventDb {
 
   getCityInfo(cityInfoId: number) {
     const cityStmt = this.db.prepare(`
-      SELECT city, state, city_thumbnail_url, city_article_url
+      SELECT city_name, city_thumbnail_url, city_article_url
       FROM city_infos
       WHERE id = ?
     `);
@@ -317,8 +317,7 @@ export class EventDb {
     }
 
     const cityRow = cityStmt.get();
-    const [city, state, cityThumbnailUrl, cityArticleUrl] = cityRow as [
-      string,
+    const [cityName, cityThumbnailUrl, cityArticleUrl] = cityRow as [
       string,
       string,
       string,
@@ -327,8 +326,7 @@ export class EventDb {
     cityStmt.free();
 
     return {
-      city,
-      state,
+      cityName,
       cityThumbnailUrl,
       cityArticleUrl,
     };
@@ -389,10 +387,10 @@ export class EventDb {
 
     const builder = new QueryBuilder(
       (whereClause) => `
-      SELECT name, SUM(${this.getCountSourceSql(markerType, turnoutEstimate)}) as count
+      SELECT event_name, SUM(${this.getCountSourceSql(markerType, turnoutEstimate)}) as count
       FROM ${markerType}s
       ${whereClause}
-      GROUP BY name
+      GROUP BY event_name
       ORDER BY count DESC
       `
     );
@@ -505,7 +503,7 @@ class QueryBuilder {
   addSelectedEventNamesSubquery(selectedEventNames: string[] | undefined) {
     if (selectedEventNames && selectedEventNames.length > 0) {
       const placeholders = selectedEventNames.map(() => "?").join(", ");
-      this.appendSubquery(`name IN (${placeholders})`);
+      this.appendSubquery(`event_name IN (${placeholders})`);
       this.#params.push(...selectedEventNames);
     }
   }

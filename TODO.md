@@ -1,5 +1,6 @@
 Critical:
 - Verify counts against K's numbers
+- Bad geocodings on 6/14 turnouts
 
 Moderate:
 

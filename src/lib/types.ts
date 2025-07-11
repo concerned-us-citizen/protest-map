@@ -3,6 +3,12 @@ export interface Coordinates {
   lon: number;
 }
 
+export interface CityInfo {
+  cityName: string;
+  cityThumbnailUrl: string;
+  cityArticleUrl: string;
+}
+
 export const markerTypes = ["event", "turnout"] as const;
 export type MarkerType = (typeof markerTypes)[number];
 
@@ -15,7 +21,7 @@ interface CommonMarkerProps extends Coordinates {
 }
 
 interface CommonPopulatedProps extends CityInfo {
-  name: string;
+  eventName: string;
   date: Date;
   link: Nullable<string>;
 }
@@ -44,13 +50,6 @@ export type Marker = ProtestEventMarker | TurnoutMarker;
 export type PopulatedMarker =
   | PopulatedProtestEventMarker
   | PopulatedTurnoutMarker;
-
-export interface CityInfo {
-  city: string;
-  state: string;
-  cityThumbnailUrl: string;
-  cityArticleUrl: string;
-}
 
 export type DateRange = {
   start: Date;

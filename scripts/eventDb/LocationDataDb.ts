@@ -11,10 +11,20 @@ export class LocationDataDb {
     { lat: number; lon: number } | undefined
   >;
 
-  private addCityInfoStatement: Statement<[string, string, string], void>;
+  private addCityInfoStatement: Statement<
+    [string, string, string, string, number | undefined, number | undefined],
+    void
+  >;
   private getCityInfoStatement: Statement<
     [string],
-    { article_url: string; thumbnail_url: string } | undefined
+    | {
+        title: string;
+        article_url: string;
+        thumbnail_url: string;
+        lat: number;
+        lon: number;
+      }
+    | undefined
   >;
 
   private addBadAddressStatement: Statement<[string], void>;
@@ -34,7 +44,7 @@ export class LocationDataDb {
     );
 
     this.addCityInfoStatement = this.db.prepare(
-      `INSERT INTO city_info (city_key, article_url, thumbnail_url) VALUES (?, ?, ?)`
+      `INSERT INTO city_info (city_key, title, article_url, thumbnail_url, lat, lon) VALUES (?, ?, ?, ?, ?, ?)`
     );
     this.getCityInfoStatement = this.db.prepare(
       `SELECT * FROM city_info WHERE city_key = ?`
@@ -69,8 +79,11 @@ export class LocationDataDb {
 
     db.exec(`CREATE TABLE IF NOT EXISTS city_info (
       city_key TEXT PRIMARY KEY,
+      title TEXT,
       article_url TEXT, 
-      thumbnail_url TEXT
+      thumbnail_url TEXT,
+      lat REAL,
+      lon REAL
     )`);
 
     db.exec(`CREATE TABLE IF NOT EXISTS bad_address (
@@ -118,15 +131,24 @@ export class LocationDataDb {
   getCityInfo(cityKey: string): Nullable<WikiCityInfo> {
     const result = this.getCityInfoStatement.get(cityKey);
     return result
-      ? { articleUrl: result.article_url, thumbnailUrl: result.thumbnail_url }
+      ? {
+          title: result.title,
+          articleUrl: result.article_url,
+          thumbnailUrl: result.thumbnail_url,
+          lat: result.lat,
+          lon: result.lon,
+        }
       : null;
   }
 
   addCityInfo(cityKey: string, cityInfo: WikiCityInfo) {
     this.addCityInfoStatement.run(
       cityKey,
+      cityInfo.title,
       cityInfo.articleUrl,
-      cityInfo.thumbnailUrl
+      cityInfo.thumbnailUrl,
+      cityInfo.lat,
+      cityInfo.lon
     );
   }
 

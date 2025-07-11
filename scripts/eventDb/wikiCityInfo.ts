@@ -1,11 +1,17 @@
+import { delay } from "../../src/lib/util/misc";
 import { getStateInfo } from "./usStateInfo";
 
 export const fallBackCityThumbnailUrl =
   "https://upload.wikimedia.org/wikipedia/en/5/59/Springfield_%28The_Simpsons%29.png";
 export interface WikiCityInfo {
+  title: string;
   articleUrl: string;
   thumbnailUrl: string;
+  lat?: number;
+  lon?: number;
 }
+
+const DELAY_MS = 1000;
 
 /**
  * Attempts to fetch Wikipedia info for a city+state, with fallback, validation, and prioritization.
@@ -34,6 +40,8 @@ export async function fetchWikiCityInfo(
 
   for (const query of searchQueries) {
     const opensearchUrl = `https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(query)}&limit=10&namespace=0&format=json&origin=*`;
+
+    await delay(DELAY_MS);
     const res = await fetch(opensearchUrl);
     const data: [string, string[], string[], string[]] = await res.json();
     // eslint-disable-next-line no-unused-vars
@@ -82,11 +90,11 @@ export async function fetchWikiCityInfo(
     candidates.sort((a, b) => a.priority - b.priority);
 
     for (const candidate of candidates) {
-      const title = candidate.title;
+      const candidateTitle = candidate.title;
       const articleUrl = candidate.url;
 
       // Step 1: Validate categories
-      const categoryUrl = `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=categories&cllimit=max&redirects=1&format=json&origin=*`;
+      const categoryUrl = `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(candidateTitle)}&prop=categories&cllimit=max&redirects=1&format=json&origin=*`;
       const categoryRes = await fetch(categoryUrl);
       const categoryData = await categoryRes.json();
       const page = Object.values(categoryData.query.pages)[0] as {
@@ -114,18 +122,26 @@ export async function fetchWikiCityInfo(
 
       if (!isPlace) continue;
 
-      // Step 2: Get thumbnail
-      const thumbUrl = `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=pageimages&piprop=thumbnail&pithumbsize=400&redirects=1&format=json&origin=*`;
-      const thumbRes = await fetch(thumbUrl);
-      const thumbData = await thumbRes.json();
-      const thumbPage = Object.values(thumbData.query.pages)[0] as {
+      // Step 2: Get thumbnail + coordinates
+      const metaUrl = `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(candidateTitle)}&prop=pageimages|coordinates&piprop=thumbnail&pithumbsize=400&redirects=1&format=json&origin=*`;
+      const metaRes = await fetch(metaUrl);
+      const metaData = await metaRes.json();
+      const metaPage = Object.values(metaData.query.pages)[0] as {
+        title: string;
         thumbnail?: { source: string };
+        coordinates?: { lat: number; lon: number }[];
       };
-      const thumbnailUrl: string = thumbPage?.thumbnail?.source ?? "";
 
+      const title = metaPage?.title;
+      const thumbnailUrl: string = metaPage?.thumbnail?.source ?? "";
+      const lat = metaPage?.coordinates?.[0]?.lat;
+      const lon = metaPage?.coordinates?.[0]?.lon;
       return {
+        title,
         articleUrl,
         thumbnailUrl,
+        lat,
+        lon,
       };
     }
   }

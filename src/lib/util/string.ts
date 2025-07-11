@@ -82,6 +82,9 @@ export function isLikelyMalformedUrl(input: string): boolean {
 
   if (!maybeUrl) return false;
 
+  // Some bad links have '.'s stripped out
+  if (!trimmed.includes(".")) return true;
+
   try {
     new URL(trimmed);
     return false; // It's a valid URL

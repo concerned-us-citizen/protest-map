@@ -47,11 +47,11 @@ export class NodeEventAndTurnoutDb {
     this.db = db;
 
     this.insertEventStatement = db.prepare(
-      "INSERT INTO events (lat, lon, pct_dem_lead, date, name, link, city_info_id) VALUES (?, ?, ?, ?, ?, ?, ?)"
+      "INSERT INTO events (lat, lon, pct_dem_lead, date, event_name, link, city_info_id) VALUES (?, ?, ?, ?, ?, ?, ?)"
     );
 
     this.insertCityInfoStatement = db.prepare(
-      "INSERT INTO city_infos (city, state, city_thumbnail_url, city_article_url) VALUES (?, ?, ?, ?)"
+      "INSERT INTO city_infos (city_name, city_thumbnail_url, city_article_url) VALUES (?, ?, ?)"
     );
 
     this.hasSeenEventOrTurnoutStatement = this.db.prepare(
@@ -62,7 +62,7 @@ export class NodeEventAndTurnoutDb {
     );
 
     this.insertTurnoutStatement = db.prepare(
-      "INSERT INTO turnouts (lat, lon, pct_dem_lead, date, name, link, coverage_url, low, high, city_info_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+      "INSERT INTO turnouts (lat, lon, pct_dem_lead, date, event_name, link, coverage_url, low, high, city_info_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
     );
 
     this.hasSeenCityInfoStatement = this.db.prepare(
@@ -86,8 +86,7 @@ export class NodeEventAndTurnoutDb {
 
       db.exec(`CREATE TABLE city_infos (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
-              city TEXT,
-              state TEXT,
+              city_name TEXT,
               city_thumbnail_url TEXT,
               city_article_url TEXT
           );
@@ -99,7 +98,7 @@ export class NodeEventAndTurnoutDb {
               lon REAL NOT NULL,
               pct_dem_lead REAL,
               date INTEGER NOT NULL,
-              name TEXT NOT NULL,
+              event_name TEXT NOT NULL,
               link TEXT,
               city_info_id INTEGER,
               FOREIGN KEY (city_info_id) REFERENCES city_infos(id)
@@ -107,7 +106,7 @@ export class NodeEventAndTurnoutDb {
       `);
 
       db.exec(`CREATE INDEX idx_events_date ON events(date);`);
-      db.exec(`CREATE INDEX idx_events_name ON events(name)`);
+      db.exec(`CREATE INDEX idx_events_name ON events(event_name)`);
 
       db.exec(`
         CREATE TEMPORARY TABLE seen_events_or_turnouts (
@@ -121,7 +120,7 @@ export class NodeEventAndTurnoutDb {
             lon REAL NOT NULL,
             pct_dem_lead REAL,
             date INTEGER NOT NULL,
-            name TEXT NOT NULL,
+            event_name TEXT NOT NULL,
             link TEXT,
             coverage_url TEXT,
             low INTEGER,
@@ -131,7 +130,7 @@ export class NodeEventAndTurnoutDb {
         );
       `);
       db.exec(`CREATE INDEX idx_turnouts_date ON turnouts(date);`);
-      db.exec(`CREATE INDEX idx_turnouts_name ON turnouts(name)`);
+      db.exec(`CREATE INDEX idx_turnouts_event_name ON turnouts(event_name)`);
 
       db.exec(`
         CREATE TEMPORARY TABLE seen_turnouts (
@@ -224,8 +223,7 @@ export class NodeEventAndTurnoutDb {
 
   insertCityInfo(info: CityInfo) {
     const result = this.insertCityInfoStatement.run(
-      info.city,
-      info.state,
+      info.cityName,
       info.cityThumbnailUrl,
       info.cityArticleUrl
     );

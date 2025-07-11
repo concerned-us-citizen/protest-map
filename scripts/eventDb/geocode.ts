@@ -1,6 +1,5 @@
 import { Coordinates, Nullable } from "../../src/lib/types";
 import { delay } from "../../src/lib/util/misc";
-import { isValidZipCode } from "../../src/lib/util/string";
 import { config } from "./config";
 import { Address } from "./types";
 
@@ -25,9 +24,6 @@ export async function geocodeFromService({
   state,
   country,
 }: Address): Promise<Geocode> {
-  // Defend against poorly formed zips
-  zip = isValidZipCode(zip) ? zip : undefined;
-
   console.log(`Geocoding ${address ? address : ""} ${city} ${state}...`);
 
   const allFieldsEmpty = [address, zip, city, state, country].every(

@@ -1,9 +1,8 @@
-import { Nullable } from "../../src/lib/types";
+import { Coordinates, Nullable } from "../../src/lib/types";
 import { LocationInfo } from "./types";
 import { geocodeFromService } from "./geocode";
 import { ScrapeLogger } from "./ScrapeLogger";
 import { LocationDataDb } from "./LocationDataDb";
-import { getStateInfo as getStateIdInfo } from "./usStateInfo";
 import { Address } from "./types";
 import { fetchVotingInfo } from "./votingInfo";
 import {
@@ -50,60 +49,17 @@ export class LocationDataModel {
     const addressKey = this.addressKey(address);
 
     const city = address.city;
-    let state = address.state;
+    const state = address.state;
 
-    // Failed geocoding before?
-    if (db.isBadAddress(addressKey)) {
-      this.logger.logInvalidEntry(
-        address,
-        sheetName,
-        `Bad address - unable to find geolocation for'${getAddress(address)}' (cached)`
-      );
-      this.logger.current.badAddresses++;
-      return null;
-    }
-
-    // Have we seen this address before?
-    let coordinates = db.getGeocoding(addressKey);
-
-    // Not available, geocode the address
-    if (!coordinates) {
-      try {
-        coordinates = await geocodeFromService(address);
-        this.logger.current.geocodings++;
-        this.db.addGeocoding(addressKey, coordinates);
-      } catch {
-        // Or the failure
-        this.db.addBadAddress(addressKey);
-        this.logger.logInvalidEntry(
-          address,
-          sheetName,
-          `Bad address - unable to find geolocation for '${getAddress(address)}'`
-        );
-        this.logger.current.badAddresses++;
-        return null;
-      }
-    }
-
-    const stateIdInfo = getStateIdInfo(state);
-    if (!stateIdInfo) {
-      this.logger.logInvalidEntry(
-        address,
-        sheetName,
-        `Invalid state name '${state}'`
-      );
-      this.logger.current.badAddresses++;
-    } else {
-      state = stateIdInfo.fullName;
-    }
     const cityKey = asNormalizedKey(`${city}-${state}`);
 
-    let cityInfo: WikiCityInfo | null = {
+    let cityInfo: WikiCityInfo = {
+      title: `${city}, ${state}`,
       articleUrl: "",
       thumbnailUrl: fallBackCityThumbnailUrl,
     };
 
-    const badCityMsg = `Bad city - could not resolve '${getCity(address)}' on Wikipedia, not rejecting, but may be malformed, and will lack thumbnail and article`;
+    const badCityMsg = `Bad city - could not resolve '${getCity(address)}' on Wikipedia (maybe ambiguous, mispelled, wrong state?). Not rejecting, but may be malformed, and will lack thumbnail and article`;
 
     // Failed wiki search for city before => use the default
     if (this.db.isBadCity(cityKey)) {
@@ -129,13 +85,52 @@ export class LocationDataModel {
       }
     }
 
+    let coordinates: Coordinates | null;
+
+    // If we have a more specific address than just a city and state,
+    // or the cityInfo doesn't provide coordinates, geocode.
+    if (address.address || address.zip || !cityInfo.lat || !cityInfo.lon) {
+      // Failed geocoding before?
+      if (db.isBadAddress(addressKey)) {
+        this.logger.logInvalidEntry(
+          address,
+          sheetName,
+          `Bad address - unable to find geolocation for '${getAddress(address)}' (cached)`
+        );
+        this.logger.current.badAddresses++;
+        return null;
+      }
+
+      // Have we seen this address before?
+      coordinates = db.getGeocoding(addressKey);
+
+      // Not seen, geocode the address
+      if (!coordinates) {
+        try {
+          coordinates = await geocodeFromService(address);
+          this.logger.current.geocodings++;
+          this.db.addGeocoding(addressKey, coordinates);
+        } catch {
+          this.db.addBadAddress(addressKey);
+          this.logger.logInvalidEntry(
+            address,
+            sheetName,
+            `Bad address - unable to find geolocation for '${getAddress(address)}'`
+          );
+          this.logger.current.badAddresses++;
+          return null;
+        }
+      }
+    } else {
+      coordinates = { lat: cityInfo.lat, lon: cityInfo.lon };
+    }
+
     // Get precinct voting stats
     const voting = fetchVotingInfo(coordinates);
 
     return {
       ...coordinates,
-      city,
-      state,
+      cityName: cityInfo.title,
       cityThumbnailUrl: cityInfo.thumbnailUrl,
       cityArticleUrl: cityInfo.articleUrl,
       pctDemLead: voting?.pct_dem_lead,

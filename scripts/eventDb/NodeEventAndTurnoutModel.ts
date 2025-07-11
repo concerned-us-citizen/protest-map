@@ -23,17 +23,15 @@ export class NodeEventAndTurnoutModel {
       await fs.unlink(dbPath);
     }
     const db = NodeEventAndTurnoutDb.create(dbPath);
-    db.beginTransaction();
     return new NodeEventAndTurnoutModel(db);
   }
 
   async close() {
-    this.db.commit();
     this.db.close();
   }
 
   private cityInfoKey(cityInfo: CityInfo) {
-    return asNormalizedKey(`${cityInfo.city}-${cityInfo.state}`);
+    return asNormalizedKey(cityInfo.cityName);
   }
 
   getOrCreateCityInfo(newCityInfo: CityInfo): number {

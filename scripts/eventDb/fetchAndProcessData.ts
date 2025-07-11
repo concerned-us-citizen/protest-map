@@ -21,6 +21,7 @@ import {
 } from "../../src/lib/util/string";
 import { Nullable } from "../../src/lib/types";
 import { RawProtestEvent, RawTurnout } from "./NodeEventAndTurnoutDb";
+import { getStateInfo } from "./usStateInfo";
 
 export interface SheetProcessingProps<T extends EventOrTurnoutRowSchemaType> {
   fetchedDataType: FetchedDataType;
@@ -156,7 +157,7 @@ async function sanitize<T extends EventRow | TurnoutRow>(
   const unnamed = "Unnamed event";
   const badNames = new Set(["None", "No name"]);
 
-  const { name, zip, date, link, ...rest } = row;
+  const { name, state, zip, date, link, ...rest } = row;
   const { coverageUrl, low, high } = row as TurnoutRow;
 
   // Sanitize Name
@@ -185,10 +186,27 @@ async function sanitize<T extends EventRow | TurnoutRow>(
     return null; // Skip row if date is invalid
   }
 
+  // Validate State
+  const sanitizedState = state.trim();
+  const stateIdInfo = getStateInfo(sanitizedState);
+  if (!stateIdInfo) {
+    this.logger.logInvalidEntry(
+      row,
+      sheetName,
+      `Invalid state name '${state}'`
+    );
+    this.logger.current.badAddresses++;
+    return null;
+  }
+
   // Sanitize and Validate Zip (warn only)
   let sanitizedZip = zip?.trim();
   if (!isValidZipCode(sanitizedZip)) {
-    logger.logInvalidEntry(row, sheetName, `Bad zipcode '${sanitizedZip}'`);
+    logger.logInvalidEntry(
+      row,
+      sheetName,
+      `Bad zipcode '${sanitizedZip}', not rejecting, leaving empty`
+    );
     logger.current.badZipcodes++;
     sanitizedZip = "";
   }
@@ -220,8 +238,7 @@ async function sanitize<T extends EventRow | TurnoutRow>(
       }
     }
 
-    // Look for invalid low/high numbers
-
+    // Validate low/high numbers
     sanitizedLow = low;
     sanitizedHigh = high;
 
@@ -268,6 +285,7 @@ async function sanitize<T extends EventRow | TurnoutRow>(
   return {
     name: sanitizedName,
     date: sanitizedDate,
+    state: sanitizedState,
     zip: sanitizedZip,
     link: sanitizedLink,
     low: sanitizedLow,

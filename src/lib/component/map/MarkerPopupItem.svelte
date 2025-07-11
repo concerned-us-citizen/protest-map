@@ -79,10 +79,10 @@
             class="event-title-link"
             href={populatedMarker.link}
             target="_blank"
-            ><div class="event-title">{populatedMarker.name}</div></a
+            ><div class="event-title">{populatedMarker.eventName}</div></a
           >
         {:else}
-          <div class="event-title">{populatedMarker.name}</div>
+          <div class="event-title">{populatedMarker.eventName}</div>
         {/if}
       </div>
       {#if marginDisplay.show}

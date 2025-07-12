@@ -52,7 +52,7 @@
   <div class="top-row">
     {#if populatedMarker}
       <div class="image-container">
-        <a href={populatedMarker.cityArticleUrl} target="_blank">
+        <a href={populatedMarker.cityArticleUrl} target="_blank" rel="noopener">
           <img
             src={populatedMarker.cityThumbnailUrl
               ? populatedMarker.cityThumbnailUrl
@@ -65,13 +65,15 @@
         <a
           class="location-title"
           href={populatedMarker.cityArticleUrl}
-          target="_blank"><strong>{populatedMarker.cityName}</strong></a
+          target="_blank"
+          rel="noopener"><strong>{populatedMarker.cityName}</strong></a
         >
         {#if populatedMarker.link}
           <a
             class="event-title-link"
             href={populatedMarker.link}
             target="_blank"
+            rel="noopener"
             ><div class="event-title">{populatedMarker.eventName}</div></a
           >
         {:else}
@@ -82,6 +84,7 @@
         <a
           href={attributions.nytimesData.resourceLink}
           target="_blank"
+          rel="noopener"
           class="margin-link"
         >
           <div
@@ -110,9 +113,9 @@
       {#if coverageUrl}
         <div class="coverage">
           {#if isHttpUrl(coverageUrl)}
-            <a href={coverageUrl}>Coverage</a>
+            <a href={coverageUrl} target="_blank" rel="noopener">Coverage</a>
           {:else}
-            {coverageUrl}
+            Coverage: {coverageUrl}
           {/if}
         </div>
       {/if}

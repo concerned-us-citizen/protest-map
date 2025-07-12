@@ -104,9 +104,10 @@
   }
 
   .dialog {
+    --dialog-y-translate: -0vh;
     border: none;
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(calc(var(--dialog-y-translate) + 10px));
     transition:
       opacity 0.3s ease,
       transform 0.3s ease,
@@ -115,11 +116,11 @@
 
     &:popover-open {
       opacity: 1;
-      transform: translateY(0);
+      transform: translateY(var(--dialog-y-translate));
 
       @starting-style {
         opacity: 0;
-        transform: translateY(-10px);
+        transform: translateY(calc(var(--dialog-y-translate) + 10px));
       }
     }
   }

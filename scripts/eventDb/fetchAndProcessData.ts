@@ -214,7 +214,11 @@ async function sanitize<T extends EventRow | TurnoutRow>(
   // Look for bad links
   let sanitizedLink = link?.trim();
   if (isLikelyMalformedUrl(sanitizedLink)) {
-    logger.logInvalidEntry(row, sheetName, `Bad link '${sanitizedLink}'`);
+    logger.logInvalidEntry(
+      row,
+      sheetName,
+      `Bad link '${sanitizedLink}, not rejected, leaving empty'`
+    );
     logger.current.badLinks++;
     sanitizedLink = "";
   }

@@ -22,6 +22,8 @@
 
   const MAX_RECENTS = 8;
 
+  let autocompleteText = $state("");
+
   let recents = $derived.by(() => {
     if (!browser) return [];
     const m = document.cookie.match(/(?:^|;\s*)recentRegions=([^;]+)/);
@@ -65,17 +67,21 @@
 <Dialog
   bind:this={dialog}
   id={regionNavigationDialogId}
-  class={className}
+  class={["region-dialog", className]}
   title="Jump to Region"
   showDismissButton
 >
   <Autocomplete
+    bind:query={autocompleteText}
     {fetchSuggestions}
     {addRecent}
     placeholder="Enter a state, city or ZIP…"
     maxVisible={20}
     onSelect={picked}
-    onDismiss={() => dialog.dismiss()}
+    onDismiss={() => {
+      autocompleteText = "";
+      dialog.dismiss();
+    }}
   />
 
   {#if recents.length}
@@ -107,6 +113,9 @@
 </Dialog>
 
 <style>
+  :global(.region-dialog) {
+    --dialog-y-translate: -30vh !important;
+  }
   .recents-block {
     padding-top: 0.5rem;
   }

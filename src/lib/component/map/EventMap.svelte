@@ -55,7 +55,7 @@
         showZoom: true,
         showCompass: false,
       });
-      map.addControl(navigationControl, "bottom-right");
+      map.addControl(navigationControl, "bottom-left");
     } else if (navigationControl && !zoomControlVisible) {
       map.removeControl(navigationControl);
       navigationControl = undefined;

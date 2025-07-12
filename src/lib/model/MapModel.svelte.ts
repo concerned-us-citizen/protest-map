@@ -139,6 +139,10 @@ export class MapModel {
     }
   }
 
+  clearBoundsStack() {
+    this.#boundsStack = [];
+  }
+
   zoomIn() {
     this.#mapInstance?.zoomIn();
   }

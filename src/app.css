@@ -58,7 +58,7 @@ body.touch-device {
   --icon-button-size: 4em;
 }
 
-.maplibregl-ctrl-bottom-right {
+.maplibregl-ctrl-bottom-left {
   margin: var(--toolbar-margin);
   z-index: var(--controls-layer);
 }

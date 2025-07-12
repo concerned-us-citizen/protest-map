@@ -10,6 +10,8 @@
     ArrowRightToLine,
     ArrowUpToLine,
     Settings2,
+    ChartNoAxesColumn,
+    Ban,
   } from "@lucide/svelte";
   import { getShortcutPrefix } from "$lib/util/os";
   import { protestMapTourId } from "./dialog/ProtestMapTour.svelte";
@@ -102,6 +104,24 @@
 
       <PillButton
         white
+        class="timeline-button"
+        title={`${pageState.toolbarVisible ? "Hide" : "Show"} timeline`}
+        onClick={() => pageState.toggleTimelineVisible()}
+      >
+        <div class="timeline-icon-stack">
+          <div class="timeline-icon">
+            <ChartNoAxesColumn size={pageState.toolbarVisible ? "19" : "24"} />
+          </div>
+          {#if pageState.timelineVisible}
+            <div class="timeline-icon-overlay">
+              <Ban size="24" />
+            </div>
+          {/if}
+        </div>
+      </PillButton>
+
+      <PillButton
+        white
         popoverTarget={protestMapTourId}
         title={`Show Help (${getShortcutPrefix()}H)`}
       >
@@ -132,6 +152,27 @@
     flex-direction: column;
   }
 
+  :global(.timeline-button) {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .timeline-icon-stack {
+    position: relative;
+  }
+
+  .timeline-icon {
+    width: 100%;
+    height: 100%;
+  }
+  .timeline-icon-overlay {
+    position: absolute;
+    inset: 0;
+    margin-left: -2px;
+    pointer-events: none;
+  }
   :global(svg) {
     vertical-align: middle;
   }

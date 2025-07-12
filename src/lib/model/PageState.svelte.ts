@@ -25,6 +25,7 @@ export class PageState {
 
   filterVisible = $state(false);
   toolbarVisible = $state(true);
+  timelineVisible = $state(true);
   eventInfoVisible = $state(false);
   #hideEventInfoTimer: SetTimeoutId = undefined;
 
@@ -41,6 +42,10 @@ export class PageState {
 
   toggleToolbarVisible() {
     this.toolbarVisible = !this.toolbarVisible;
+  }
+
+  toggleTimelineVisible() {
+    this.timelineVisible = !this.timelineVisible;
   }
 
   async scheduleNextDateAdvance() {

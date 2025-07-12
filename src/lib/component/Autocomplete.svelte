@@ -3,7 +3,8 @@
 
   export type AutocompleteItem = { name: string; id: number };
 
-  const {
+  let {
+    query = $bindable(""),
     fetchSuggestions,
     addRecent,
     onSelect = (_v: AutocompleteItem) => {},
@@ -11,6 +12,7 @@
     placeholder = "Search…",
     maxVisible = 10,
   } = $props<{
+    query?: string;
     fetchSuggestions: (_q: string, _max: number) => Promise<AutocompleteItem[]>;
     addRecent: (_v: AutocompleteItem) => void;
     onSelect?: (_v: AutocompleteItem) => void;
@@ -19,7 +21,6 @@
     maxVisible?: number;
   }>();
 
-  let query = $state("");
   let suggestions: AutocompleteItem[] = $state([]);
   let open = $state(false);
   let hi = $state(-1);
@@ -75,6 +76,7 @@
     addRecent(v);
     onSelect(v);
     query = "";
+    hidePopover();
     open = false;
   };
 
@@ -105,6 +107,8 @@
         }
         break;
       case "Escape":
+        hidePopover();
+        query = "";
         onDismiss();
         query = "";
         break;

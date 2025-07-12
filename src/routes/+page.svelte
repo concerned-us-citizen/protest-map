@@ -133,6 +133,7 @@
               onClick={() => {
                 pageState.filter.clearAllFilters();
                 pageState.mapModel.navigateToUS();
+                pageState.mapModel.clearBoundsStack();
               }}
             >
               View All US Protests
@@ -165,7 +166,9 @@
         {#if pageState.updateAvailable}
           <UpdateBanner />
         {:else if pageState.eventModel.isLoaded}
-          <TimelineContainer class="timeline-container" />
+          {#if pageState.timelineVisible}
+            <TimelineContainer class="timeline-container" />
+          {/if}
         {/if}
       </div>
     </div>

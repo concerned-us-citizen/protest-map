@@ -1,4 +1,4 @@
-import { Coordinates, Nullable } from "../../src/lib/types";
+import { Coordinates } from "../../src/lib/types";
 import { delay } from "../../src/lib/util/misc";
 import { config } from "./config";
 import { Address } from "./types";
@@ -17,98 +17,56 @@ async function fetchGeocode(url: string) {
   return await res.json();
 }
 
+function sanitize(str: string | undefined | null) {
+  return str?.trim() ?? "";
+}
+
+async function attemptGeocodeWithProps(
+  addr: Address,
+  propsToAttempt: (keyof Address)[]
+) {
+  const params = new URLSearchParams({
+    country: "USA",
+    format: "json",
+    addressdetails: "1",
+    extratags: "1",
+    limit: "1",
+  });
+  for (const prop of propsToAttempt) {
+    const value = addr[prop];
+    if (!value || value?.length === 0) {
+      return [];
+    }
+    params.set(prop, value);
+  }
+  const url = `https://nominatim.openstreetmap.org/search?${params.toString()}`;
+  return await fetchGeocode(url);
+}
+
 export async function geocodeFromService({
   address,
   zip,
   city,
   state,
-  country,
 }: Address): Promise<Geocode> {
-  console.log(`Geocoding ${address ? address : ""} ${city} ${state}...`);
+  console.log(`Geocoding ${address ? address : ""} ${city} ${state} ${zip}...`);
 
-  const allFieldsEmpty = [address, zip, city, state, country].every(
-    (part) => !part?.trim()
-  );
-  if (allFieldsEmpty) {
-    throw new Error("Cannot geocode: all address fields are empty.");
-  }
-
-  const tryQuery = async ({
-    useStructured = true,
-    includeStreet = true,
-    includeZip = true,
-    includeCity = true,
-    includeState = true,
-    includeCountry = true,
-  }) => {
-    const queryParts = {
-      street: includeStreet ? address : undefined,
-      city: includeCity ? city : undefined,
-      state: includeState ? state : undefined,
-      postalcode: includeZip ? zip : undefined,
-      country: includeCountry ? country : undefined,
-    };
-
-    let params: Nullable<URLSearchParams> = null;
-    if (useStructured) {
-      params = new URLSearchParams({
-        format: "json",
-        addressdetails: "1",
-        extratags: "1",
-        limit: "1",
-      });
-      for (const [key, value] of Object.entries(queryParts)) {
-        if (value?.trim()) params.set(key, value);
-      }
-    } else {
-      const q = [
-        includeStreet ? address : "",
-        includeZip ? zip : "",
-        city,
-        state,
-        country,
-      ]
-        .filter((p) => p?.trim())
-        .join(", ");
-      params = new URLSearchParams({
-        q,
-        format: "json",
-        addressdetails: "1",
-        extratags: "1",
-        limit: "1",
-      });
-    }
-
-    const url = `https://nominatim.openstreetmap.org/search?${params.toString()}`;
-    return await fetchGeocode(url);
+  const sanitized = {
+    address: sanitize(address),
+    city: sanitize(city),
+    state: sanitize(state),
+    zip: sanitize(zip),
   };
 
-  const attempts = [
-    { useStructured: true, includeStreet: true, includeZip: false },
-    { useStructured: false, includeStreet: true, includeZip: false },
-    { useStructured: true, includeStreet: false, includeZip: true },
-    { useStructured: false, includeStreet: false, includeZip: false },
-    // Last gasp, try just the zip
-    {
-      useStructured: false,
-      includeStreet: false,
-      includeZip: true,
-      includeCity: false,
-      includeState: false,
-      includeCountry: false,
-    },
+  const propsToAttempt: (keyof Address)[][] = [
+    ["address", "city", "state", "zip"],
+    ["address", "city", "state"],
+    ["zip"],
+    ["city", "state"],
   ];
 
-  for (const [i, attempt] of attempts.entries()) {
-    const label =
-      `${attempt.useStructured ? "structured" : "q"} query` +
-      (attempt.includeStreet ? " + street" : "") +
-      (attempt.includeZip ? " + zip" : "") +
-      (attempt.includeCity ? " + city" : "") +
-      (attempt.includeState ? " + state" : "") +
-      (attempt.includeCountry ? " + country " : "");
-    console.log(`🔎 Attempt ${i + 1}: ${label}`);
-    const data = await tryQuery(attempt);
+  for (const props of propsToAttempt) {
+    const data = await attemptGeocodeWithProps(sanitized, props);
     if (data.length > 0) {
       const loc = {
         lat: parseFloat(data[0].lat),
@@ -124,9 +82,16 @@ export async function geocodeFromService({
   throw new Error(`No results found after all fallbacks.`);
 }
 
+const US_BOUNDS = {
+  minLat: 18.9, // Southern tip of Hawaii
+  maxLat: 71.4, // Northernmost point of Alaska
+  minLng: -179.2, // Western Aleutian Islands, Alaska
+  maxLng: -66.9, // Eastern tip of Maine
+};
+
 function isRoughlyInUS(lat: number, lon: number): boolean {
   // Rough bounding box for continental US
-  const withinLat = lat >= 24.396308 && lat <= 49.384358;
-  const withinLng = lon >= -125.0 && lon <= -66.93457;
+  const withinLat = lat >= US_BOUNDS.minLat && lat <= US_BOUNDS.maxLat;
+  const withinLng = lon >= US_BOUNDS.minLng && lon <= US_BOUNDS.maxLng;
   return withinLat && withinLng;
 }

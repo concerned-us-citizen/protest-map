@@ -62,6 +62,7 @@
     cursor: pointer;
     font-size: 0.875rem;
     transition: background-color 0.15s ease-in-out;
+    pointer-events: auto;
   }
 
   .pill.large {

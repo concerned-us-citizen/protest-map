@@ -70,6 +70,9 @@
   class={["region-dialog", className]}
   title="Jump to Region"
   showDismissButton
+  onClosing={() => {
+    autocompleteText = "";
+  }}
 >
   <Autocomplete
     bind:query={autocompleteText}
@@ -79,7 +82,6 @@
     maxVisible={20}
     onSelect={picked}
     onDismiss={() => {
-      autocompleteText = "";
       dialog.dismiss();
     }}
   />

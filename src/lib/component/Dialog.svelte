@@ -9,6 +9,7 @@
     title,
     showDismissButton = false,
     onDismiss,
+    onClosing,
     children,
     id,
   } = $props<{
@@ -16,6 +17,7 @@
     title?: string;
     showDismissButton?: boolean;
     onDismiss?: () => void;
+    onClosing?: () => void;
     children: Snippet;
     id: string;
   }>();
@@ -23,6 +25,12 @@
   function handleToggle(event: ToggleEvent) {
     if (event.newState === "closed") {
       onDismiss?.();
+    }
+  }
+
+  function handleBeforeToggle(event: ToggleEvent) {
+    if (event.newState === "closed") {
+      onClosing?.();
     }
   }
 
@@ -40,6 +48,7 @@
   aria-labelledby={title ? "dialog-heading" : undefined}
   tabindex="-1"
   ontoggle={handleToggle}
+  onbeforetoggle={handleBeforeToggle}
   popover
 >
   <div class="dialog-content">

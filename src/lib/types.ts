@@ -12,9 +12,6 @@ export interface CityInfo {
 export const markerTypes = ["event", "turnout"] as const;
 export type MarkerType = (typeof markerTypes)[number];
 
-export const turnoutEstimates = ["high", "low", "average"] as const;
-export type TurnoutEstimate = (typeof turnoutEstimates)[number];
-
 interface CommonMarkerProps extends Coordinates {
   id: number;
   pctDemLead: Nullable<number>;

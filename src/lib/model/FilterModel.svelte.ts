@@ -6,7 +6,6 @@ import {
   type Marker,
   type MarkerType,
   type SetTimeoutId,
-  type TurnoutEstimate,
   type TurnoutMarker,
   type TurnoutRange,
   type VoterLean,
@@ -29,7 +28,6 @@ const REPEAT_INTERVAL = 80; // ms
 
 export interface FilterOptions {
   markerType: MarkerType;
-  turnoutEstimate: TurnoutEstimate;
   date?: Date;
   eventNames?: string[]; // empty or missing means match all events
   namedRegion?: NamedRegion; // If not null, only match events within the region
@@ -44,7 +42,6 @@ export class FilterModel {
 
   readonly filter = $derived.by(() => ({
     markerType: this.markerType,
-    turnoutEstimate: this.turnoutEstimate,
     date: this.date,
     eventNames: this.selectedEventNames,
     namedRegion: this.namedRegion,
@@ -55,7 +52,6 @@ export class FilterModel {
   // The marker type a user has picked as their default.
   // Will be used if that marker type is available
   desiredMarkerType: MarkerType = $state("turnout");
-  turnoutEstimate: TurnoutEstimate = $state("low");
 
   // The actual marker type to use
   readonly markerType: MarkerType = $derived.by(() => {
@@ -143,14 +139,7 @@ export class FilterModel {
       return 1;
     } else {
       const turnoutMarker = marker as TurnoutMarker;
-      switch (this.turnoutEstimate) {
-        case "low":
-          return turnoutMarker.low;
-        case "average":
-          return Math.round((turnoutMarker.low + turnoutMarker.high) / 2);
-        case "high":
-          return turnoutMarker.high;
-      }
+      return Math.round((turnoutMarker.low + turnoutMarker.high) / 2);
     }
   }
 
@@ -242,7 +231,6 @@ export class FilterModel {
     const allDateEventNamesAndCounts = this.eventModel
       ? this.eventModel.getEventNamesAndCounts({
           markerType: filter.markerType,
-          turnoutEstimate: filter.turnoutEstimate,
           date: filter.date,
         })
       : [];
@@ -275,7 +263,6 @@ export class FilterModel {
     const allDateEventNamesAndTurnoutRanges = this.eventModel
       ? this.eventModel.getEventNamesAndTurnoutRanges({
           markerType: filter.markerType,
-          turnoutEstimate: filter.turnoutEstimate,
           date: filter.date,
         })
       : [];

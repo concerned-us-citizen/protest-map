@@ -1,4 +1,4 @@
-import { VoterLeanValues, type TurnoutEstimate } from "$lib/types";
+import { VoterLeanValues } from "$lib/types";
 import { deserializeDate, serializeDate } from "$lib/util/date";
 import { mdItalics, pluralize, toTitleCase } from "$lib/util/string";
 import { PageState } from "./PageState.svelte";
@@ -123,28 +123,6 @@ export const shareOptions: ParamOption[] = [
       }
     },
     isFilterProp: false,
-  },
-  {
-    formTitle: (pageState) => {
-      return `Show ${pageState.filter.turnoutEstimate} turnout numbers`;
-    },
-    paramName: (_pageState) => "turnout-est",
-    type: "string",
-    getValue: (pageState) =>
-      pageState.filter.turnoutEstimate !== "low"
-        ? pageState.filter.turnoutEstimate
-        : undefined,
-    setValue: async (params, pageState) => {
-      const turnoutSource = params.get("turnout-est");
-      if (
-        turnoutSource === "low" ||
-        turnoutSource === "high" ||
-        turnoutSource === "average"
-      ) {
-        pageState.filter.turnoutEstimate = turnoutSource as TurnoutEstimate;
-      }
-    },
-    isFilterProp: true,
   },
   {
     formTitle: (_pageState) => "Debug",

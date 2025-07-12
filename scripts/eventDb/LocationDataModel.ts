@@ -59,7 +59,7 @@ export class LocationDataModel {
       thumbnailUrl: fallBackCityThumbnailUrl,
     };
 
-    const badCityMsg = `Bad city - could not resolve '${getCity(address)}' on Wikipedia (maybe ambiguous, mispelled, wrong state?). Not rejecting, but may be malformed, and will lack thumbnail and article`;
+    const badCityMsg = `Bad city - could not resolve '${getCity(address)}' on Wikipedia (ambiguous?, mispelled?, wrong state?). Not rejecting, but will lack custom thumbnail and article`;
 
     // Failed wiki search for city before => use the default
     if (this.db.isBadCity(cityKey)) {
@@ -72,6 +72,7 @@ export class LocationDataModel {
         cityInfo = fetched;
       } else {
         // If not, fetch it
+        this.logger.logInfo(`Fetching wiki data for ${city}, ${state}...`);
         fetched = await fetchWikiCityInfo(city, state);
         this.logger.current.wikiFetches++;
         if (fetched) {

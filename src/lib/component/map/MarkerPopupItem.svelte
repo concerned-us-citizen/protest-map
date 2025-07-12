@@ -3,7 +3,7 @@
   import { attributions } from "$lib/attributions";
   import { isHttpUrl } from "$lib/util/misc";
   import { pluralize } from "$lib/util/string";
-  import { formatAsInteger } from "$lib/util/number";
+  import { formatRangeTerse } from "../formatting";
 
   const { populatedMarker } = $props<{
     populatedMarker: PopulatedMarker;
@@ -14,7 +14,6 @@
       ? (populatedMarker as PopulatedTurnoutMarker)
       : undefined
   );
-  const locationTitle = `${populatedMarker.city}, ${populatedMarker.state}`;
 
   let marginDisplay = $derived.by(() => {
     if (!location) {
@@ -45,13 +44,7 @@
   let coverageUrl = $derived.by(() => turnout?.coverageUrl);
 
   let turnoutDescription = $derived.by(() => {
-    if (turnout) {
-      const val =
-        turnout.low !== turnout.high
-          ? `${formatAsInteger(turnout.low)}-${formatAsInteger(turnout.high)}`
-          : `${formatAsInteger(turnout.low)}`;
-      return `${val}`;
-    }
+    return turnout ? formatRangeTerse(turnout) : "";
   });
 </script>
 
@@ -64,7 +57,7 @@
             src={populatedMarker.cityThumbnailUrl
               ? populatedMarker.cityThumbnailUrl
               : "https://en.wikipedia.org/wiki/Springfield_(The_Simpsons)#/media/File:Springfield_(The_Simpsons).png"}
-            alt={locationTitle}
+            alt={populatedMarker.cityName}
           />
         </a>
       </div>
@@ -72,7 +65,7 @@
         <a
           class="location-title"
           href={populatedMarker.cityArticleUrl}
-          target="_blank"><strong>{locationTitle}</strong></a
+          target="_blank"><strong>{populatedMarker.cityName}</strong></a
         >
         {#if populatedMarker.link}
           <a

@@ -5,10 +5,11 @@ import type {
   PopulatedProtestEventMarker,
   PopulatedTurnoutMarker,
   ProtestEventMarker,
-  TurnoutEstimate,
   TurnoutMarker,
+  TurnoutRange,
   VoterLean,
   VoterLeanCounts,
+  VoterLeanTurnoutRange,
 } from "$lib/types";
 import type { FilterOptions } from "./FilterModel.svelte";
 import { type Database, type SqlValue } from "sql.js";
@@ -96,38 +97,16 @@ export class EventDb {
     return results;
   }
 
-  private getCountSourceSql(
-    markerType: MarkerType,
-    turnoutEstimate: TurnoutEstimate
-  ) {
-    if (markerType === "event") {
-      return "1"; // This will yield the count of rows
-    } else if (turnoutEstimate === "average") {
-      return "(low + high) / 2.0";
-    } else {
-      return turnoutEstimate; // low or high
-    }
-  }
-
   getVoterLeanCounts(filter: FilterOptions): VoterLeanCounts {
-    const {
-      markerType,
-      turnoutEstimate,
-      date,
-      eventNames,
-      namedRegion,
-      voterLeans,
-    } = filter;
-
-    const countSource = this.getCountSourceSql(markerType, turnoutEstimate);
+    const { date, eventNames, namedRegion, voterLeans } = filter;
 
     const builder = new QueryBuilder(
       (whereClause) => `
       SELECT
-          SUM(CASE WHEN pct_dem_lead <  0 THEN ${countSource} ELSE 0 END) AS trump,
-          SUM(CASE WHEN pct_dem_lead >  0 THEN ${countSource} ELSE 0 END) AS harris,
-          SUM(CASE WHEN pct_dem_lead IS NULL THEN ${countSource} ELSE 0 END) AS unavailable
-        FROM ${markerType}s
+          SUM(CASE WHEN pct_dem_lead <  0 THEN 1 ELSE 0 END) AS trump,
+          SUM(CASE WHEN pct_dem_lead >  0 THEN 1 ELSE 0 END) AS harris,
+          SUM(CASE WHEN pct_dem_lead IS NULL THEN 1 ELSE 0 END) AS unavailable
+        FROM events
         ${whereClause}
 `
     );
@@ -148,22 +127,62 @@ export class EventDb {
     };
   }
 
-  getCount(filter: FilterOptions): number {
-    const {
-      date,
-      markerType,
-      turnoutEstimate,
-      eventNames,
-      namedRegion,
-      voterLeans,
-    } = filter;
-
-    const countSource = this.getCountSourceSql(markerType, turnoutEstimate);
+  getVoterLeanTurnoutRange(filter: FilterOptions): VoterLeanTurnoutRange {
+    const { date, eventNames, namedRegion, voterLeans } = filter;
 
     const builder = new QueryBuilder(
       (whereClause) => `
-      SELECT SUM(${countSource}) as count
-      FROM ${markerType}s
+      SELECT
+          SUM(CASE WHEN pct_dem_lead < 0 THEN low ELSE 0 END) AS trump_low,
+          SUM(CASE WHEN pct_dem_lead < 0 THEN high ELSE 0 END) AS trump_high,
+          SUM(CASE WHEN pct_dem_lead > 0 THEN low ELSE 0 END) AS harris_low,
+          SUM(CASE WHEN pct_dem_lead > 0 THEN high ELSE 0 END) AS harris_high,
+          SUM(CASE WHEN pct_dem_lead IS NULL THEN low ELSE 0 END) AS unavailable_low,
+          SUM(CASE WHEN pct_dem_lead IS NULL THEN high ELSE 0 END) AS unavailable_high
+        FROM turnouts
+        ${whereClause}
+`
+    );
+    builder.addDateSubquery(date);
+    builder.addVoterLeanSubquery(voterLeans);
+    builder.addSelectedEventNamesSubquery(eventNames);
+    builder.addNamedRegionOnlySubquery(namedRegion);
+    const stmt = builder.createStatement(this.db);
+    if (!stmt.step()) {
+      throw new Error("Nothing returned for voter lean counts");
+    }
+
+    const [
+      trumpLow,
+      trumpHigh,
+      harrisLow,
+      harrisHigh,
+      unavailableLow,
+      unavailableHigh,
+    ] = stmt.get();
+    return {
+      trump: {
+        low: (trumpLow ?? 0) as number,
+        high: (trumpHigh ?? 0) as number,
+      },
+      harris: {
+        low: (harrisLow ?? 0) as number,
+        high: (harrisHigh ?? 0) as number,
+      },
+      unavailable: {
+        low: (unavailableLow ?? 0) as number,
+        high: (unavailableHigh ?? 0) as number,
+      },
+    };
+  }
+
+  getCount(filter: FilterOptions): number {
+    const { date, eventNames, namedRegion, voterLeans } = filter;
+
+    const builder = new QueryBuilder(
+      (whereClause) => `
+      SELECT SUM(1) as count
+      FROM events
       ${whereClause}
       LIMIT 1
     `
@@ -181,6 +200,32 @@ export class EventDb {
 
     stmt.free();
     return count ?? 0;
+  }
+
+  getTurnoutRange(filter: FilterOptions): TurnoutRange {
+    const { date, eventNames, namedRegion, voterLeans } = filter;
+
+    const builder = new QueryBuilder(
+      (whereClause) => `
+      SELECT SUM(low) as low_sum, SUM(high) as high_sum
+      FROM turnouts
+      ${whereClause}
+      LIMIT 1
+    `
+    );
+    builder.addDateSubquery(date);
+    builder.addNamedRegionOnlySubquery(namedRegion);
+    builder.addSelectedEventNamesSubquery(eventNames);
+    builder.addVoterLeanSubquery(voterLeans);
+
+    const stmt = builder.createStatement(this.db);
+
+    stmt.step();
+    const row = stmt.get();
+    const [low, high] = row as [number, number];
+
+    stmt.free();
+    return { low, high };
   }
 
   getDates(filter: FilterOptions): Date[] {
@@ -376,19 +421,12 @@ export class EventDb {
   getEventNamesAndCounts(
     filter: FilterOptions
   ): { name: string; count: number }[] {
-    const {
-      markerType,
-      turnoutEstimate,
-      date,
-      namedRegion,
-      eventNames,
-      voterLeans,
-    } = filter;
+    const { date, namedRegion, eventNames, voterLeans } = filter;
 
     const builder = new QueryBuilder(
       (whereClause) => `
-      SELECT event_name, SUM(${this.getCountSourceSql(markerType, turnoutEstimate)}) as count
-      FROM ${markerType}s
+      SELECT event_name, SUM(1) as count
+      FROM events
       ${whereClause}
       GROUP BY event_name
       ORDER BY count DESC
@@ -407,6 +445,39 @@ export class EventDb {
       const row = stmt.get();
       const [name, count] = row as [string, number];
       results.push({ name, count });
+    }
+
+    stmt.free();
+    return results;
+  }
+
+  getEventNamesAndTurnoutRanges(
+    filter: FilterOptions
+  ): { name: string; turnoutRange: TurnoutRange }[] {
+    const { date, namedRegion, eventNames, voterLeans } = filter;
+
+    const builder = new QueryBuilder(
+      (whereClause) => `
+      SELECT event_name, SUM(low) as low_count, SUM(high) as high_count
+      FROM turnouts
+      ${whereClause}
+      GROUP BY event_name
+      ORDER BY low_count DESC
+      `
+    );
+
+    builder.addDateSubquery(date);
+    builder.addSelectedEventNamesSubquery(eventNames);
+    builder.addNamedRegionOnlySubquery(namedRegion);
+    builder.addVoterLeanSubquery(voterLeans);
+
+    const stmt = builder.createStatement(this.db);
+
+    const results: { name: string; turnoutRange: TurnoutRange }[] = [];
+    while (stmt.step()) {
+      const row = stmt.get();
+      const [name, lowCount, highCount] = row as [string, number, number];
+      results.push({ name, turnoutRange: { low: lowCount, high: highCount } });
     }
 
     stmt.free();

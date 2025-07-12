@@ -1,10 +1,14 @@
 import { browser } from "$app/environment";
 import {
+  EmptyTurnoutRange,
   EmptyVoterLeanCounts,
+  EmptyVoterLeanTurnoutRange,
   type Marker,
   type MarkerType,
   type Nullable,
+  type TurnoutRange,
   type VoterLeanCounts,
+  type VoterLeanTurnoutRange,
 } from "$lib/types";
 import { formatDateTime } from "$lib/util/date";
 import { EventDb } from "./EventDb";
@@ -54,12 +58,28 @@ export class EventModel {
     return this.db ? this.db.getEventNamesAndCounts(filter) : [];
   }
 
+  getEventNamesAndTurnoutRanges(
+    filter: FilterOptions
+  ): { name: string; turnoutRange: TurnoutRange }[] {
+    return this.db ? this.db.getEventNamesAndTurnoutRanges(filter) : [];
+  }
+
   getVoterLeanCounts(filter: FilterOptions): VoterLeanCounts {
     return this.db ? this.db.getVoterLeanCounts(filter) : EmptyVoterLeanCounts;
   }
 
+  getVoterLeanTurnoutRange(filter: FilterOptions): VoterLeanTurnoutRange {
+    return this.db
+      ? this.db.getVoterLeanTurnoutRange(filter)
+      : EmptyVoterLeanTurnoutRange;
+  }
+
   getCount(filter: FilterOptions): number {
     return this.db ? this.db.getCount(filter) : 0;
+  }
+
+  getTurnoutRange(filter: FilterOptions): TurnoutRange {
+    return this.db ? this.db.getTurnoutRange(filter) : EmptyTurnoutRange;
   }
 
   getPopulatedMarker(id: number, markerType: MarkerType) {

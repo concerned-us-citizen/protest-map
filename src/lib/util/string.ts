@@ -73,20 +73,20 @@ export function isValidZipCode(
 }
 
 export function isLikelyMalformedUrl(input: string): boolean {
-  const trimmed = input.trim();
+  const sanitized = input.trim().toLowerCase();
 
   const maybeUrl =
-    trimmed.includes(":/") ||
-    trimmed.includes("http") ||
-    /\.[a-zA-Z]{3}$/.test(trimmed);
+    sanitized.includes(":/") ||
+    sanitized.includes("http") ||
+    /\.[a-zA-Z]{3}$/.test(sanitized);
 
   if (!maybeUrl) return false;
 
   // Some bad links have '.'s stripped out
-  if (!trimmed.includes(".")) return true;
+  if (!sanitized.includes(".")) return true;
 
   try {
-    new URL(trimmed);
+    new URL(sanitized);
     return false; // It's a valid URL
   } catch {
     return true; // Looks like a URL, but is malformed

@@ -4,6 +4,7 @@ Critical:
 
 Moderate:
 
+- Track and add event time to popups
 - Using synchronous results on autocomplete before opening may end up feeling unresponsive
 - better aria/keyboard handling
 - scroll map to show full tooltip

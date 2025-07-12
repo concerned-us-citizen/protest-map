@@ -22,7 +22,7 @@
         </span>
         <span class="stats-display"
           >{countAndLabel(pageState.filter.filteredEventCount, "Event")}, {countAndLabel(
-            pageState.filter.markerCount,
+            pageState.filter.eventCount,
             pageState.filter.markerType === "event"
               ? "Location"
               : "Demonstrator"

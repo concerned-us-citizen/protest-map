@@ -56,14 +56,32 @@ export type DateRange = {
   end: Date;
 };
 
+export type TurnoutRange = {
+  low: number;
+  high: number;
+};
+export type CountOrTurnoutRange = TurnoutRange | number;
+export const EmptyTurnoutRange = { low: 0, high: 0 };
+export type EventCount<T extends CountOrTurnoutRange> = {
+  name: string;
+  count: T;
+};
+
 export type Nullable<T> = T | null;
 export type SetTimeoutId = ReturnType<typeof setTimeout> | undefined;
 
 export const VoterLeanValues = ["trump", "harris", "unavailable"];
 export type VoterLean = (typeof VoterLeanValues)[number];
 export type VoterLeanCounts = Record<VoterLean, number>;
+export type VoterLeanTurnoutRange = Record<VoterLean, TurnoutRange>;
 export const EmptyVoterLeanCounts: VoterLeanCounts = {
   trump: 0,
   harris: 0,
   unavailable: 0,
+};
+
+export const EmptyVoterLeanTurnoutRange: VoterLeanTurnoutRange = {
+  trump: EmptyTurnoutRange,
+  harris: EmptyTurnoutRange,
+  unavailable: EmptyTurnoutRange,
 };

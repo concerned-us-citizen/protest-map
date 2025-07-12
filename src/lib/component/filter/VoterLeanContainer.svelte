@@ -1,7 +1,7 @@
 <script lang="ts">
   import { markerColor } from "$lib/colors";
   import { getPageStateFromContext } from "$lib/model/PageState.svelte";
-  import { circledMarkerSvg } from "$lib/icons";
+  import { circledMarkerSvg, personSvg } from "$lib/icons";
   import type { VoterLean } from "$lib/types";
   import PillButton from "$lib/component/PillButton.svelte";
   import type { ClassValue } from "svelte/elements";
@@ -9,6 +9,7 @@
   import { deviceInfo } from "$lib/model/DeviceInfo.svelte";
   import Panel from "../Panel.svelte";
   import { formatAsInteger } from "$lib/util/number";
+  import { formatRangeTerse } from "../formatting";
 
   const { class: className, ...rest } = $props<{
     class?: ClassValue;
@@ -27,11 +28,19 @@
   }
 
   function formatCount(voterLean: VoterLean) {
-    const result = pageState.filter.filteredVoterLeanCounts[voterLean];
     try {
-      return `${name} ${formatAsInteger(result)}`;
+      let countOrRange: string;
+      if (pageState.filter.markerType === "event") {
+        const result = pageState.filter.filteredVoterLeanCounts[voterLean];
+        countOrRange = formatAsInteger(result);
+      } else {
+        const result =
+          pageState.filter.filteredVoterLeanTurnoutRange[voterLean];
+        countOrRange = formatRangeTerse(result, false);
+      }
+      return `${name} ${countOrRange}`;
     } catch (err) {
-      throw new Error(`Could not format voter lean count ${err}`);
+      throw new Error(`Could not format voter lean ${err}`);
     }
   }
   interface VoterLeanInfo {
@@ -84,13 +93,23 @@
       >
         <div class="button-content">
           <div class="icon-and-label">
-            <div
-              class="small-icon"
-              style="color: {colorForVoterLean(voterLean)}"
-            >
-              <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-              {@html circledMarkerSvg}
-            </div>
+            {#if pageState.filter.markerType === "turnout"}
+              <div
+                class="small-icon"
+                style="color: {colorForVoterLean(voterLean)}"
+              >
+                <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+                {@html personSvg}
+              </div>
+            {:else}
+              <div
+                class="small-icon"
+                style="color: {colorForVoterLean(voterLean)}"
+              >
+                <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+                {@html circledMarkerSvg}
+              </div>
+            {/if}
             <div class="name-label">{formatName(voterLean)}</div>
           </div>
           <div class="count-label">{formatCount(voterLean)}</div>
@@ -101,13 +120,22 @@
 </Panel>
 
 <style>
+  /* Really should have a Container like a panel without the padding and rounded border */
+  :global(.voter-lean-container) {
+    padding: 0 !important;
+  }
   .leans {
     display: flex;
-    justify-content: center;
+    justify-content: stretch;
     flex-direction: row;
     gap: 0.5rem;
     align-items: start;
     min-width: 0;
+  }
+
+  :global(.voter-lean-button) {
+    flex: 1;
+    width: 100%;
   }
 
   .button-content {
@@ -123,6 +151,10 @@
     justify-content: start;
     gap: 0.2rem;
     align-items: center;
+  }
+
+  .count-label {
+    white-space: nowrap;
   }
 
   :global(.large-icon *) {

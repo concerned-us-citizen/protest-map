@@ -23,10 +23,9 @@
   import { cubicInOut } from "svelte/easing";
   import { fade } from "svelte/transition";
   import { Undo2 } from "@lucide/svelte";
-  import TitleContainer from "$lib/component/TitleContainer.svelte";
-  import FilterContainer from "$lib/component/filter/FilterContainer.svelte";
+  import TitlePanel from "$lib/component/TitlePanel.svelte";
+  import FilterPanel from "$lib/component/filter/FilterPanel.svelte";
   import { deviceInfo } from "$lib/model/DeviceInfo.svelte";
-  import Panel from "$lib/component/Panel.svelte";
   import PillButton from "$lib/component/PillButton.svelte";
   import ShareDialog from "$lib/component/dialog/ShareDialog.svelte";
   import { showPopover } from "$lib/component/popover";
@@ -91,7 +90,7 @@
     const type =
       pageState.filter.markerType === "event"
         ? "Protests"
-        : "Protester Turnout";
+        : "Protests and Turnout";
     return `${type} in ${
       pageState.filter.namedRegion
         ? prettifyNamedRegion(pageState.filter.namedRegion)
@@ -119,12 +118,12 @@
     <div class="map-overlay">
       <div class="top-area">
         <div class="left-column">
-          <Panel class="title-and-filter-panel">
-            <TitleContainer {title} class="title-container" />
+          <div class="title-and-filter-panel">
+            <TitlePanel {title} class="title-container" />
             {#if pageState.filterVisible}
-              <FilterContainer class="filter-container" />
+              <FilterPanel class="filter-container" />
             {/if}
-          </Panel>
+          </div>
           {#if pageState.filter.isFiltering && !pageState.filterVisible}
             <PillButton
               white
@@ -232,15 +231,17 @@
     flex-direction: column;
     gap: 0.5rem;
     padding: 0.5rem;
-    width: 23rem;
+    width: 25rem;
     min-height: 0;
     max-height: 100%;
     box-sizing: border-box;
   }
-  :global(.title-and-filter-panel) {
+  .title-and-filter-panel {
     min-height: 0;
     max-height: 100%;
-    max-width: 75vw;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
   :global(.title-container) {

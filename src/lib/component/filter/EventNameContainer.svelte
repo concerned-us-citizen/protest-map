@@ -5,20 +5,24 @@
   import type { ClassValue } from "svelte/elements";
   import Panel from "../Panel.svelte";
   import { formatAsInteger } from "$lib/util/number";
+  import { formatRangeTerse } from "../formatting";
+  import { type TurnoutRange } from "$lib/types";
 
   const { class: className } = $props<{
     class?: ClassValue;
   }>();
 
   const pageState = getPageStateFromContext();
-  const eventNamesWithLocationCounts = $derived(
-    pageState.filter.filteredEventNamesWithLocationCounts
-  );
+  const eventNamesWithLocationCountsOrTurnoutRanges = $derived.by(() => {
+    const counts = pageState.filter.filteredEventNamesWithLocationCounts;
+    const turnoutRanges = pageState.filter.filteredEventNamesWithTurnoutRange;
+    return pageState.filter.markerType === "event" ? counts : turnoutRanges;
+  });
 
   const title = $derived.by(() => {
     const count = pageState.filter.filteredEventNamesWithLocationCounts.length;
     return count > 0
-      ? `Protest Events That Day (Total ${count})`
+      ? `Protest Events That Day (total ${formatAsInteger(count)})`
       : "Protest Events";
   });
 
@@ -27,6 +31,7 @@
     const update = async () => {
       // Runs every time selected event names changes
       void pageState.filter.filteredEventNamesWithLocationCounts;
+      void pageState.filter.filteredEventNamesWithTurnoutRange;
       void pageState.filter.selectedEventNames;
 
       // Wait until Svelte has flushed DOM updates
@@ -56,22 +61,39 @@
 
 <Panel class={["event-name-container", className]} {title}>
   <div class="content" role="list" bind:this={listEl}>
-    {#if eventNamesWithLocationCounts.length > 0}
-      {#each eventNamesWithLocationCounts as event (event.name)}
+    {#if eventNamesWithLocationCountsOrTurnoutRanges.length > 0}
+      {#each eventNamesWithLocationCountsOrTurnoutRanges as eventWithCountOrTurnoutRange (eventWithCountOrTurnoutRange.name)}
         {@const selected = pageState.filter.selectedEventNames.includes(
-          event.name
+          eventWithCountOrTurnoutRange.name
         )}
         <PillButton
           onClick={(e: MouseEvent) => {
             e.stopPropagation();
-            pageState.filter.toggleSelectedEventName(event.name);
+            pageState.filter.toggleSelectedEventName(
+              eventWithCountOrTurnoutRange.name
+            );
           }}
           {selected}
         >
           <div class="button-content">
-            <div class="event-name-in-list">{event.name || "Unnamed"}</div>
+            <div class="event-name-in-list">
+              {eventWithCountOrTurnoutRange.name || "Unnamed"}
+            </div>
             <div class="event-count-in-list">
-              {formatAsInteger(event.count)}
+              {#if pageState.filter.markerType === "event"}
+                {formatAsInteger(
+                  (eventWithCountOrTurnoutRange as { count: number }).count
+                )}
+              {:else}
+                {formatRangeTerse(
+                  (
+                    eventWithCountOrTurnoutRange as {
+                      turnoutRange: TurnoutRange;
+                    }
+                  ).turnoutRange,
+                  false
+                )}
+              {/if}
             </div>
           </div>
         </PillButton>
@@ -83,6 +105,11 @@
 </Panel>
 
 <style>
+  /* Really should have a Container like a panel without the padding and rounded border */
+  :global(.event-name-container) {
+    padding: 0 !important;
+  }
+
   .content {
     display: flex;
     flex-direction: column;
@@ -121,5 +148,6 @@
     margin-left: 8px;
     font-size: 0.9em;
     color: #777;
+    white-space: nowrap;
   }
 </style>

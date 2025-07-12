@@ -1,11 +1,14 @@
 import { EventModel } from "./EventModel.svelte";
 import {
+  EmptyTurnoutRange,
   EmptyVoterLeanCounts,
+  EmptyVoterLeanTurnoutRange,
   type Marker,
   type MarkerType,
   type SetTimeoutId,
   type TurnoutEstimate,
   type TurnoutMarker,
+  type TurnoutRange,
   type VoterLean,
 } from "$lib/types";
 import { formatDate, isFutureDate } from "$lib/util/date";
@@ -65,7 +68,8 @@ export class FilterModel {
   );
 
   markers = $state<Marker[]>([]);
-  markerCount = $state<number>(0);
+  eventCount = $state<number>(0);
+  turnoutRange = $state<TurnoutRange>(EmptyTurnoutRange);
 
   dateSummaries = $state<DateSummary[]>([]);
 
@@ -249,6 +253,39 @@ export class FilterModel {
     }));
   });
 
+  readonly filteredEventNamesWithTurnoutRange = $derived.by(() => {
+    const filter = this.filter;
+
+    if (!filter?.date) return [];
+
+    // We want to see all the event names for the current date's filter,
+    // excluding other filters, but with ranges that reflect the
+    // full current filter (i.e. many will be 0). This gives users the ability to select
+    // names that would otherwise be filtered out, but see accurate ranges.
+    const allFullyFilteredEventNamesAndTurnoutRanges = this.eventModel
+      ? this.eventModel.getEventNamesAndTurnoutRanges(filter)
+      : [];
+
+    const fullTurnoutRangesMap = new Map(
+      allFullyFilteredEventNamesAndTurnoutRanges.map(
+        ({ name, turnoutRange }) => [name, turnoutRange]
+      )
+    );
+
+    const allDateEventNamesAndTurnoutRanges = this.eventModel
+      ? this.eventModel.getEventNamesAndTurnoutRanges({
+          markerType: filter.markerType,
+          turnoutEstimate: filter.turnoutEstimate,
+          date: filter.date,
+        })
+      : [];
+
+    return allDateEventNamesAndTurnoutRanges.map(({ name }) => ({
+      name,
+      turnoutRange: fullTurnoutRangesMap.get(name) ?? EmptyTurnoutRange,
+    }));
+  });
+
   readonly filteredEventCount = $derived.by(() => {
     return this.filteredEventNamesWithLocationCounts.filter(
       (nc) => nc.count > 0
@@ -262,6 +299,15 @@ export class FilterModel {
     return this.eventModel
       ? this.eventModel.getVoterLeanCounts(filter)
       : EmptyVoterLeanCounts;
+  });
+
+  readonly filteredVoterLeanTurnoutRange = $derived.by(() => {
+    const filter = this.filter;
+    if (!filter?.date) return EmptyVoterLeanTurnoutRange;
+
+    return this.eventModel
+      ? this.eventModel.getVoterLeanTurnoutRange(filter)
+      : EmptyVoterLeanTurnoutRange;
   });
 
   selectedEventNames = $state<string[]>([]);
@@ -283,12 +329,12 @@ export class FilterModel {
       });
     }
 
-    const eventCount = this.selectedEventNames.length;
-    if (eventCount > 0) {
+    const selectedEventCount = this.selectedEventNames.length;
+    if (selectedEventCount > 0) {
       const title =
-        eventCount < 5
+        selectedEventCount < 5
           ? `From ${pluralize(this.selectedEventNames, "event")} ${joinWithAnd(this.selectedEventNames.map(mdBold))}`
-          : `From ${eventCount} events`;
+          : `From ${selectedEventCount} events`;
       descriptions.push({
         title,
         clearFunc: () => this.clearSelectedNames(),
@@ -417,7 +463,8 @@ export class FilterModel {
       const update = async () => {
         if (this.eventModel) {
           this.markers = this.eventModel.getMarkers(currentFilter);
-          this.markerCount = this.eventModel.getCount(currentFilter);
+          this.eventCount = this.eventModel.getCount(currentFilter);
+          this.turnoutRange = this.eventModel.getTurnoutRange(currentFilter);
         }
       };
       update();

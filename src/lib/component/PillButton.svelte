@@ -11,6 +11,7 @@
     white = false,
     accented = false,
     selected = false,
+    disabled = false,
     large = false,
     popoverTarget,
     button = $bindable(),
@@ -25,6 +26,7 @@
     white?: boolean;
     accented?: boolean;
     selected?: boolean;
+    disabled?: boolean;
     large?: boolean;
     popoverTarget?: string;
     button?: HTMLButtonElement;
@@ -36,6 +38,7 @@
   {title}
   bind:this={button}
   type="button"
+  {disabled}
   data-selected={selected}
   onclick={(e) => onClick && onClick(e)}
   onfocus={(e) => onFocus && onFocus(e)}
@@ -78,15 +81,15 @@
     background-color: var(--pill-button-selected-hover-background);
   }
 
+  .pill.white {
+    --pill-button-background: white;
+  }
+
   .pill.accented {
     --pill-button-background: #ffd580;
     --pill-button-hover-background: #ffcc66;
     --pill-button-color: #7a4e00;
     --pill-button-selected-background: #f4bc51;
     --pill-button-selected-hover-background: #dca53c;
-  }
-
-  .pill.white {
-    --pill-button-background: white;
   }
 </style>

@@ -164,7 +164,9 @@ export class ScrapeLogger {
     await this.logInfo(`\nProcessing complete: `, summaryInfo);
     this.saveSummary(summaryInfo);
 
-    await maybeCreateGithubIssue(summaryInfo);
+    if (process.env.GITHUB_ACTIONS === "true") {
+      await maybeCreateGithubIssue(summaryInfo);
+    }
   }
 }
 

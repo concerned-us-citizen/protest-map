@@ -9,6 +9,7 @@
     Share,
     ArrowRightToLine,
     ArrowUpToLine,
+    Settings2,
   } from "@lucide/svelte";
   import { getShortcutPrefix } from "$lib/util/os";
   import { protestMapTourId } from "./dialog/ProtestMapTour.svelte";
@@ -66,6 +67,16 @@
       >
         <Search />
       </PillButton>
+
+      <PillButton
+        white
+        accented={pageState.filter.isFiltering}
+        title={`${pageState.filterVisible ? "Hide" : "Show"} Filter (${getShortcutPrefix()}F)`}
+        onClick={() => pageState.toggleFilterVisible()}
+      >
+        <Settings2 />
+      </PillButton>
+
       <PillButton
         white
         popoverTarget={shareDialogId}

@@ -26,21 +26,53 @@ export async function fetchWikiCityInfo(
   const normalize = (str: string) => str.trim().toLowerCase();
   const normalizedCity = normalize(city);
   const normalizedState = normalize(fullStateName);
+  const loweredCity = city.toLowerCase();
 
-  const searchQueries = [`${city}, ${fullStateName}`];
+  let searchQueries: string[];
+
+  const nationalSites = [
+    "monument",
+    "park",
+    "historic",
+    "forest",
+    "memorial",
+    "battlefield",
+    "preserve",
+    "lakeshore",
+    "seashore",
+    "recreational area",
+    "military",
+    "scenic",
+    "river",
+  ];
+
   if (
-    normalizedCity.includes("island") ||
-    normalizedCity.includes("township")
+    fullStateName === "District of Columbia" ||
+    normalizedCity.endsWith("D.C.") ||
+    normalizedCity.endsWith("DC")
   ) {
-    searchQueries.push(city); // try without state for special cases
+    searchQueries = ["Washington, D.C."];
+  } else if (
+    nationalSites.some((siteName) =>
+      loweredCity.includes(`national ${siteName}`)
+    )
+  ) {
+    searchQueries = [normalizedCity];
   } else {
-    searchQueries.push(`${city} Township, ${fullStateName}`);
-    searchQueries.push(`${city} County, ${fullStateName}`);
+    searchQueries = [`${city}, ${fullStateName}`];
+    if (
+      normalizedCity.includes("island") ||
+      normalizedCity.includes("township")
+    ) {
+      searchQueries.push(city); // try without state for special cases
+    } else {
+      searchQueries.push(`${city} Township, ${fullStateName}`);
+      searchQueries.push(`${city} County, ${fullStateName}`);
+    }
   }
 
   for (const query of searchQueries) {
     const opensearchUrl = `https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(query)}&limit=10&namespace=0&format=json&origin=*`;
-
     await delay(DELAY_MS);
     const res = await fetch(opensearchUrl);
     const data: [string, string[], string[], string[]] = await res.json();
@@ -108,8 +140,9 @@ export async function fetchWikiCityInfo(
       const isPlace = categories.some(
         (cat) =>
           cat.includes("census-designated places in") ||
-          cat.includes("populated places in") ||
+          cat.includes("populated places ") ||
           cat.includes("cities in") ||
+          cat.includes("counties in") ||
           cat.includes("townships in") ||
           cat.includes("towns in") ||
           cat.includes("villages in") ||
@@ -117,7 +150,13 @@ export async function fetchWikiCityInfo(
           cat.includes("county seats in") ||
           cat.includes("boroughs in") ||
           cat.includes("unincorporated communities in") ||
-          cat.includes("counties in")
+          cat.endsWith(" counties") ||
+          cat.includes("military base") ||
+          cat.includes("military camp") ||
+          cat.includes("military camp") ||
+          // This might be too broad - if so we could set up a whitelist
+          cat.includes("coordinates on wikidata") ||
+          nationalSites.some((siteName) => cat.includes(`national ${siteName}`))
       );
 
       if (!isPlace) continue;

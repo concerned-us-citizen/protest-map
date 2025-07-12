@@ -164,13 +164,17 @@ async function sanitize<T extends EventRow | TurnoutRow>(
   let sanitizedName: string;
   if (!name || name === "" || badNames.has(name)) {
     sanitizedName = unnamed;
-    logger.logInvalidEntry(row, sheetName, `Unnamed ${fetchedDataType}`);
+    logger.logInvalidEntry(
+      row,
+      sheetName,
+      `Unnamed ${fetchedDataType} - not rejected, will be titled '${unnamed}'`
+    );
     logger.current.badNames++;
   } else if (name.includes("http:") || name.includes("https:")) {
     logger.logInvalidEntry(
       row,
       sheetName,
-      `Bad event name ${name} - shouldn't be a URL`
+      `Bad event name ${name} - shouldn't be a URL - not rejected, will be titled '${unnamed}'`
     );
     logger.current.badNames++;
     sanitizedName = unnamed;
@@ -190,12 +194,8 @@ async function sanitize<T extends EventRow | TurnoutRow>(
   const sanitizedState = state.trim();
   const stateIdInfo = getStateInfo(sanitizedState);
   if (!stateIdInfo) {
-    this.logger.logInvalidEntry(
-      row,
-      sheetName,
-      `Invalid state name '${state}'`
-    );
-    this.logger.current.badAddresses++;
+    logger.logInvalidEntry(row, sheetName, `Invalid state name '${state}'`);
+    logger.current.badAddresses++;
     return null;
   }
 

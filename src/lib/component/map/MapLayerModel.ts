@@ -6,6 +6,7 @@ import type {
   FilterSpecification,
   LngLatLike,
   MapMouseEvent,
+  PointLike,
 } from "maplibre-gl";
 import maplibregl from "maplibre-gl";
 import { mount } from "svelte";
@@ -55,7 +56,7 @@ export class MapLayerModel {
 
   popup: maplibregl.Popup | undefined;
   sveltePopupInstance: ReturnType<typeof mount> | undefined;
-  sveltePopupContainer: Element | undefined;
+  sveltePopupContainer: HTMLDivElement | undefined;
 
   constructor(map: maplibregl.Map, pageState: PageState) {
     this.map = map;
@@ -107,12 +108,11 @@ export class MapLayerModel {
     this.showMarkersPopup([f]);
   };
 
-  showMarkersPopup(fc: Feature[]) {
+  async showMarkersPopup(fc: Feature[]) {
     const safeFc = fc.filter(
       (f): f is Feature<Point> =>
         f.geometry?.type === "Point" && f.properties !== undefined
     );
-
     if (safeFc.length < 1) return;
 
     const lngLat: LngLatLike = safeFc[0].geometry.coordinates as [
@@ -132,13 +132,18 @@ export class MapLayerModel {
 
     if (this.popup) this.popup.remove();
 
-    this.sveltePopupContainer = document.createElement("div");
-    this.sveltePopupInstance = mount(MarkerPopup, {
-      target: this.sveltePopupContainer,
-      props: { populatedMarkers },
-    });
     const vOffset = 14;
     const hOffset = 16;
+    const padding = 16;
+
+    // Step 1: Mount Svelte popup content
+    const container = document.createElement("div");
+    this.sveltePopupInstance = mount(MarkerPopup, {
+      target: container,
+      props: { populatedMarkers },
+    });
+
+    // Step 2: Create the popup
     this.popup = new maplibregl.Popup({
       closeButton: false,
       maxWidth: "300px",
@@ -150,8 +155,49 @@ export class MapLayerModel {
       } as maplibregl.Offset,
     })
       .setLngLat(lngLat)
-      .setDOMContent(this.sveltePopupContainer)
+      .setDOMContent(container)
       .addTo(this.map);
+
+    // Step 3: Wait for layout to finalize
+    await new Promise((resolve) =>
+      requestAnimationFrame(() => setTimeout(resolve, 0))
+    );
+
+    // Step 4: Measure popup position relative to map container
+    const popupEl = this.popup.getElement();
+    const popupRect = popupEl.getBoundingClientRect();
+    const mapRect = this.map.getContainer().getBoundingClientRect();
+
+    // Calculate how far popup sticks out of visible map area
+    let dx = 0;
+    let dy = 0;
+
+    if (popupRect.left < mapRect.left + padding) {
+      dx = popupRect.left - mapRect.left - padding;
+    } else if (popupRect.right > mapRect.right - padding) {
+      dx = popupRect.right - mapRect.right + padding;
+    }
+
+    if (popupRect.top < mapRect.top + padding) {
+      dy = popupRect.top - mapRect.top - padding;
+    } else if (popupRect.bottom > mapRect.bottom - padding) {
+      dy = popupRect.bottom - mapRect.bottom + padding;
+    }
+
+    // Convert screen dx/dy into map coordinates
+    if (dx !== 0 || dy !== 0) {
+      const currentCenter = this.map.getCenter();
+      const projectedCenter = this.map.project(currentCenter);
+
+      const newCenter = this.map.unproject({
+        x: projectedCenter.x + dx,
+        y: projectedCenter.y + dy,
+      } as PointLike);
+
+      this.map.easeTo({ center: newCenter, duration: 300 });
+    }
+
+    this.sveltePopupContainer = container;
   }
 
   addMouseHandlers(layerId: string, clusterOrPoint: ClusterOrPoint) {

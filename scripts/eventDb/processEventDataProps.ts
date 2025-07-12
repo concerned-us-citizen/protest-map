@@ -40,7 +40,11 @@ function mapHeaders(headers: string[]) {
     let firstWord = header.trim().split(/\s+/)[0].toLowerCase();
     if (firstWord === "linke") {
       firstWord = "name";
-    } else if (firstWord === "submit" || firstWord === "dill") {
+    } else if (
+      firstWord === "submit" ||
+      firstWord === "dill" ||
+      firstWord === "no"
+    ) {
       firstWord = "date";
     } else if (firstWord === "org.") {
       firstWord = "link";

@@ -68,6 +68,7 @@
   bind:this={dialog}
   id={regionNavigationDialogId}
   class={["region-dialog", className]}
+  topAligned
   title="Jump to Region"
   showDismissButton
   onClosing={() => {
@@ -148,7 +149,7 @@
     margin: 0.25rem 0 0;
     padding: 0;
     list-style: none;
-    max-height: 8rem;
+    max-height: 10rem;
     overflow: auto;
   }
   .recents-item {

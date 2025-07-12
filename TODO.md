@@ -1,14 +1,15 @@
 Critical:
 - Verify counts against K's numbers
-Clear search dialog content at open - otherwise autocomplete looks bad
 Wisconsin 6/15 shows 1 location, but no markers
 Arkansas 6/2 shows 2
 
 Moderate:
 
+- Scroll map popups into view
+- Keep event info panel open during animation
+- Turnout
 - Add event names to search, on select they should switch to an event name page
 - Fold multiple events into one in popup
-- Scroll map popups into view
 - Show time and organizer in popup
 - Using synchronous results on autocomplete before opening may end up feeling unresponsive
 - better aria/keyboard handling

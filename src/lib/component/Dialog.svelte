@@ -6,6 +6,7 @@
 
   const {
     class: className,
+    topAligned = false,
     title,
     showDismissButton = false,
     onDismiss,
@@ -14,6 +15,7 @@
     id,
   } = $props<{
     class?: ClassValue;
+    topAligned?: boolean;
     title?: string;
     showDismissButton?: boolean;
     onDismiss?: () => void;
@@ -42,7 +44,7 @@
 <div
   {id}
   bind:this={dialogEl}
-  class={["dialog", className]}
+  class={["dialog", className, topAligned ? "top-aligned" : ""]}
   role="dialog"
   aria-modal="true"
   aria-labelledby={title ? "dialog-heading" : undefined}
@@ -112,11 +114,14 @@
     margin-right: -6px;
   }
 
-  .dialog {
-    --dialog-y-translate: -0vh;
+  .dialog[popover] {
+    margin: 0;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -60%);
     border: none;
     opacity: 0;
-    transform: translateY(calc(var(--dialog-y-translate) + 10px));
     transition:
       opacity 0.3s ease,
       transform 0.3s ease,
@@ -125,11 +130,27 @@
 
     &:popover-open {
       opacity: 1;
-      transform: translateY(var(--dialog-y-translate));
+      transform: translate(-50%, -50%);
 
       @starting-style {
         opacity: 0;
-        transform: translateY(calc(var(--dialog-y-translate) + 10px));
+        transform: translate(-50%, -60%);
+      }
+    }
+  }
+
+  .dialog:global(.top-aligned)[popover] {
+    margin-top: 1rem;
+    top: 0px;
+    transform: translateX(-50%) translateY(-2rem);
+
+    &:popover-open {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+
+      @starting-style {
+        opacity: 0;
+        transform: translate(-50%, -2rem);
       }
     }
   }

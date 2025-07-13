@@ -118,12 +118,14 @@
     <div class="map-overlay">
       <div class="top-area">
         <div class="left-column">
-          <div class="title-and-filter-panel">
-            <TitlePanel {title} class="title-container" />
-            {#if pageState.filterVisible}
-              <FilterPanel class="filter-container" />
-            {/if}
-          </div>
+          {#if pageState.infoPanelsVisible}
+            <div class="title-and-filter-panel" transition:fade>
+              <TitlePanel {title} class="title-container" />
+              {#if pageState.filterVisible}
+                <FilterPanel class="filter-container" />
+              {/if}
+            </div>
+          {/if}
           {#if pageState.filter.isFiltering && !pageState.filterVisible}
             <PillButton
               white
@@ -166,8 +168,10 @@
         {#if pageState.updateAvailable}
           <UpdateBanner />
         {:else if pageState.eventModel.isLoaded}
-          {#if pageState.timelineVisible}
-            <TimelineContainer class="timeline-container" />
+          {#if pageState.infoPanelsVisible}
+            <div transition:fade>
+              <TimelineContainer class="timeline-container" />
+            </div>
           {/if}
         {/if}
       </div>

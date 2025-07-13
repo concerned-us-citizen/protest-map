@@ -20,15 +20,15 @@ export function onKeyDown(event: KeyboardEvent, pageState: PageState) {
     return;
   }
 
-  // Toggle Filter (F)
-  if (code === "KeyF") {
+  // Toggle Filter (Q)
+  if (code === "KeyQ") {
     pageState.toggleFilterVisible();
     event.preventDefault();
     return;
   }
 
-  // Toggle Navigation (R)
-  if (code === "KeyR") {
+  // Toggle Navigation (F)
+  if (code === "KeyF") {
     togglePopover(regionNavigationDialogId);
     event.preventDefault();
     return;
@@ -40,8 +40,15 @@ export function onKeyDown(event: KeyboardEvent, pageState: PageState) {
     pageState.mapModel.navigateToUS();
   }
 
-  // Help (I/H)
-  if (code === "KeyI" || code === "KeyH") {
+  // Help (I)
+  if (code === "KeyI") {
+    pageState.toggleInfoPanelsVisible();
+    event.preventDefault();
+    return;
+  }
+
+  // Help (H)
+  if (code === "KeyH") {
     togglePopover(protestMapTourId);
     event.preventDefault();
     return;

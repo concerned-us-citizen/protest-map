@@ -65,7 +65,7 @@
       <PillButton
         white
         popoverTarget={regionNavigationDialogId}
-        title={`Find a city, state, or ZIP code (${getShortcutPrefix()}R)`}
+        title={`Find a city, state, or ZIP code (${getShortcutPrefix()}F)`}
       >
         <Search />
       </PillButton>
@@ -73,7 +73,7 @@
       <PillButton
         white
         accented={pageState.filter.isFiltering}
-        title={`${pageState.filterVisible ? "Hide" : "Show"} Filter (${getShortcutPrefix()}F)`}
+        title={`${pageState.filterVisible ? "Hide" : "Show"} Filter (${getShortcutPrefix()}Q)`}
         onClick={() => pageState.toggleFilterVisible()}
       >
         <Settings2 />
@@ -105,14 +105,14 @@
       <PillButton
         white
         class="timeline-button"
-        title={`${pageState.toolbarVisible ? "Hide" : "Show"} timeline`}
-        onClick={() => pageState.toggleTimelineVisible()}
+        title={`${pageState.toolbarVisible ? "Hide" : "Show"} info panels ${getShortcutPrefix()}I)`}
+        onClick={() => pageState.toggleInfoPanelsVisible()}
       >
         <div class="timeline-icon-stack">
           <div class="timeline-icon">
             <ChartNoAxesColumn size={pageState.toolbarVisible ? "19" : "24"} />
           </div>
-          {#if pageState.timelineVisible}
+          {#if pageState.infoPanelsVisible}
             <div class="timeline-icon-overlay">
               <Ban size="24" />
             </div>

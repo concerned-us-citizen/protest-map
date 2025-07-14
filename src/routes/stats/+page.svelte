@@ -283,14 +283,20 @@
           <div class="row" style="grid-template-columns: {gridTemplate}">
             {#each columns as column, _i (column)}
               <!-- eslint-disable-next-line @typescript-eslint/no-explicit-any -->
-              {@const cellValue = (issue.item as any)[column]}
+              {@const cellValue = (issue.item as any)[column] as string}
               <div
                 class={["row-cell cell", `row-cell-${column}`]}
                 title={cellValue}
               >
                 <div class="cell-centering-container">
                   <div class="cell-value">
-                    {cellValue}
+                    {#if typeof cellValue === "string" && cellValue.startsWith("http")}
+                      <a href={cellValue} target="_blank" rel="noopener"
+                        >{cellValue}</a
+                      >
+                    {:else}
+                      {cellValue}
+                    {/if}
                   </div>
                   {#if cellValue?.length > 0 && isCopyableColumn(column)}
                     <PillButton
@@ -309,13 +315,15 @@
               <a
                 style="margin-left: .3rem"
                 href={`https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(issue.explanationArg)}`}
-                >Search Wikipedia</a
+                target="_blank"
+                rel="noopener">Search Wikipedia</a
               >
             {:else if issue.type === "address"}
               <a
                 style="margin-left: .3rem"
                 href={`https://duckduckgo.com/?q=${encodeURIComponent(issue.explanationArg)}`}
-                >Search DuckDuckGo</a
+                target="_blank"
+                rel="noopener">Search DuckDuckGo</a
               >
             {/if}
           </div>

@@ -9,6 +9,7 @@
   import { en } from "svelty-picker/i18n";
   import PillButton from "./PillButton.svelte";
   import { formatDate } from "$lib/util/date";
+  import { deviceInfo } from "$lib/model/DeviceInfo.svelte";
 
   const { class: className } = $props<{
     class?: ClassValue;
@@ -91,7 +92,10 @@
   >
     <div class="date-container">
       <h4>
-        {formatDate(pageState.filter.date)}
+        {formatDate(
+          pageState.filter.date,
+          deviceInfo.isNarrow ? "medium" : "long"
+        )}
       </h4>
     </div>
   </PillButton>

@@ -30,7 +30,14 @@
   <link rel="preload" as="image" href="tour-images/date-picker.png" />
   <link rel="preload" as="image" href="tour-images/info-popup.png" />
   <link rel="preload" as="image" href="tour-images/popup-turnout.png" />
-  <link rel="preload" as="image" href="tour-images/event-filter.png" />
+  <link
+    rel="preload"
+    as="image"
+    href="tour-images/find-region-and-filter-buttons.png"
+  />
+  <link rel="preload" as="image" href="tour-images/area-lean.png" />
+  <link rel="preload" as="image" href="tour-images/event-names.png" />
+  <link rel="preload" as="image" href="tour-images/find-region-dialog.png" />
   <link rel="preload" as="image" href="tour-images/back-button.png" />
 </svelte:head>
 
@@ -43,9 +50,9 @@
       title: "US Protests Map",
       description: `
     <p>This map shows recent and planned US protest locations and turnout over time.</p>
-    <p>It's <a href="stats" target="_blank" rel="noopener">built daily</a> from data provided by <a href="https://thepeopledissent.substack.com" target="_blank">We (the People) Dissent</a>.
+    <p>It's <a href="stats" target="_blank" rel="noopener">built daily</a> from data provided by <a href="https://thepeopledissent.substack.com" target="_blank" rel="noopener">We (the People) Dissent</a>.
     <p>Locations are shown by date, which you can either browse or run as an animation.</p>
-    <p>For larger event days, estimated protester numbers are also presented (highlighted on the timeline).
+    <p>For larger event days, estimated protester numbers are also presented (and highlighted on the timeline).
     <p><i>Important: locations are approximate. For addresses, follow the event name link that appears when clicking on a marker.</i></p>
     `,
     },
@@ -79,11 +86,17 @@
     `,
     },
     {
-      title: "View By Event",
+      title: "Filtering Events",
       description: `
-    <p>Each protest location is associated with an event (e.g."Hands Off!"). In most cases, there are multiple events on a given day.</p>
-    <img src="tour-images/event-filter.png" class='tour-image' />
-    <p>To see specific events' locations, ${tap} on the location count next to the date to see the list of events. Then ${tap} one or more names from that list.</p>
+    <p>You can restrict the markers and totals shown using a combination of several filters, using the Filter and Find Region tools:</p>
+    <img src="tour-images/find-region-and-filter-buttons.png" class='tour-image' />
+    <p><b>Voter Lean</b> - show only locations in areas with specied voter leans.</p>
+    <img src="tour-images/area-lean.png" class='tour-image' />
+    <p><b>Event Name</b> - show only locations associated with specified event names.</p>
+    <img src="tour-images/event-names.png" class='tour-image' />
+    <p><b>Region</b> - ${tap} the search tool and enter a ZIP code, city, or state.</p> 
+    <img src="tour-images/find-region-dialog.png" class='tour-image' />
+    <p>The map will zoom, and only markers within the highlighted region will be presented.</p>
     `,
     },
     {

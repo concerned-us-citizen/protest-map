@@ -1,53 +1,34 @@
 <script lang="ts">
   import { attributions } from "../attributions";
-  import { getPageStateFromContext } from "../model/PageState.svelte";
 
   const { className } = $props();
-
-  const pageState = getPageStateFromContext();
 </script>
 
 <div class={`content ${className}`}>
   <p>
-    This project is open source. To give feedback, you can either post
-    <a href="https://github.com/concerned-us-citizen/protest-map"
-      >an issue on GitHub</a
+    This project is a solo <a
+      href="https://github.com/concerned-us-citizen/protest-map">open source</a
     >
-    or
-    <a href="mailto:support@protestmap.info?subject=Feedback"
-      >send us an email</a
-    >.
+    effort.
+    <a href="mailto:support@protestmap.info?subject=Feedback">Have feedback?</a>
   </p>
   <p>
-    The map owes much to the the data provided by <a
+    The map's data comes from the continuous hard work of the volunteers around <a
       href="https://thepeopledissent.substack.com">We (The People) Dissent</a
-    >. Data Sources:
-  </p>
-  <p class="data-source-links">
-    <a
-      href="https://docs.google.com/spreadsheets/d/1f-30Rsg6N_ONQAulO-yVXTKpZxXchRRB2kD3Zhkpe_A/edit?gid=2111558793#gid=2111558793"
-      >Event Data
-    </a>
-    <a
-      href="https://docs.google.com/spreadsheets/d/1hQzNbsbupLqtijfQywpmZs6nKSNLmEbugaYl6HWbyvA/edit?gid=1716080084#gid=1716080084"
-      >Turnout Data
-    </a>
+    >. You can view most the recent data ingestion stats
+    <a href="/stats" target="_blank" rel="noopener">here</a>.
   </p>
   <p>Many thanks also to those responsible for these valuable resources:</p>
   <div class="attribution-container">
     {#each Object.values(attributions) as attribution, _i (attribution.resourceName)}
       <div class="attribution">
         <div class="description">{attribution.description}</div>
-        <a href={attribution.resourceLink} target="_blank"
+        <a href={attribution.resourceLink} target="_blank" rel="noopener"
           >{attribution.resourceName}</a
         >
       </div>
     {/each}
   </div>
-
-  <p class="last-updated">
-    {pageState.eventModel.formattedUpdatedAt}
-  </p>
 </div>
 
 <style>

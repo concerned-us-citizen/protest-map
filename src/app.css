@@ -3,12 +3,12 @@
 html,
 body {
   font-family: sans-serif;
-  --toolbar-margin: 0.9375rem;
-  --dropdown-top-margin: 0.4rem;
 
-  /* These below are here so that the size of the icon button can influence
-    the width of the title panel */
-  --icon-button-size: 2.3rem;
+  button {
+    font-size: 0.9rem;
+  }
+
+  --toolbar-margin: 0.9375rem;
 
   --pill-button-background: #f3f4f6; /* gray-100 */
   --pill-button-hover-background: #e5e7eb; /* gray-200 */
@@ -46,8 +46,4 @@ body.touch-device {
 .maplibregl-ctrl-bottom-left {
   margin: var(--toolbar-margin);
   z-index: var(--controls-layer);
-}
-
-button {
-  font-size: 0.9rem;
 }

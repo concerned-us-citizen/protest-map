@@ -141,10 +141,11 @@
 
 <style>
   .tour-panel {
-    max-width: min(20em, 100vw - 4 * var(--toolbar-margin));
-    height: min(30em, calc(100vh - 4 * var(--toolbar-margin)));
+    max-width: min(20em, 100vw - 2 * var(--toolbar-margin));
+    height: min(30em, calc(100vh - 2 * var(--toolbar-margin)));
     display: flex;
     flex-direction: column;
+    gap: 0.5rem;
   }
 
   .swipe-panel {
@@ -160,6 +161,7 @@
     display: flex;
     flex-direction: column;
     justify-content: stretch;
+    scrollbar-width: auto;
   }
 
   .header {

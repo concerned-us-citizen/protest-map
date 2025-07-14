@@ -98,3 +98,43 @@ export function isHttpUrl(
     return false; // thrown if input is not absolute or is malformed
   }
 }
+
+export function getUniquePropCounts<T>(
+  items: T[],
+  prop: keyof T
+): { value: string; count: number }[] {
+  const counts = new Map<string, number>();
+  const order: string[] = [];
+  for (const item of items) {
+    const value = item[prop];
+    if (typeof value === "string") {
+      if (!counts.has(value)) {
+        order.push(value);
+        counts.set(value, 1);
+      } else {
+        counts.set(value, counts.get(value)! + 1);
+      }
+    }
+  }
+
+  return order.map((value) => ({
+    value,
+    count: counts.get(value)!,
+  }));
+}
+
+export function groupByProp<T>(items: T[], prop: keyof T): Record<string, T[]> {
+  const groups: Record<string, T[]> = {};
+
+  for (const item of items) {
+    const key = item[prop];
+    if (typeof key === "string") {
+      if (!groups[key]) {
+        groups[key] = [];
+      }
+      groups[key].push(item);
+    }
+  }
+
+  return groups;
+}

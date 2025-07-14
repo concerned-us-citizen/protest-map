@@ -1,24 +1,7 @@
 import Database, { Statement } from "better-sqlite3";
-import { CityInfo, Coordinates, Nullable } from "../../src/lib/types";
+import { CityInfo } from "../../src/lib/types";
 import { dateToYYYYMMDDInt } from "../../src/lib/util/date";
-
-interface CommonProps extends Coordinates {
-  pctDemLead: Nullable<number>;
-  cityInfoId: number;
-  name: string;
-  date: string;
-  link: Nullable<string>;
-}
-export interface RawProtestEvent extends CommonProps {
-  type: "event";
-}
-
-export interface RawTurnout extends CommonProps {
-  type: "turnout";
-  coverageUrl: string;
-  low: number;
-  high: number;
-}
+import { RawProtestEvent, RawTurnout } from "../../src/lib/stats/types";
 
 export class NodeEventAndTurnoutDb {
   private db: Database.Database;

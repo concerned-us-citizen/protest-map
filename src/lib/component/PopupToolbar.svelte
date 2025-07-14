@@ -74,7 +74,12 @@
         white
         accented={pageState.filter.isFiltering}
         title={`${pageState.filterVisible ? "Hide" : "Show"} Filter (${getShortcutPrefix()}Q)`}
-        onClick={() => pageState.toggleFilterVisible()}
+        onClick={() => {
+          pageState.toggleFilterVisible();
+          if (pageState.filterVisible) {
+            pageState.infoPanelsVisible = true;
+          }
+        }}
       >
         <Settings2 />
       </PillButton>
@@ -104,6 +109,7 @@
 
       <PillButton
         white
+        accented={!pageState.infoPanelsVisible}
         class="timeline-button"
         title={`${pageState.toolbarVisible ? "Hide" : "Show"} info panels ${getShortcutPrefix()}I)`}
         onClick={() => pageState.toggleInfoPanelsVisible()}

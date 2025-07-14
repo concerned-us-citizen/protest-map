@@ -7,7 +7,6 @@ export type Files = {
   locationCache: string;
   events: string;
   log: string;
-  summary: string;
 };
 
 // Only expose the paths that make sense
@@ -17,7 +16,8 @@ export type PathKeys =
   | "buildEvents"
   | "buildLog"
   | "buildSummary"
-  | "releaseEvents";
+  | "releaseEvents"
+  | "releaseLog";
 
 export type Paths = Record<PathKeys, string>;
 

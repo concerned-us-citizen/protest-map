@@ -42,9 +42,10 @@
     {
       title: "US Protests Map",
       description: `
-    <p>This map shows recent and planned US protest locations and turnout over time, from data collected by <a href="https://thepeopledissent.substack.com" target="_blank">We (the People) Dissent</a>. It's synced daily.</p>
+    <p>This map shows recent and planned US protest locations and turnout over time.</p>
+    <p>It's <a href="stats" target="_blank" rel="noopener">built daily</a> from data provided by <a href="https://thepeopledissent.substack.com" target="_blank">We (the People) Dissent</a>.
     <p>Locations are shown by date, which you can either browse or run as an animation.</p>
-    <p>For larger event days, estimated protester turnouts may also be presented.
+    <p>For larger event days, estimated protester numbers are also presented (highlighted on the timeline).
     <p><i>Important: locations are approximate. For addresses, follow the event name link that appears when clicking on a marker.</i></p>
     `,
     },

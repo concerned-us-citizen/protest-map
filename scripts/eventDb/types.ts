@@ -5,8 +5,6 @@ import {
   type Nullable,
 } from "../../src/lib/types";
 
-export type FetchedDataType = "event" | "turnout";
-
 export const EventOrTurnoutRowCommonSchema = z.object({
   date: z.string(),
   address: z.string().optional(),

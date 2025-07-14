@@ -9,7 +9,9 @@ import {
   EventOrTurnoutRow,
   EventRowSchema,
   FetchedDataType,
-} from "./types";
+  RawProtestEvent,
+  RawTurnout,
+} from "../../src/lib/stats/types";
 import {
   normalizeYearTo2025,
   normalizeToMMDDYYYY,
@@ -20,7 +22,6 @@ import {
   isLikelyMalformedUrl,
 } from "../../src/lib/util/string";
 import { Nullable } from "../../src/lib/types";
-import { RawProtestEvent, RawTurnout } from "./NodeEventAndTurnoutDb";
 import { getStateInfo } from "./usStateInfo";
 
 export interface SheetProcessingProps<T extends EventOrTurnoutRowSchemaType> {
@@ -61,9 +62,11 @@ export async function fetchAndProcessData<
       }
       const firstRowSampleResult = schema.safeParse(sheet.rows[1]);
       if (!firstRowSampleResult.success) {
-        logger.logIssue(
-          `'${sheet.title}': differently shaped, skipping`,
-          firstRowSampleResult.error.errors
+        await logger.logIssue(
+          "other",
+          firstRowSampleResult,
+          sheet.title,
+          `Differently shaped header row, skipping ${JSON.stringify(firstRowSampleResult.error.errors, null, 2)}`
         );
         logger.current.skippedSheets.push({
           title: sheet.title,
@@ -85,7 +88,12 @@ export async function fetchAndProcessData<
       try {
         parsedRow = schema.parse(row);
       } catch (err) {
-        logger.logIssue(`'${sheet.title}': Zod failed to parse:`, err);
+        await logger.logIssue(
+          "other",
+          row,
+          sheet.title,
+          `Zod failed to parse: ${JSON.stringify(err)}`
+        );
         logger.current.rejects++;
         continue;
       }
@@ -164,19 +172,19 @@ async function sanitize<T extends EventRow | TurnoutRow>(
   let sanitizedName: string;
   if (!name || name === "" || badNames.has(name)) {
     sanitizedName = unnamed;
-    logger.logInvalidEntry(
+    await logger.logIssue(
+      "name",
       row,
       sheetName,
-      `Unnamed ${fetchedDataType} - not rejected, will be titled '${unnamed}'`
+      `Unnamed - will be titled '${unnamed}'`
     );
-    logger.current.badNames++;
   } else if (name.includes("http:") || name.includes("https:")) {
-    logger.logInvalidEntry(
+    await logger.logIssue(
+      "name",
       row,
       sheetName,
-      `Bad event name ${name} - shouldn't be a URL - not rejected, will be titled '${unnamed}'`
+      `${name} shouldn't be a URL - will be titled '${unnamed}'`
     );
-    logger.current.badNames++;
     sanitizedName = unnamed;
   } else {
     sanitizedName = toTitleCase(name).trim();
@@ -185,8 +193,12 @@ async function sanitize<T extends EventRow | TurnoutRow>(
   // Sanitize and Validate Date (critical, skip row if invalid)
   const sanitizedDate = normalizeYearTo2025(normalizeToMMDDYYYY(date));
   if (!sanitizedDate) {
-    logger.logInvalidEntry(row, sheetName, `Bad date '${date}'`);
-    logger.current.badDates++;
+    await logger.logIssue(
+      "date",
+      row,
+      sheetName,
+      date.length > 0 ? date : "<unspecified>"
+    );
     return null; // Skip row if date is invalid
   }
 
@@ -194,32 +206,26 @@ async function sanitize<T extends EventRow | TurnoutRow>(
   const sanitizedState = state.trim();
   const stateIdInfo = getStateInfo(sanitizedState);
   if (!stateIdInfo) {
-    logger.logInvalidEntry(row, sheetName, `Invalid state name '${state}'`);
-    logger.current.badAddresses++;
+    await logger.logIssue(
+      "cityOrState",
+      row,
+      sheetName,
+      `Unrecognized state name '${state}'`
+    );
     return null;
   }
 
   // Sanitize and Validate Zip (warn only)
   let sanitizedZip = zip?.trim();
   if (!isValidZipCode(sanitizedZip)) {
-    logger.logInvalidEntry(
-      row,
-      sheetName,
-      `Bad zipcode '${sanitizedZip}', not rejecting, leaving empty`
-    );
-    logger.current.badZipcodes++;
+    await logger.logIssue("zip", row, sheetName, sanitizedZip ?? "");
     sanitizedZip = "";
   }
 
   // Look for bad links
   let sanitizedLink = link?.trim();
   if (isLikelyMalformedUrl(sanitizedLink)) {
-    logger.logInvalidEntry(
-      row,
-      sheetName,
-      `Bad link '${sanitizedLink}, not rejected, leaving empty'`
-    );
-    logger.current.badLinks++;
+    await logger.logIssue("link", row, sheetName, sanitizedLink);
     sanitizedLink = "";
   }
 
@@ -232,12 +238,12 @@ async function sanitize<T extends EventRow | TurnoutRow>(
     sanitizedCoverageUrl = coverageUrl?.trim();
     if (sanitizedCoverageUrl) {
       if (isLikelyMalformedUrl(sanitizedCoverageUrl)) {
-        logger.logInvalidEntry(
+        await logger.logIssue(
+          "coverageUrl",
           row,
           sheetName,
-          `Bad coverageUrl '${sanitizedCoverageUrl}'`
+          sanitizedCoverageUrl
         );
-        logger.current.badCoverageUrls++;
         sanitizedCoverageUrl = "";
       }
     }
@@ -249,22 +255,22 @@ async function sanitize<T extends EventRow | TurnoutRow>(
     let badLow = false;
     if (!Number.isInteger(low)) {
       badLow = true;
-      logger.logInvalidEntry(
+      await logger.logIssue(
+        "turnoutNumbers",
         row,
         sheetName,
-        `Bad turnout #, low (${low}) should be a whole number`
+        `Low (${low}) should be a whole number`
       );
-      logger.current.badTurnoutNumbers++;
     }
     let badHigh = false;
     if (!Number.isInteger(high)) {
       badHigh = true;
-      logger.logInvalidEntry(
+      await logger.logIssue(
+        "turnoutNumbers",
         row,
         sheetName,
-        `Bad turnout #, high (${high}) should be a whole number`
+        `High (${high}) should be a whole number`
       );
-      logger.current.badTurnoutNumbers++;
     }
     if (badLow && badHigh) {
       return null;
@@ -275,12 +281,12 @@ async function sanitize<T extends EventRow | TurnoutRow>(
     }
 
     if (low > high) {
-      logger.logInvalidEntry(
+      await logger.logIssue(
+        "turnoutNumbers",
         row,
         sheetName,
-        `Bad turnout #, low of ${low} > high of ${high}`
+        `Low of ${low} > high of ${high}`
       );
-      logger.current.badTurnoutNumbers++;
       return null;
     }
   }

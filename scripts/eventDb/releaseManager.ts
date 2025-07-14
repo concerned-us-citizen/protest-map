@@ -128,10 +128,6 @@ const [, , cmd] = process.argv;
         config.paths.buildLocationCache
       );
       break;
-    case "upload-log":
-      await uploadFile(config.paths.buildLog, "issues-last.log");
-      await uploadFile(config.paths.buildSummary, "summary-last.txt");
-      break;
     default:
       console.error(`Unknown command: ${cmd}`);
       process.exit(1);

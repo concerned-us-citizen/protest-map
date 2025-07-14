@@ -1,7 +1,7 @@
 import { Coordinates } from "../../src/lib/types";
 import { delay } from "../../src/lib/util/misc";
 import { config } from "./config";
-import { Address } from "./types";
+import { Address } from "../../src/lib/stats/types";
 
 const USER_AGENT = config.userAgent;
 const DELAY_MS = 1000;

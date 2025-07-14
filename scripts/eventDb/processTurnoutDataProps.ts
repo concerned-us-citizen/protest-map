@@ -1,5 +1,5 @@
 import { SheetProcessingProps } from "./fetchAndProcessData";
-import { TurnoutRowSchema } from "./types";
+import { TurnoutRowSchema } from "../../src/lib/stats/types";
 
 export const processTurnoutDataProps: SheetProcessingProps<
   typeof TurnoutRowSchema

@@ -2,22 +2,7 @@
 
 html,
 body {
-  overflow: hidden; /* Hide scrollbars */
-  touch-action: none; /* Prevent bounce */
-  overscroll-behavior: none; /* Prevent pull-to-refresh on iOS */
-  margin: 0; /* Remove default body margin */
-  padding: 0; /* Remove default body padding */
-  width: 100%; /* Ensure full width */
-  height: 100%; /* Ensure full height */
-
-  /* Suppress default OS long press actions on mobile */
-  user-select: none;
-  -webkit-user-select: none; /* Safari */
-  -ms-user-select: none; /* IE 10+ */
-  touch-action: manipulation; /* Prevent default touch behaviors like context menu */
-
   font-family: sans-serif;
-
   --toolbar-margin: 0.9375rem;
   --dropdown-top-margin: 0.4rem;
 

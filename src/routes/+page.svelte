@@ -30,6 +30,8 @@
   import ShareDialog from "$lib/component/dialog/ShareDialog.svelte";
   import { showPopover } from "$lib/component/popover";
   import PopupToolbar from "$lib/component/PopupToolbar.svelte";
+  import { browser } from "$app/environment";
+  import { onMount } from "svelte";
 
   const pageState = PageState.create();
   createPageStateInContext(pageState);
@@ -96,6 +98,27 @@
         ? prettifyNamedRegion(pageState.filter.namedRegion)
         : "the US"
     }`;
+  });
+
+  onMount(() => {
+    if (browser) {
+      document.addEventListener(
+        "dblclick",
+        (event) => {
+          if (
+            event.target instanceof HTMLElement &&
+            event.target.closest("button")
+          ) {
+            event.preventDefault();
+          }
+        },
+        { capture: true }
+      ); // Use capture to catch the event early
+
+      if (deviceInfo.isTouchDevice) {
+        document.body.classList.add("touch-device");
+      }
+    }
   });
 </script>
 
@@ -312,5 +335,23 @@
   :global(body:has(.maplibregl-popup-tip))
     :global(:is(.maplibregl-ctrl-top-left, .maplibregl-ctrl-top-left *)) {
     opacity: 0;
+  }
+
+  :global(html),
+  :global(body) {
+    overflow: hidden; /* Hide scrollbars */
+    touch-action: none; /* Prevent bounce */
+    overscroll-behavior: none; /* Prevent pull-to-refresh on iOS */
+
+    /* Suppress default OS long press actions on mobile */
+    user-select: none;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10+ */
+    touch-action: manipulation; /* Prevent default touch behaviors like context menu */
+
+    margin: 0; /* Remove default body margin */
+    padding: 0; /* Remove default body padding */
+    width: 100%; /* Ensure full width */
+    height: 100%; /* Ensure full height */
   }
 </style>

@@ -52,7 +52,7 @@ The project creates and deploys a static web site to GitHub Pages. It has two ma
         Running this generates multiple artifacts in the build_db directory:
         * *events.sqlite* - the database used by the app
         * *cached-location-data.sqlite* - an accumulating cache of data retrieved from Nominatim and Wikidata used during the build process. See **Managing Cached Lookup Data** below for details on how to manage this.
-        * *issues.log* - a log of errors and stats from the run.
+        * *processing_summary.json* - a log of errors and stats from the run.
     
     * Install `events.sqlite` to the static directory
         ```bash

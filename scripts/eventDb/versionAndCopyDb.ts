@@ -13,22 +13,23 @@ const git = simpleGit();
 const shortSha = (await git.revparse(["--short", "HEAD"])).trim();
 
 // Versioned filename
-const versionedFilename = `events-${shortSha}-${dateStr}.sqlite`;
-const targetFile = resolve(config.dirs.release, versionedFilename);
-const manifestFile = resolve(config.dirs.release, "latest.json");
+const versionedDbFilename = `events-${shortSha}-${dateStr}.sqlite`;
+const targetDbFile = resolve(config.dirs.release, versionedDbFilename);
+const targetManifestFile = resolve(config.dirs.release, "latest.json");
 
 try {
   mkdirSync(config.dirs.release, { recursive: true });
-  copyFileSync(config.paths.buildEvents, targetFile);
+  copyFileSync(config.paths.buildEvents, targetDbFile);
+  copyFileSync(config.paths.buildLog, config.paths.releaseLog);
 
   const manifest = {
-    dbFilename: versionedFilename,
+    dbFilename: versionedDbFilename,
     lastUpdated: isoTimestamp,
     sha: shortSha,
   };
 
-  writeFileSync(manifestFile, JSON.stringify(manifest, null, 2));
-  console.log(`✔ Wrote ${versionedFilename} and latest.json`);
+  writeFileSync(targetManifestFile, JSON.stringify(manifest, null, 2));
+  console.log(`✔ Wrote ${versionedDbFilename} and latest.json`);
 } catch (err) {
   console.error("❌ Failed to version/copy the database:", err);
   process.exit(1);

@@ -9,7 +9,6 @@
     "locationCache": "cached-location-data.sqlite",
     "precinctsSpatialIndex": "precincts-with-results-spatial-index.json",
     "events": "events.sqlite",
-    "log": "issues.log",
-    "summary": "summary.txt"
+    "log": "processing_summary.json"
   }
 }

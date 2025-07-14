@@ -1,5 +1,5 @@
 import { SheetProcessingProps } from "./fetchAndProcessData";
-import { EventRowSchema } from "./types";
+import { EventRowSchema } from "../../src/lib/stats/types";
 
 export const processEventDataProps: SheetProcessingProps<
   typeof EventRowSchema

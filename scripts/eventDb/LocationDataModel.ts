@@ -1,9 +1,8 @@
 import { Coordinates, Nullable } from "../../src/lib/types";
-import { LocationInfo } from "./types";
 import { geocodeFromService } from "./geocode";
 import { ScrapeLogger } from "./ScrapeLogger";
 import { LocationDataDb } from "./LocationDataDb";
-import { Address } from "./types";
+import { LocationInfo, Address } from "../../src/lib/stats/types";
 import { fetchVotingInfo } from "./votingInfo";
 import {
   fallBackCityThumbnailUrl,
@@ -59,12 +58,14 @@ export class LocationDataModel {
       thumbnailUrl: fallBackCityThumbnailUrl,
     };
 
-    const badCityMsg = `Bad city - could not resolve '${getCity(address)}' on Wikipedia (ambiguous?, mispelled?, wrong state?). Not rejecting, but will lack custom thumbnail and article`;
-
     // Failed wiki search for city before => use the default
     if (this.db.isBadCity(cityKey)) {
-      this.logger.logInvalidEntry(address, sheetName, `${badCityMsg} (cached)`);
-      this.logger.current.badCities++;
+      await this.logger.logIssue(
+        "cityOrState",
+        address,
+        sheetName,
+        getCity(address)
+      );
     } else {
       // Seen city before?
       let fetched = this.db.getCityInfo(cityKey);
@@ -72,15 +73,19 @@ export class LocationDataModel {
         cityInfo = fetched;
       } else {
         // If not, fetch it
-        this.logger.logInfo(`Fetching wiki data for ${city}, ${state}...`);
+        console.log(`Fetching wiki data for ${city}, ${state}...`);
         fetched = await fetchWikiCityInfo(city, state);
         this.logger.current.wikiFetches++;
         if (fetched) {
           cityInfo = fetched;
           this.db.addCityInfo(cityKey, cityInfo);
         } else {
-          this.logger.logInvalidEntry(address, sheetName, badCityMsg);
-          this.logger.current.badCities++;
+          await this.logger.logIssue(
+            "cityOrState",
+            address,
+            sheetName,
+            getCity(address)
+          );
           this.db.addBadCity(cityKey);
         }
       }
@@ -93,12 +98,12 @@ export class LocationDataModel {
     if (address.address || address.zip || !cityInfo.lat || !cityInfo.lon) {
       // Failed geocoding before?
       if (db.isBadAddress(addressKey)) {
-        this.logger.logInvalidEntry(
+        await this.logger.logIssue(
+          "address",
           address,
           sheetName,
-          `Bad address - unable to find geolocation for '${getAddress(address)}' (cached)`
+          `${getAddress(address)}`
         );
-        this.logger.current.badAddresses++;
         return null;
       }
 
@@ -113,12 +118,12 @@ export class LocationDataModel {
           this.db.addGeocoding(addressKey, coordinates);
         } catch {
           this.db.addBadAddress(addressKey);
-          this.logger.logInvalidEntry(
+          await this.logger.logIssue(
+            "address",
             address,
             sheetName,
-            `Bad address - unable to find geolocation for '${getAddress(address)}'`
+            `${getAddress(address)}`
           );
-          this.logger.current.badAddresses++;
           return null;
         }
       }

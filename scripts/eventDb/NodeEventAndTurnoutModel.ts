@@ -3,12 +3,12 @@ import { CityInfo } from "../../src/lib/types";
 import { fileExists } from "../../src/lib/util/file";
 import { asNormalizedKey } from "../../src/lib/util/string";
 import { config } from "./config";
-import {
-  NodeEventAndTurnoutDb,
+import { NodeEventAndTurnoutDb } from "./NodeEventAndTurnoutDb";
+import type {
+  FetchedDataType,
   RawProtestEvent,
   RawTurnout,
-} from "./NodeEventAndTurnoutDb";
-import { FetchedDataType } from "./types";
+} from "../../src/lib/stats/types";
 
 export class NodeEventAndTurnoutModel {
   private db: NodeEventAndTurnoutDb;

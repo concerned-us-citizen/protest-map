@@ -1,8 +1,11 @@
 import { Octokit } from "@octokit/rest";
-import { type ProcessingSummary, type RunSummary } from "./ScrapeLogger";
 import dotenv from "dotenv";
 import crypto from "crypto";
-import type { FetchedDataType } from "./types";
+import type {
+  FetchedDataType,
+  ProcessingSummary,
+  RunSummary,
+} from "../../src/lib/stats/types";
 
 dotenv.config();
 
@@ -110,11 +113,6 @@ export async function maybeCreateGithubIssue(summaryInfo: ProcessingSummary) {
     {
       test: (s) => s.unfetchedSheets.length > 0,
       message: (s) => `${s.fetchedDataType}: Failed fetching tab`,
-    },
-    {
-      test: (s) => s.added < thresholds[s.fetchedDataType].minRowCount,
-      message: (s) =>
-        `${s.fetchedDataType}: Fewer rows than expected (min ${thresholds[s.fetchedDataType].minRowCount}, added ${s.added})`,
     },
     {
       test: (s) => s.rejects > thresholds[s.fetchedDataType].maxRejects,

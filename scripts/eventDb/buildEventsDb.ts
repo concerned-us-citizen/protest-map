@@ -7,6 +7,7 @@ import { loadVotingInfo } from "./votingInfo";
 import { processEventDataProps } from "./processEventDataProps";
 import { fetchAndProcessData } from "./fetchAndProcessData";
 import { processTurnoutDataProps } from "./processTurnoutDataProps";
+import { maybeCreateGithubIssue } from "./createGithubSummaryIssue";
 
 async function main() {
   await fs.mkdir(config.dirs.build, { recursive: true });
@@ -41,7 +42,11 @@ async function main() {
   eventAndTurnoutModel.close();
   locationDataModel.close();
 
-  logger.publishResults();
+  const summary = await logger.close();
+
+  if (process.env.GITHUB_ACTIONS === "true") {
+    await maybeCreateGithubIssue(summary);
+  }
 }
 
 main();

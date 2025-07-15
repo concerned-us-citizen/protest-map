@@ -103,6 +103,7 @@
           {#if currentStep?.component}
             <Component {...currentStep.props || {}} />
           {:else}
+            <!-- IMPORTANT - the descriptions here are generated entirely by this library, no user content -->
             <!-- eslint-disable-next-line svelte/no-at-html-tags -->
             {@html currentStep.description}
           {/if}

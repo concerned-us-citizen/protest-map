@@ -7,6 +7,7 @@
   import { formatRangeTerse } from "./formatting";
   import { formatTerse } from "$lib/util/number";
   import Panel from "./Panel.svelte";
+  import InlineSvg from "$lib/InlineSvg.svelte";
 
   const { title, class: className } = $props<{
     title: string;
@@ -33,8 +34,7 @@
           onClick={() => (pageState.filter.desiredMarkerType = "event")}
         >
           <div class="event-icon">
-            <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-            {@html circledMarkerSvg}
+            <InlineSvg content={circledMarkerSvg} />
           </div>
           <div class="event-count">
             {#if pageState.filter.dateHasTurnout}
@@ -54,8 +54,7 @@
           onClick={() => (pageState.filter.desiredMarkerType = "turnout")}
         >
           <div class="event-icon">
-            <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-            {@html personSvg}
+            <InlineSvg content={personSvg} />
           </div>
           <div class="turnout-count">
             {#if showTurnout}

@@ -10,6 +10,7 @@
   import Panel from "../Panel.svelte";
   import { formatAsInteger } from "$lib/util/number";
   import { formatRangeTerse } from "../formatting";
+  import InlineSvg from "$lib/InlineSvg.svelte";
 
   const { class: className, ...rest } = $props<{
     class?: ClassValue;
@@ -98,16 +99,14 @@
                 class="small-icon"
                 style="color: {colorForVoterLean(voterLean)}"
               >
-                <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-                {@html personSvg}
+                <InlineSvg content={personSvg} />
               </div>
             {:else}
               <div
                 class="small-icon"
                 style="color: {colorForVoterLean(voterLean)}"
               >
-                <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-                {@html circledMarkerSvg}
+                <InlineSvg content={circledMarkerSvg} />
               </div>
             {/if}
             <div class="name-label">{formatName(voterLean)}</div>

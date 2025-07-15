@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { safelyBold } from "$lib/util/sanitize";
   import { onMount } from "svelte";
 
   export type AutocompleteItem = { name: string; id: number };
@@ -80,14 +81,6 @@
     open = false;
   };
 
-  const bold = (text: string, query: string) => {
-    if (!text || !query) return text ?? "";
-    const safe = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const exp = new RegExp(safe, "gi");
-    const result = text.replace(exp, (m) => `<strong>${m}</strong>`);
-    return result;
-  };
-
   function key(e: KeyboardEvent) {
     if (["ArrowDown", "ArrowUp", "Enter"].includes(e.key)) open = true;
     switch (e.key) {
@@ -141,7 +134,7 @@
           }}
         >
           <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-          {@html bold(s.name, query)}
+          {@html safelyBold(s.name, query)}
         </button>
       </li>
     {/each}

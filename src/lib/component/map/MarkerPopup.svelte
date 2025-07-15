@@ -6,6 +6,7 @@
   import Link from "../Link.svelte";
   import { isHttpUrl } from "$lib/util/misc";
   import { fallBackCityThumbnailUrl } from "$lib/images";
+  import FormattedText from "../FormattedText.svelte";
 
   const { populatedMarkers } = $props<{
     populatedMarkers: PopulatedMarker[];
@@ -110,7 +111,7 @@
                 <Link class="coverage" href={turnout.coverageUrl}>Coverage</Link
                 >
               {:else if typeof turnout.coverageUrl === "string" && turnout.coverageUrl.length > 0}
-                Coverage: {turnout.coverageUrl}
+                Coverage: <FormattedText text={turnout.coverageUrl} />
               {/if}
             </div>
           {/if}

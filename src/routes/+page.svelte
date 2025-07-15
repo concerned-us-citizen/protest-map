@@ -144,25 +144,30 @@
           {#if pageState.infoPanelsVisible}
             <div class="title-and-filter-panel" transition:fade>
               <TitlePanel {title} class="title-container" />
-              {#if pageState.filterVisible}
-                <FilterPanel class="filter-container" />
-              {/if}
+              <div class="filter-or-show-all-container">
+                {#if pageState.filterVisible}
+                  <div class="filter-container" transition:fade>
+                    <FilterPanel />
+                  </div>
+                {:else if pageState.filter.isFiltering && !pageState.filterVisible}
+                  <div class="show-all-button-container" transition:fade>
+                    <PillButton
+                      white
+                      class="show-all-button"
+                      large
+                      title={`Clear all filters and view entire US (${getShortcutPrefix()}C)`}
+                      onClick={() => {
+                        pageState.filter.clearAllFilters();
+                        pageState.mapModel.navigateToUS();
+                        pageState.mapModel.clearBoundsStack();
+                      }}
+                    >
+                      View All US Protests
+                    </PillButton>
+                  </div>
+                {/if}
+              </div>
             </div>
-          {/if}
-          {#if pageState.filter.isFiltering && !pageState.filterVisible}
-            <PillButton
-              white
-              class="show-all-button"
-              large
-              title={`Clear all filters and view entire US (${getShortcutPrefix()}C)`}
-              onClick={() => {
-                pageState.filter.clearAllFilters();
-                pageState.mapModel.navigateToUS();
-                pageState.mapModel.clearBoundsStack();
-              }}
-            >
-              View All US Protests
-            </PillButton>
           {/if}
         </div>
         <div class="buttons-container">
@@ -239,7 +244,7 @@
   }
 
   :global(.title-container),
-  :global(.filter-container),
+  .filter-container,
   :global(.show-all-button),
   .zoom-undo-button-wrapper,
   :global(.toolbar) {
@@ -281,13 +286,26 @@
     gap: 0.5rem;
   }
 
-  :global(.filter-container) {
+  .filter-or-show-all-container {
+    position: relative;
+  }
+
+  .show-all-button-container {
+    position: absolute;
+    inset: 0;
+  }
+
+  :global(.show-all-button) {
+    width: 100%;
+  }
+
+  .filter-container {
     flex: 1;
     overflow-y: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
-  :global(.filter-container)::-webkit-scrollbar {
+  .filter-container::-webkit-scrollbar {
     display: none;
   }
 

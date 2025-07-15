@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { slide } from "svelte/transition";
   import { getPageStateFromContext } from "$lib/model/PageState.svelte";
   import FormattedText from "$lib/component/FormattedText.svelte";
   import PillButton from "$lib/component/PillButton.svelte";
@@ -8,12 +7,12 @@
   const pageState = getPageStateFromContext();
 </script>
 
-<div transition:slide>
+<div>
   <Panel title="Filtering, Showing Protests:">
-    <div class="content" transition:slide>
+    <div class="content">
       <ul>
         {#each pageState.filter.filterDescriptions as filter, _i (filter.title)}
-          <li class="filter" transition:slide>
+          <li class="filter">
             <PillButton
               accented
               onClick={filter.clearFunc}

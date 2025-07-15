@@ -3,6 +3,8 @@
   import type { ClassValue } from "svelte/elements";
   import EventInfoPanel from "./EventInfoPanel.svelte";
   import Timeline from "./Timeline.svelte";
+  import { formatAsInteger } from "$lib/util/number";
+  import { countAndLabel } from "$lib/util/string";
 
   const { class: className } = $props<{
     class?: ClassValue;
@@ -18,6 +20,12 @@
   <Timeline />
   <div class="date-range">
     <div>{pageState.filter.formattedDateRangeStart}</div>
+    {#if pageState.filter.isFiltering}
+      <div class="matching-dates-count">
+        {countAndLabel(pageState.filter.filteredDateCount, "date")} (of
+        {formatAsInteger(pageState.filter.dateCount)})
+      </div>
+    {/if}
     <div>{pageState.filter.formattedDateRangeEnd}</div>
   </div>
 </div>
@@ -44,5 +52,12 @@
   .attribution-link {
     font-size: 0.7rem;
     color: #555;
+  }
+
+  .matching-dates-count {
+    background: var(--accent-color);
+    overflow: hidden;
+    border-radius: 0.3rem;
+    padding: 0.1rem 0.5rem;
   }
 </style>

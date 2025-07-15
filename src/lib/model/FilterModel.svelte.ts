@@ -82,6 +82,7 @@ export class FilterModel {
   inCurrentFilter(date: Date) {
     return this.#datesInFilterAsIntSet.has(date.getTime());
   }
+  readonly dateCount = $derived(this.dateSummaries.length);
   readonly filteredDateCount = $derived(this.#datesInFilterAsIntSet.size);
 
   namedRegion = $state<NamedRegion | undefined>();

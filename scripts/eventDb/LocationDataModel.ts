@@ -4,12 +4,9 @@ import { ScrapeLogger } from "./ScrapeLogger";
 import { LocationDataDb } from "./LocationDataDb";
 import { LocationInfo, Address } from "../../src/lib/stats/types";
 import { fetchVotingInfo } from "./votingInfo";
-import {
-  fallBackCityThumbnailUrl,
-  fetchWikiCityInfo,
-  WikiCityInfo,
-} from "./wikiCityInfo";
+import { fetchWikiCityInfo, WikiCityInfo } from "./wikiCityInfo";
 import { asNormalizedKey } from "../../src/lib/util/string";
+import { fallBackCityThumbnailUrl } from "../../src/lib/images";
 
 function getCity(sheetAddress: Address) {
   return `${sheetAddress.city}, ${sheetAddress.state}`;

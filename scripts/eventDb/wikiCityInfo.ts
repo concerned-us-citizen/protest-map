@@ -1,8 +1,6 @@
 import { delay } from "../../src/lib/util/misc";
 import { getStateInfo } from "./usStateInfo";
 
-export const fallBackCityThumbnailUrl =
-  "https://upload.wikimedia.org/wikipedia/en/5/59/Springfield_%28The_Simpsons%29.png";
 export interface WikiCityInfo {
   title: string;
   articleUrl: string;

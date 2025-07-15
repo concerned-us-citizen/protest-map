@@ -89,8 +89,9 @@ export function withTiming<T>(fn: () => T, label = "withTiming"): T {
 }
 
 export function isHttpUrl(
-  input: string
+  input: string | undefined
 ): input is `${"http" | "https"}://${string}` {
+  if (!(typeof input === "string")) return false;
   try {
     const url = new URL(input);
     return url.protocol === "http:" || url.protocol === "https:";

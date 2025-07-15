@@ -14,6 +14,7 @@
   import { getUniquePropCounts, groupByProp } from "$lib/util/misc";
   import { safeCopyToClipboard } from "$lib/util/os";
   import { ClipboardCopy } from "@lucide/svelte";
+  import Link from "$lib/component/Link.svelte";
 
   let summary: ProcessingSummary | undefined = $state();
   let selectedRunType: FetchedDataType = $state("event");
@@ -290,13 +291,7 @@
               >
                 <div class="cell-centering-container">
                   <div class="cell-value">
-                    {#if typeof cellValue === "string" && cellValue.startsWith("http")}
-                      <a href={cellValue} target="_blank" rel="noopener"
-                        >{cellValue}</a
-                      >
-                    {:else}
-                      {cellValue}
-                    {/if}
+                    <Link href={cellValue}>{cellValue}</Link>
                   </div>
                   {#if cellValue?.length > 0 && isCopyableColumn(column)}
                     <PillButton

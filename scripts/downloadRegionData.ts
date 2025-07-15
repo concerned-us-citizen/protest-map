@@ -4,6 +4,7 @@ import { basename } from "path";
 import { pipeline } from "stream/promises";
 import https from "https";
 import http from "http";
+import { config } from "./eventDb/config";
 
 const staticDataDir = "static/data";
 const MAX_REDIRECTS = 5;
@@ -69,7 +70,7 @@ async function downloadWithRedirects(
     request.on("error", reject);
   });
 }
-const tag = "v1.0.1";
+const tag = config.regionDbTag;
 for (const fileName of [
   `region-names-${tag}.json.gz`,
   `regions-${tag}.sqlite.gz`,

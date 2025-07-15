@@ -4,7 +4,6 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "extract-domains": "tsx scripts/extractLinkDomains.ts",
     "build-events-db": "tsx scripts/eventDb/buildEventsDb.ts",
     "download-precincts-spatial-index": "tsx scripts/eventDb/downloadPrecinctsSpatialIndex.ts",
     "dev": "vite dev",
@@ -70,6 +69,7 @@
     "sql.js": "^1.13.0",
     "svelty-picker": "^6.1.5",
     "title-case": "^4.3.2",
+    "wkx": "^0.5.0",
     "wkx-ts": "^1.0.1"
   }
 }

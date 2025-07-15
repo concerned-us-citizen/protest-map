@@ -26,6 +26,16 @@ export class NodeEventAndTurnoutDb {
 
   private insertTurnoutStatement: Statement<unknown[], unknown>;
 
+  private insertEventRegionStatement: Statement<
+    [number, number],
+    { "1": number } | undefined
+  >;
+
+  private insertTurnoutRegionStatement: Statement<
+    [number, number],
+    { "1": number } | undefined
+  >;
+
   private constructor(db: Database.Database) {
     this.db = db;
 
@@ -56,6 +66,12 @@ export class NodeEventAndTurnoutDb {
     );
     this.addSeenCityInfoStatement = this.db.prepare(
       "INSERT OR IGNORE INTO seen_city_infos (city_info_key, city_info_id) VALUES (?, ?)"
+    );
+    this.insertEventRegionStatement = this.db.prepare(
+      "INSERT INTO event_regions (event_id, region_id) VALUES (?, ?)"
+    );
+    this.insertTurnoutRegionStatement = this.db.prepare(
+      "INSERT INTO turnout_regions (turnout_id, region_id) VALUES (?, ?)"
     );
   }
 
@@ -114,6 +130,26 @@ export class NodeEventAndTurnoutDb {
       `);
       db.exec(`CREATE INDEX idx_turnouts_date ON turnouts(date);`);
       db.exec(`CREATE INDEX idx_turnouts_event_name ON turnouts(event_name)`);
+
+      db.exec(`
+        CREATE TABLE turnout_regions(
+          turnout_id INTEGER,
+          region_id INTEGER
+        );
+      `);
+      db.exec(
+        `CREATE INDEX idx_turnout_region_id ON turnout_regions(turnout_id, region_id)`
+      );
+
+      db.exec(`
+        CREATE TABLE event_regions(
+          event_id INTEGER,
+          region_id INTEGER
+        );
+      `);
+      db.exec(
+        `CREATE INDEX idx_event_region_id ON event_regions(event_id, region_id)`
+      );
 
       db.exec(`
         CREATE TEMPORARY TABLE seen_turnouts (
@@ -233,6 +269,16 @@ export class NodeEventAndTurnoutDb {
         ) t ON t.date = e.date
         GROUP BY e.date;
 `);
+  }
+
+  insertEventRegion(eventId: number, regionId: number) {
+    const result = this.insertEventRegionStatement.run(eventId, regionId);
+    return Number(result.lastInsertRowid);
+  }
+
+  insertTurnoutRegion(turnoutId: number, regionId: number) {
+    const result = this.insertTurnoutRegionStatement.run(turnoutId, regionId);
+    return Number(result.lastInsertRowid);
   }
 
   beginTransaction() {

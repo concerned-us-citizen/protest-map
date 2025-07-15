@@ -12,7 +12,6 @@ import {
 } from "$lib/types";
 import { formatDateTime } from "$lib/util/date";
 import { EventDb } from "./EventDb";
-import { booleanPointInPolygon, point } from "@turf/turf";
 import type { FilterOptions } from "./FilterModel.svelte";
 
 export class EventModel {
@@ -30,14 +29,7 @@ export class EventModel {
   );
 
   getMarkers(filter: FilterOptions): Marker[] {
-    let result = this.db ? this.db.getMarkers(filter) : [];
-    const polygon = filter.namedRegionPolygon;
-    if (polygon) {
-      result = result.filter((marker) =>
-        booleanPointInPolygon(point([marker.lon, marker.lat]), polygon)
-      );
-    }
-    return result;
+    return this.db ? this.db.getMarkers(filter) : [];
   }
 
   getDateSummaries() {

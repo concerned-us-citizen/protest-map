@@ -9,12 +9,15 @@ import type {
   RawProtestEvent,
   RawTurnout,
 } from "../../src/lib/stats/types";
+import { NodeRegionModel } from "./NodeRegionModel";
 
 export class NodeEventAndTurnoutModel {
   private db: NodeEventAndTurnoutDb;
+  private regionModel: NodeRegionModel;
 
-  private constructor(db: NodeEventAndTurnoutDb) {
+  private constructor(db: NodeEventAndTurnoutDb, regionModel: NodeRegionModel) {
     this.db = db;
+    this.regionModel = regionModel;
   }
 
   static async create() {
@@ -23,7 +26,8 @@ export class NodeEventAndTurnoutModel {
       await fs.unlink(dbPath);
     }
     const db = NodeEventAndTurnoutDb.create(dbPath);
-    return new NodeEventAndTurnoutModel(db);
+    const regionModel = await NodeRegionModel.create();
+    return new NodeEventAndTurnoutModel(db, regionModel);
   }
 
   async close() {
@@ -63,13 +67,27 @@ export class NodeEventAndTurnoutModel {
       eventOrTurnout
     );
     if (!db.hasSeenEventOrTurnoutKey(eventKey)) {
+      let id: number;
       if (eventOrTurnout.type === "event") {
-        db.insertEvent(eventOrTurnout as RawProtestEvent);
+        id = db.insertEvent(eventOrTurnout as RawProtestEvent);
       } else {
-        db.insertTurnout(eventOrTurnout as RawTurnout);
+        id = db.insertTurnout(eventOrTurnout as RawTurnout);
       }
 
       db.addSeenEventOrTurnoutKey(eventKey);
+
+      const regionIdsForEventOrTurnout =
+        this.regionModel.getRegionIdsContaining(
+          eventOrTurnout.lat,
+          eventOrTurnout.lon
+        );
+      for (const regionId of regionIdsForEventOrTurnout) {
+        if (eventOrTurnout.type === "event") {
+          db.insertEventRegion(id, regionId);
+        } else {
+          db.insertTurnoutRegion(id, regionId);
+        }
+      }
       return true;
     } else {
       return false;

@@ -17,12 +17,14 @@ export type PathKeys =
   | "buildLog"
   | "buildSummary"
   | "releaseEvents"
-  | "releaseLog";
+  | "releaseLog"
+  | "releaseRegionDb";
 
 export type Paths = Record<PathKeys, string>;
 
 export type AppConfig = {
   scrapeEventLinks: boolean;
+  regionDbTag: string;
   userAgent: string;
   dirs: Dirs;
   files: Files;

@@ -56,7 +56,7 @@ export class EventDb {
     builder.addDateSubquery(date);
     builder.addVoterLeanSubquery(voterLeans);
     builder.addSelectedEventNamesSubquery(eventNames);
-    builder.addNamedRegionOnlySubquery(namedRegion);
+    builder.addNamedRegionOnlySubquery(markerType, namedRegion);
 
     const stmt = builder.createStatement(this.db);
 
@@ -98,7 +98,7 @@ export class EventDb {
   }
 
   getVoterLeanCounts(filter: FilterOptions): VoterLeanCounts {
-    const { date, eventNames, namedRegion, voterLeans } = filter;
+    const { date, markerType, eventNames, namedRegion, voterLeans } = filter;
 
     const builder = new QueryBuilder(
       (whereClause) => `
@@ -113,7 +113,8 @@ export class EventDb {
     builder.addDateSubquery(date);
     builder.addVoterLeanSubquery(voterLeans);
     builder.addSelectedEventNamesSubquery(eventNames);
-    builder.addNamedRegionOnlySubquery(namedRegion);
+    builder.addNamedRegionOnlySubquery(markerType, namedRegion);
+
     const stmt = builder.createStatement(this.db);
     if (!stmt.step()) {
       throw new Error("Nothing returned for voter lean counts");
@@ -128,7 +129,7 @@ export class EventDb {
   }
 
   getVoterLeanTurnoutRange(filter: FilterOptions): VoterLeanTurnoutRange {
-    const { date, eventNames, namedRegion, voterLeans } = filter;
+    const { date, markerType, eventNames, namedRegion, voterLeans } = filter;
 
     const builder = new QueryBuilder(
       (whereClause) => `
@@ -146,7 +147,8 @@ export class EventDb {
     builder.addDateSubquery(date);
     builder.addVoterLeanSubquery(voterLeans);
     builder.addSelectedEventNamesSubquery(eventNames);
-    builder.addNamedRegionOnlySubquery(namedRegion);
+    builder.addNamedRegionOnlySubquery(markerType, namedRegion);
+
     const stmt = builder.createStatement(this.db);
     if (!stmt.step()) {
       throw new Error("Nothing returned for voter lean counts");
@@ -188,7 +190,7 @@ export class EventDb {
     `
     );
     builder.addDateSubquery(date);
-    builder.addNamedRegionOnlySubquery(namedRegion);
+    builder.addNamedRegionOnlySubquery("event", namedRegion);
     builder.addSelectedEventNamesSubquery(eventNames);
     builder.addVoterLeanSubquery(voterLeans);
 
@@ -214,7 +216,7 @@ export class EventDb {
     `
     );
     builder.addDateSubquery(date);
-    builder.addNamedRegionOnlySubquery(namedRegion);
+    builder.addNamedRegionOnlySubquery("turnout", namedRegion);
     builder.addSelectedEventNamesSubquery(eventNames);
     builder.addVoterLeanSubquery(voterLeans);
 
@@ -240,7 +242,7 @@ export class EventDb {
     `
     );
 
-    builder.addNamedRegionOnlySubquery(namedRegion);
+    builder.addNamedRegionOnlySubquery(markerType, namedRegion);
     builder.addSelectedEventNamesSubquery(eventNames);
     builder.addVoterLeanSubquery(voterLeans);
 
@@ -421,7 +423,7 @@ export class EventDb {
   getEventNamesAndCounts(
     filter: FilterOptions
   ): { name: string; count: number }[] {
-    const { date, namedRegion, eventNames, voterLeans } = filter;
+    const { date, markerType, namedRegion, eventNames, voterLeans } = filter;
 
     const builder = new QueryBuilder(
       (whereClause) => `
@@ -435,7 +437,7 @@ export class EventDb {
 
     builder.addDateSubquery(date);
     builder.addSelectedEventNamesSubquery(eventNames);
-    builder.addNamedRegionOnlySubquery(namedRegion);
+    builder.addNamedRegionOnlySubquery(markerType, namedRegion);
     builder.addVoterLeanSubquery(voterLeans);
 
     const stmt = builder.createStatement(this.db);
@@ -454,7 +456,7 @@ export class EventDb {
   getEventNamesAndTurnoutRanges(
     filter: FilterOptions
   ): { name: string; turnoutRange: TurnoutRange }[] {
-    const { date, namedRegion, eventNames, voterLeans } = filter;
+    const { date, markerType, namedRegion, eventNames, voterLeans } = filter;
 
     const builder = new QueryBuilder(
       (whereClause) => `
@@ -468,7 +470,7 @@ export class EventDb {
 
     builder.addDateSubquery(date);
     builder.addSelectedEventNamesSubquery(eventNames);
-    builder.addNamedRegionOnlySubquery(namedRegion);
+    builder.addNamedRegionOnlySubquery(markerType, namedRegion);
     builder.addVoterLeanSubquery(voterLeans);
 
     const stmt = builder.createStatement(this.db);
@@ -559,15 +561,20 @@ class QueryBuilder {
     }
   }
 
-  addNamedRegionOnlySubquery(namedRegion: NamedRegion | undefined) {
+  addNamedRegionOnlySubquery(
+    markerType: MarkerType,
+    namedRegion: NamedRegion | undefined
+  ) {
     if (namedRegion) {
-      this.appendSubquery(`lon BETWEEN ? AND ? AND lat BETWEEN ? AND ?`);
-      this.#params.push(
-        namedRegion.xmin,
-        namedRegion.xmax,
-        namedRegion.ymin,
-        namedRegion.ymax
-      );
+      this.appendSubquery(`
+        EXISTS (
+        SELECT 1
+        FROM ${markerType}_regions er
+        WHERE er.${markerType}_id = id
+          AND er.region_id = ?
+    )
+        `);
+      this.#params.push(namedRegion.id);
     }
   }
 

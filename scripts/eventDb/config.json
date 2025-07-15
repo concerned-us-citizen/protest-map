@@ -1,5 +1,6 @@
 {
   "scrapeEventLinks": false,
+  "regionDbTag": "v1.0.1",
   "userAgent": "ProtestMap/1.0 (hypo.30-buggy@icloud.com)",
   "dirs": {
     "build": "./build_db",
@@ -9,6 +10,7 @@
     "locationCache": "cached-location-data.sqlite",
     "precinctsSpatialIndex": "precincts-with-results-spatial-index.json",
     "events": "events.sqlite",
-    "log": "processing_summary.json"
+    "log": "processing_summary.json",
+    "regionDb": ""
   }
 }

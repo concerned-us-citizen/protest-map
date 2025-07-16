@@ -77,6 +77,7 @@
   <HistogramSlider
     className="slider"
     items={pageState.filter.dateSummaries}
+    highlightEnabled={pageState.filter.isFiltering}
     isEnabled={(dateSummary) =>
       pageState.filter.inCurrentFilter(dateSummary.date)}
     isHighlighted={(dateSummary) => dateSummary.hasTurnout}
@@ -116,7 +117,7 @@
     position: static;
     height: 3rem;
     transform: none;
-    background-color: #f5f5f5f2;
+    background-color: var(--panel-background-color);
     border-radius: 8px;
     box-shadow: 0 -2px 10px #0000001a;
     pointer-events: auto;

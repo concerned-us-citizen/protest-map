@@ -11,7 +11,6 @@ Moderate:
 - Using synchronous results on autocomplete before opening may end up feeling unresponsive
 - better aria/keyboard handling
 - timeline selection bar disappears when selecting from date picker
-- Timeline highlighted date bars extend beyond top of selection
 - Transitions for map markers
 
 Back Burner:

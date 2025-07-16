@@ -5,6 +5,7 @@
 
   interface Props {
     items: T[];
+    highlightEnabled: boolean;
     selectedItem: Nullable<T>;
     magnitudeFor: (_item: T) => number;
     isEnabled: (_item: T) => boolean;
@@ -16,6 +17,7 @@
 
   const {
     items,
+    highlightEnabled,
     selectedItem,
     magnitudeFor,
     isEnabled,
@@ -234,6 +236,16 @@
     {/if}
     {#if items.length > 0}
       {#each items as item, i (item)}
+        {@const enabled = isEnabled(item)}
+        {#if highlightEnabled && enabled}
+          <rect
+            class="enabled-highlight"
+            x={getBarX(i)}
+            y={0}
+            width={barWidth}
+            height={svgWrapperHeight}
+          />
+          #{/if}
         <rect
           class={[
             "data-bar",
@@ -261,7 +273,7 @@
           <rect
             class="selected-highlight"
             x={getBarX(i)}
-            y={topPadding}
+            y={0}
             width={barWidth}
             height={svgWrapperHeight}
           />
@@ -291,6 +303,11 @@
     fill: var(--accent-color);
   }
 
+  .enabled-highlight {
+    fill: var(--accent-color);
+    opacity: 0.2;
+  }
+
   rect.data-bar {
     fill: #00008b; /* Dark blue for standard bars */
     transition: fill 0.2s ease-in-out;
@@ -298,10 +315,6 @@
 
   rect.data-bar:hover {
     fill: #4169e1; /* RoyalBlue on hover */
-  }
-
-  rect.data-bar.selected {
-    fill: #ffa500; /* Orange for selected bars */
   }
 
   rect.data-bar.disabled {

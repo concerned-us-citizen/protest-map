@@ -20,7 +20,9 @@
   {/if}
   <Timeline />
   <div class="date-range">
-    <div>{pageState.filter.formattedDateRangeStart}</div>
+    <div class="date-range-value">
+      {pageState.filter.formattedDateRangeStart}
+    </div>
     {#if pageState.filter.isFiltering}
       <div class="matching-dates-count">
         {#if deviceInfo.isNarrow}
@@ -34,7 +36,9 @@
         {/if}
       </div>
     {/if}
-    <div>{pageState.filter.formattedDateRangeEnd}</div>
+    <div class="date-range-value">
+      {pageState.filter.formattedDateRangeEnd}
+    </div>
   </div>
 </div>
 
@@ -57,6 +61,14 @@
     margin-left: 1em;
     margin-right: 1em;
   }
+
+  .date-range-value {
+    padding: 0.1rem 0.5rem;
+    background: var(--panel-background-color);
+    border-radius: 0.3rem;
+    overflow: hidden;
+  }
+
   .attribution-link {
     font-size: 0.7rem;
     color: #555;

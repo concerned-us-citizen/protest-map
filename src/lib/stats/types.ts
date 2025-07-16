@@ -78,7 +78,7 @@ export interface RunSummary {
 }
 
 export interface ProcessingSummary {
-  runAt: string;
+  runAt: Date;
   elapsedSeconds: number;
   runs: RunSummary[];
 }

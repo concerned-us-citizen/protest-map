@@ -1,4 +1,3 @@
-import { formatDateTime } from "../../src/lib/util/date";
 import fs from "fs/promises";
 import { fileExists } from "../../src/lib/util/file";
 import { config } from "./config";
@@ -95,7 +94,7 @@ export class ScrapeLogger {
 
   async close() {
     const summary: ProcessingSummary = {
-      runAt: formatDateTime(new Date()),
+      runAt: new Date(),
       elapsedSeconds: (Date.now() - this.startTime) / 1000,
       runs: this.#runs.map((r) => r.summary),
     };

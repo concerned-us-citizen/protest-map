@@ -197,7 +197,9 @@
 <div class="page">
   <h2>Data Import Summary</h2>
   {#if summary}
-    <div class="updated">Imported: {summary.runAt}</div>
+    <div class="updated">
+      Imported: {new Date(summary.runAt).toLocaleString()}
+    </div>
 
     <div class="run-buttons">
       {#each summary.runs as run, _i (run.fetchedDataType)}

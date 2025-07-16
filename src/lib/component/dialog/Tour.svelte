@@ -49,6 +49,7 @@
   const swipeThreshold = 50; // Minimum distance for a swipe
 
   const handleTouchStart = (event: Event | TouchEvent) => {
+    if ((event.target as Element).closest("a")) return;
     if ("touches" in event) {
       touchStartX = event.touches[0].clientX;
       event.preventDefault();
@@ -56,6 +57,7 @@
   };
 
   const handleTouchEnd = (event: Event | TouchEvent) => {
+    if ((event.target as Element).closest("a")) return;
     if ("changedTouches" in event) {
       const touchEndX = event.changedTouches[0].clientX;
       const diff = touchEndX - touchStartX;

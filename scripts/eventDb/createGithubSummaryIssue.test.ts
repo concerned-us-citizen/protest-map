@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach, Mock } from "vitest";
 import { maybeCreateGithubIssue } from "./createGithubSummaryIssue";
 import { Octokit } from "@octokit/rest";
-import type { RunSummary, ProcessingSummary } from "./ScrapeLogger";
+import { RunSummary, ProcessingSummary } from "../../src/lib/stats/types";
 
 vi.mock("@octokit/rest");
 
@@ -16,17 +16,18 @@ function createSummaryWithRunProps(
     rowsProcessed: 11962,
     rejects: 892,
     duplicates: 982,
-    added: 10088,
+    totalRows: 1000,
     skippedSheets: [],
     unfetchedSheets: [],
     elapsedSeconds: 17.88,
     loggedIssues: 1299,
     wikiFetches: 0,
     geocodings: 0,
+    issues: [],
   };
 
   return {
-    runAt: `${new Date(2000, 11, 1)}`,
+    runAt: new Date(2000, 11, 1),
     elapsedSeconds: 100,
     runs: [
       {
@@ -70,9 +71,9 @@ afterEach(() => {
 });
 
 describe("maybeCreateGithubIssue", () => {
-  it("creates an issue for low added count", async () => {
+  it("creates an issue for low totalRows count", async () => {
     const info = createSummaryWithRunProps({
-      added: 5000,
+      totalRows: 5000,
       rejects: 100,
       skippedSheets: [],
     });
@@ -86,7 +87,7 @@ describe("maybeCreateGithubIssue", () => {
 
   it("creates an issue for high rejects", async () => {
     const info = createSummaryWithRunProps({
-      added: 12000,
+      totalRows: 12000,
       rejects: 5000,
       skippedSheets: [],
     });
@@ -112,7 +113,7 @@ describe("maybeCreateGithubIssue", () => {
 
   it("creates an issue for skipped sheets", async () => {
     const info = createSummaryWithRunProps({
-      added: 12000,
+      totalRows: 12000,
       rejects: 100,
       skippedSheets: [
         {
@@ -145,7 +146,7 @@ describe("maybeCreateGithubIssue", () => {
     delete process.env.GITHUB_REPOSITORY;
 
     const info = createSummaryWithRunProps({
-      added: 12000,
+      totalRows: 12000,
       rejects: 1000,
       skippedSheets: [],
     });

@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { PopulatedMarker, PopulatedTurnoutMarker } from "$lib/types";
   import { attributions } from "$lib/attributions";
-  import { countAndLabel, pluralize } from "$lib/util/string";
+  import { pluralize } from "$lib/util/string";
   import { formatRangeTerse } from "../formatting";
   import Link from "../Link.svelte";
   import { isHttpUrl } from "$lib/util/misc";
@@ -139,12 +139,6 @@
     display: flex;
     gap: 0.8em;
     align-items: center;
-  }
-
-  .event-count {
-    font-weight: bold;
-    align-self: center;
-    margin-bottom: -0.3rem;
   }
 
   .multiple-or-turnout-container {

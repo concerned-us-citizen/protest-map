@@ -57,3 +57,12 @@ export function boundsToPolygon(b: Bounds): Polygon {
     ],
   };
 }
+
+export function expandBounds(b: Bounds, margin: number) {
+  return {
+    xmin: b.xmin - margin,
+    ymin: b.ymin - margin,
+    xmax: b.xmax + margin,
+    ymax: b.ymax + margin,
+  };
+}

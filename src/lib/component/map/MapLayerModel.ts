@@ -1,5 +1,5 @@
 import type { PageState } from "$lib/model/PageState.svelte";
-import { type BBox2D, bboxToBounds } from "$lib/util/bounds";
+import { type BBox2D, bboxToBounds, expandBounds } from "$lib/util/bounds";
 import bbox from "@turf/bbox";
 import { featureCollection, point } from "@turf/helpers";
 import type {
@@ -95,7 +95,9 @@ export class MapLayerModel {
         );
 
         const bboxValue = bbox(fc) as BBox2D; // [minX, minY, maxX, maxY]
-        this.pageState.mapModel.navigateTo(bboxToBounds(bboxValue));
+        this.pageState.mapModel.navigateTo(
+          expandBounds(bboxToBounds(bboxValue), 15)
+        );
       }
     } catch (error) {
       console.error("Error getting cluster leaves:", error);
@@ -134,7 +136,7 @@ export class MapLayerModel {
 
     const vOffset = 14;
     const hOffset = 16;
-    const padding = 16;
+    const padding = this.pageState.mapModel.getMapPadding();
 
     // Step 1: Mount Svelte popup content
     const container = document.createElement("div");
@@ -172,16 +174,16 @@ export class MapLayerModel {
     let dx = 0;
     let dy = 0;
 
-    if (popupRect.left < mapRect.left + padding) {
-      dx = popupRect.left - mapRect.left - padding;
-    } else if (popupRect.right > mapRect.right - padding) {
-      dx = popupRect.right - mapRect.right + padding;
+    if (popupRect.left < mapRect.left + padding.left) {
+      dx = popupRect.left - mapRect.left - padding.left;
+    } else if (popupRect.right > mapRect.right - padding.right) {
+      dx = popupRect.right - mapRect.right + padding.right;
     }
 
-    if (popupRect.top < mapRect.top + padding) {
-      dy = popupRect.top - mapRect.top - padding;
-    } else if (popupRect.bottom > mapRect.bottom - padding) {
-      dy = popupRect.bottom - mapRect.bottom + padding;
+    if (popupRect.top < mapRect.top + padding.top) {
+      dy = popupRect.top - mapRect.top - padding.top;
+    } else if (popupRect.bottom > mapRect.bottom - padding.bottom) {
+      dy = popupRect.bottom - mapRect.bottom + padding.bottom;
     }
 
     // Convert screen dx/dy into map coordinates

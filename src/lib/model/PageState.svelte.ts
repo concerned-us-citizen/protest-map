@@ -115,7 +115,7 @@ export class PageState {
   private constructor() {
     this.regionModel = RegionModel.getInstance();
     this.eventModel = EventModel.create(); // Create EventModel immediately, it loads db in background
-    this.mapModel = new MapModel();
+    this.mapModel = new MapModel(this);
     this.regionLabeler = new RegionLabeler(this.regionModel);
     this.filter = new FilterModel(
       this.eventModel,

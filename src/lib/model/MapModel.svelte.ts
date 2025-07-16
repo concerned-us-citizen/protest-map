@@ -6,6 +6,7 @@ import {
   boundsToLngLatBoundsLike,
 } from "$lib/util/bounds";
 import { deviceInfo } from "./DeviceInfo.svelte";
+import type { PageState } from "./PageState.svelte";
 
 interface FitBoundsOptions {
   animate?: boolean;
@@ -13,6 +14,7 @@ interface FitBoundsOptions {
 }
 
 export class MapModel {
+  #pageState: PageState;
   #mapInstance: maplibregl.Map | undefined;
   #pendingBounds: Bounds | undefined;
   #initialBounds: Bounds | undefined;
@@ -22,8 +24,27 @@ export class MapModel {
   #boundsStack = $state<Bounds[]>([]);
   #isAtInitialBounds = $state(false);
 
-  constructor() {
+  constructor(pageState: PageState) {
+    this.#pageState = pageState;
     this.navigateToUS(true);
+  }
+
+  getMapPadding() {
+    const container = this.mapInstance.getContainer();
+    const paddingPercent = 0.05; // 5% of the smaller dimension
+    const basePadding = paddingPercent * container.clientWidth;
+    const pageState = this.#pageState;
+    const topPanelHeight = pageState.infoPanelsVisible
+      ? 110 + (pageState.filter.isFiltering ? 30 : 0)
+      : basePadding;
+    const bottomPanelHeight = pageState.infoPanelsVisible ? 90 : basePadding;
+    const toolbarWidth = pageState.toolbarVisible ? 50 : basePadding;
+    return {
+      top: topPanelHeight,
+      left: basePadding,
+      bottom: bottomPanelHeight,
+      right: toolbarWidth,
+    };
   }
 
   navigateToUS(initializing = false) {
@@ -83,16 +104,7 @@ export class MapModel {
     const animate = options?.animate ?? true;
     const addPadding = options?.addPadding ?? true;
 
-    const container = this.mapInstance.getContainer();
-    const paddingPercent = 0.1; // 10% of the smaller dimension
-    const hPadding = paddingPercent * container.clientWidth;
-
-    const padding = {
-      top: 80,
-      bottom: 120,
-      left: hPadding,
-      right: hPadding,
-    };
+    const padding = this.getMapPadding();
 
     this.mapInstance.fitBounds(boundsToLngLatBoundsLike(bounds), {
       padding: addPadding ? padding : 0,

@@ -19,6 +19,10 @@
     align-items: center;
     justify-content: center;
     text-align: center;
+    background: var(--panel-background-color);
+    border-radius: 0.3rem;
+    overflow: hidden;
+    padding: 1rem;
   }
 
   .spinner {

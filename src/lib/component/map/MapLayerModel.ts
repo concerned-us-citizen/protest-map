@@ -95,9 +95,7 @@ export class MapLayerModel {
         );
 
         const bboxValue = bbox(fc) as BBox2D; // [minX, minY, maxX, maxY]
-        this.pageState.mapModel.navigateTo(
-          expandBounds(bboxToBounds(bboxValue), 15)
-        );
+        this.pageState.mapModel.navigateTo(bboxToBounds(bboxValue));
       }
     } catch (error) {
       console.error("Error getting cluster leaves:", error);

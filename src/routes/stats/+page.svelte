@@ -11,10 +11,11 @@
   import { formatAsInteger } from "$lib/util/number";
   import { toTitleCase } from "$lib/util/string";
   import { onMount, tick } from "svelte";
-  import { getUniquePropCounts, groupByProp } from "$lib/util/misc";
+  import { groupByProp } from "$lib/util/misc";
   import { safeCopyToClipboard } from "$lib/util/os";
   import { ClipboardCopy } from "@lucide/svelte";
   import Link from "$lib/component/Link.svelte";
+  import IssueBadges from "./IssueBadges.svelte";
 
   let summary: ProcessingSummary | undefined = $state();
   let selectedRunType: FetchedDataType = $state("event");
@@ -44,9 +45,9 @@
     return issuesGroupedBySheetName[selectedSheetName] ?? [];
   });
 
-  let issuesAndCountsForSelectedSheetName = $derived.by(() => {
+  let issuesForSelectedSheetNameGroupedByType = $derived.by(() => {
     if (!selectedSheetName) return [];
-    return getUniquePropCounts(issuesForSelectedSheetName, "type");
+    return groupByProp(issuesForSelectedSheetName, "type");
   });
 
   let selectedSpreadsheetLink = $derived.by(() => {
@@ -248,27 +249,33 @@
       <div class="sheetname-buttons">
         {#each Object.entries(issuesGroupedBySheetName) as [sheetName, issues] (sheetName)}
           <PillButton
+            class="badge-button"
             selected={selectedSheetName === sheetName}
             onClick={() => (selectedSheetName = sheetName)}
           >
-            {sheetName} ({issues.length})
+            {sheetName}
+            <IssueBadges {issues} />
           </PillButton>
         {/each}
       </div>
 
       <div class="issue-type-buttons">
         <PillButton
+          class="badge-button"
           selected={selectedIssueType === "all"}
           onClick={() => (selectedIssueType = "all")}
         >
-          All Issues ({issuesForSelectedSheetName.length})
+          All Issues
+          <IssueBadges issues={issuesForSelectedSheetName} />
         </PillButton>
-        {#each issuesAndCountsForSelectedSheetName as { value, count } (value)}
+        {#each Object.entries(issuesForSelectedSheetNameGroupedByType) as [type, issues] (type)}
           <PillButton
-            selected={selectedIssueType === value}
-            onClick={() => (selectedIssueType = value as IssueType)}
+            class="badge-button"
+            selected={selectedIssueType === type}
+            onClick={() => (selectedIssueType = type as IssueType)}
           >
-            {issueTypeInfos[value as IssueType].title} ({count})
+            {issueTypeInfos[type as IssueType].title}
+            <IssueBadges {issues} />
           </PillButton>
         {/each}
       </div>
@@ -426,6 +433,14 @@
     flex-direction: row;
     gap: 0.3rem;
     flex-wrap: wrap;
+  }
+
+  :global(.badge-button) {
+    padding: 0.5rem !important;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.4rem;
   }
 
   .table {

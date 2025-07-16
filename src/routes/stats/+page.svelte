@@ -36,17 +36,20 @@
   );
 
   let issuesGroupedBySheetName = $derived.by(() => {
+    void issuesByRunTypeAndSheetName;
     if (!selectedRunType) return {};
     return issuesByRunTypeAndSheetName[selectedRunType] ?? {};
   });
 
   let issuesForSelectedSheetName = $derived.by(() => {
+    void issuesGroupedBySheetName;
     if (!selectedSheetName) return [];
     return issuesGroupedBySheetName[selectedSheetName] ?? [];
   });
 
   let issuesForSelectedSheetNameGroupedByType = $derived.by(() => {
-    if (!selectedSheetName) return [];
+    void issuesForSelectedSheetName;
+    if (!selectedSheetName) return {};
     return groupByProp(issuesForSelectedSheetName, "type");
   });
 
@@ -57,6 +60,8 @@
   });
 
   let selectedIssues = $derived.by(() => {
+    void issuesForSelectedSheetName;
+    void selectedIssueType;
     if (!selectedRun || !selectedSheetName) return [];
     return issuesForSelectedSheetName.filter((issue) => {
       return selectedIssueType === "all" || issue.type === selectedIssueType;
@@ -67,6 +72,12 @@
     void selectedRunType;
     selectedIssueType = "all";
     selectedSheetName = Object.keys(issuesGroupedBySheetName)[0];
+  });
+
+  $effect(() => {
+    if (!issuesForSelectedSheetNameGroupedByType[selectedIssueType]) {
+      selectedIssueType = "all";
+    }
   });
 
   let netAccepted = $derived.by(() => {
@@ -268,7 +279,7 @@
           All Issues
           <IssueBadges issues={issuesForSelectedSheetName} />
         </PillButton>
-        {#each Object.entries(issuesForSelectedSheetNameGroupedByType) as [type, issues] (type)}
+        {#each Object.entries(issuesForSelectedSheetNameGroupedByType) as [type, issues] (`${selectedSheetName}-${type}`)}
           <PillButton
             class="badge-button"
             selected={selectedIssueType === type}

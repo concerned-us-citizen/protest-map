@@ -10,20 +10,16 @@
   }>();
   const { issues } = props;
 
-  let rejectCount = $state(0);
-  let warningCount = $state(0);
+  let rejectCount = $derived.by(() => {
+    return issues.filter(
+      (i: ScrapeIssue) => issueTypeInfos[i.type as IssueType].rejected
+    ).length;
+  });
 
-  $effect(() => {
-    rejectCount = 0;
-    warningCount = 0;
-    for (let i = 0; i < issues.length; i++) {
-      const issue = issues[i];
-      if (issueTypeInfos[issue.type as IssueType].rejected) {
-        rejectCount++;
-      } else {
-        warningCount++;
-      }
-    }
+  let warningCount = $derived.by(() => {
+    return issues.filter(
+      (i: ScrapeIssue) => !issueTypeInfos[i.type as IssueType].rejected
+    ).length;
   });
 </script>
 

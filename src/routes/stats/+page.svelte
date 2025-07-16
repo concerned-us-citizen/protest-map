@@ -149,16 +149,16 @@
   // Example flex config function
   function getColumnWidth(col: string): string {
     const map: Record<string, string> = {
-      date: "1fr",
-      name: "2fr",
-      address: "3fr",
-      city: "2fr",
-      state: "1fr",
-      zip: "1fr",
-      link: "3fr",
-      coverageUrl: "3fr",
-      low: "1fr",
-      high: "1fr",
+      date: "minmax(4rem,1fr)",
+      name: "minmax(0,3fr)",
+      address: "minmax(0,3fr)",
+      city: "minmax(0,2fr)",
+      state: "minmax(2.5rem,1fr)",
+      zip: "minmax(4rem,1fr)",
+      link: "minmax(0,3fr)",
+      coverageUrl: "minmax(0,3fr)",
+      low: "minmax(0,1fr)",
+      high: "minmax(0,1fr)",
     };
     return map[col] ?? 1;
   }
@@ -487,6 +487,11 @@
   .cell-centering-container {
     width: 100%;
     overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.3rem;
+    flex-wrap: wrap;
   }
 
   .cell-centering-container :global(button) {
@@ -496,10 +501,6 @@
   .cell-value {
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-
-  .row-cell-link .cell-value,
-  .row-cell-coverageUrl .cell-value {
     word-break: break-all;
   }
 
@@ -511,7 +512,7 @@
   .row-detail {
     padding: 0.5rem;
     background: #f0f0f0;
-    border-radius: 0 0.3rem 0.3rem 0.3rem;
+    border-radius: 0 0 0.3rem 0.3rem;
     grid-column: 1 / -1;
   }
 

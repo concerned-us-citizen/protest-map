@@ -95,8 +95,8 @@
       {#each populatedMarkers as populatedMarker (populatedMarker.id)}
         <div class="multiple-or-turnout">
           {#if multipleMarkers}
-            <Link href={firstMarker.link}>
-              {firstMarker.eventName}
+            <Link href={populatedMarker.link}>
+              {populatedMarker.eventName}
             </Link>
           {/if}
           {#if markersAreTurnouts}

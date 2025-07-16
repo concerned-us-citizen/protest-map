@@ -87,11 +87,6 @@
   </div>
   {#if multipleMarkers || markersAreTurnouts}
     <div class="multiple-or-turnout-container">
-      {#if multipleMarkers}
-        <div class="event-count">
-          {countAndLabel(populatedMarkers, "Event")}
-        </div>
-      {/if}
       {#each populatedMarkers as populatedMarker (populatedMarker.id)}
         <div class="multiple-or-turnout">
           {#if multipleMarkers}

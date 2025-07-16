@@ -306,7 +306,15 @@
               </div>
             {/each}
           </div>
-          <div class="row-detail">
+          <div
+            class={[
+              "row-detail",
+              issueTypeInfos[issue.type].rejected ? "rejected" : "",
+            ]}
+          >
+            {#if issueTypeInfos[issue.type].rejected}
+              Rejected:
+            {/if}
             {issueTypeInfos[issue.type].explanation(issue.explanationArg)}
             {#if issue.type === "cityOrState"}
               <a
@@ -479,6 +487,18 @@
     background: #f0f0f0;
     border-radius: 0 0.3rem 0.3rem 0.3rem;
     grid-column: 1 / -1;
+  }
+
+  .row-detail,
+  .row-detail a {
+    color: #202020;
+    background-color: var(--color-unavailable);
+  }
+
+  .row-detail.rejected,
+  .row-detail.rejected a {
+    color: #fefefe;
+    background-color: var(--color-red);
   }
 
   .cell-centering-container * {

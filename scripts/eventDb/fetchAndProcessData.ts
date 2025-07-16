@@ -206,12 +206,7 @@ async function sanitize<T extends EventRow | TurnoutRow>(
   const sanitizedState = state.trim();
   const stateIdInfo = getStateInfo(sanitizedState);
   if (!stateIdInfo) {
-    await logger.logIssue(
-      "cityOrState",
-      row,
-      sheetName,
-      `Unrecognized state name '${state}'`
-    );
+    await logger.logIssue("state", row, sheetName, state);
     return null;
   }
 

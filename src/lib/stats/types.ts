@@ -9,26 +9,31 @@ export const issueTypeInfos = {
     rejected: true,
     explanation: (arg: string) => `Could not geocode '${arg}'`,
   },
+  state: {
+    title: "Bad State",
+    rejected: false,
+    explanation: (arg: string) => `Invalid state name ${arg}`,
+  },
   cityOrState: {
     title: "Bad City or State",
     rejected: false,
     explanation: (arg: string) =>
-      `No direct link on Wikipedia for '${arg}' (ambiguous?, mispelled?, wrong state?). Will use default thumbnail, no article link`,
+      `No direct Wikipedia link for '${arg}' (ambiguous?, mispelled?, wrong state?). Will use default thumbnail without article link.`,
   },
   zip: {
     title: "Bad ZIP Code",
     rejected: false,
-    explanation: (arg: string) => `Invalid ZIP code ${arg}, ignoring field`,
+    explanation: (arg: string) => `Invalid ZIP code ${arg}, ignoring field.`,
   },
   date: {
     title: "Bad Date",
     rejected: true,
-    explanation: (arg: string) => `Invalid date ${arg}`,
+    explanation: (arg: string) => `Invalid date ${arg}.`,
   },
   link: {
     title: "Bad Event Link",
     rejected: false,
-    explanation: (arg: string) => `Invalid event link ${arg}, ignoring field`,
+    explanation: (arg: string) => `Invalid event link ${arg}, ignoring field.`,
   },
   name: {
     title: "Bad Event Name",
@@ -38,7 +43,7 @@ export const issueTypeInfos = {
   coverageUrl: {
     title: "Bad Coverage URL",
     rejected: false,
-    explanation: (arg: string) => `Invalid coverage URL ${arg}`,
+    explanation: (arg: string) => `Invalid coverage URL ${arg}.`,
   },
   turnoutNumbers: {
     title: "Bad Turnout Numbers",

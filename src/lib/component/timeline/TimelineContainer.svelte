@@ -5,6 +5,7 @@
   import Timeline from "./Timeline.svelte";
   import { formatAsInteger } from "$lib/util/number";
   import { countAndLabel } from "$lib/util/string";
+  import { deviceInfo } from "$lib/model/DeviceInfo.svelte";
 
   const { class: className } = $props<{
     class?: ClassValue;
@@ -22,8 +23,15 @@
     <div>{pageState.filter.formattedDateRangeStart}</div>
     {#if pageState.filter.isFiltering}
       <div class="matching-dates-count">
-        {countAndLabel(pageState.filter.filteredDateCount, "date")} (of
-        {formatAsInteger(pageState.filter.dateCount)})
+        {#if deviceInfo.isNarrow}
+          {countAndLabel(pageState.filter.filteredDateCount, "matching day")}
+          (of
+          {formatAsInteger(pageState.filter.dateCount)})
+        {:else}
+          {countAndLabel(pageState.filter.filteredDateCount, "day")} with matching
+          {pageState.filter.markerType}s (out of
+          {formatAsInteger(pageState.filter.dateCount)})
+        {/if}
       </div>
     {/if}
     <div>{pageState.filter.formattedDateRangeEnd}</div>

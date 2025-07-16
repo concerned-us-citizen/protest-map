@@ -1,5 +1,5 @@
 import type { PageState } from "$lib/model/PageState.svelte";
-import { type BBox2D, bboxToBounds, expandBounds } from "$lib/util/bounds";
+import { type BBox2D, bboxToBounds } from "$lib/util/bounds";
 import bbox from "@turf/bbox";
 import { featureCollection, point } from "@turf/helpers";
 import type {

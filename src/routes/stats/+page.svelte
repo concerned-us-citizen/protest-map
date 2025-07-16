@@ -500,8 +500,9 @@
 
   .cell-value {
     overflow: hidden;
-    text-overflow: ellipsis;
-    word-break: break-all;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: normal;
   }
 
   .header {

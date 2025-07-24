@@ -1,4 +1,4 @@
-import { getSheetData } from "./getSheetData";
+import { getSheetData, HeaderHints } from "./getSheetData";
 import { LocationDataModel } from "./LocationDataModel";
 import { NodeEventAndTurnoutModel } from "./NodeEventAndTurnoutModel";
 import { ScrapeLogger } from "./ScrapeLogger";
@@ -27,7 +27,7 @@ import { getStateInfo } from "./usStateInfo";
 export interface SheetProcessingProps<T extends EventOrTurnoutRowSchemaType> {
   fetchedDataType: FetchedDataType;
   sheetId: string;
-  mapHeaders: (_headers: string[]) => string[];
+  headerHints: HeaderHints;
   schema: T;
   knownBadSheetNames: string[];
 }
@@ -142,13 +142,13 @@ export async function fetchData(
   props: {
     fetchedDataType: FetchedDataType;
     sheetId: string;
-    mapHeaders: (_headers: string[]) => string[];
+    headerHints: HeaderHints;
   },
-  logger: ScrapeLogger
+  logger?: ScrapeLogger
 ) {
-  const { fetchedDataType, sheetId } = props;
+  const { fetchedDataType, sheetId, headerHints } = props;
   console.log(`Retrieving ${fetchedDataType}s from google sheets...`);
-  const sheets = await getSheetData(sheetId, logger);
+  const sheets = await getSheetData(sheetId, headerHints, logger);
 
   const rowCount = sheets.reduce((acc, sheet) => acc + sheet.rows.length, 0);
   console.log(`Retrieved ${rowCount} total ${fetchedDataType}s`);

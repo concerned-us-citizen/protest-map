@@ -146,9 +146,9 @@ export async function fetchData(
   },
   logger: ScrapeLogger
 ) {
-  const { fetchedDataType, sheetId, mapHeaders } = props;
+  const { fetchedDataType, sheetId } = props;
   console.log(`Retrieving ${fetchedDataType}s from google sheets...`);
-  const sheets = await getSheetData(sheetId, logger, mapHeaders);
+  const sheets = await getSheetData(sheetId, logger);
 
   const rowCount = sheets.reduce((acc, sheet) => acc + sheet.rows.length, 0);
   console.log(`Retrieved ${rowCount} total ${fetchedDataType}s`);

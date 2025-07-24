@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import { fetchHtml } from "../../src/lib/util/html";
 import { load } from "cheerio";
-import { parse } from "csv-parse/sync";
+import { ColumnOption, parse } from "csv-parse/sync";
 import { ScrapeLogger } from "./ScrapeLogger";
 
 export interface SheetTabData {
@@ -64,34 +64,52 @@ function getCsvHash(csvContent: string): number {
   return parseInt(hash.slice(0, 8), 16);
 }
 
-export function getCsvRows(
-  csvContent: string,
-  mapHeaders: (_headers: string[]) => string[] = (headers) => headers,
-  mapCell?: (_cell: string) => string
-): Record<string, string>[] {
-  const records = parse(csvContent, {
-    columns: mapHeaders,
+const columns = [
+  "date",
+  "time",
+  "address",
+  "zip",
+  "city",
+  "state",
+  "country",
+  "name",
+  "link",
+  "adaAccessible",
+  "reoccurring",
+] as const satisfies ColumnOption[];
+
+type Row = Record<(typeof columns)[number], string | undefined>;
+
+const ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
+const now = Date.now();
+
+function isRecentDate(s?: string): boolean {
+  if (!s) return false;
+  const m = s.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+  if (!m) return false;
+  // eslint-disable-next-line prefer-const
+  let [, mm, dd, yyyy] = m;
+  if (yyyy.length === 2) yyyy = (Number(yyyy) < 70 ? "20" : "19") + yyyy;
+  const d = new Date(+yyyy, +mm - 1, +dd);
+  const t = d.getTime();
+  return !isNaN(t) && now - t <= ONE_YEAR;
+}
+
+export function getCsvRows(csvContent: string): Row[] {
+  return parse(csvContent, {
+    columns,
+    relax_column_count: true,
     skip_empty_lines: true,
     trim: true,
-  });
-
-  if (mapCell) {
-    return records.map((row) => {
-      const mapped: Record<string, string> = {};
-      for (const key in row) {
-        mapped[key] = mapCell(row[key]);
-      }
-      return mapped;
-    });
-  }
-
-  return records;
+    on_record(record: Row) {
+      return isRecentDate(record.date) ? record : null;
+    },
+  }) as Row[];
 }
 
 export async function getSheetData(
   sheetId: string,
-  logger: ScrapeLogger,
-  mapHeaders?: (_headers: string[]) => string[]
+  logger: ScrapeLogger
 ): Promise<SheetTabData[]> {
   const tabs = await getTabNames(sheetId);
 
@@ -102,7 +120,7 @@ export async function getSheetData(
     try {
       const csv = await getCsvForTab(sheetId, tab.gid);
       const hash = getCsvHash(csv);
-      const rows = getCsvRows(csv, mapHeaders);
+      const rows = getCsvRows(csv) as Record<string, string>[];
       results.push({
         title: tab.title,
         gid: tab.gid,

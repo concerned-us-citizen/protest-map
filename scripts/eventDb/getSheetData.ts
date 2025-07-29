@@ -48,7 +48,8 @@ async function getTabNames(
 }
 
 async function getCsvForTab(sheetId: string, tabGid: string): Promise<string> {
-  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&gid=${tabGid}`;
+  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${tabGid}`;
+  console.log(`Fetching ${url}`);
   const res = await fetch(url);
   if (!res.ok) {
     throw new Error(
@@ -110,6 +111,14 @@ export function getCsvRows<
 >(csvText: string, hints: H, mandatoryKey: K = "date" as K): Row<H>[] {
   /* ---------- constants / helpers ---------- */
 
+  /** Helper: normalise text (lowercase, collapse whitespace, strip punctuation) */
+  const norm = (s: string) =>
+    s
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, " ")
+      .replace(/[^a-z0-9 ]/g, "");
+
   /** Compile all hint patterns into functions for quick matching */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tests: Record<keyof H, (_cell: string) => boolean> = {} as any;
@@ -118,7 +127,7 @@ export function getCsvRows<
     const arr = Array.isArray(raw) ? raw : [raw];
     const fns = arr.map((p) =>
       typeof p === "string"
-        ? (c: string) => c.includes(p)
+        ? (c: string) => norm(c).includes(norm(p))
         : (c: string) => (p as RegExp).test(c)
     );
     tests[k] = (cell: string) => fns.some((fn) => fn(cell));
@@ -138,7 +147,7 @@ export function getCsvRows<
     return !Number.isNaN(t) && NOW - t <= ONE_YEAR;
   };
 
-  const SAMPLE_LINES = 10;
+  const SAMPLE_LINES = 20;
   const sample = parseSync(csvText, {
     to_line: SAMPLE_LINES,
     relax_column_count: true,

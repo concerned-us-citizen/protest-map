@@ -44,8 +44,7 @@ async function main() {
 
   const summary = await logger.close();
 
-  if (process.env.GITHUB_ACTIONS === "NOTTRUE") {
-    // "true") {
+  if (process.env.GITHUB_ACTIONS === "true") {
     await maybeCreateGithubIssue(summary);
   }
 }

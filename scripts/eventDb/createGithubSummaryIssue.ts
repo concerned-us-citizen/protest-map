@@ -23,6 +23,18 @@ async function maybeCreateGhIssue(
 ) {
   const { token, ref, runId, repoString } = ghInfo;
 
+  const trimmedRuns = summaryInfo.runs.map((run) => {
+    // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+    const { issues, ...trimmedRun } = run;
+    return trimmedRun;
+  });
+
+  const trimmedSummary = {
+    runAt: summaryInfo.runAt,
+    elapsedSeconds: summaryInfo.elapsedSeconds,
+    runs: trimmedRuns,
+  };
+
   if (!token || !ref || !runId || !repoString) {
     throw new Error("Missing required GitHub environment variables");
   }
@@ -44,7 +56,7 @@ ${issues.map((issue) => `- ${issue}`).join("\n")}
 
 **Full Summary**
 \`\`\`ts
-  ${JSON.stringify(summaryInfo, null, 2)}
+  ${JSON.stringify(trimmedSummary, null, 2)}
 \`\`\`
 
 [View run on GitHub Actions](${runUrl})

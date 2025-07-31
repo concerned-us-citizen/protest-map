@@ -226,6 +226,7 @@ export function getCsvRows<
 export async function getSheetData(
   sheetId: string,
   headerHints: HeaderHints,
+  knownBadSheetNames: string[],
   logger?: ScrapeLogger
 ): Promise<SheetTabData[]> {
   const tabs = await getTabNames(sheetId);
@@ -233,6 +234,9 @@ export async function getSheetData(
   const results: SheetTabData[] = [];
 
   for (const tab of tabs) {
+    if (knownBadSheetNames.includes(tab.title)) {
+      continue;
+    }
     console.log(`Retrieving tab ${tab.title}...`);
 
     try {

@@ -143,12 +143,18 @@ export async function fetchData(
     fetchedDataType: FetchedDataType;
     sheetId: string;
     headerHints: HeaderHints;
+    knownBadSheetNames: string[];
   },
   logger?: ScrapeLogger
 ) {
-  const { fetchedDataType, sheetId, headerHints } = props;
+  const { fetchedDataType, sheetId, knownBadSheetNames, headerHints } = props;
   console.log(`Retrieving ${fetchedDataType}s from google sheets...`);
-  const sheets = await getSheetData(sheetId, headerHints, logger);
+  const sheets = await getSheetData(
+    sheetId,
+    headerHints,
+    knownBadSheetNames,
+    logger
+  );
 
   const rowCount = sheets.reduce((acc, sheet) => acc + sheet.rows.length, 0);
   console.log(`Retrieved ${rowCount} total ${fetchedDataType}s`);

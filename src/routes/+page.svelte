@@ -184,7 +184,7 @@
               <PillButton
                 white
                 onClick={() => pageState.mapModel.popBounds()}
-                title={"Zoom Back Out (${getShortcutPrefix()}R, +U, or +B)"}
+                title={`Zoom Back Out (${getShortcutPrefix()}R, +U, or +B)`}
               >
                 <Undo2 />
               </PillButton>

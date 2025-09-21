@@ -61,7 +61,7 @@ export async function geocodeFromService({
   const propsToAttempt: (keyof Address)[][] = [
     ["address", "city", "state", "zip"],
     ["address", "city", "state"],
-    ["zip"],
+    ["city", "state", "zip"],
     ["city", "state"],
   ];
 

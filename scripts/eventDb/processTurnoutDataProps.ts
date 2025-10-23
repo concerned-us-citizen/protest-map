@@ -15,7 +15,7 @@ export const processTurnoutDataProps: SheetProcessingProps<
     name: ["Event Name"],
     low: ["Low Estimate"],
     high: ["High Estimate"],
-    link: ["Protest Listing", "Source"],
+    link: ["Protest Listing", "Source", "Protest Website"],
     coverageUrl: ["News Coverage"],
   },
   schema: TurnoutRowSchema,

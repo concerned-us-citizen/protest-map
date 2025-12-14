@@ -18,5 +18,10 @@ export const processEventDataProps: SheetProcessingProps<
     link: "Link",
   },
   schema: EventRowSchema,
-  knownBadSheetNames: ["June 14 State Counts", "Good Trouble State Counts"],
+  knownBadSheetNames: [
+    "June 14 State Counts",
+    "Good Trouble State Counts",
+    "2025 State Counts",
+    "2025 Protest Summary",
+  ],
 };

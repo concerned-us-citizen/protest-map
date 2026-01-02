@@ -202,7 +202,7 @@ export class FilterModel {
     );
   }
 
-  readonly formattedAvailableDateRangeStart = $derived.by(() => {
+  readonly formattedDateRangeStart = $derived.by(() => {
     if (!this.availableDateRange) return "";
     return formatDate(
       this.availableDateRange.start,
@@ -210,7 +210,7 @@ export class FilterModel {
     );
   });
 
-  readonly formattedAvailableDateRangeEnd = $derived.by(() => {
+  readonly formattedDateRangeEnd = $derived.by(() => {
     if (!this.availableDateRange) return "";
     return formatDate(
       this.availableDateRange.end,

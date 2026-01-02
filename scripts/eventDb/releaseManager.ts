@@ -20,7 +20,13 @@ async function ensureRelease() {
   try {
     await octokit.repos.getReleaseByTag({ owner: OWNER, repo: REPO, tag: TAG });
   } catch (err) {
-    if (err.status === 404) {
+    // Type guard to check if error has status property (Octokit errors)
+    if (
+      typeof err === "object" &&
+      err !== null &&
+      "status" in err &&
+      err.status === 404
+    ) {
       await octokit.repos.createRelease({
         owner: OWNER,
         repo: REPO,

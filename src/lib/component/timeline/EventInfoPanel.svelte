@@ -1,13 +1,24 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
-  import { formatDateIndicatingFuture } from "$lib/util/date";
+  import { formatDateRangeIndicatingFuture } from "$lib/util/date";
   import { cubicInOut } from "svelte/easing";
   import { countAndLabel, joinWithAnd } from "$lib/util/string";
   import { getPageStateFromContext } from "$lib/model/PageState.svelte";
+  import { deviceInfo } from "$lib/model/DeviceInfo.svelte";
 
   let { className = "" } = $props();
 
   const pageState = getPageStateFromContext();
+
+  const formattedDateDisplay = $derived.by(() => {
+    const dr = pageState.filter.dateRange;
+    if (!dr) return "";
+    return formatDateRangeIndicatingFuture(
+      dr.start,
+      dr.end,
+      deviceInfo.isNarrow ? "medium" : "long"
+    );
+  });
 </script>
 
 <div
@@ -17,9 +28,7 @@
   {#if pageState.filter.markers.length > 0}
     <div class="counts-line">
       <strong>
-        <span class="date-display"
-          >{formatDateIndicatingFuture(pageState.filter.date)}
-        </span>
+        <span class="date-display">{formattedDateDisplay} </span>
         <span class="stats-display"
           >{countAndLabel(pageState.filter.filteredEventCount, "Event")}, {countAndLabel(
             pageState.filter.eventCount,

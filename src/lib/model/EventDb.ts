@@ -39,7 +39,8 @@ export class EventDb {
   }
 
   getMarkers(filter: FilterOptions): (ProtestEventMarker | TurnoutMarker)[] {
-    const { markerType, date, eventNames, namedRegion, voterLeans } = filter;
+    const { markerType, dateRange, eventNames, namedRegion, voterLeans } =
+      filter;
 
     const selectFields = ["id", "lat", "lon", "pct_dem_lead"];
     if (markerType === "turnout") {
@@ -53,7 +54,7 @@ export class EventDb {
       ${whereClause}`
     );
 
-    builder.addDateSubquery(date);
+    builder.addDateSubquery(dateRange);
     builder.addVoterLeanSubquery(voterLeans);
     builder.addSelectedEventNamesSubquery(eventNames);
     builder.addNamedRegionOnlySubquery(markerType, namedRegion);
@@ -98,7 +99,8 @@ export class EventDb {
   }
 
   getVoterLeanCounts(filter: FilterOptions): VoterLeanCounts {
-    const { date, markerType, eventNames, namedRegion, voterLeans } = filter;
+    const { dateRange, markerType, eventNames, namedRegion, voterLeans } =
+      filter;
 
     const builder = new QueryBuilder(
       (whereClause) => `
@@ -110,7 +112,7 @@ export class EventDb {
         ${whereClause}
 `
     );
-    builder.addDateSubquery(date);
+    builder.addDateSubquery(dateRange);
     builder.addVoterLeanSubquery(voterLeans);
     builder.addSelectedEventNamesSubquery(eventNames);
     builder.addNamedRegionOnlySubquery(markerType, namedRegion);
@@ -129,7 +131,8 @@ export class EventDb {
   }
 
   getVoterLeanTurnoutRange(filter: FilterOptions): VoterLeanTurnoutRange {
-    const { date, markerType, eventNames, namedRegion, voterLeans } = filter;
+    const { dateRange, markerType, eventNames, namedRegion, voterLeans } =
+      filter;
 
     const builder = new QueryBuilder(
       (whereClause) => `
@@ -144,7 +147,7 @@ export class EventDb {
         ${whereClause}
 `
     );
-    builder.addDateSubquery(date);
+    builder.addDateSubquery(dateRange);
     builder.addVoterLeanSubquery(voterLeans);
     builder.addSelectedEventNamesSubquery(eventNames);
     builder.addNamedRegionOnlySubquery(markerType, namedRegion);
@@ -179,7 +182,7 @@ export class EventDb {
   }
 
   getCount(filter: FilterOptions): number {
-    const { date, eventNames, namedRegion, voterLeans } = filter;
+    const { dateRange, eventNames, namedRegion, voterLeans } = filter;
 
     const builder = new QueryBuilder(
       (whereClause) => `
@@ -189,7 +192,7 @@ export class EventDb {
       LIMIT 1
     `
     );
-    builder.addDateSubquery(date);
+    builder.addDateSubquery(dateRange);
     builder.addNamedRegionOnlySubquery("event", namedRegion);
     builder.addSelectedEventNamesSubquery(eventNames);
     builder.addVoterLeanSubquery(voterLeans);
@@ -205,7 +208,7 @@ export class EventDb {
   }
 
   getTurnoutRange(filter: FilterOptions): TurnoutRange {
-    const { date, eventNames, namedRegion, voterLeans } = filter;
+    const { dateRange, eventNames, namedRegion, voterLeans } = filter;
 
     const builder = new QueryBuilder(
       (whereClause) => `
@@ -215,7 +218,7 @@ export class EventDb {
       LIMIT 1
     `
     );
-    builder.addDateSubquery(date);
+    builder.addDateSubquery(dateRange);
     builder.addNamedRegionOnlySubquery("turnout", namedRegion);
     builder.addSelectedEventNamesSubquery(eventNames);
     builder.addVoterLeanSubquery(voterLeans);
@@ -423,7 +426,8 @@ export class EventDb {
   getEventNamesAndCounts(
     filter: FilterOptions
   ): { name: string; count: number }[] {
-    const { date, markerType, namedRegion, eventNames, voterLeans } = filter;
+    const { dateRange, markerType, namedRegion, eventNames, voterLeans } =
+      filter;
 
     const builder = new QueryBuilder(
       (whereClause) => `
@@ -435,7 +439,7 @@ export class EventDb {
       `
     );
 
-    builder.addDateSubquery(date);
+    builder.addDateSubquery(dateRange);
     builder.addSelectedEventNamesSubquery(eventNames);
     builder.addNamedRegionOnlySubquery(markerType, namedRegion);
     builder.addVoterLeanSubquery(voterLeans);
@@ -456,7 +460,8 @@ export class EventDb {
   getEventNamesAndTurnoutRanges(
     filter: FilterOptions
   ): { name: string; turnoutRange: TurnoutRange }[] {
-    const { date, markerType, namedRegion, eventNames, voterLeans } = filter;
+    const { dateRange, markerType, namedRegion, eventNames, voterLeans } =
+      filter;
 
     const builder = new QueryBuilder(
       (whereClause) => `
@@ -468,7 +473,7 @@ export class EventDb {
       `
     );
 
-    builder.addDateSubquery(date);
+    builder.addDateSubquery(dateRange);
     builder.addSelectedEventNamesSubquery(eventNames);
     builder.addNamedRegionOnlySubquery(markerType, namedRegion);
     builder.addVoterLeanSubquery(voterLeans);
@@ -534,10 +539,18 @@ class QueryBuilder {
   #params: SqlValue[] = [];
   #templateFunc: (_whereClause: string) => string;
 
-  addDateSubquery(date: Date | undefined) {
-    if (date) {
-      this.appendSubquery(` date = ?`);
-      this.#params.push(dateToYYYYMMDDInt(date));
+  addDateSubquery(dateRange: { start: Date; end: Date } | undefined) {
+    if (dateRange) {
+      const { start, end } = dateRange;
+      // If start and end are the same, use exact match for efficiency
+      if (start.getTime() === end.getTime()) {
+        this.appendSubquery(` date = ?`);
+        this.#params.push(dateToYYYYMMDDInt(start));
+      } else {
+        // Use BETWEEN for range queries
+        this.appendSubquery(` date BETWEEN ? AND ?`);
+        this.#params.push(dateToYYYYMMDDInt(start), dateToYYYYMMDDInt(end));
+      }
     }
   }
 

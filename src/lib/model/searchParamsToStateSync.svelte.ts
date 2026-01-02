@@ -24,12 +24,41 @@ export const shareOptions: ParamOption[] = [
     getValue: (pageState) => pageState.filter.date,
     setValue: async (params, pageState) => {
       const dateStr = params.get("date");
-      const date = dateStr ? deserializeDate(dateStr) : undefined;
-      if (date) {
-        pageState.filter.setDate(date);
+      const endDateStr = params.get("endDate");
+
+      const startDate = dateStr ? deserializeDate(dateStr) : undefined;
+      const endDate = endDateStr ? deserializeDate(endDateStr) : undefined;
+
+      if (startDate) {
+        if (endDate) {
+          // If both dates provided, set as range
+          pageState.filter.setDateRange(startDate, endDate);
+        } else {
+          // Single date for backward compatibility
+          pageState.filter.setDate(startDate);
+        }
       }
     },
     isFilterProp: true,
+  },
+  {
+    formTitle: (_pageState) => {
+      return ""; // End date is part of the date range, no separate title
+    },
+    paramName: (_pageState) => "endDate",
+    type: "date",
+    getValue: (pageState) => {
+      // Only include endDate if it differs from start date (i.e., it's a range)
+      const dateRange = pageState.filter.dateRange;
+      if (dateRange && dateRange.start.getTime() !== dateRange.end.getTime()) {
+        return dateRange.end;
+      }
+      return undefined;
+    },
+    setValue: async (_params, _pageState) => {
+      // Handled by the "date" option above
+    },
+    isFilterProp: false, // Don't show separately in filter options
   },
   {
     formTitle: (pageState) => {

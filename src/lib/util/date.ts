@@ -301,3 +301,152 @@ export function datesEqual(
   if (!a || !b) return a === b; // handles null/undefined
   return a.getTime() === b.getTime();
 }
+
+/**
+ * Helper function to check if a year is a leap year
+ */
+function isLeapYear(year: number): boolean {
+  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+}
+
+/**
+ * Helper function to get the number of days in a month (0-indexed month)
+ */
+function getDaysInMonth(year: number, month: number): number {
+  const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  if (month === 1 && isLeapYear(year)) {
+    // February in a leap year
+    return 29;
+  }
+  return daysInMonth[month];
+}
+
+/**
+ * Formats a date range in a user-friendly way
+ * - Single date: "January 20, 2025"
+ * - Full year: "All of 2025" or "2025"
+ * - Full month: "January 2025" or "Jan 2025"
+ * - Same month: "January 20-21, 2025"
+ * - Different months: "January 20 - February 2, 2025"
+ * - Different years: "December 31, 2024 - January 2, 2025"
+ */
+export function formatDateRange(
+  start: Date | undefined,
+  end: Date | undefined,
+  verbosity: "short" | "medium" | "long" = "long"
+): string {
+  if (!start) return "";
+  if (!end || start.getTime() === end.getTime()) {
+    return formatDate(start, verbosity);
+  }
+
+  const startYear = start.getFullYear();
+  const endYear = end.getFullYear();
+  const startMonth = start.getMonth();
+  const endMonth = end.getMonth();
+  const startDay = start.getDate();
+  const endDay = end.getDate();
+
+  const sameYear = startYear === endYear;
+  const sameMonth = sameYear && startMonth === endMonth;
+  const currentYear = new Date().getFullYear();
+  const omitYear = sameYear && startYear === currentYear;
+
+  // Check if this is a full year (Jan 1 - Dec 31)
+  if (
+    sameYear &&
+    startMonth === 0 &&
+    startDay === 1 &&
+    endMonth === 11 &&
+    endDay === 31
+  ) {
+    if (omitYear) {
+      return "This Year";
+    } else {
+      return `For The Year ${startYear}`;
+    }
+  }
+
+  // Check if this is a full month - always use full month name
+  if (sameMonth && startDay === 1) {
+    const daysInMonth = getDaysInMonth(startYear, startMonth);
+    if (endDay === daysInMonth) {
+      // Always use full month name for full month ranges
+      const month = start.toLocaleDateString("en-US", { month: "long" });
+
+      if (omitYear) {
+        return month;
+      } else {
+        return `${month} ${startYear}`;
+      }
+    }
+  }
+
+  if (sameMonth) {
+    // Same month: "January 20-21" or "January 20-21, 2025"
+    const monthOpts: Intl.DateTimeFormatOptions =
+      verbosity === "short"
+        ? { month: "numeric" }
+        : verbosity === "medium"
+          ? { month: "short" }
+          : { month: "long" };
+
+    const month = start.toLocaleDateString("en-US", monthOpts);
+    const yearStr = omitYear
+      ? ""
+      : verbosity === "short"
+        ? `/${startYear}`
+        : `, ${startYear}`;
+
+    if (verbosity === "short") {
+      return `${month}/${startDay}-${endDay}${yearStr}`;
+    } else {
+      return `${month} ${startDay}-${endDay}${yearStr}`;
+    }
+  } else if (sameYear) {
+    // Different months, same year: always use short month names
+    // "Jan 20 - Feb 2" or "Jan 20 - Feb 2, 2025"
+    const startOpts: Intl.DateTimeFormatOptions = {
+      month: "short",
+      day: "numeric",
+    };
+    const endOpts: Intl.DateTimeFormatOptions = omitYear
+      ? { month: "short", day: "numeric" }
+      : { month: "short", day: "numeric", year: "numeric" };
+
+    const startStr = start.toLocaleDateString("en-US", startOpts);
+    const endStr = end.toLocaleDateString("en-US", endOpts);
+
+    return `${startStr} - ${endStr}`;
+  } else {
+    // Different years: always use short month names
+    // "Dec 31, 2024 - Jan 2, 2025"
+    const opts: Intl.DateTimeFormatOptions = {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    };
+
+    const startStr = start.toLocaleDateString("en-US", opts);
+    const endStr = end.toLocaleDateString("en-US", opts);
+
+    return `${startStr} - ${endStr}`;
+  }
+}
+
+/**
+ * Formats a date range, indicating if any dates are in the future
+ */
+export function formatDateRangeIndicatingFuture(
+  start: Date | undefined,
+  end: Date | undefined,
+  verbosity: "short" | "medium" | "long" = "long"
+): string {
+  const rangeStr = formatDateRange(start, end, verbosity);
+  if (!start) return rangeStr;
+
+  const endDate = end || start;
+  const isFuture = isFutureDate(endDate);
+
+  return `${rangeStr}${isFuture ? " (future)" : ""}`;
+}

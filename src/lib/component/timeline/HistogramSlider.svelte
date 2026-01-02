@@ -7,6 +7,7 @@
     items: T[];
     highlightEnabled: boolean;
     selectedItem: Nullable<T>;
+    selectedRange?: { start: T; end: T };
     magnitudeFor: (_item: T) => number;
     isEnabled: (_item: T) => boolean;
     isHighlighted: (_item: T) => boolean;
@@ -19,6 +20,7 @@
     items,
     highlightEnabled,
     selectedItem,
+    selectedRange,
     magnitudeFor,
     isEnabled,
     isHighlighted,
@@ -95,6 +97,28 @@
       }
     } else {
       futureStartIndex = -1; // Reset if no data
+    }
+  });
+
+  // Calculate range selection highlight
+  let rangeStartIndex = $state(-1);
+  let rangeEndIndex = $state(-1);
+  let rangeRectX = $state(0);
+  let rangeRectWidth = $state(0);
+
+  $effect(() => {
+    if (selectedRange && items.length > 0) {
+      rangeStartIndex = items.indexOf(selectedRange.start);
+      rangeEndIndex = items.indexOf(selectedRange.end);
+
+      if (rangeStartIndex !== -1 && rangeEndIndex !== -1) {
+        rangeRectX = getBarX(rangeStartIndex);
+        rangeRectWidth = (rangeEndIndex - rangeStartIndex + 1) * barWidth;
+      } else {
+        rangeStartIndex = -1;
+      }
+    } else {
+      rangeStartIndex = -1;
     }
   });
 
@@ -234,6 +258,15 @@
         height={svgWrapperHeight - bottomPadding - topPadding + 4}
       />
     {/if}
+    {#if rangeStartIndex !== -1}
+      <rect
+        class="range-selection-highlight"
+        x={rangeRectX}
+        y={0}
+        width={rangeRectWidth}
+        height={svgWrapperHeight}
+      />
+    {/if}
     {#if items.length > 0}
       {#each items as item, i (item)}
         {@const enabled = isEnabled(item)}
@@ -328,5 +361,10 @@
   .future-events-highlight {
     fill: #a9a9a9; /* Medium gray */
     opacity: 0.5; /* Semi-transparent */
+  }
+
+  .range-selection-highlight {
+    fill: var(--accent-color);
+    opacity: 0.3;
   }
 </style>

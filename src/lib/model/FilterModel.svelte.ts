@@ -28,7 +28,7 @@ const REPEAT_INTERVAL = 80; // ms
 
 export interface FilterOptions {
   markerType: MarkerType;
-  date?: Date;
+  dateRange?: { start: Date; end: Date };
   eventNames?: string[]; // empty or missing means match all events
   namedRegion?: NamedRegion; // If not null, only match events within the region
   namedRegionPolygon?: Polygon | MultiPolygon;
@@ -42,7 +42,7 @@ export class FilterModel {
 
   readonly filter = $derived.by(() => ({
     markerType: this.markerType,
-    date: this.date,
+    dateRange: this.dateRange,
     eventNames: this.selectedEventNames,
     namedRegion: this.namedRegion,
     namedRegionPolygon: this.namedRegionPolygon,
@@ -71,7 +71,7 @@ export class FilterModel {
 
   #datesInFilterAsIntSet = $derived.by(() => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-    const { date, ...rest } = this.filter;
+    const { dateRange, ...rest } = this.filter;
     const filterOverEventsWithNoDate = {
       ...rest,
       markerType: "event" as MarkerType,
@@ -101,22 +101,47 @@ export class FilterModel {
   get dateIndex() {
     return this.#dateIndex;
   }
-  #date = $state<Date | undefined>();
-  get date() {
-    return this.#date;
+
+  // State for the selected date range
+  #dateRangeStart = $state<Date | undefined>();
+  #dateRangeEnd = $state<Date | undefined>();
+
+  // Getter for the selected date range (used in filter)
+  get dateRange() {
+    if (!this.#dateRangeStart) return undefined;
+    return {
+      start: this.#dateRangeStart,
+      end: this.#dateRangeEnd || this.#dateRangeStart,
+    };
   }
 
-  setDateIndex(index: number) {
+  // Backward-compatible getter for the cursor/start date
+  get date() {
+    return this.#dateRangeStart;
+  }
+
+  setDateIndex(index: number, clearRange: boolean = false) {
     this.#dateIndex = index;
     if (index < 0 || index >= this.dateSummaries.length) {
-      this.#date = undefined;
+      this.#dateRangeStart = undefined;
+      this.#dateRangeEnd = undefined;
     } else {
-      this.#date = this.dateSummaries[index].date;
+      this.#dateRangeStart = this.dateSummaries[index].date;
+      // Clear range end if requested or if it's now invalid
+      if (
+        clearRange ||
+        (this.#dateRangeEnd && this.#dateRangeEnd < this.#dateRangeStart)
+      ) {
+        this.#dateRangeEnd = undefined;
+      }
     }
   }
 
   setDate(date: Date | undefined) {
-    this.#date = date;
+    this.#dateRangeStart = date;
+    // Clear range end when setting a single date
+    this.#dateRangeEnd = undefined;
+
     if (!date) {
       this.#dateIndex = -1;
     } else {
@@ -135,6 +160,30 @@ export class FilterModel {
     }
   }
 
+  setDateRange(start: Date | undefined, end?: Date | undefined) {
+    this.#dateRangeStart = start;
+    this.#dateRangeEnd =
+      end && start && end.getTime() !== start.getTime() ? end : undefined;
+
+    if (!start) {
+      this.#dateIndex = -1;
+    } else {
+      // Use the start date to set the index (cursor position)
+      const index = this.dateSummaries.findIndex(
+        (d) => d.date.getTime() === start.getTime()
+      );
+      if (index !== -1) {
+        this.#dateIndex = index;
+      } else {
+        console.warn(
+          "Setting date range start to value not found in eventModel.dateSummaries:",
+          start
+        );
+        this.#dateIndex = -1;
+      }
+    }
+  }
+
   countForMarker(marker: Marker) {
     if (this.markerType === "event") {
       return 1;
@@ -147,29 +196,30 @@ export class FilterModel {
   isValidDate(date: Date | undefined) {
     if (!date) return false;
     return (
-      this.dateRange &&
-      date >= this.dateRange.start &&
-      date <= this.dateRange?.end
+      this.availableDateRange &&
+      date >= this.availableDateRange.start &&
+      date <= this.availableDateRange.end
     );
   }
 
-  readonly formattedDateRangeStart = $derived.by(() => {
-    if (!this.dateRange) return "";
+  readonly formattedAvailableDateRangeStart = $derived.by(() => {
+    if (!this.availableDateRange) return "";
     return formatDate(
-      this.dateRange.start,
+      this.availableDateRange.start,
       deviceInfo.isNarrow ? "medium" : "long"
     );
   });
 
-  readonly formattedDateRangeEnd = $derived.by(() => {
-    if (!this.dateRange) return "";
+  readonly formattedAvailableDateRangeEnd = $derived.by(() => {
+    if (!this.availableDateRange) return "";
     return formatDate(
-      this.dateRange.end,
+      this.availableDateRange.end,
       deviceInfo.isNarrow ? "medium" : "long"
     );
   });
 
-  readonly dateRange = $derived.by(() => {
+  // The full range of dates available in the database
+  readonly availableDateRange = $derived.by(() => {
     const dates = this.dateSummaries;
     if (dates.length === 0) return null;
     return { start: dates[0].date, end: dates[dates.length - 1].date };
@@ -193,7 +243,8 @@ export class FilterModel {
       index = (index + step + total) % total;
       const dateSummary = allDates[index];
       if (this.inCurrentFilter(dateSummary.date)) {
-        this.setDateIndex(index);
+        // Clear range when navigating with next/previous
+        this.setDateIndex(index, true);
         return;
       }
     }
@@ -212,7 +263,7 @@ export class FilterModel {
   readonly filteredEventNamesWithLocationCounts = $derived.by(() => {
     const filter = this.filter;
 
-    if (!filter?.date) return [];
+    if (!filter?.dateRange) return [];
 
     // We want to see all the event names for the current date's filter,
     // excluding other filters, but with counts that reflect the
@@ -232,7 +283,7 @@ export class FilterModel {
     const allDateEventNamesAndCounts = this.eventModel
       ? this.eventModel.getEventNamesAndCounts({
           markerType: filter.markerType,
-          date: filter.date,
+          dateRange: filter.dateRange,
         })
       : [];
 
@@ -245,7 +296,7 @@ export class FilterModel {
   readonly filteredEventNamesWithTurnoutRange = $derived.by(() => {
     const filter = this.filter;
 
-    if (!filter?.date) return [];
+    if (!filter?.dateRange) return [];
 
     // We want to see all the event names for the current date's filter,
     // excluding other filters, but with ranges that reflect the
@@ -264,7 +315,7 @@ export class FilterModel {
     const allDateEventNamesAndTurnoutRanges = this.eventModel
       ? this.eventModel.getEventNamesAndTurnoutRanges({
           markerType: filter.markerType,
-          date: filter.date,
+          dateRange: filter.dateRange,
         })
       : [];
 
@@ -282,7 +333,7 @@ export class FilterModel {
 
   readonly filteredVoterLeanCounts = $derived.by(() => {
     const filter = this.filter;
-    if (!filter?.date) return EmptyVoterLeanCounts;
+    if (!filter?.dateRange) return EmptyVoterLeanCounts;
 
     return this.eventModel
       ? this.eventModel.getVoterLeanCounts(filter)
@@ -291,7 +342,7 @@ export class FilterModel {
 
   readonly filteredVoterLeanTurnoutRange = $derived.by(() => {
     const filter = this.filter;
-    if (!filter?.date) return EmptyVoterLeanTurnoutRange;
+    if (!filter?.dateRange) return EmptyVoterLeanTurnoutRange;
 
     return this.eventModel
       ? this.eventModel.getVoterLeanTurnoutRange(filter)

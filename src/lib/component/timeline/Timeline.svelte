@@ -11,6 +11,26 @@
     return dateSummaries.find((dc) => dc.date === date) ?? null;
   });
 
+  let selectedDateRange = $derived.by(() => {
+    const dateSummaries = pageState.filter.dateSummaries;
+    const dateRange = pageState.filter.dateRange;
+
+    if (!dateRange) return undefined;
+
+    const start = dateSummaries.find(
+      (dc) => dc.date.getTime() === dateRange.start.getTime()
+    );
+    const end = dateSummaries.find(
+      (dc) => dc.date.getTime() === dateRange.end.getTime()
+    );
+
+    // Only return a range if start and end are different
+    if (start && end && start !== end) {
+      return { start, end };
+    }
+    return undefined;
+  });
+
   let isRepeatingChange = false;
   let currentRepeatDirection: "next" | "prev" | null = null;
   const INITIAL_REPEAT_DELAY = 400; // ms
@@ -81,7 +101,8 @@
     isEnabled={(dateSummary) =>
       pageState.filter.inCurrentFilter(dateSummary.date)}
     isHighlighted={(dateSummary) => dateSummary.hasTurnout}
-    selectedItem={selectedDateSummary}
+    selectedItem={selectedDateRange ? null : selectedDateSummary}
+    selectedRange={selectedDateRange}
     onSelect={(dc) => {
       if (pageState.filter.inCurrentFilter(dc.date)) {
         pageState.filter.setDate(dc.date);

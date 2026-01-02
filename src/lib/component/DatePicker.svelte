@@ -8,7 +8,7 @@
   } from "svelty-picker";
   import { en } from "svelty-picker/i18n";
   import PillButton from "./PillButton.svelte";
-  import { formatDate } from "$lib/util/date";
+  import { formatDateRange } from "$lib/util/date";
   import { deviceInfo } from "$lib/model/DeviceInfo.svelte";
 
   const { class: className } = $props<{
@@ -20,9 +20,17 @@
   let wrapperEl: HTMLElement;
   let inputEl: HTMLInputElement | null;
 
-  const disableDate = (date: Date) => !pageState.filter.inCurrentFilter(date);
   const dateFormat = "yyyy/mm/dd";
   let isOpen = $state(false);
+
+  // Format date range for display
+  const formattedDateDisplay = $derived.by(() => {
+    const dr = pageState.filter.dateRange;
+    if (!dr) return "";
+
+    const verbosity = deviceInfo.isNarrow ? "medium" : "long";
+    return formatDateRange(dr.start, dr.end, verbosity);
+  });
 
   onMount(() => {
     inputEl = wrapperEl.querySelector<HTMLInputElement>("input.inner-input");
@@ -53,13 +61,12 @@
 >
   <SveltyPicker
     mode="date"
-    startDate={pageState.filter.dateRange?.start}
-    endDate={pageState.filter.dateRange?.end}
-    disableDatesFn={disableDate}
+    theme="auto"
     format={dateFormat}
     inputClasses="inner-input"
     clearToggle={false}
     clearBtn={false}
+    todayBtn={true}
     manualInput={false}
     positionResolver={(el: HTMLElement) => {
       Object.assign(el.style, {
@@ -92,10 +99,7 @@
   >
     <div class="date-container">
       <h4>
-        {formatDate(
-          pageState.filter.date,
-          deviceInfo.isNarrow ? "medium" : "long"
-        )}
+        {formattedDateDisplay}
       </h4>
     </div>
   </PillButton>

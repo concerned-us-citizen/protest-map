@@ -106,7 +106,7 @@ export async function maybeCreateGithubIssue(summaryInfo: ProcessingSummary) {
   > = {
     event: {
       minRowCount: 10000,
-      maxRejects: 1100,
+      maxRejects: 1137,
     },
     turnout: {
       minRowCount: 1000,

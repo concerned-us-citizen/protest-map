@@ -19,7 +19,7 @@ interface GHInfo {
 async function maybeCreateGhIssue(
   issues: string[],
   summaryInfo: ProcessingSummary,
-  ghInfo: GHInfo
+  ghInfo: GHInfo,
 ) {
   const { token, ref, runId, repoString } = ghInfo;
 
@@ -71,7 +71,7 @@ ${issues.map((issue) => `- ${issue}`).join("\n")}
     repo,
     hashLabel,
     "f29513",
-    "Hash signature for duplicate detection"
+    "Hash signature for duplicate detection",
   );
 
   const existingIssues = await octokit.paginate(octokit.issues.listForRepo, {
@@ -84,7 +84,7 @@ ${issues.map((issue) => `- ${issue}`).join("\n")}
   if (existingIssues.length > 0) {
     const existing = existingIssues[0];
     console.log(
-      `Existing matching issue exists (${existing.html_url}), not duplicating`
+      `Existing matching issue exists (${existing.html_url}), not duplicating`,
     );
   }
 
@@ -106,7 +106,7 @@ export async function maybeCreateGithubIssue(summaryInfo: ProcessingSummary) {
   > = {
     event: {
       minRowCount: 10000,
-      maxRejects: 1167,
+      maxRejects: 1200,
     },
     turnout: {
       minRowCount: 1000,
@@ -179,7 +179,7 @@ async function ensureLabelExists(
   repo: string,
   name: string,
   color: string = "ededed",
-  description: string = ""
+  description: string = "",
 ): Promise<void> {
   try {
     await octokit.issues.getLabel({ owner, repo, name });

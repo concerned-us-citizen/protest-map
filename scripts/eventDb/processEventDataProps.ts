@@ -22,6 +22,8 @@ export const processEventDataProps: SheetProcessingProps<
     "June 14 State Counts",
     "Good Trouble State Counts",
     "2025 State Counts",
+    "2026 State Counts",
     "2025 Protest Summary",
+    "2026 Protest Summary",
   ],
 };

@@ -104,3 +104,10 @@ npx tsx scripts/eventDb/releaseManager.ts download-cache
 to get the latest from the previous night's build on Github.
 
 This way, whoever's doing a scrape (dev or the github action) benefits from work previously done.
+
+## Updating Release Token
+The token for communicating with github actions is GH_RELEASE_TOKEN. It will need to be replaced periodically. Follow these steps:
+- Go to https://github.com/settings/tokens/new, generate a new token, make it 90 days. It should have repo and workflow enabled.
+- Copy the resulting token, edit https://github.com/REPO/settings/secrets/actions/GH_RELEASE_TOKEN, paste.
+- Paste into .env as well
+- Test workflow: https://github.com/REPO/actions/workflows/build-and-deploy-pages.yml

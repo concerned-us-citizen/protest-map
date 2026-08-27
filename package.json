@@ -25,11 +25,11 @@
     "@types/better-sqlite3": "^7.6.13",
     "@types/cheerio": "^0.22.35",
     "@types/geojson": "^7946.0.16",
-    "@types/node": "^22.15.17",
+    "@types/node": "^24.0.0",
     "@types/sql.js": "^1.4.9",
     "@typescript-eslint/eslint-plugin": "^8.32.1",
     "@typescript-eslint/parser": "^8.32.1",
-    "@vitest/ui": "^3.2.3",
+    "@vitest/ui": "^4.1.11",
     "better-sqlite3": "^11.10.0",
     "cheerio": "^1.1.0",
     "csv-parse": "^5.6.0",
@@ -43,7 +43,7 @@
     "geojson-rbush": "^3.2.0",
     "globals": "^16.2.0",
     "rbush": "2.0.2",
-    "simple-git": "^2.40.0",
+    "simple-git": "^3.36.0",
     "svelte": "^5.0.0",
     "svelte-check": "^4.0.0",
     "svelte-eslint-parser": "1.0.0-next.13",
@@ -53,7 +53,7 @@
     "typescript-eslint": "^8.34.0",
     "unzipper": "^0.12.3",
     "vite": "^6.2.6",
-    "vitest": "^3.2.3",
+    "vitest": "^4.1.11",
     "vm": "^0.1.0",
     "zod": "^3.25.57"
   },
@@ -73,5 +73,14 @@
     "title-case": "^4.3.2",
     "wkx": "^0.5.0",
     "wkx-ts": "^1.0.1"
+  },
+  "overrides": {
+    "picomatch": "^4.0.0"
+  },
+  "allowScripts": {
+    "better-sqlite3@11.10.0": true,
+    "esbuild@0.25.5": true,
+    "fsevents@2.3.3": true,
+    "svelte-preprocess@6.0.3": true
   }
 }

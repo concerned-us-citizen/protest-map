@@ -9,7 +9,23 @@ export interface WikiCityInfo {
   lon?: number;
 }
 
-const DELAY_MS = 1000;
+const DELAY_MS = 1500;
+const RATE_LIMIT_BACKOFF_MS = 10000;
+
+async function wikiApiFetch(url: string): Promise<unknown> {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const res = await fetch(url);
+    const contentType = res.headers.get("content-type") ?? "";
+    if (!contentType.includes("application/json")) {
+      // Rate-limited or unexpected response — back off and retry
+      console.warn(`Wikipedia rate-limited (attempt ${attempt + 1}), backing off ${RATE_LIMIT_BACKOFF_MS}ms`);
+      await delay(RATE_LIMIT_BACKOFF_MS);
+      continue;
+    }
+    return res.json();
+  }
+  throw new Error("Wikipedia API rate-limited after retries");
+}
 
 /**
  * Attempts to fetch Wikipedia info for a city+state, with fallback, validation, and prioritization.
@@ -73,8 +89,7 @@ export async function fetchWikiCityInfo(
     const opensearchUrl = `https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(query)}&limit=10&namespace=0&format=json&origin=*`;
     await delay(DELAY_MS);
     try {
-      const res = await fetch(opensearchUrl);
-      const data: [string, string[], string[], string[]] = await res.json();
+      const data = await wikiApiFetch(opensearchUrl) as [string, string[], string[], string[]];
       // eslint-disable-next-line no-unused-vars
       const [_, titles, snippets, urls] = data;
 
@@ -126,8 +141,7 @@ export async function fetchWikiCityInfo(
 
         // Step 1: Validate categories
         const categoryUrl = `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(candidateTitle)}&prop=categories&cllimit=max&redirects=1&format=json&origin=*`;
-        const categoryRes = await fetch(categoryUrl);
-        const categoryData = await categoryRes.json();
+        const categoryData = await wikiApiFetch(categoryUrl) as { query: { pages: Record<string, unknown> } };
         const page = Object.values(categoryData.query.pages)[0] as {
           title: string;
           categories?: { title: string }[];
@@ -164,8 +178,7 @@ export async function fetchWikiCityInfo(
 
         // Step 2: Get thumbnail + coordinates
         const metaUrl = `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(candidateTitle)}&prop=pageimages|coordinates&piprop=thumbnail&pithumbsize=400&redirects=1&format=json&origin=*`;
-        const metaRes = await fetch(metaUrl);
-        const metaData = await metaRes.json();
+        const metaData = await wikiApiFetch(metaUrl) as { query: { pages: Record<string, unknown> } };
         const metaPage = Object.values(metaData.query.pages)[0] as {
           title: string;
           thumbnail?: { source: string };

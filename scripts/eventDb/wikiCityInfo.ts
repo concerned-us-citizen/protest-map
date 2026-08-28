@@ -9,15 +9,15 @@ export interface WikiCityInfo {
   lon?: number;
 }
 
-const DELAY_MS = 1500;
-const RATE_LIMIT_BACKOFF_MS = 10000;
+const DELAY_MS = 500;
+const RATE_LIMIT_BACKOFF_MS = 3000;
 
 async function wikiApiFetch(url: string): Promise<unknown> {
   for (let attempt = 0; attempt < 3; attempt++) {
+    await delay(DELAY_MS);
     const res = await fetch(url);
     const contentType = res.headers.get("content-type") ?? "";
     if (!contentType.includes("application/json")) {
-      // Rate-limited or unexpected response — back off and retry
       console.warn(`Wikipedia rate-limited (attempt ${attempt + 1}), backing off ${RATE_LIMIT_BACKOFF_MS}ms`);
       await delay(RATE_LIMIT_BACKOFF_MS);
       continue;
@@ -87,7 +87,6 @@ export async function fetchWikiCityInfo(
 
   for (const query of searchQueries) {
     const opensearchUrl = `https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(query)}&limit=10&namespace=0&format=json&origin=*`;
-    await delay(DELAY_MS);
     try {
       const data = await wikiApiFetch(opensearchUrl) as [string, string[], string[], string[]];
       // eslint-disable-next-line no-unused-vars

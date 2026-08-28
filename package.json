@@ -31,7 +31,7 @@
     "@typescript-eslint/eslint-plugin": "^8.32.1",
     "@typescript-eslint/parser": "^8.32.1",
     "@vitest/ui": "^4.1.11",
-    "better-sqlite3": "^11.10.0",
+    "better-sqlite3": "^13.0.3",
     "cheerio": "^1.1.0",
     "csv-parse": "^5.6.0",
     "date-fns": "^4.1.0",
@@ -79,7 +79,7 @@
     "picomatch": "^4.0.0"
   },
   "allowScripts": {
-    "better-sqlite3@11.10.0": true,
+    "better-sqlite3@13.0.3": true,
     "esbuild@0.25.5": true,
     "fsevents@2.3.3": true,
     "svelte-preprocess@6.0.3": true

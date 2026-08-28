@@ -12,7 +12,8 @@
     "lint:strict": "eslint . --ext .js,.ts,.svelte --max-warnings=0",
     "lint-data": "node scripts/lintData.js cache/events_raw.json",
     "preview": "vite preview",
-    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "postinstall": "node scripts/patch-bindings.cjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.26.0",

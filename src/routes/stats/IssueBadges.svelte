@@ -5,10 +5,7 @@
     type ScrapeIssue,
   } from "$lib/stats/types";
 
-  const props = $props<{
-    issues: ScrapeIssue[];
-  }>();
-  const { issues } = props;
+  const { issues } = $props<{ issues: ScrapeIssue[] }>();
 
   let rejectCount = $derived.by(() => {
     return issues.filter(

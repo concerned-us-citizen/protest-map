@@ -90,6 +90,7 @@
     >
       <div
         class="swipe-panel vertical-scroll"
+        role="region"
         ontouchstart={handleTouchStart}
         ontouchend={handleTouchEnd}
       >

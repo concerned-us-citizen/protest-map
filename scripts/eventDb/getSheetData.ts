@@ -133,18 +133,25 @@ export function getCsvRows<
     tests[k] = (cell: string) => fns.some((fn) => fn(cell));
   }
 
-  /* recent‑date predicate ----------------------------------------------------*/
+  /* date predicates ----------------------------------------------------------*/
   const ONE_YEAR = 365 * 24 * 60 * 60 * 1_000;
   const NOW = Date.now();
-  const isRecentDate = (s?: string): boolean => {
-    if (!s) return false;
+  /** Parse an MM/DD/YYYY cell, returning its timestamp (or null if not a date) */
+  const parseDate = (s?: string): number | null => {
+    if (!s) return null;
     const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
-    if (!m) return false;
+    if (!m) return null;
     // eslint-disable-next-line prefer-const
     let [, mm, dd, yyyy] = m;
     if (yyyy.length === 2) yyyy = (+yyyy < 70 ? "20" : "19") + yyyy;
     const t = new Date(+yyyy, +mm - 1, +dd).getTime();
-    return !Number.isNaN(t) && NOW - t <= ONE_YEAR;
+    return Number.isNaN(t) ? null : t;
+  };
+  /** Looks like a date, regardless of how old it is */
+  const isDateLike = (s?: string): boolean => parseDate(s) !== null;
+  const isRecentDate = (s?: string): boolean => {
+    const t = parseDate(s);
+    return t !== null && NOW - t <= ONE_YEAR;
   };
 
   const SAMPLE_LINES = 20;
@@ -187,17 +194,22 @@ export function getCsvRows<
     });
   });
 
-  /* repair mandatory “date” (or supplied key) if header missed it */
+  /* repair mandatory “date” (or supplied key) if header missed it
+     (e.g. tabs where the first column's header cell is simply blank) */
   const mandIdx = keys.indexOf(mandatoryKey);
   if (posMap[mandIdx] === -1) {
+    /* pick the unclaimed column holding the most date‑shaped cells. Old tabs
+       hold only old dates, so match on shape rather than recency here. */
+    const claimed = new Set(posMap.filter((p) => p !== -1));
+    const dateHits = new Map<number, number>();
     for (const rec of sample.slice(headerIdx + 1)) {
       for (let i = 0; i < rec.length; i++) {
-        if (isRecentDate(rec[i])) {
-          posMap[mandIdx] = i;
-          break;
-        }
+        if (claimed.has(i) || !isDateLike(rec[i])) continue;
+        dateHits.set(i, (dateHits.get(i) ?? 0) + 1);
       }
-      if (posMap[mandIdx] !== -1) break;
+    }
+    for (const [colIdx, hits] of dateHits) {
+      if (hits > (dateHits.get(posMap[mandIdx]) ?? 0)) posMap[mandIdx] = colIdx;
     }
     if (posMap[mandIdx] === -1)
       throw new Error(`Unable to locate mandatory column "${mandatoryKey}"`);
